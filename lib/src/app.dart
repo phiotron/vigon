@@ -11,6 +11,7 @@ import 'features/categories/categories_screen.dart';
 import 'features/entries/entries_screen.dart';
 import 'features/entry/entry_editor_screen.dart';
 import 'features/home/home_screen.dart';
+import 'features/recurring/recurring_screen.dart';
 import 'features/settings/settings_screen.dart';
 import 'providers.dart';
 import 'ui/messenger.dart';
@@ -25,6 +26,10 @@ GoRouter createRouter() => GoRouter(
         GoRoute(
           path: 'settings',
           builder: (context, state) => const SettingsScreen(),
+        ),
+        GoRoute(
+          path: 'recurring',
+          builder: (context, state) => const RecurringScreen(),
         ),
         GoRoute(
           path: 'categories',

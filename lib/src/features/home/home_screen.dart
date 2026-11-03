@@ -12,6 +12,7 @@ import '../../l10n_names.dart';
 import '../../providers.dart';
 import '../../ui/category_avatar.dart';
 import '../../ui/format.dart';
+import '../settings/budget_dialog.dart';
 import 'period_picker.dart';
 
 /// Màn chính: biểu đồ chi theo danh mục, tổng thu chi, số dư (F-02).
@@ -367,10 +368,51 @@ class _AddButtons extends StatelessWidget {
   }
 }
 
-/// Thanh ngân sách tháng; làm ở G4 (AC-26, AC-27).
-class BudgetBar extends StatelessWidget {
+/// Thanh ngân sách tháng: đã chi / hạn mức; vượt thì đổi màu và ghi rõ chữ
+/// "Vượt", không chỉ dựa vào màu (AC-27). Chạm để đặt lại hạn mức.
+class BudgetBar extends ConsumerWidget {
   const BudgetBar({super.key});
 
   @override
-  Widget build(BuildContext context) => const SizedBox.shrink();
+  Widget build(BuildContext context, WidgetRef ref) {
+    final limit = ref.watch(budgetProvider).value;
+    if (limit == null) return const SizedBox.shrink();
+    final l = AppLocalizations.of(context);
+    final spent = ref.watch(budgetSpentProvider).value ?? 0;
+    final currency = ref.watch(currencyProvider).value ?? 'VND';
+    final over = spent > limit;
+    final scheme = Theme.of(context).colorScheme;
+    final text = over
+        ? '${l.budget}: ${l.budgetOver(money(context, currency, spent - limit))}'
+        : '${l.budget}: ${l.budgetProgress(money(context, currency, spent), money(context, currency, limit))}';
+    return InkWell(
+      onTap: () => showBudgetDialog(context, ref),
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(16, 4, 16, 8),
+        child: Semantics(
+          label: text,
+          excludeSemantics: true,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                text,
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                  color: over ? scheme.error : null,
+                  fontWeight: over ? FontWeight.bold : null,
+                ),
+              ),
+              const SizedBox(height: 4),
+              LinearProgressIndicator(
+                value: (spent / limit).clamp(0, 1).toDouble(),
+                minHeight: 8,
+                borderRadius: BorderRadius.circular(4),
+                color: over ? scheme.error : scheme.primary,
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
 }

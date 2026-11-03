@@ -6,6 +6,8 @@ import 'package:intl/intl.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../data/currency.dart';
 import '../../providers.dart';
+import '../../ui/format.dart';
+import 'budget_dialog.dart';
 
 /// Cài đặt (AC-12, AC-21, AC-35, AC-36 và các mục G4–G6).
 class SettingsScreen extends ConsumerWidget {
@@ -20,6 +22,7 @@ class SettingsScreen extends ConsumerWidget {
     final currency = ref.watch(currencyProvider).value ?? 'VND';
     final weekStart = ref.watch(weekStartProvider).value ?? DateTime.monday;
     final monthStartDay = ref.watch(monthStartDayProvider).value ?? 1;
+    final budget = ref.watch(budgetProvider).value;
     final titleStyle = Theme.of(context).textTheme.titleSmall
         ?.copyWith(color: Theme.of(context).colorScheme.primary);
 
@@ -80,6 +83,22 @@ class SettingsScreen extends ConsumerWidget {
             title: Text(l.accounts),
             trailing: const Icon(Icons.chevron_right),
             onTap: () => context.push('/accounts'),
+          ),
+          ListTile(
+            leading: const Icon(Icons.savings_outlined),
+            title: Text(l.budget),
+            subtitle: Text(
+              budget == null
+                  ? l.budgetNotSet
+                  : money(context, currency, budget),
+            ),
+            onTap: () => showBudgetDialog(context, ref),
+          ),
+          ListTile(
+            leading: const Icon(Icons.repeat),
+            title: Text(l.recurring),
+            trailing: const Icon(Icons.chevron_right),
+            onTap: () => context.push('/recurring'),
           ),
           ListTile(
             leading: const Icon(Icons.payments_outlined),

@@ -34,9 +34,10 @@ Mỗi giai đoạn kết thúc bằng: `flutter analyze` sạch, `flutter test` 
 - [x] Widget test chạy ở màn 360×800 dp; đã sửa tràn 13 px ở màn Chuyển tiền
 - [ ] Thử tay trên máy thật: vuốt đổi kỳ, kéo sắp xếp danh mục, chuyển tiền
 
-### G4 · Khoản định kỳ và ngân sách — trạng thái: todo
-- [ ] Chuỗi định kỳ, tự tạo khoản khi mở app, không trùng (AC-23 tới AC-25)
-- [ ] Ngân sách tháng và thanh tiến độ (AC-26, AC-27)
+### G4 · Khoản định kỳ và ngân sách — trạng thái: done (chờ thử máy thật)
+- [x] Chuỗi định kỳ, tự tạo khoản khi mở app, không trùng (AC-23 tới AC-25): test `recurring_test`, `g4_screens_test`
+- [x] Ngân sách tháng và thanh tiến độ (AC-26, AC-27): test `g4_screens_test`
+- [ ] Thử tay trên máy thật: đặt ngân sách, ghi khoản lặp, đổi ngày máy để kiểm tạo khoản tới hạn
 
 ### G5 · Sao lưu, khóa PIN, dữ liệu — trạng thái: todo
 - [ ] Xuất/khôi phục file `.vigon`, xuất CSV (AC-28 tới AC-30)

@@ -43,6 +43,8 @@ class _EntryEditorScreenState extends ConsumerState<EntryEditorScreen> {
   String? _error;
   bool _loading = false;
   bool _saving = false;
+  RecurrenceFrequency? _repeat;
+  RecurringRule? _rule;
 
   @override
   void initState() {
@@ -63,7 +65,13 @@ class _EntryEditorScreenState extends ConsumerState<EntryEditorScreen> {
     final digits = currencyDecimalDigits(
       ref.read(currencyProvider).value ?? 'VND',
     );
+    final ruleId = entry.recurringRuleId;
+    final rule = ruleId == null
+        ? null
+        : await ref.read(recurringRepositoryProvider).find(ruleId);
+    if (!mounted) return;
     setState(() {
+      _rule = rule;
       _original = entry;
       _type = entry.type;
       _categoryId = entry.categoryId;
@@ -119,16 +127,23 @@ class _EntryEditorScreenState extends ConsumerState<EntryEditorScreen> {
     final note = _note.text.trim().isEmpty ? null : _note.text.trim();
     final original = _original;
     if (original == null) {
-      await repo.add(
-        EntriesCompanion.insert(
-          type: _type,
-          amount: amount,
-          categoryId: Value(_categoryId),
-          accountId: accountId,
-          date: dateKey(_date),
-          note: Value(note),
-        ),
+      final entry = EntriesCompanion.insert(
+        type: _type,
+        amount: amount,
+        categoryId: Value(_categoryId),
+        accountId: accountId,
+        date: dateKey(_date),
+        note: Value(note),
       );
+      final repeat = _repeat;
+      if (repeat == null) {
+        await repo.add(entry);
+      } else {
+        // Ngày bắt đầu ở quá khứ thì tạo luôn các lần đã tới hạn (AC-24).
+        final recurring = ref.read(recurringRepositoryProvider);
+        await recurring.addWithRepeat(entry, repeat);
+        await recurring.generateDue(ref.read(clockProvider)());
+      }
     } else {
       await repo.update(
         original.copyWith(
@@ -174,6 +189,41 @@ class _EntryEditorScreenState extends ConsumerState<EntryEditorScreen> {
       isScrollControlled: true,
       builder: (context) => _CategoryGrid(type: type, selectedId: _categoryId),
     );
+  }
+
+  Future<void> _pickRepeat() async {
+    final l = AppLocalizations.of(context);
+    final options = <RecurrenceFrequency?>[null, ...RecurrenceFrequency.values];
+    final picked = await showModalBottomSheet<(RecurrenceFrequency?,)>(
+      context: context,
+      showDragHandle: true,
+      builder: (context) => SafeArea(
+        child: ListView(
+          shrinkWrap: true,
+          children: [
+            for (final f in options)
+              ListTile(
+                title: Text(repeatLabel(l, f)),
+                selected: f == _repeat,
+                trailing: f == _repeat ? const Icon(Icons.check) : null,
+                onTap: () => Navigator.pop(context, (f,)),
+              ),
+          ],
+        ),
+      ),
+    );
+    if (picked != null) setState(() => _repeat = picked.$1);
+  }
+
+  /// Dừng chuỗi định kỳ của khoản này; khoản đã tạo giữ nguyên (AC-25).
+  Future<void> _stopRepeat() async {
+    final rule = _rule;
+    if (rule == null) return;
+    final stopped = AppLocalizations.of(context).repeatStopped;
+    await ref.read(recurringRepositoryProvider).stop(rule.id);
+    if (!mounted) return;
+    setState(() => _rule = rule.copyWith(active: false));
+    showMessage(stopped);
   }
 
   Future<void> _pickDate() async {
@@ -315,6 +365,20 @@ class _EntryEditorScreenState extends ConsumerState<EntryEditorScreen> {
                           ),
                           onPressed: _pickDate,
                         ),
+                        if (_original == null)
+                          ActionChip(
+                            avatar: const Icon(Icons.repeat, size: 18),
+                            label: Text(repeatLabel(l, _repeat)),
+                            onPressed: _pickRepeat,
+                          )
+                        else if (_rule != null && _rule!.active)
+                          InputChip(
+                            avatar: const Icon(Icons.repeat, size: 18),
+                            label: Text(repeatLabel(l, _rule!.frequency)),
+                            deleteIcon: const Icon(Icons.stop_circle_outlined),
+                            deleteButtonTooltipMessage: l.stopRepeat,
+                            onDeleted: _stopRepeat,
+                          ),
                         if (account != null && accounts.length > 1)
                           ActionChip(
                             avatar: const Icon(
@@ -413,3 +477,11 @@ class _CategoryGrid extends ConsumerWidget {
     );
   }
 }
+
+String repeatLabel(AppLocalizations l, RecurrenceFrequency? f) => switch (f) {
+  null => l.repeatNone,
+  RecurrenceFrequency.daily => l.repeatDaily,
+  RecurrenceFrequency.weekly => l.repeatWeekly,
+  RecurrenceFrequency.monthly => l.repeatMonthly,
+  RecurrenceFrequency.yearly => l.repeatYearly,
+};

@@ -4,7 +4,7 @@ App mobile CHỈ dành cho điện thoại. Mở Claude ngay trong thư mục n�
 
 - Mã app: APP-001
 - Thư mục: apps/APP-001-vi-gon
-- Giai đoạn hiện tại: G4
+- Giai đoạn hiện tại: G5
 - Nền tảng: Android (v1); iOS để sau (D-001)
 - Quy mô: chuẩn
 - Stack: Flutter
