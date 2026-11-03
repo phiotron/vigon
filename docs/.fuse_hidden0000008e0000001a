@@ -1,0 +1,26 @@
+# BACKLOG — {{APP_NAME}} ({{APP_CODE}})
+
+Nguồn sự thật về việc cần làm. Claude đọc đầu phiên, cập nhật cuối phiên (`/end`). Việc chưa xong ghi dạng "[ ] ..." đầu dòng sau dấu gạch; xong đổi thành "[x]". `scripts/status.sh` đếm các việc chưa xong.
+
+## Giai đoạn xây dựng
+Chia SPEC thành các giai đoạn nhỏ (mỗi giai đoạn: làm được trong một vài phiên, kiểm chứng được độc lập). Ghi dạng:
+"### G1 · tên — trạng thái: todo | doing | done", dưới đó là các việc, mỗi việc gắn AC liên quan.
+(Chưa có. `/plan` sẽ điền sau khi SPEC rõ.)
+
+## Việc kế tiếp (tối đa 5, theo thứ tự)
+(Chưa có)
+
+## Lỗi đã biết (đang mở)
+Mỗi lỗi: BUG-xxx · mô tả · cách tái hiện · mức độ (chặn / nặng / nhẹ) · cách tạm tránh.
+(Chưa có)
+
+## Lỗi đã sửa đáng nhớ (nguồn cho bài học)
+Mỗi lỗi: BUG-xxx · nguyên nhân gốc · cách sửa · làm sao tránh lần sau.
+(Chưa có)
+
+## Ý tưởng ngoài SPEC (chưa được duyệt, KHÔNG tự làm)
+(Chưa có)
+
+## Biên bản thử máy thật
+Mỗi lần thử: ngày · máy và phiên bản hệ điều hành · bản app · đã thử gì · kết quả · lỗi phát hiện.
+(Chưa có)

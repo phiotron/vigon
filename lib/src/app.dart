@@ -1,0 +1,64 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+
+import '../l10n/app_localizations.dart';
+import 'features/home/home_screen.dart';
+import 'features/settings/settings_screen.dart';
+import 'providers.dart';
+
+/// Mỗi lần gọi tạo router mới; test dùng để mỗi test bắt đầu ở màn chính.
+GoRouter createRouter() => GoRouter(
+  routes: [
+    GoRoute(
+      path: '/',
+      builder: (context, state) => const HomeScreen(),
+      routes: [
+        GoRoute(
+          path: 'settings',
+          builder: (context, state) => const SettingsScreen(),
+        ),
+      ],
+    ),
+  ],
+);
+
+final _router = createRouter();
+
+const _seedColor = Color(0xFF2E7D6B);
+
+class VigonApp extends ConsumerWidget {
+  const VigonApp({super.key, this.router});
+
+  /// Test truyền router từ [createRouter].
+  final GoRouter? router;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final themeMode = ref.watch(themeModeProvider).value ?? ThemeMode.system;
+    final localeCode = ref.watch(localeCodeProvider).value;
+    return MaterialApp.router(
+      onGenerateTitle: (context) => AppLocalizations.of(context).appTitle,
+      routerConfig: router ?? _router,
+      themeMode: themeMode,
+      theme: ThemeData(
+        colorScheme: ColorScheme.fromSeed(seedColor: _seedColor),
+      ),
+      darkTheme: ThemeData(
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: _seedColor,
+          brightness: Brightness.dark,
+        ),
+      ),
+      locale: localeCode == null ? null : Locale(localeCode),
+      supportedLocales: AppLocalizations.supportedLocales,
+      localizationsDelegates: const [
+        AppLocalizations.delegate,
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+    );
+  }
+}
