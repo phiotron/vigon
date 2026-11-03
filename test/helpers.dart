@@ -5,7 +5,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:vigon/src/app.dart';
 import 'package:vigon/src/data/database.dart';
+import 'package:vigon/src/data/pin_service.dart';
 import 'package:vigon/src/data/settings_repository.dart';
+import 'package:vigon/src/features/lock/app_lock.dart';
 import 'package:vigon/src/providers.dart';
 
 /// Ngày cố định cho test.
@@ -30,6 +32,8 @@ Future<AppDatabase> pumpApp(
   WidgetTester tester, {
   String? localeCode = 'vi',
   AppDatabase? db,
+  SecretStore? secrets,
+  DateTime Function()? clock,
   List overrides = const [],
 }) async {
   usePhoneScreen(tester);
@@ -41,7 +45,8 @@ Future<AppDatabase> pumpApp(
     ProviderScope(
       overrides: [
         databaseProvider.overrideWithValue(database),
-        clockProvider.overrideWithValue(() => testToday),
+        clockProvider.overrideWithValue(clock ?? () => testToday),
+        secretStoreProvider.overrideWithValue(secrets ?? MemorySecretStore()),
         deviceLocaleProvider.overrideWithValue('vi_VN'),
         ...overrides.cast(),
       ],

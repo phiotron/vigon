@@ -4,17 +4,17 @@ App mobile CHỈ dành cho điện thoại. Mở Claude ngay trong thư mục n�
 
 - Mã app: APP-001
 - Thư mục: apps/APP-001-vi-gon
-- Giai đoạn hiện tại: G5
+- Giai đoạn hiện tại: G5 (code xong, chờ build và thử máy)
 - Nền tảng: Android (v1); iOS để sau (D-001)
 - Quy mô: chuẩn
 - Stack: Flutter
 
 ## Điểm dừng (Claude cập nhật bằng /end; đọc mục này đầu tiên khi quay lại app sau thời gian dài)
 - Cập nhật lần cuối: 2026-11-03
-- Đang làm dở: (chưa có)
-- Bước tiếp theo: (chưa có)
-- Đang chờ (ai/cái gì): (chưa có)
-- Lưu ý dễ vấp: máy thử Galaxy A13 (SM-A135F) chạy Android 14 chỉ 32-bit; build APK phải có `armeabi-v7a` (BUG-001).
+- Đang làm dở: G5 (sao lưu, PIN, xóa dữ liệu). Code và 91 test tự động đã đạt, đã commit. CHƯA làm: build APK release (BUG-002), thử tay trên máy thật; G6 chưa bắt đầu. Đang để dở một thay đổi chưa commit: dòng `kotlin.incremental=false` trong `android/gradle.properties` (thử sửa BUG-002, chưa chạy lại build)
+- Bước tiếp theo: chạy `flutter build apk --release` để xem `kotlin.incremental=false` có sửa được BUG-002 không; nếu được thì kiểm `aapt2 dump permissions` (AC-43), commit dòng đó, cài lên máy và thử G3 tới G5 theo BACKLOG; rồi làm G6
+- Đang chờ (ai/cái gì): người dùng: thử tay trên máy thật, trả lời tên cá nhân hay công ty và Play Age Signals, cài Command-line Tools cho Android SDK, tạo remote git và sao lưu `D:/DemoChung` ra ngoài ổ D
+- Lưu ý dễ vấp: (1) Galaxy A13 (SM-A135F, Android 14) chỉ chạy 32-bit, không build APK `arm64` riêng (BUG-001). (2) Điện thoại đang cài bản G2, cũ hơn mã hiện tại. (3) PIN 4 số chỉ chặn người tò mò, không phải mã hóa dữ liệu (D-007). (4) Flutter chưa có trong PATH, xem mục "Lệnh". (5) Từ G3 trở đi chỉ mới kiểm bằng test tự động, chưa thử tay.
 
 ## Mô tả
 - Mục đích: Ghi chép thu chi cá nhân nhanh, xem biểu đồ theo danh mục (chức năng tương đương Monefy)

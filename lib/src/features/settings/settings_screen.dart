@@ -7,7 +7,9 @@ import '../../../l10n/app_localizations.dart';
 import '../../data/currency.dart';
 import '../../providers.dart';
 import '../../ui/format.dart';
+import '../lock/app_lock.dart';
 import 'budget_dialog.dart';
+import 'data_actions.dart';
 
 /// Cài đặt (AC-12, AC-21, AC-35, AC-36 và các mục G4–G6).
 class SettingsScreen extends ConsumerWidget {
@@ -23,6 +25,7 @@ class SettingsScreen extends ConsumerWidget {
     final weekStart = ref.watch(weekStartProvider).value ?? DateTime.monday;
     final monthStartDay = ref.watch(monthStartDayProvider).value ?? 1;
     final budget = ref.watch(budgetProvider).value;
+    final pinEnabled = ref.watch(pinEnabledProvider).value ?? false;
     final titleStyle = Theme.of(context).textTheme.titleSmall
         ?.copyWith(color: Theme.of(context).colorScheme.primary);
 
@@ -126,6 +129,47 @@ class SettingsScreen extends ConsumerWidget {
               ],
               onChanged: (d) => d == null ? null : repo.setMonthStartDay(d),
             ),
+          ),
+          header(l.security),
+          SwitchListTile(
+            secondary: const Icon(Icons.lock_outline),
+            title: Text(l.pinLock),
+            subtitle: Text(l.pinWarning),
+            value: pinEnabled,
+            onChanged: (on) =>
+                on ? setupPin(context, ref) : disablePin(context, ref),
+          ),
+          header(l.dataSection),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
+            child: Text(l.backupReminder),
+          ),
+          ListTile(
+            leading: const Icon(Icons.upload_file),
+            title: Text(l.backup),
+            subtitle: Text(l.backupNote),
+            onTap: () => exportBackupFile(ref),
+          ),
+          ListTile(
+            leading: const Icon(Icons.settings_backup_restore),
+            title: Text(l.restore),
+            onTap: () => restoreFromFile(context, ref),
+          ),
+          ListTile(
+            leading: const Icon(Icons.table_view_outlined),
+            title: Text(l.exportCsv),
+            onTap: () => exportCsvFile(context, ref),
+          ),
+          ListTile(
+            leading: Icon(
+              Icons.delete_forever_outlined,
+              color: Theme.of(context).colorScheme.error,
+            ),
+            title: Text(
+              l.deleteAll,
+              style: TextStyle(color: Theme.of(context).colorScheme.error),
+            ),
+            onTap: () => deleteEverything(context, ref),
           ),
         ],
       ),
