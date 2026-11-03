@@ -1,0 +1,97 @@
+import 'package:drift/drift.dart';
+import 'package:drift/native.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:vigon/src/app.dart';
+import 'package:vigon/src/data/database.dart';
+import 'package:vigon/src/data/settings_repository.dart';
+import 'package:vigon/src/providers.dart';
+
+/// Ngày cố định cho test.
+final testToday = DateTime(2026, 11, 3, 9);
+
+/// Cơ sở dữ liệu trong bộ nhớ cho widget test. Phải tạo bên trong thân
+/// `testWidgets`; tạo ở `setUp` thì thao tác đầu tiên bị treo.
+AppDatabase memoryDatabase() => AppDatabase(
+  DatabaseConnection(NativeDatabase.memory(), closeStreamsSynchronously: true),
+);
+
+/// Chờ thao tác cơ sở dữ liệu thật xong rồi vẽ lại.
+Future<void> settle(WidgetTester tester) async {
+  for (var i = 0; i < 3; i++) {
+    await tester.runAsync(() => Future<void>.delayed(Duration.zero));
+    await tester.pumpAndSettle();
+  }
+}
+
+/// Mở app với cơ sở dữ liệu mới, tiếng Việt, VND, ngày [testToday].
+Future<AppDatabase> pumpApp(
+  WidgetTester tester, {
+  String? localeCode = 'vi',
+  AppDatabase? db,
+  List overrides = const [],
+}) async {
+  final database = db ?? memoryDatabase();
+  await tester.runAsync(
+    () => SettingsRepository(database).setLocaleCode(localeCode),
+  );
+  await tester.pumpWidget(
+    ProviderScope(
+      overrides: [
+        databaseProvider.overrideWithValue(database),
+        clockProvider.overrideWithValue(() => testToday),
+        deviceLocaleProvider.overrideWithValue('vi_VN'),
+        ...overrides.cast(),
+      ],
+      child: VigonApp(router: createRouter()),
+    ),
+  );
+  await settle(tester);
+  return database;
+}
+
+/// Gỡ cây widget và đóng cơ sở dữ liệu để không còn stream treo khi test kết thúc.
+Future<void> disposeApp(WidgetTester tester, AppDatabase db) async {
+  await tester.pumpWidget(const SizedBox());
+  await tester.runAsync(db.close);
+}
+
+/// Bỏ khoảng trắng không ngắt mà intl dùng trong số tiền.
+String plain(String s) => s.replaceAll(' ', ' ');
+
+/// Tìm Text có nội dung [text] sau khi đổi khoảng trắng không ngắt.
+Finder findPlainText(String text) => find.byWidgetPredicate(
+  (w) => w is Text && w.data != null && plain(w.data!) == text,
+);
+
+/// Ghi một khoản thẳng vào cơ sở dữ liệu.
+Future<int> insertEntry(
+  WidgetTester tester,
+  AppDatabase db, {
+  required EntryType type,
+  required int amount,
+  int? categoryId,
+  int accountId = 1,
+  int? toAccountId,
+  String date = '2026-11-03',
+  String? note,
+}) async {
+  final id = await tester.runAsync(
+    () => db
+        .into(db.entries)
+        .insert(
+          EntriesCompanion.insert(
+            type: type,
+            amount: amount,
+            categoryId: Value(categoryId),
+            accountId: accountId,
+            toAccountId: Value(toAccountId),
+            date: date,
+            note: Value(note),
+          ),
+        ),
+  );
+  await settle(tester);
+  return id!;
+}

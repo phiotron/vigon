@@ -4,9 +4,13 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../l10n/app_localizations.dart';
+import 'data/database.dart';
+import 'features/entries/entries_screen.dart';
+import 'features/entry/entry_editor_screen.dart';
 import 'features/home/home_screen.dart';
 import 'features/settings/settings_screen.dart';
 import 'providers.dart';
+import 'ui/messenger.dart';
 
 /// Mỗi lần gọi tạo router mới; test dùng để mỗi test bắt đầu ở màn chính.
 GoRouter createRouter() => GoRouter(
@@ -18,6 +22,28 @@ GoRouter createRouter() => GoRouter(
         GoRoute(
           path: 'settings',
           builder: (context, state) => const SettingsScreen(),
+        ),
+        GoRoute(
+          path: 'entries',
+          builder: (context, state) => const EntriesScreen(),
+        ),
+        GoRoute(
+          path: 'entry/new',
+          builder: (context, state) {
+            final q = state.uri.queryParameters;
+            return EntryEditorScreen(
+              type: q['type'] == 'income'
+                  ? EntryType.income
+                  : EntryType.expense,
+              categoryId: int.tryParse(q['category'] ?? ''),
+            );
+          },
+        ),
+        GoRoute(
+          path: 'entry/:id',
+          builder: (context, state) => EntryEditorScreen(
+            entryId: int.parse(state.pathParameters['id']!),
+          ),
         ),
       ],
     ),
@@ -36,11 +62,13 @@ class VigonApp extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    ref.watch(startupProvider);
     final themeMode = ref.watch(themeModeProvider).value ?? ThemeMode.system;
     final localeCode = ref.watch(localeCodeProvider).value;
     return MaterialApp.router(
       onGenerateTitle: (context) => AppLocalizations.of(context).appTitle,
       routerConfig: router ?? _router,
+      scaffoldMessengerKey: rootMessengerKey,
       themeMode: themeMode,
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: _seedColor),

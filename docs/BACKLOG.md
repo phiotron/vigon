@@ -19,11 +19,12 @@ Mỗi giai đoạn kết thúc bằng: `flutter analyze` sạch, `flutter test` 
 - [ ] Xoay máy thật khi bật tự xoay: app phải giữ dọc (cần người dùng xoay tay)
 - [ ] Sửa ở G6: nút "Theo hệ thống" trong Cài đặt bị xuống 2 dòng ở cỡ chữ mặc định, sẽ tệ hơn ở cỡ chữ 200% (AC-38)
 
-### G2 · Ghi khoản và màn chính — trạng thái: todo
-- [ ] Màn nhập số tiền với bàn phím số có phép tính (AC-01 tới AC-05)
-- [ ] Màn chính: biểu đồ tròn, tổng thu/chi/số dư, icon danh mục quanh biểu đồ, trạng thái trống (AC-06, AC-07, AC-09)
-- [ ] Danh sách khoản gom theo danh mục, phần trăm (AC-08)
-- [ ] Sửa, xóa có hoàn tác (AC-13, AC-14)
+### G2 · Ghi khoản và màn chính — trạng thái: done
+- [x] Màn nhập số tiền với bàn phím số có phép tính (AC-01 tới AC-05): test `calculator_test`, `entry_flow_test`; thử máy thật 2026-11-03
+- [x] Màn chính: biểu đồ tròn, tổng thu/chi/số dư, icon danh mục quanh biểu đồ, trạng thái trống (AC-06, AC-07, AC-09): test `summary_test`, `entry_flow_test`; thử máy thật
+- [x] Danh sách khoản gom theo danh mục, phần trăm (AC-08): test `summary_test`
+- [x] Sửa, xóa có hoàn tác (AC-13, AC-14): test `entry_repository_test`, `entry_flow_test`
+- [ ] Đo AC-01 (mở màn nhập trong 300 ms) bằng đồng hồ trên máy thật: CHƯA đo
 
 ### G3 · Kỳ xem, danh mục, tài khoản, tiền tệ — trạng thái: todo
 - [ ] Chọn kỳ, vuốt chuyển kỳ, cài đặt đầu tuần/đầu tháng (AC-10 tới AC-12)
@@ -73,4 +74,5 @@ Mỗi lỗi: BUG-xxx · nguyên nhân gốc · cách sửa · làm sao tránh l�
 
 ## Biên bản thử máy thật
 Mỗi lần thử: ngày · máy và phiên bản hệ điều hành · bản app · đã thử gì · kết quả · lỗi phát hiện.
+- 2026-11-03 · Galaxy A13 SM-A135F, Android 14 · G2, APK release · màn chính có 10 icon danh mục quanh vòng tròn, nút −/+ ở nửa dưới; bấm − nhập 120+35, Choose category, Food → lưu ₫155, biểu đồ 100% Food, số dư -₫155 (đọc bằng uiautomator). Lần chạm − đầu tiên mở nhầm "New income", chạm lại 2 lần đều đúng; lúc đó người dùng cũng đang cầm máy (bảng thông báo bị kéo xuống), CHƯA tái hiện được, theo dõi tiếp.
 - 2026-11-03 · Samsung Galaxy A13 SM-A135F, Android 14 (API 34), chỉ 32-bit, Exynos 850 · G1, APK release (khóa debug) · mở app; Cài đặt → Tối, → English; Back về màn chính; tắt hẳn rồi mở lại 5 lần · Lần đầu crash (BUG-001, đã sửa). Sau khi sửa: chữ tiếng Việt và tiếng Anh đúng, giao diện tối đổi ngay, Back đúng, cài đặt còn sau khi mở lại, không crash. `WaitTime` của `am start -W` 5 lần: 835, 1050, 1676, 2081, 2641 ms (trung vị 1676 ms; số này tính tới khung hình Android đầu tiên, chưa phải khung hình Flutter, đo NFR chuẩn ở G6). APK đủ kiến trúc 53,7 MB; ngưỡng ≤ 25 MB trong SPEC là cho một kiến trúc, sẽ đo bằng AAB ở G6. Chưa thử xoay máy.

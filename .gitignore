@@ -45,3 +45,6 @@ app.*.symbols
 app.*.map.json
 .widget_preview/
 **/ios/Flutter/.last_build_id
+
+# Tệp tạm của hệ thống tệp
+.fuse_hidden*

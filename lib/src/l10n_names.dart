@@ -1,4 +1,5 @@
 import '../l10n/app_localizations.dart';
+import 'data/database.dart';
 
 /// Tên hiển thị của danh mục và tài khoản mặc định theo `nameKey` (D-005).
 /// Trả về null khi khóa không có trong bảng dịch.
@@ -19,3 +20,13 @@ String? defaultName(AppLocalizations l, String key) => switch (key) {
   'otherIncome' => l.categoryOtherIncome,
   _ => null,
 };
+
+/// Tên người dùng đặt nếu có, không thì tên mặc định theo ngôn ngữ.
+String _label(AppLocalizations l, String? name, String? nameKey) =>
+    name ?? (nameKey == null ? null : defaultName(l, nameKey)) ?? '';
+
+String categoryLabel(AppLocalizations l, Category c) =>
+    _label(l, c.name, c.nameKey);
+
+String accountLabel(AppLocalizations l, Account a) =>
+    _label(l, a.name, a.nameKey);

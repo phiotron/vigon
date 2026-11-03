@@ -1,0 +1,38 @@
+import 'package:flutter/material.dart';
+
+/// Bộ icon chọn được cho danh mục. Khóa là chữ lưu trong cơ sở dữ liệu.
+const categoryIcons = <String, IconData>{
+  'restaurant': Icons.restaurant,
+  'local_cafe': Icons.local_cafe,
+  'local_grocery_store': Icons.local_grocery_store,
+  'directions_bus': Icons.directions_bus,
+  'local_gas_station': Icons.local_gas_station,
+  'two_wheeler': Icons.two_wheeler,
+  'home': Icons.home,
+  'receipt_long': Icons.receipt_long,
+  'bolt': Icons.bolt,
+  'wifi': Icons.wifi,
+  'phone_android': Icons.phone_android,
+  'shopping_bag': Icons.shopping_bag,
+  'checkroom': Icons.checkroom,
+  'medical_services': Icons.medical_services,
+  'fitness_center': Icons.fitness_center,
+  'movie': Icons.movie,
+  'sports_esports': Icons.sports_esports,
+  'flight': Icons.flight,
+  'school': Icons.school,
+  'menu_book': Icons.menu_book,
+  'family_restroom': Icons.family_restroom,
+  'child_care': Icons.child_care,
+  'pets': Icons.pets,
+  'card_giftcard': Icons.card_giftcard,
+  'volunteer_activism': Icons.volunteer_activism,
+  'payments': Icons.payments,
+  'redeem': Icons.redeem,
+  'savings': Icons.savings,
+  'trending_up': Icons.trending_up,
+  'work': Icons.work,
+  'more_horiz': Icons.more_horiz,
+};
+
+IconData iconFor(String key) => categoryIcons[key] ?? Icons.category;
