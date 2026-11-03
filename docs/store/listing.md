@@ -80,4 +80,13 @@ Ví Gọn is a fast personal income and expense tracker that shows where your mo
 - Liên hệ nhà phát triển: `phamphuongphuong@gmail.com`.
 
 ## Ảnh chụp màn hình
-Chụp trên điện thoại thật ở màn dọc, dữ liệu mẫu (không dùng dữ liệu thật). Cần tối thiểu 2 ảnh điện thoại; đề xuất 6: màn chính có biểu đồ, nhập số tiền, danh sách khoản, ngân sách, tài khoản và chuyển tiền, giao diện tối. Chưa chụp.
+Đã chụp 2026-11-03 trên Galaxy A13 (bản release, dữ liệu MẪU do `exportBackup` sinh ra, không có dữ liệu thật), nằm ở `docs/store/screenshots/`. Mỗi ảnh 1080×2160 px (đã cắt thanh trạng thái và thanh điều hướng để tỉ lệ đúng 2:1, mức tối đa Play cho phép).
+| Ảnh | Nội dung | Gợi ý dòng chữ phụ |
+|-----|----------|--------------------|
+| `01-man-chinh.png` | Màn chính: biểu đồ vòng, ngân sách tháng, số dư (sáng, tiếng Việt) | "Biết tiền đi đâu" |
+| `02-nhap-khoan.png` | Nhập số tiền bằng bàn phím có phép tính | "Ghi nhanh trong 3 chạm" |
+| `03-danh-sach-khoan.png` | Danh sách khoản gom theo danh mục, có phần trăm | "Xem chi tiết từng khoản" |
+| `04-tai-khoan.png` | Nhiều tài khoản (tiền mặt, ngân hàng) | "Quản lý nhiều ví" |
+| `05-giao-dien-toi.png` | Màn chính giao diện tối | "Giao diện sáng và tối" |
+| `06-english-main.png` | Màn chính tiếng Anh, dùng cho trang store tiếng Anh | "Your data stays on your phone" |
+Lưu ý: ảnh 04 khá trống (chỉ hai tài khoản), có thể thay bằng màn Chuyển tiền; ảnh 02 bị cắt nhẹ phần đáy nút Lưu vì giới hạn tỉ lệ. Chưa có ảnh cho máy tính bảng (v1 chỉ nhắm điện thoại) và chưa có ảnh bìa 1024×500 cùng icon 512×512 của store (việc thiết kế, người dùng quyết).
