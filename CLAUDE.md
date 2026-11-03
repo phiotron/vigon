@@ -4,17 +4,17 @@ App mobile CHỈ dành cho điện thoại. Mở Claude ngay trong thư mục n�
 
 - Mã app: APP-001
 - Thư mục: apps/APP-001-vi-gon
-- Giai đoạn hiện tại: G5 (code xong, chờ build và thử máy)
+- Giai đoạn hiện tại: G5 xong (đã thử máy thật), chờ người dùng duyệt để sang G6
 - Nền tảng: Android (v1); iOS để sau (D-001)
 - Quy mô: chuẩn
 - Stack: Flutter
 
 ## Điểm dừng (Claude cập nhật bằng /end; đọc mục này đầu tiên khi quay lại app sau thời gian dài)
 - Cập nhật lần cuối: 2026-11-03
-- Đang làm dở: G5 (sao lưu, PIN, xóa dữ liệu). Code, 91 test tự động và build APK release đều đạt (BUG-002 đã sửa bằng `kotlin.incremental=false`), AC-43 kiểm lại đạt. CHƯA thử tay trên máy thật; G6 chưa bắt đầu
-- Bước tiếp theo: cài `build/app/outputs/flutter-apk/app-release.apk` lên Galaxy A13 và thử G3 tới G5 theo BACKLOG, ghi biên bản; rồi làm G6
+- Đang làm dở: không có. G3, G4, G5 đã thử trên Galaxy A13 qua adb ngày 2026-11-03, đạt (biên bản trong BACKLOG). Còn: người dùng mở CSV bằng Excel/Sheets; khôi phục file xuất từ chính máy
+- Bước tiếp theo: người dùng duyệt cổng G5, rồi làm G6 (accessibility, màn Giới thiệu, chính sách quyền riêng tư, đo NFR, SBOM/MASVS)
 - Đang chờ (ai/cái gì): người dùng: thử tay trên máy thật, trả lời tên cá nhân hay công ty và Play Age Signals, cài Command-line Tools cho Android SDK, tạo remote git và sao lưu `D:/DemoChung` ra ngoài ổ D
-- Lưu ý dễ vấp: (1) Galaxy A13 (SM-A135F, Android 14) chỉ chạy 32-bit, không build APK `arm64` riêng (BUG-001). (2) Điện thoại đang cài bản G2, cũ hơn mã hiện tại. (3) PIN 4 số chỉ chặn người tò mò, không phải mã hóa dữ liệu (D-007). (4) Flutter chưa có trong PATH, xem mục "Lệnh". (5) Từ G3 trở đi chỉ mới kiểm bằng test tự động, chưa thử tay.
+- Lưu ý dễ vấp: (1) Galaxy A13 (SM-A135F, Android 14) chỉ chạy 32-bit, không build APK `arm64` riêng (BUG-001). (2) Điện thoại đang cài bản G5 (commit aefb38e), dữ liệu đã xóa sạch sau lần thử quên mã. Máy thử là máy người dùng đang dùng: trước mỗi lần chạm qua adb phải kiểm `mCurrentFocus` là Ví Gọn. (3) PIN 4 số chỉ chặn người tò mò, không phải mã hóa dữ liệu (D-007). (4) Flutter chưa có trong PATH, xem mục "Lệnh". (5) G3 tới G5 đã thử máy thật bằng adb; CSV mở bằng Excel chưa thử.
 
 ## Mô tả
 - Mục đích: Ghi chép thu chi cá nhân nhanh, xem biểu đồ theo danh mục (chức năng tương đương Monefy)

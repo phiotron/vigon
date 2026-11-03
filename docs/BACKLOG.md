@@ -26,25 +26,27 @@ Mỗi giai đoạn kết thúc bằng: `flutter analyze` sạch, `flutter test` 
 - [x] Sửa, xóa có hoàn tác (AC-13, AC-14): test `entry_repository_test`, `entry_flow_test`
 - [ ] Đo AC-01 (mở màn nhập trong 300 ms) bằng đồng hồ trên máy thật: CHƯA đo
 
-### G3 · Kỳ xem, danh mục, tài khoản, tiền tệ — trạng thái: done (chờ thử máy thật)
+### G3 · Kỳ xem, danh mục, tài khoản, tiền tệ — trạng thái: done
 - [x] Chọn kỳ, vuốt chuyển kỳ, cài đặt đầu tuần/đầu tháng (AC-10 tới AC-12): test `period_test`, `g3_repositories_test`; vuốt ngang (AC-11) CHƯA thử tay
 - [x] Quản lý danh mục: thêm, sửa, sắp xếp, xóa có chuyển khoản (AC-16, AC-17): test `g3_repositories_test`, `g3_screens_test`
 - [x] Tài khoản, chuyển tiền, lọc theo tài khoản (AC-18 tới AC-20): test `g3_repositories_test`, `g3_screens_test`
 - [x] Tiền tệ theo vùng và định dạng số (AC-21, AC-22): test `g3_repositories_test`, `money_test`
 - [x] Widget test chạy ở màn 360×800 dp; đã sửa tràn 13 px ở màn Chuyển tiền
-- [ ] Thử tay trên máy thật: vuốt đổi kỳ, kéo sắp xếp danh mục, chuyển tiền
+- [x] Thử tay trên máy thật: vuốt đổi kỳ, kéo sắp xếp danh mục, chuyển tiền (biên bản 2026-11-03, qua adb)
 
-### G4 · Khoản định kỳ và ngân sách — trạng thái: done (chờ thử máy thật)
+### G4 · Khoản định kỳ và ngân sách — trạng thái: done
 - [x] Chuỗi định kỳ, tự tạo khoản khi mở app, không trùng (AC-23 tới AC-25): test `recurring_test`, `g4_screens_test`
 - [x] Ngân sách tháng và thanh tiến độ (AC-26, AC-27): test `g4_screens_test`
-- [ ] Thử tay trên máy thật: đặt ngân sách, ghi khoản lặp, đổi ngày máy để kiểm tạo khoản tới hạn
+- [x] Thử tay trên máy thật: đặt ngân sách, ghi khoản lặp, kiểm tạo khoản tới hạn (biên bản 2026-11-03; dùng ngày bắt đầu trong quá khứ thay cho đổi ngày máy)
 
-### G5 · Sao lưu, khóa PIN, dữ liệu — trạng thái: code xong, test tự động đạt, APK release build được; CHƯA thử máy thật
+### G5 · Sao lưu, khóa PIN, dữ liệu — trạng thái: done (còn mở file CSV bằng Excel/Sheets)
 - [x] Xuất/khôi phục file `.vigon`, xuất CSV (AC-28 tới AC-30): test `backup_test` (xuất rồi khôi phục ra đúng dữ liệu, file sửa/hỏng/sai khóa ngoại/số tiền âm bị từ chối và giữ dữ liệu cũ, CSV có BOM). AC-28 (bảng chia sẻ, không xin quyền bộ nhớ) và AC-29 (trình chọn file) CHƯA thử tay: chỉ chạy được trên máy thật
 - [x] Khóa PIN, khóa lại sau 1 phút ở nền, quên mã (AC-31 tới AC-34): test `pin_test`, `g5_lock_test` (mã băm có muối, khóa/mở, quá 1 phút thì khóa, quên mã xóa dữ liệu qua hai bước). AC-32 trên máy thật và AC-33 trên Android Keystore thật CHƯA kiểm chứng
 - [x] Xóa toàn bộ dữ liệu (AC-42): test `backup_test`, `g5_lock_test`
 - [x] Build APK release lại được (BUG-002), rồi kiểm AC-43: build đạt 2026-11-03 (61,4 MB, đủ kiến trúc); `aapt2 dump permissions` chỉ có `com.phiotron.vigon.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION` (AndroidX tự thêm), không có INTERNET, không có quyền bộ nhớ
-- [ ] Thử tay trên máy thật: xuất sao lưu rồi khôi phục, xuất CSV mở bằng Excel/Sheets, đặt PIN, ra nền hơn 1 phút rồi mở lại, quên mã
+- [x] Thử tay trên máy thật: xuất sao lưu, khôi phục, xuất CSV, đặt PIN, ra nền hơn 1 phút rồi mở lại, quên mã (biên bản 2026-11-03)
+- [ ] Người dùng: xuất CSV, gửi file sang máy tính và mở bằng Excel/Sheets, xem tiếng Việt đúng (Claude không gửi file ra ngoài thay người dùng)
+- [ ] Khôi phục một file `.vigon` xuất từ chính điện thoại (lần thử dùng file tạo bằng `exportBackup` trên máy tính vì bảng chia sẻ không có mục lưu vào máy)
 
 ### G6 · Khả năng tiếp cận, pháp lý, chuẩn bị phát hành — trạng thái: todo
 - [ ] Rà accessibility: vùng chạm, cỡ chữ 200%, TalkBack, tương phản (AC-37 tới AC-40)
@@ -55,10 +57,9 @@ Mỗi giai đoạn kết thúc bằng: `flutter analyze` sạch, `flutter test` 
 - [ ] Closed test 12 người trong 14 ngày (P-09), rồi `/release`
 
 ## Việc kế tiếp (tối đa 5, theo thứ tự)
-1. Cài APK mới lên Galaxy A13, thử tay G3, G4, G5 (danh sách ở từng giai đoạn) và ghi biên bản
-2. G6: accessibility, màn Giới thiệu, chính sách quyền riêng tư, đo NFR, SBOM/MASVS (package_info_plus và url_launcher đã thêm vào pubspec cho màn Giới thiệu, chưa dùng)
-3. Câu còn mở của người dùng: phát hành dưới tên cá nhân hay công ty (EAA); Play Age Signals (D-12); luật sư xác nhận CRA (S-06) và DPIA VN (D-07)
-4. Người dùng: cài Android SDK Command-line Tools và chấp nhận giấy phép SDK; tạo remote git và chạy `bash scripts/backup.sh <thư mục ngoài ổ D>`
+1. G6: accessibility, màn Giới thiệu, chính sách quyền riêng tư, đo NFR, SBOM/MASVS (package_info_plus và url_launcher đã thêm vào pubspec cho màn Giới thiệu, chưa dùng)
+2. Câu còn mở của người dùng: phát hành dưới tên cá nhân hay công ty (EAA); Play Age Signals (D-12); luật sư xác nhận CRA (S-06) và DPIA VN (D-07)
+3. Người dùng: cài Android SDK Command-line Tools và chấp nhận giấy phép SDK; tạo remote git và chạy `bash scripts/backup.sh <thư mục ngoài ổ D>`
 
 ## Lỗi đã biết (đang mở)
 Mỗi lỗi: BUG-xxx · mô tả · cách tái hiện · mức độ (chặn / nặng / nhẹ) · cách tạm tránh.
@@ -80,5 +81,6 @@ Mỗi lỗi: BUG-xxx · nguyên nhân gốc · cách sửa · làm sao tránh l�
 
 ## Biên bản thử máy thật
 Mỗi lần thử: ngày · máy và phiên bản hệ điều hành · bản app · đã thử gì · kết quả · lỗi phát hiện.
+- 2026-11-03 · Galaxy A13 SM-A135F, Android 14 · G5, APK release commit aefb38e · Claude điều khiển qua adb (chạm, vuốt, đọc màn hình bằng uiautomator). Mở nguội 582 tới 999 ms (`am start -W`). G3: vuốt ngang đổi tháng và tuần (tuần bắt đầu thứ Hai), "Toàn thời gian"; kéo tay nắm đưa Đi lại xuống dưới Hóa đơn, giữ sau khi thoát ra, vòng icon màn chính đổi theo; thêm tài khoản TestBank 500.000, chuyển 100.000 từ Tiền mặt, số dư hai bên đúng, màn chính không tính chuyển tiền là chi; lọc theo TestBank cho số dư 0. G4: ngân sách 150.000, thanh tiến độ khoảng 55%, chi thêm 100.000 thì thanh đỏ và báo vượt 32.403; khoản 60.000 lặp hằng ngày từ 01/11 tạo đúng 3 khoản 01, 02, 03/11, mở nguội lại 2 lần không trùng. G5: xuất sao lưu và CSV mở bảng chia sẻ, không xin quyền bộ nhớ (AC-28); khôi phục qua trình chọn file hệ thống, không xin quyền (AC-29), có hỏi xác nhận, dữ liệu được thay đúng, khoản định kỳ hằng tháng không trùng; đặt PIN, ra nền 20 giây không khóa, 70 giây thì khóa (AC-32), mở nguội thì khóa ngay; mã sai báo "Sai mã PIN", mã đúng mở được; quên mã qua 3 hộp thoại rồi xóa, mở lại không còn PIN, dữ liệu về mặc định (AC-34). Kết quả: đạt. Ghi chú: (1) khôi phục làm giao diện và ngôn ngữ về "theo hệ thống" vì file sao lưu không mang hai cài đặt này (đúng thiết kế, nên nói rõ trong màn khôi phục ở G6); (2) nút lọc tài khoản ở màn chính chỉ ghi "Tài khoản", không hiện tên tài khoản đang lọc (xét ở G6); (3) ba hiện tượng lạ (mở lại vào thẳng màn "Thu mới" và Back thoát app, bảng thêm tài khoản tự đóng, màn khóa có sẵn 1 chấm rồi biến mất) chỉ xảy ra khi có người khác đang dùng máy cùng lúc, thử lại riêng đều không tái hiện; (4) chưa mở CSV bằng Excel, chưa khôi phục file xuất từ chính máy (xem G5).
 - 2026-11-03 · Galaxy A13 SM-A135F, Android 14 · G2, APK release · màn chính có 10 icon danh mục quanh vòng tròn, nút −/+ ở nửa dưới; bấm − nhập 120+35, Choose category, Food → lưu ₫155, biểu đồ 100% Food, số dư -₫155 (đọc bằng uiautomator). Lần chạm − đầu tiên mở nhầm "New income", chạm lại 2 lần đều đúng; lúc đó người dùng cũng đang cầm máy (bảng thông báo bị kéo xuống), CHƯA tái hiện được, theo dõi tiếp.
 - 2026-11-03 · Samsung Galaxy A13 SM-A135F, Android 14 (API 34), chỉ 32-bit, Exynos 850 · G1, APK release (khóa debug) · mở app; Cài đặt → Tối, → English; Back về màn chính; tắt hẳn rồi mở lại 5 lần · Lần đầu crash (BUG-001, đã sửa). Sau khi sửa: chữ tiếng Việt và tiếng Anh đúng, giao diện tối đổi ngay, Back đúng, cài đặt còn sau khi mở lại, không crash. `WaitTime` của `am start -W` 5 lần: 835, 1050, 1676, 2081, 2641 ms (trung vị 1676 ms; số này tính tới khung hình Android đầu tiên, chưa phải khung hình Flutter, đo NFR chuẩn ở G6). APK đủ kiến trúc 53,7 MB; ngưỡng ≤ 25 MB trong SPEC là cho một kiến trúc, sẽ đo bằng AAB ở G6. Chưa thử xoay máy.
