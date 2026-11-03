@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:vigon/src/app_info.dart';
 import 'package:vigon/src/data/account_repository.dart';
 import 'package:vigon/src/data/database.dart';
+import 'package:vigon/src/data/period.dart';
 import 'package:vigon/src/data/pin_service.dart';
 import 'package:vigon/src/data/settings_repository.dart';
+
+import 'package:vigon/src/providers.dart';
 
 import '../helpers.dart';
 
@@ -160,6 +164,27 @@ void main() {
     await settle(tester);
     expect(find.text('Khoản chi mới'), findsOneWidget);
     handle.dispose();
+    await disposeApp(tester, db);
+  });
+
+  testWidgets('đổi ngày đầu tuần khi đang xem Tuần thì vẫn ở kỳ Tuần (AC-12)', (
+    tester,
+  ) async {
+    final db = await pumpApp(tester);
+    final container = ProviderScope.containerOf(
+      tester.element(find.byType(Scaffold).first),
+    );
+    container.read(periodProvider.notifier).selectType(PeriodType.week);
+    await settle(tester);
+    expect(container.read(periodProvider).type, PeriodType.week);
+    expect(container.read(periodProvider).start.weekday, DateTime.monday);
+    await tester.runAsync(
+      () => SettingsRepository(db).setWeekStart(DateTime.sunday),
+    );
+    await settle(tester);
+    final after = container.read(periodProvider);
+    expect(after.type, PeriodType.week);
+    expect(after.start.weekday, DateTime.sunday);
     await disposeApp(tester, db);
   });
 }

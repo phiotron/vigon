@@ -71,15 +71,31 @@ class PeriodSummary {
     );
   }
 
+  /// Phần trăm làm tròn tới 0,1 theo phần dư lớn nhất, nên các phần hiển thị
+  /// cộng lại đúng 100,0 (AC-08).
   static List<CategoryTotal> _sorted(
     Iterable<(Category, int)> values,
     int total,
-  ) =>
-      values
-          .map(
-            (v) =>
-                CategoryTotal(v.$1, v.$2, total == 0 ? 0 : v.$2 * 100 / total),
-          )
-          .toList()
-        ..sort((a, b) => b.total.compareTo(a.total));
+  ) {
+    final items = values.toList()..sort((a, b) => b.$2.compareTo(a.$2));
+    final tenths = [
+      for (final v in items) total == 0 ? 0 : v.$2 * 1000 ~/ total,
+    ];
+    if (total > 0) {
+      final order = List.generate(items.length, (i) => i)
+        ..sort((a, b) {
+          final ra = items[a].$2 * 1000 % total;
+          final rb = items[b].$2 * 1000 % total;
+          return rb != ra ? rb.compareTo(ra) : a.compareTo(b);
+        });
+      var left = 1000 - tenths.fold<int>(0, (a, b) => a + b);
+      for (var k = 0; left > 0 && k < order.length; k++, left--) {
+        tenths[order[k]]++;
+      }
+    }
+    return [
+      for (var i = 0; i < items.length; i++)
+        CategoryTotal(items[i].$1, items[i].$2, tenths[i] / 10),
+    ];
+  }
 }

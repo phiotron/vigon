@@ -455,4 +455,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String linkOpenFailed(String target) {
     return 'Could not open it. You can write to $target yourself';
   }
+
+  @override
+  String iconNumber(int n) {
+    return 'Icon $n';
+  }
 }

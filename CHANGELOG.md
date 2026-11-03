@@ -11,4 +11,5 @@
 - Sửa build APK release hỏng sau G5 (BUG-002): tắt Kotlin incremental; kiểm lại APK không có quyền INTERNET (2026-11-03)
 - Thử G3, G4, G5 trên Galaxy A13 (Android 14): đạt; còn mở CSV bằng Excel (2026-11-03)
 - G6 (một phần): màn Giới thiệu (phiên bản, chính sách, email báo lỗi bảo mật, giấy phép nguồn mở); bố cục cho cỡ chữ lớn; TalkBack bấm được icon danh mục (BUG-003); test accessibility tự động; chính sách quyền riêng tư vi/en (chưa đăng); SBOM, tự kiểm MASVS (2026-11-03)
+- Kiểm chứng độc lập và sửa 6 lỗi (BUG-005 tới BUG-010): màn khóa không kẹt khi Keystore lỗi, phần trăm cộng đúng 100,0, đổi ngày đầu tuần giữ kỳ đang xem, tên icon danh mục cho TalkBack, nút Lưu không kẹt, bỏ lọc tài khoản sau khôi phục; màn Các khoản dựng lười (BUG-004); đo AC-01 80–84 ms (2026-11-03)
 - Tài liệu: ARCHITECTURE, RUNBOOK, PROMPTS điền lần đầu; D-006, D-007; RETROSPECTIVE nháp (2026-11-03)

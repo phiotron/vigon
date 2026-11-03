@@ -81,6 +81,7 @@ Future<void> restoreFromFile(BuildContext context, WidgetRef ref) async {
   if (!ok) return;
   try {
     await importBackup(ref.read(databaseProvider), content);
+    ref.read(accountFilterProvider.notifier).select(null);
     showMessage(l.restoreDone);
   } on BackupFormatException {
     showMessage(l.restoreFailed);

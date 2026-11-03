@@ -32,7 +32,13 @@ class LockNotifier extends Notifier<AppLockState> {
   }
 
   Future<void> _init() async {
-    final enabled = await ref.read(pinServiceProvider).isEnabled();
+    var enabled = true;
+    try {
+      enabled = await ref.read(pinServiceProvider).isEnabled();
+    } catch (_) {
+      // Không đọc được bộ nhớ an toàn (Keystore hỏng): coi như đang khóa để
+      // người dùng thấy màn khóa và nút "Quên mã" thay vì màn trắng.
+    }
     state = enabled ? AppLockState.locked : AppLockState.unlocked;
   }
 
@@ -49,7 +55,12 @@ class LockNotifier extends Notifier<AppLockState> {
   }
 
   Future<bool> unlock(String pin) async {
-    final ok = await ref.read(pinServiceProvider).verify(pin);
+    var ok = false;
+    try {
+      ok = await ref.read(pinServiceProvider).verify(pin);
+    } catch (_) {
+      // Lỗi bộ nhớ an toàn: không mở khóa.
+    }
     if (ok) state = AppLockState.unlocked;
     return ok;
   }

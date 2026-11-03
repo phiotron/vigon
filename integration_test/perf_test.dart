@@ -12,6 +12,7 @@ import 'package:vigon/src/app.dart';
 import 'package:vigon/src/data/database.dart';
 import 'package:vigon/src/data/period.dart';
 import 'package:vigon/src/data/pin_service.dart';
+import 'package:vigon/src/features/entry/keypad.dart';
 import 'package:vigon/src/features/lock/app_lock.dart';
 import 'package:vigon/src/providers.dart';
 
@@ -84,6 +85,23 @@ void main() {
     }
     // In ngay để còn số liệu nếu test bị ngắt giữa chừng (máy dùng chung).
     debugPrint('PERF save_ms=$saveTimes');
+
+    // AC-01: từ lúc chạm nút "−" tới khung hình đầu tiên có bàn phím số.
+    final openTimes = <int>[];
+    for (var round = 0; round < 5; round++) {
+      final watch = Stopwatch()..start();
+      await tester.tap(find.byType(FilledButton).first);
+      while (find.byType(Keypad).evaluate().isEmpty) {
+        await tester.pump(const Duration(milliseconds: 1));
+        if (watch.elapsedMilliseconds > 5000) break;
+      }
+      watch.stop();
+      openTimes.add(watch.elapsedMilliseconds);
+      await tester.pumpAndSettle();
+      GoRouter.of(tester.element(find.byType(Scaffold).first)).pop();
+      await tester.pumpAndSettle();
+    }
+    debugPrint('PERF open_entry_ms=$openTimes');
 
     // Màn "Các khoản" với 5.000 khoản trong một danh mục, kỳ "Tất cả".
     container.read(periodProvider.notifier).selectType(PeriodType.all);

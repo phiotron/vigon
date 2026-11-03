@@ -15,7 +15,7 @@ void main() {
     await tester.tap(find.byTooltip('Thêm danh mục'));
     await settle(tester);
     await tester.enterText(find.byType(TextField), 'Cà phê');
-    await tester.tap(find.byTooltip('local_cafe'));
+    await tester.tap(find.byKey(const ValueKey('icon-local_cafe')));
     await tester.tap(find.text('Lưu'));
     await settle(tester);
     final added = await tester.runAsync(

@@ -454,4 +454,9 @@ class AppLocalizationsVi extends AppLocalizations {
   String linkOpenFailed(String target) {
     return 'Không mở được. Bạn có thể tự gửi email tới $target';
   }
+
+  @override
+  String iconNumber(int n) {
+    return 'Biểu tượng $n';
+  }
 }

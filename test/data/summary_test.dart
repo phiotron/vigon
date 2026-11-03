@@ -79,4 +79,39 @@ void main() {
     expect(s.isEmpty, isTrue);
     expect(s.expenseByCategory, isEmpty);
   });
+
+  for (final n in [6, 7, 12, 13]) {
+    test(
+      'phần trăm hiển thị của $n danh mục bằng nhau cộng đúng 100,0 (AC-08)',
+      () {
+        final rows = [
+          for (var i = 1; i <= n; i++)
+            _row(i, EntryType.expense, 1, _cat(i, CategoryType.expense)),
+        ];
+        final s = PeriodSummary.of(rows);
+        // Giá trị người dùng thấy: làm tròn một chữ số thập phân.
+        final shown = s.expenseByCategory
+            .map((t) => double.parse(t.percent.toStringAsFixed(1)))
+            .toList();
+        expect(shown.fold<double>(0, (a, b) => a + b), closeTo(100, 1e-6));
+        // Mỗi phần chỉ lệch tối đa 0,1 so với phần trăm thật.
+        for (final p in shown) {
+          expect((p - 100 / n).abs(), lessThanOrEqualTo(0.1 + 1e-9));
+        }
+      },
+    );
+  }
+
+  test('phần trăm có khoản rất nhỏ và rất lớn vẫn cộng 100,0 (AC-08)', () {
+    final s = PeriodSummary.of([
+      _row(1, EntryType.expense, 1, food),
+      _row(2, EntryType.expense, 999999, bus),
+      _row(3, EntryType.expense, 3, home),
+    ]);
+    final sum = s.expenseByCategory.fold<double>(
+      0,
+      (a, t) => a + double.parse(t.percent.toStringAsFixed(1)),
+    );
+    expect(sum, closeTo(100, 1e-6));
+  });
 }

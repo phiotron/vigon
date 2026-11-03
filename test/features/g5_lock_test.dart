@@ -91,4 +91,28 @@ void main() {
     );
     await disposeApp(tester, db);
   });
+
+  testWidgets('bộ nhớ an toàn lỗi thì vẫn hiện màn khóa, không kẹt màn trắng', (
+    tester,
+  ) async {
+    final db = await pumpApp(tester, secrets: _BrokenSecretStore());
+    expect(find.text('Nhập mã PIN'), findsOneWidget);
+    expect(find.text('Quên mã'), findsOneWidget);
+    // Nhập mã không mở khóa được và không ném lỗi ra ngoài.
+    await enterPin(tester, '1234');
+    expect(find.text('Nhập mã PIN'), findsOneWidget);
+    expect(tester.takeException(), isNull);
+    await disposeApp(tester, db);
+  });
+}
+
+class _BrokenSecretStore implements SecretStore {
+  @override
+  Future<String?> read(String key) async => throw StateError('keystore lỗi');
+
+  @override
+  Future<void> write(String key, String value) async {}
+
+  @override
+  Future<void> delete(String key) async {}
 }

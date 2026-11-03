@@ -919,6 +919,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Could not open it. You can write to {target} yourself'**
   String linkOpenFailed(String target);
+
+  /// No description provided for @iconNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'Icon {n}'**
+  String iconNumber(int n);
 }
 
 class _AppLocalizationsDelegate

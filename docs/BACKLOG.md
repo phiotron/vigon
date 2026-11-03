@@ -56,7 +56,8 @@ Mỗi giai đoạn kết thúc bằng: `flutter analyze` sạch, `flutter test` 
 - [x] Viết chính sách quyền riêng tư vi/en: `docs/legal/privacy-policy.md`
 - [ ] Người dùng: đăng chính sách lên Google Sites, gửi đường dẫn; Claude điền `lib/src/app_info.dart`
 - [x] Đo lưu khoản (đạt, tối đa 169 ms) và cuộn 5.000 khoản (đạt; mở nhóm có 1 khung hình 46,8 ms, vượt 32 ms một lần)
-- [ ] Đo NFR còn thiếu: pin 15 phút (máy đang cắm sạc USB nên không đo được, cần người dùng), tắt đột ngột ngay sau Lưu (đã đo: mở nguội, dung lượng, tác vụ nền, bộ nhớ 10.000 khoản 151 MB; xem `docs/TESTING.md`)
+- [x] Đo AC-01 (80–84 ms) và tắt đột ngột ngay sau Lưu (6 lần, không mất khoản)
+- [ ] Đo NFR còn thiếu: pin 15 phút (máy đang cắm sạc USB nên không đo được, cần người dùng)
 - [x] SBOM (`docs/sbom/vigon.cdx.json`, `tool/make_sbom.py`), tự kiểm MASVS (`docs/security/MASVS-SELF-CHECK.md`), SECURITY.md, cập nhật COMPLIANCE
 - [ ] COMPLIANCE còn "chưa": M-01, D-02, D-07, D-09, D-12, S-06, A-01, C-03, P-08, P-09, P-10 (phần lớn cần người dùng hoặc luật sư)
 - [ ] Closed test 12 người trong 14 ngày (P-09), rồi `/release`
@@ -74,10 +75,29 @@ Mỗi lỗi: BUG-xxx · mô tả · cách tái hiện · mức độ (chặn / n
 
 ## Lỗi đã sửa đáng nhớ (nguồn cho bài học)
 Mỗi lỗi: BUG-xxx · nguyên nhân gốc · cách sửa · làm sao tránh lần sau.
+- BUG-005 · Kẹt màn trắng khi bộ nhớ an toàn (Keystore) đọc lỗi lúc mở app: `LockNotifier._init` không bắt lỗi nên trạng thái ở `checking` mãi. Sửa: lỗi thì coi như đang khóa (có nút "Quên mã"), nhập mã khi lỗi thì không mở khóa. Test chặn: `g5_lock_test`. Phát hiện bởi `/spec-review` độc lập.
+- BUG-006 · Phần trăm hiển thị theo danh mục có thể cộng 100,2 hoặc 99,6 (6 hoặc 12 danh mục bằng nhau) trái AC-08. Sửa: chia phần trăm theo phần dư lớn nhất ở độ chính xác 0,1. Test chặn: `summary_test`. Test cũ chỉ thử ca 3 danh mục nên không bắt được.
+- BUG-007 · Đổi "Ngày đầu tuần" hoặc "Tháng bắt đầu từ ngày" trong Cài đặt làm kỳ đang xem bị đặt lại về Tháng (do `PeriodNotifier.build` dùng `ref.watch`). Sửa: nghe thay đổi và tính lại kỳ cùng loại. Test chặn: `g6_accessibility_test`.
+- BUG-008 · Nút chọn icon danh mục có tooltip là mã tiếng Anh ("local_cafe"), TalkBack đọc mã này, trái AC-36 và AC-39. Sửa: tên "Biểu tượng N" lấy từ file dịch.
+- BUG-009 · Màn nhập khoản và chuyển tiền: nếu ghi lỗi thì nút Lưu kẹt (cờ `_saving` không được đặt lại); khoản có ngày trước năm 2000 (từ file khôi phục) làm hộp chọn ngày lỗi. Sửa cả hai.
+- BUG-010 · Sau khôi phục sao lưu, bộ lọc tài khoản cũ còn nguyên; nếu tài khoản đó không còn thì màn chính trống. Sửa: khôi phục xong thì đặt lọc về "Tất cả tài khoản".
 - BUG-004 · Mở một nhóm vài nghìn khoản ở màn Các khoản làm máy đứng hình (khung hình dựng 13,4 giây với 5.000 khoản). Nguyên nhân gốc: `ExpansionTile` dựng toàn bộ dòng con ngay khi mở, và cả màn là `ListView(children: [...])` không dựng lười. Cách sửa: `ListView.builder` với danh sách hàm dựng dòng, nhóm mở lưu trong state; còn 1 khung hình 46,8 ms lúc mở. Tránh lần sau: danh sách có thể dài thì luôn dùng `ListView.builder`; test dữ liệu lớn bằng `integration_test/perf_test.dart`, vì test 5 khoản không thấy lỗi này.
 - BUG-003 · TalkBack đọc được tên 10 icon danh mục quanh biểu đồ nhưng không bấm được (uiautomator báo không clickable). Nguyên nhân gốc: `CategoryAvatar` bọc `Semantics(excludeSemantics: true)` làm mất cả hành động chạm của `InkWell` bên trong; guideline nhãn của Flutter không bắt được vì nút không còn hành động chạm. Cách sửa: gắn `onTap` vào chính `Semantics` (`lib/src/ui/category_avatar.dart`), test chặn trong `g6_accessibility_test`. Tránh lần sau: dùng `excludeSemantics` trên nút thì luôn kiểm `hasTapAction` (D-008).
 - BUG-001 · App crash ngay khi mở trên Galaxy A13: "Could not find libflutter.so, looked for armeabi-v7a". Nguyên nhân gốc: APK build với `--target-platform android-arm64`, nhưng máy có chip 64-bit lại chạy hệ điều hành chỉ 32-bit (`ro.product.cpu.abilist64` rỗng). Cách sửa: build APK đủ kiến trúc (`flutter build apk --release`); bản phát hành dùng AAB thì Play tự chia theo kiến trúc. Tránh lần sau: không build APK một kiến trúc để thử; kiểm `adb shell getprop ro.product.cpu.abilist` của máy thử. Test trên máy tính và giả lập không bắt được lỗi này (L-003).
 - BUG-002 · `flutter build apk --release` thất bại ở `:android_file_picker:compileReleaseKotlin` với "Could not close incremental caches", xuất hiện sau khi G5 thêm các gói plugin. Nguyên nhân nghi: dự án ở ổ D:, pub cache ở ổ C:, Kotlin không đóng được bộ đệm biên dịch tăng dần (CHƯA kiểm chứng bằng cách bỏ dòng sửa rồi build lại). Cách sửa: `kotlin.incremental=false` trong `android/gradle.properties`; build release đạt ngày 2026-11-03. Tránh lần sau: dự án Flutter trên Windows mà pub cache khác ổ thì tắt Kotlin incremental ngay từ đầu (build chậm hơn chút, không ảnh hưởng app).
+
+## Phát hiện của `/spec-review` chưa xử lý (đã kiểm với code, xếp theo mức độ)
+Nguồn: agent `reviewer` chỉ đọc, 2026-11-03. Các lỗi đã sửa nằm ở BUG-005 tới BUG-010. Còn lại, chưa sửa vì ngoài SPEC hoặc cần người dùng quyết:
+- [ ] (nhẹ) "Hôm nay" chỉ đọc một lần: app sống qua nửa đêm thì thanh ngân sách và kỳ mặc định vẫn là tháng cũ tới khi app bị tắt (`providers.dart`)
+- [ ] (nhẹ) PIN không đếm lần nhập sai, không làm chậm; giờ ra nền dùng đồng hồ tường nên đổi giờ máy qua được AC-32 (SPEC không đòi; D-007 đã nói PIN chỉ chặn người tò mò)
+- [ ] (nhẹ) Khôi phục hỏi xác nhận trước khi kiểm file (dữ liệu vẫn an toàn vì kiểm trước khi xóa); SPEC ghi kiểm trước rồi mới hỏi
+- [ ] (nhẹ) Đổi tiền tệ USD→VND làm tròn phần lẻ, đổi lại không hoàn được; chữ cảnh báo chưa nói rõ
+- [ ] (nhẹ) Không giới hạn số tiền tối đa; phép tính dùng số thực nên 1.005 USD có thể ra 100 thay vì 101 cent; số rất lớn có nguy cơ tràn khi cộng tổng
+- [ ] (nhẹ) Nếu có hơn 10 danh mục chi, danh mục thừa không chạm được từ vòng icon quanh biểu đồ (AC-06)
+- [ ] (nhẹ) CSV: tiêu đề cột và loại luôn tiếng Anh, số lẻ dùng dấu chấm; chưa thử Excel
+- [ ] (nhẹ) Danh sách tiền tệ chỉ 31 mã, chưa phải toàn bộ ISO 4217 (AC-21)
+- [ ] Thiếu test giao diện cho AC-04, AC-10 (khoảng tùy chọn), AC-16 (đổi tên/màu/icon), AC-17 (chọn danh mục thay thế), AC-20 (nút lọc), AC-26 (hộp thoại ngân sách); thiếu biên bản máy thật cho AC-14, AC-09, AC-37 tới AC-40 thật
+- [ ] Ký bản release đang bằng khóa debug (`android/app/build.gradle.kts`): phải đổi sang khóa phát hành ở `/release` (việc của người dùng: tạo và cất khóa)
 
 ## Ý tưởng ngoài SPEC (chưa được duyệt, KHÔNG tự làm)
 - Bản iOS

@@ -65,12 +65,23 @@ final accountsProvider = StreamProvider<List<Account>>(
 /// Kỳ đang xem trên màn chính; mặc định tháng hiện tại (AC-10).
 class PeriodNotifier extends Notifier<Period> {
   @override
-  Period build() => Period.containing(
-    PeriodType.month,
-    ref.read(clockProvider)(),
-    weekStart: ref.watch(weekStartProvider).value ?? DateTime.monday,
-    monthStartDay: ref.watch(monthStartDayProvider).value ?? 1,
-  );
+  Period build() {
+    // Đổi ngày đầu tuần/tháng thì tính lại kỳ cùng loại, không đổi loại kỳ.
+    void recompute(Object? previous, Object? next) {
+      if (previous == next) return;
+      final type = state.type;
+      if (type == PeriodType.week || type == PeriodType.month) selectType(type);
+    }
+
+    ref.listen(weekStartProvider, (p, n) => recompute(p?.value, n.value));
+    ref.listen(monthStartDayProvider, (p, n) => recompute(p?.value, n.value));
+    return Period.containing(
+      PeriodType.month,
+      ref.read(clockProvider)(),
+      weekStart: ref.read(weekStartProvider).value ?? DateTime.monday,
+      monthStartDay: ref.read(monthStartDayProvider).value ?? 1,
+    );
+  }
 
   /// Chọn loại kỳ mới, lấy kỳ chứa hôm nay.
   void selectType(PeriodType type) => state = Period.containing(

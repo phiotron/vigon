@@ -149,5 +149,7 @@
   "@contactEmail": {"placeholders": {"email": {"type": "String"}}},
   "securityEmailSubject": "Báo lỗi bảo mật Ví Gọn",
   "linkOpenFailed": "Không mở được. Bạn có thể tự gửi email tới {target}",
-  "@linkOpenFailed": {"placeholders": {"target": {"type": "String"}}}
+  "@linkOpenFailed": {"placeholders": {"target": {"type": "String"}}},
+  "iconNumber": "Biểu tượng {n}",
+  "@iconNumber": {"placeholders": {"n": {"type": "int"}}}
 }

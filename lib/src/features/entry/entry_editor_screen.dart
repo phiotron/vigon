@@ -122,38 +122,43 @@ class _EntryEditorScreenState extends ConsumerState<EntryEditorScreen> {
       _categoryId = picked;
     }
     _saving = true;
-    final repo = ref.read(entryRepositoryProvider);
-    final accountId = _accountId ?? await _defaultAccountId();
-    final note = _note.text.trim().isEmpty ? null : _note.text.trim();
-    final original = _original;
-    if (original == null) {
-      final entry = EntriesCompanion.insert(
-        type: _type,
-        amount: amount,
-        categoryId: Value(_categoryId),
-        accountId: accountId,
-        date: dateKey(_date),
-        note: Value(note),
-      );
-      final repeat = _repeat;
-      if (repeat == null) {
-        await repo.add(entry);
-      } else {
-        // Ngày bắt đầu ở quá khứ thì tạo luôn các lần đã tới hạn (AC-24).
-        final recurring = ref.read(recurringRepositoryProvider);
-        await recurring.addWithRepeat(entry, repeat);
-        await recurring.generateDue(ref.read(clockProvider)());
-      }
-    } else {
-      await repo.update(
-        original.copyWith(
+    try {
+      final repo = ref.read(entryRepositoryProvider);
+      final accountId = _accountId ?? await _defaultAccountId();
+      final note = _note.text.trim().isEmpty ? null : _note.text.trim();
+      final original = _original;
+      if (original == null) {
+        final entry = EntriesCompanion.insert(
+          type: _type,
           amount: amount,
           categoryId: Value(_categoryId),
           accountId: accountId,
           date: dateKey(_date),
           note: Value(note),
-        ),
-      );
+        );
+        final repeat = _repeat;
+        if (repeat == null) {
+          await repo.add(entry);
+        } else {
+          // Ngày bắt đầu ở quá khứ thì tạo luôn các lần đã tới hạn (AC-24).
+          final recurring = ref.read(recurringRepositoryProvider);
+          await recurring.addWithRepeat(entry, repeat);
+          await recurring.generateDue(ref.read(clockProvider)());
+        }
+      } else {
+        await repo.update(
+          original.copyWith(
+            amount: amount,
+            categoryId: Value(_categoryId),
+            accountId: accountId,
+            date: dateKey(_date),
+            note: Value(note),
+          ),
+        );
+      }
+    } catch (_) {
+      _saving = false;
+      rethrow;
     }
     if (mounted) context.pop();
   }
@@ -231,7 +236,7 @@ class _EntryEditorScreenState extends ConsumerState<EntryEditorScreen> {
     final picked = await showDatePicker(
       context: context,
       initialDate: _date,
-      firstDate: DateTime(2000),
+      firstDate: _date.isBefore(DateTime(2000)) ? _date : DateTime(2000),
       lastDate: DateTime(now.year + 10),
     );
     if (picked != null) setState(() => _date = dateOnly(picked));

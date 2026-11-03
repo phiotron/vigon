@@ -231,7 +231,7 @@ class _CategoryEditorState extends ConsumerState<_CategoryEditor> {
               spacing: 4,
               runSpacing: 4,
               children: [
-                for (final entry in categoryIcons.entries)
+                for (final (index, entry) in categoryIcons.entries.indexed)
                   IconButton(
                     isSelected: entry.key == _icon,
                     style: IconButton.styleFrom(
@@ -241,7 +241,8 @@ class _CategoryEditorState extends ConsumerState<_CategoryEditor> {
                       foregroundColor: entry.key == _icon ? Colors.white : null,
                     ),
                     icon: Icon(entry.value),
-                    tooltip: entry.key,
+                    key: ValueKey('icon-${entry.key}'),
+                    tooltip: l.iconNumber(index + 1),
                     onPressed: () => setState(() => _icon = entry.key),
                   ),
               ],

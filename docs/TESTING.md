@@ -28,14 +28,17 @@
 Cập nhật khi viết test hoặc khi thử tay. Một AC chưa có dòng ở đây hoặc cột "Kết quả lần cuối" trống nghĩa là CHƯA được kiểm chứng.
 | AC (SPEC) | Cách | Test hoặc biên bản (tên test / mục trong BACKLOG) | Kết quả lần cuối (ngày, lệnh hoặc máy, đạt/hỏng) |
 |-----------|------|----------------------------------------------------|-----------------------------------------------------|
-| AC-01 | tự động / tay | `entry_flow_test`; đo 300 ms trên máy: CHƯA | 2026-11-03 flutter test đạt |
+| AC-01 | tự động + đo | `entry_flow_test`; `integration_test/perf_test.dart`: từ chạm "−" tới khung hình đầu có bàn phím, 5 lần | 2026-11-03 Galaxy A13 bản profile: 84/80/82/80/81 ms; đạt |
+| AC-08 | tự động | `summary_test` (6, 7, 12, 13 danh mục bằng nhau và ca khoản rất nhỏ/lớn: phần trăm hiển thị cộng đúng 100,0) | 2026-11-03 flutter test 107/107 đạt |
+| AC-12 | tự động | `g6_accessibility_test` "đổi ngày đầu tuần khi đang xem Tuần" | 2026-11-03 đạt |
+| AC-32 | tự động + tay | `g5_lock_test` (kể cả bộ nhớ an toàn lỗi vẫn hiện màn khóa); biên bản G5 | 2026-11-03 đạt |
 | AC-37 | tự động + tay | `g6_accessibility_test` (androidTapTargetGuideline, mọi màn, sáng/tối, 100%/200%); bàn phím và nút −/+ ở nửa dưới: biên bản máy thật G2 | 2026-11-03 flutter test 98/98 đạt |
 | AC-38 | tự động + tay | `g6_accessibility_test` (không lỗi vẽ hay tràn ở cỡ chữ 200%, màn 360×800 dp); máy thật ở cỡ chữ lớn nhất: CHƯA (cần người dùng đổi cỡ chữ hệ thống) | 2026-11-03 flutter test đạt |
 | AC-39 | tự động + tay | `g6_accessibility_test` (labeledTapTargetGuideline; icon danh mục có hành động chạm cho TalkBack); máy thật: uiautomator mọi nút bấm được có nhãn (biên bản G6); bật TalkBack thật: CHƯA | 2026-11-03 đạt (trừ TalkBack thật) |
 | AC-40 | tự động | `g6_accessibility_test` (textContrastGuideline, sáng và tối); icon trắng trên màu danh mục đã chỉnh ở G3 | 2026-11-03 đạt |
 | AC-41 | tự động + tay | `g6_accessibility_test` "màn Giới thiệu…"; máy thật: phiên bản, email mở Gmail có tiêu đề, trang giấy phép (biên bản G6); đường dẫn chính sách: CHƯA có | 2026-11-03 đạt (trừ đường dẫn) |
 | AC-42 | tự động + tay | `backup_test`, `g5_lock_test`; máy thật biên bản G5 | 2026-11-03 đạt |
-| AC-43 | tay (kiểm APK) | `aapt2 dump permissions build/app/outputs/flutter-apk/app-release.apk` | 2026-11-03 đạt (bản G6) |
+| AC-43 | tự động + tay | `test/manifest_test.dart` (manifest nguồn không có `uses-permission`, `allowBackup=false`, chỉ dọc; pubspec không có SDK mạng/quảng cáo); `aapt2 dump permissions` trên APK release | 2026-11-03 đạt (bản sau BUG-005..BUG-010) |
 
 ## Yêu cầu phi chức năng (SPEC mục 5b): đo bằng gì
 | Yêu cầu | Cách đo | Kết quả lần cuối |
@@ -47,7 +50,7 @@ Cập nhật khi viết test hoặc khi thử tay. Một AC chưa có dòng ở 
 | 15 phút dùng ≤ 3% pin | `dumpsys batterystats` | CHƯA |
 | Bộ nhớ ≤ 200 MB với 10.000 khoản | `dumpsys meminfo` sau khi khôi phục file 10.000 khoản | 2026-11-03 Galaxy A13, bản release, kỳ "Tất cả" với 10.000 khoản: màn chính 73 MB PSS; màn Các khoản mở nhóm 1.000 khoản và cuộn 20 lần: 151 MB PSS. Đạt |
 | APK một kiến trúc (arm64) ≤ 25 MB | `flutter build apk --release --split-per-abi` | 2026-11-03: arm64 21,3 MB; đạt |
-| Toàn vẹn dữ liệu khi tắt đột ngột | Ghi trong giao dịch (D-004); `force-stop` ngay sau Lưu | Một phần: mở nguội lại nhiều lần trong biên bản G4 không mất khoản; chưa thử tắt ngay sau Lưu |
+| Toàn vẹn dữ liệu khi tắt đột ngột | Ghi trong giao dịch (D-004); `adb shell "input tap <Lưu>; am force-stop"` trong một lệnh | 2026-11-03 Galaxy A13 bản release: 6 lần Lưu rồi tắt ngay, mở lại cả 6 khoản đều còn (12.345 + 5 × 1), không hỏng dữ liệu; đạt |
 | Không crash ≥ 99,5% | Android vitals, sau phát hành | CHƯA (sau phát hành) |
 
 ## Lệnh

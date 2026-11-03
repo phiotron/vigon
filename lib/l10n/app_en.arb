@@ -160,5 +160,7 @@
   "@contactEmail": {"placeholders": {"email": {"type": "String"}}},
   "securityEmailSubject": "Ví Gọn security report",
   "linkOpenFailed": "Could not open it. You can write to {target} yourself",
-  "@linkOpenFailed": {"placeholders": {"target": {"type": "String"}}}
+  "@linkOpenFailed": {"placeholders": {"target": {"type": "String"}}},
+  "iconNumber": "Icon {n}",
+  "@iconNumber": {"placeholders": {"n": {"type": "int"}}}
 }

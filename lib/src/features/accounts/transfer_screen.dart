@@ -217,7 +217,9 @@ class _TransferScreenState extends ConsumerState<TransferScreen> {
                               final picked = await showDatePicker(
                                 context: context,
                                 initialDate: _date,
-                                firstDate: DateTime(2000),
+                                firstDate: _date.isBefore(DateTime(2000))
+                                    ? _date
+                                    : DateTime(2000),
                                 lastDate: DateTime(now.year + 10),
                               );
                               if (picked != null) {
