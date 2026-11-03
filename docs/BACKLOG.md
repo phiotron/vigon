@@ -55,7 +55,7 @@ Mỗi giai đoạn kết thúc bằng: `flutter analyze` sạch, `flutter test` 
 - [x] Màn Giới thiệu: phiên bản, chính sách, email báo lỗi bảo mật, giấy phép nguồn mở (AC-41): test và thử máy thật
 - [x] Viết chính sách quyền riêng tư vi/en: `docs/legal/privacy-policy.md`
 - [ ] Người dùng: đăng chính sách lên Google Sites, gửi đường dẫn; Claude điền `lib/src/app_info.dart`
-- [ ] Đo NFR còn thiếu: lưu ≤ 200 ms, cuộn 5.000 khoản, pin 15 phút, bộ nhớ với 10.000 khoản (đã đo: mở nguội, dung lượng, tác vụ nền; xem `docs/TESTING.md`)
+- [ ] Đo NFR còn thiếu: lưu ≤ 200 ms và cuộn 5.000 khoản (test `integration_test/perf_test.dart` đã viết, cần máy không ai dùng khoảng 5 phút), pin 15 phút (máy đang cắm sạc USB nên không đo được, cần người dùng), tắt đột ngột ngay sau Lưu (đã đo: mở nguội, dung lượng, tác vụ nền, bộ nhớ 10.000 khoản 151 MB; xem `docs/TESTING.md`)
 - [x] SBOM (`docs/sbom/vigon.cdx.json`, `tool/make_sbom.py`), tự kiểm MASVS (`docs/security/MASVS-SELF-CHECK.md`), SECURITY.md, cập nhật COMPLIANCE
 - [ ] COMPLIANCE còn "chưa": M-01, D-02, D-07, D-09, D-12, S-06, A-01, C-03, P-08, P-09, P-10 (phần lớn cần người dùng hoặc luật sư)
 - [ ] Closed test 12 người trong 14 ngày (P-09), rồi `/release`

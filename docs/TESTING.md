@@ -41,11 +41,11 @@ Cập nhật khi viết test hoặc khi thử tay. Một AC chưa có dòng ở 
 | Yêu cầu | Cách đo | Kết quả lần cuối |
 |---------|---------|------------------|
 | Mở nguội ≤ 2 s (trung vị 5 lần, release) | `adb shell am start -W` 5 lần (tới khung hình Android đầu) + `flutter run --profile --trace-startup` (tới khung hình Flutter đầu) | 2026-11-03 Galaxy A13: TotalTime 1098/633/648/633/606 ms, trung vị 633 ms; khung hình Flutter đầu 1,09 s sau khi engine chạy (1 lần đo). Đạt, nhưng mốc Flutter mới đo 1 lần |
-| Lưu một khoản ≤ 200 ms | Chưa có cách đo; đề xuất: đo trong bản profile bằng Timeline | CHƯA |
-| Cuộn 5.000 khoản không khung hình > 32 ms | Flutter DevTools, bản profile | CHƯA |
+| Lưu một khoản ≤ 200 ms | `integration_test/perf_test.dart` (bản profile, SQLite file thật): thời gian từ chạm Lưu tới khi khoản nằm trong cơ sở dữ liệu, 5 lần | CHƯA: 2 lần chạy 2026-11-03 bị ngắt vì phiên khác mở app lên trên |
+| Cuộn 5.000 khoản không khung hình > 32 ms | `integration_test/perf_test.dart`: `watchPerformance` khi mở nhóm 5.000 khoản và cuộn | CHƯA (cùng lý do); nghi ngờ: `ExpansionTile` dựng hết các dòng khi mở nhóm |
 | Không tác vụ nền | `dumpsys activity services`, `dumpsys jobscheduler` | 2026-11-03: 0 service, không job; đạt |
 | 15 phút dùng ≤ 3% pin | `dumpsys batterystats` | CHƯA |
-| Bộ nhớ ≤ 200 MB với 10.000 khoản | `dumpsys meminfo` sau khi khôi phục file 10.000 khoản | 2026-11-03: 65 MB PSS khi app ở nền, CHƯA xác nhận đã nạp 10.000 khoản (máy đang có app khác dùng) |
+| Bộ nhớ ≤ 200 MB với 10.000 khoản | `dumpsys meminfo` sau khi khôi phục file 10.000 khoản | 2026-11-03 Galaxy A13, bản release, kỳ "Tất cả" với 10.000 khoản: màn chính 73 MB PSS; màn Các khoản mở nhóm 1.000 khoản và cuộn 20 lần: 151 MB PSS. Đạt |
 | APK một kiến trúc (arm64) ≤ 25 MB | `flutter build apk --release --split-per-abi` | 2026-11-03: arm64 21,3 MB; đạt |
 | Toàn vẹn dữ liệu khi tắt đột ngột | Ghi trong giao dịch (D-004); `force-stop` ngay sau Lưu | Một phần: mở nguội lại nhiều lần trong biên bản G4 không mất khoản; chưa thử tắt ngay sau Lưu |
 | Không crash ≥ 99,5% | Android vitals, sau phát hành | CHƯA (sau phát hành) |

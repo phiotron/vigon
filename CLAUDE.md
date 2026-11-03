@@ -32,6 +32,7 @@ Flutter 3.47.8 ở `C:/src/flutter`, CHƯA có trong PATH. Trong Git Bash chạy
 - Typecheck: `flutter analyze`
 - Định dạng: `dart format lib test`
 - Test: `flutter test`
+- Đo hiệu năng trên máy (bản profile, thay tạm bản release; xong phải cài lại release): `flutter drive --profile --no-dds --driver=test_driver/perf_driver.dart --target=integration_test/perf_test.dart -d <id máy>`; kết quả ở `build/perf_summary.json` và dòng `PERF` trong log
 - SBOM: `python tool/make_sbom.py` (ghi `docs/sbom/vigon.cdx.json`)
 - Build thử trên máy: `flutter build apk --release` (KHÔNG thêm `--target-platform android-arm64`: máy 32-bit sẽ crash, xem BUG-001), cài bằng `adb install -r build/app/outputs/flutter-apk/app-release.apk`. Vẫn ký bằng khóa debug của template, CHƯA dùng để phát hành. Bản phát hành Play: `flutter build appbundle`, CHƯA chạy (cần khóa ký, G6).
 
