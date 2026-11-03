@@ -39,11 +39,11 @@ Mỗi giai đoạn kết thúc bằng: `flutter analyze` sạch, `flutter test` 
 - [x] Ngân sách tháng và thanh tiến độ (AC-26, AC-27): test `g4_screens_test`
 - [ ] Thử tay trên máy thật: đặt ngân sách, ghi khoản lặp, đổi ngày máy để kiểm tạo khoản tới hạn
 
-### G5 · Sao lưu, khóa PIN, dữ liệu — trạng thái: code xong, test tự động đạt; CHƯA build được APK, CHƯA thử máy thật
+### G5 · Sao lưu, khóa PIN, dữ liệu — trạng thái: code xong, test tự động đạt, APK release build được; CHƯA thử máy thật
 - [x] Xuất/khôi phục file `.vigon`, xuất CSV (AC-28 tới AC-30): test `backup_test` (xuất rồi khôi phục ra đúng dữ liệu, file sửa/hỏng/sai khóa ngoại/số tiền âm bị từ chối và giữ dữ liệu cũ, CSV có BOM). AC-28 (bảng chia sẻ, không xin quyền bộ nhớ) và AC-29 (trình chọn file) CHƯA thử tay: chỉ chạy được trên máy thật
 - [x] Khóa PIN, khóa lại sau 1 phút ở nền, quên mã (AC-31 tới AC-34): test `pin_test`, `g5_lock_test` (mã băm có muối, khóa/mở, quá 1 phút thì khóa, quên mã xóa dữ liệu qua hai bước). AC-32 trên máy thật và AC-33 trên Android Keystore thật CHƯA kiểm chứng
 - [x] Xóa toàn bộ dữ liệu (AC-42): test `backup_test`, `g5_lock_test`
-- [ ] Build APK release lại được (BUG-002), rồi kiểm AC-43 (không có quyền INTERNET) vì G5 thêm nhiều gói mới
+- [x] Build APK release lại được (BUG-002), rồi kiểm AC-43: build đạt 2026-11-03 (61,4 MB, đủ kiến trúc); `aapt2 dump permissions` chỉ có `com.phiotron.vigon.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION` (AndroidX tự thêm), không có INTERNET, không có quyền bộ nhớ
 - [ ] Thử tay trên máy thật: xuất sao lưu rồi khôi phục, xuất CSV mở bằng Excel/Sheets, đặt PIN, ra nền hơn 1 phút rồi mở lại, quên mã
 
 ### G6 · Khả năng tiếp cận, pháp lý, chuẩn bị phát hành — trạng thái: todo
@@ -55,19 +55,19 @@ Mỗi giai đoạn kết thúc bằng: `flutter analyze` sạch, `flutter test` 
 - [ ] Closed test 12 người trong 14 ngày (P-09), rồi `/release`
 
 ## Việc kế tiếp (tối đa 5, theo thứ tự)
-1. Sửa BUG-002 (build release hỏng): `kotlin.incremental=false` đã được thêm vào `android/gradle.properties` (CHƯA commit) nhưng CHƯA chạy lại build để xem có hết lỗi không. Chạy `flutter build apk --release`, rồi `aapt2 dump permissions` kiểm AC-43
-2. Thử tay G3, G4, G5 trên Galaxy A13 (danh sách ở từng giai đoạn) và ghi biên bản
-3. G6: accessibility, màn Giới thiệu, chính sách quyền riêng tư, đo NFR, SBOM/MASVS (package_info_plus và url_launcher đã thêm vào pubspec cho màn Giới thiệu, chưa dùng)
-4. Câu còn mở của người dùng: phát hành dưới tên cá nhân hay công ty (EAA); Play Age Signals (D-12); luật sư xác nhận CRA (S-06) và DPIA VN (D-07)
-5. Người dùng: cài Android SDK Command-line Tools và chấp nhận giấy phép SDK; tạo remote git và chạy `bash scripts/backup.sh <thư mục ngoài ổ D>`
+1. Cài APK mới lên Galaxy A13, thử tay G3, G4, G5 (danh sách ở từng giai đoạn) và ghi biên bản
+2. G6: accessibility, màn Giới thiệu, chính sách quyền riêng tư, đo NFR, SBOM/MASVS (package_info_plus và url_launcher đã thêm vào pubspec cho màn Giới thiệu, chưa dùng)
+3. Câu còn mở của người dùng: phát hành dưới tên cá nhân hay công ty (EAA); Play Age Signals (D-12); luật sư xác nhận CRA (S-06) và DPIA VN (D-07)
+4. Người dùng: cài Android SDK Command-line Tools và chấp nhận giấy phép SDK; tạo remote git và chạy `bash scripts/backup.sh <thư mục ngoài ổ D>`
 
 ## Lỗi đã biết (đang mở)
 Mỗi lỗi: BUG-xxx · mô tả · cách tái hiện · mức độ (chặn / nặng / nhẹ) · cách tạm tránh.
-- BUG-002 · `flutter build apk --release` thất bại ở `:android_file_picker:compileReleaseKotlin` với "Could not close incremental caches" (thư mục `build/android_file_picker/...`). Xuất hiện sau khi G5 thêm các gói flutter_secure_storage, share_plus, file_picker, path_provider, crypto, package_info_plus, url_launcher; trước đó build chạy được. Tái hiện: `flutter build apk --release` tại thư mục app. Mức: CHẶN phát hành. Nghi nguyên nhân: dự án ở ổ D:, thư viện pub cache ở ổ C:, Kotlin không đóng được bộ đệm tăng dần (CHƯA kiểm chứng). Cách tạm tránh đang thử: `kotlin.incremental=false` trong `android/gradle.properties` (đã thêm, chưa build lại).
+(không có)
 
 ## Lỗi đã sửa đáng nhớ (nguồn cho bài học)
 Mỗi lỗi: BUG-xxx · nguyên nhân gốc · cách sửa · làm sao tránh lần sau.
 - BUG-001 · App crash ngay khi mở trên Galaxy A13: "Could not find libflutter.so, looked for armeabi-v7a". Nguyên nhân gốc: APK build với `--target-platform android-arm64`, nhưng máy có chip 64-bit lại chạy hệ điều hành chỉ 32-bit (`ro.product.cpu.abilist64` rỗng). Cách sửa: build APK đủ kiến trúc (`flutter build apk --release`); bản phát hành dùng AAB thì Play tự chia theo kiến trúc. Tránh lần sau: không build APK một kiến trúc để thử; kiểm `adb shell getprop ro.product.cpu.abilist` của máy thử. Test trên máy tính và giả lập không bắt được lỗi này (L-003).
+- BUG-002 · `flutter build apk --release` thất bại ở `:android_file_picker:compileReleaseKotlin` với "Could not close incremental caches", xuất hiện sau khi G5 thêm các gói plugin. Nguyên nhân nghi: dự án ở ổ D:, pub cache ở ổ C:, Kotlin không đóng được bộ đệm biên dịch tăng dần (CHƯA kiểm chứng bằng cách bỏ dòng sửa rồi build lại). Cách sửa: `kotlin.incremental=false` trong `android/gradle.properties`; build release đạt ngày 2026-11-03. Tránh lần sau: dự án Flutter trên Windows mà pub cache khác ổ thì tắt Kotlin incremental ngay từ đầu (build chậm hơn chút, không ảnh hưởng app).
 
 ## Ý tưởng ngoài SPEC (chưa được duyệt, KHÔNG tự làm)
 - Bản iOS
