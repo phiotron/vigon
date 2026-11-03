@@ -154,5 +154,11 @@
   "aboutBody": "Your data is stored only on this phone. Ví Gọn does not send it anywhere.",
   "privacyPolicy": "Privacy policy",
   "reportSecurity": "Report a security issue",
-  "licenses": "Open source licenses"
+  "licenses": "Open source licenses",
+  "privacyPolicyPending": "Web page coming soon",
+  "contactEmail": "Contact email: {email}",
+  "@contactEmail": {"placeholders": {"email": {"type": "String"}}},
+  "securityEmailSubject": "Ví Gọn security report",
+  "linkOpenFailed": "Could not open it. You can write to {target} yourself",
+  "@linkOpenFailed": {"placeholders": {"target": {"type": "String"}}}
 }

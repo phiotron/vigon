@@ -23,6 +23,10 @@ class AccountsScreen extends ConsumerWidget {
     final balances =
         ref.watch(accountBalancesProvider).value ?? const <int, int>{};
     final currency = ref.watch(currencyProvider).value ?? 'VND';
+    Widget balance(Account a) => Text(
+      money(context, currency, balances[a.id] ?? a.initialBalance),
+      style: Theme.of(context).textTheme.titleMedium,
+    );
     return Scaffold(
       appBar: AppBar(
         title: Text(l.accounts),
@@ -42,10 +46,8 @@ class AccountsScreen extends ConsumerWidget {
             ListTile(
               leading: const Icon(Icons.account_balance_wallet_outlined),
               title: Text(accountLabel(l, a)),
-              trailing: Text(
-                money(context, currency, balances[a.id] ?? a.initialBalance),
-                style: Theme.of(context).textTheme.titleMedium,
-              ),
+              subtitle: isLargeText(context) ? balance(a) : null,
+              trailing: isLargeText(context) ? null : balance(a),
               onTap: () => showAccountEditor(context, account: a),
             ),
         ],

@@ -26,6 +26,10 @@ class SettingsScreen extends ConsumerWidget {
     final monthStartDay = ref.watch(monthStartDayProvider).value ?? 1;
     final budget = ref.watch(budgetProvider).value;
     final pinEnabled = ref.watch(pinEnabledProvider).value ?? false;
+    // Chữ lớn thì xếp dọc các lựa chọn để không cắt chữ (AC-38).
+    final segmentDirection = isLargeText(context)
+        ? Axis.vertical
+        : Axis.horizontal;
     final titleStyle = Theme.of(context).textTheme.titleSmall
         ?.copyWith(color: Theme.of(context).colorScheme.primary);
 
@@ -43,6 +47,7 @@ class SettingsScreen extends ConsumerWidget {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: SegmentedButton<ThemeMode>(
+              direction: segmentDirection,
               showSelectedIcon: false,
               segments: [
                 ButtonSegment(
@@ -63,6 +68,7 @@ class SettingsScreen extends ConsumerWidget {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: SegmentedButton<String>(
+              direction: segmentDirection,
               showSelectedIcon: false,
               segments: [
                 ButtonSegment(value: '', label: Text(l.languageSystem)),
@@ -170,6 +176,13 @@ class SettingsScreen extends ConsumerWidget {
               style: TextStyle(color: Theme.of(context).colorScheme.error),
             ),
             onTap: () => deleteEverything(context, ref),
+          ),
+          const Divider(),
+          ListTile(
+            leading: const Icon(Icons.info_outline),
+            title: Text(l.about),
+            trailing: const Icon(Icons.chevron_right),
+            onTap: () => context.push('/about'),
           ),
         ],
       ),

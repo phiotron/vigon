@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 
 import 'data/account_repository.dart';
 import 'data/category_repository.dart';
@@ -119,6 +120,12 @@ final periodSummaryProvider = Provider<PeriodSummary>(
 final deviceLocaleProvider = Provider<String>(
   (ref) => WidgetsBinding.instance.platformDispatcher.locale.toString(),
 );
+
+/// Phiên bản app cho màn Giới thiệu, ví dụ "1.0.0 (1)"; test ghi đè.
+final appVersionProvider = FutureProvider<String>((ref) async {
+  final info = await PackageInfo.fromPlatform();
+  return '${info.version} (${info.buildNumber})';
+});
 
 /// Việc chạy một lần khi mở app: chọn tiền tệ theo vùng nếu chưa có (AC-21),
 /// tạo các khoản định kỳ tới hạn (AC-24).

@@ -304,103 +304,122 @@ class _EntryEditorScreenState extends ConsumerState<EntryEditorScreen> {
           : SafeArea(
               child: Column(
                 children: [
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
-                    child: Semantics(
-                      liveRegion: true,
+                  // Phần trên cuộn được, bàn phím luôn ở dưới cùng; cỡ chữ
+                  // 200% không làm tràn màn hình (AC-37, AC-38).
+                  Expanded(
+                    child: SingleChildScrollView(
                       child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
-                          Text(
-                            _expression.isEmpty ? ' ' : _expression,
-                            style: Theme.of(context).textTheme.bodyLarge,
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                          FittedBox(
-                            fit: BoxFit.scaleDown,
-                            child: Text(
-                              money(context, currency, value ?? 0),
-                              style: Theme.of(context).textTheme.headlineLarge
-                                  ?.copyWith(color: color),
-                            ),
-                          ),
-                          if (_error != null)
-                            Text(
-                              _error!,
-                              style: TextStyle(
-                                color: Theme.of(context).colorScheme.error,
+                          Padding(
+                            padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
+                            child: Semantics(
+                              liveRegion: true,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.end,
+                                children: [
+                                  Text(
+                                    _expression.isEmpty ? ' ' : _expression,
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .bodyLarge,
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                  FittedBox(
+                                    fit: BoxFit.scaleDown,
+                                    child: Text(
+                                      money(context, currency, value ?? 0),
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .headlineLarge
+                                          ?.copyWith(color: color),
+                                    ),
+                                  ),
+                                  if (_error != null)
+                                    Text(
+                                      _error!,
+                                      style: TextStyle(
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .error,
+                                      ),
+                                    ),
+                                ],
                               ),
                             ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 12),
+                            child: Wrap(
+                              spacing: 8,
+                              runSpacing: 4,
+                              children: [
+                                if (category != null)
+                                  ActionChip(
+                                    avatar: CategoryAvatar(
+                                      category: category,
+                                      size: 24,
+                                    ),
+                                    label: Text(categoryLabel(l, category)),
+                                    onPressed: () async {
+                                      final picked = await _pickCategory();
+                                      if (picked != null) {
+                                        setState(() => _categoryId = picked);
+                                      }
+                                    },
+                                  ),
+                                ActionChip(
+                                  avatar: const Icon(Icons.event, size: 18),
+                                  label: Text(
+                                    _date == dateOnly(ref.read(clockProvider)())
+                                        ? l.today
+                                        : shortDate(context, _date),
+                                  ),
+                                  onPressed: _pickDate,
+                                ),
+                                if (_original == null)
+                                  ActionChip(
+                                    avatar: const Icon(Icons.repeat, size: 18),
+                                    label: Text(repeatLabel(l, _repeat)),
+                                    onPressed: _pickRepeat,
+                                  )
+                                else if (_rule != null && _rule!.active)
+                                  InputChip(
+                                    avatar: const Icon(Icons.repeat, size: 18),
+                                    label: Text(
+                                      repeatLabel(l, _rule!.frequency),
+                                    ),
+                                    deleteIcon: const Icon(
+                                      Icons.stop_circle_outlined,
+                                    ),
+                                    deleteButtonTooltipMessage: l.stopRepeat,
+                                    onDeleted: _stopRepeat,
+                                  ),
+                                if (account != null && accounts.length > 1)
+                                  ActionChip(
+                                    avatar: const Icon(
+                                      Icons.account_balance_wallet_outlined,
+                                      size: 18,
+                                    ),
+                                    label: Text(accountLabel(l, account)),
+                                    onPressed: () => _pickAccount(accounts),
+                                  ),
+                              ],
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 16),
+                            child: TextField(
+                              controller: _note,
+                              maxLength: 200,
+                              decoration: InputDecoration(hintText: l.noteHint),
+                              textInputAction: TextInputAction.done,
+                            ),
+                          ),
                         ],
                       ),
                     ),
                   ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 12),
-                    child: Wrap(
-                      spacing: 8,
-                      runSpacing: 4,
-                      children: [
-                        if (category != null)
-                          ActionChip(
-                            avatar: CategoryAvatar(
-                              category: category,
-                              size: 24,
-                            ),
-                            label: Text(categoryLabel(l, category)),
-                            onPressed: () async {
-                              final picked = await _pickCategory();
-                              if (picked != null) {
-                                setState(() => _categoryId = picked);
-                              }
-                            },
-                          ),
-                        ActionChip(
-                          avatar: const Icon(Icons.event, size: 18),
-                          label: Text(
-                            _date == dateOnly(ref.read(clockProvider)())
-                                ? l.today
-                                : shortDate(context, _date),
-                          ),
-                          onPressed: _pickDate,
-                        ),
-                        if (_original == null)
-                          ActionChip(
-                            avatar: const Icon(Icons.repeat, size: 18),
-                            label: Text(repeatLabel(l, _repeat)),
-                            onPressed: _pickRepeat,
-                          )
-                        else if (_rule != null && _rule!.active)
-                          InputChip(
-                            avatar: const Icon(Icons.repeat, size: 18),
-                            label: Text(repeatLabel(l, _rule!.frequency)),
-                            deleteIcon: const Icon(Icons.stop_circle_outlined),
-                            deleteButtonTooltipMessage: l.stopRepeat,
-                            onDeleted: _stopRepeat,
-                          ),
-                        if (account != null && accounts.length > 1)
-                          ActionChip(
-                            avatar: const Icon(
-                              Icons.account_balance_wallet_outlined,
-                              size: 18,
-                            ),
-                            label: Text(accountLabel(l, account)),
-                            onPressed: () => _pickAccount(accounts),
-                          ),
-                      ],
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    child: TextField(
-                      controller: _note,
-                      maxLength: 200,
-                      decoration: InputDecoration(hintText: l.noteHint),
-                      textInputAction: TextInputAction.done,
-                    ),
-                  ),
-                  const Spacer(),
                   Keypad(
                     decimalDigits: digits,
                     onKey: _onKey,

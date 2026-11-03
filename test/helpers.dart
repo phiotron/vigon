@@ -48,6 +48,7 @@ Future<AppDatabase> pumpApp(
         clockProvider.overrideWithValue(clock ?? () => testToday),
         secretStoreProvider.overrideWithValue(secrets ?? MemorySecretStore()),
         deviceLocaleProvider.overrideWithValue('vi_VN'),
+        appVersionProvider.overrideWith((ref) async => '1.0.0 (1)'),
         ...overrides.cast(),
       ],
       child: VigonApp(router: createRouter()),

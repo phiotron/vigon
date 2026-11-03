@@ -30,6 +30,7 @@ class EntriesScreen extends ConsumerWidget {
     final transfers = rows
         .where((r) => r.entry.type == EntryType.transfer)
         .toList();
+    final large = isLargeText(context);
 
     List<Widget> section(
       String title,
@@ -37,9 +38,9 @@ class EntriesScreen extends ConsumerWidget {
       int total,
       List<CategoryTotal> totals,
     ) => [
-      ListTile(
+      _AmountTile(
         title: Text(title, style: Theme.of(context).textTheme.titleMedium),
-        trailing: Text(
+        amount: Text(
           money(context, currency, total),
           style: Theme.of(context).textTheme.titleMedium
               ?.copyWith(color: color),
@@ -49,8 +50,13 @@ class EntriesScreen extends ConsumerWidget {
         ExpansionTile(
           leading: CategoryAvatar(category: t.category, size: 40),
           title: Text(categoryLabel(l, t.category)),
-          subtitle: Text(percent(context, t.percent)),
-          trailing: Text(money(context, currency, t.total)),
+          subtitle: Text(
+            large
+                ? '${percent(context, t.percent)} · '
+                      '${money(context, currency, t.total)}'
+                : percent(context, t.percent),
+          ),
+          trailing: large ? null : Text(money(context, currency, t.total)),
           children: [
             for (final r in rows.where((r) => r.category?.id == t.category.id))
               _EntryTile(
@@ -68,12 +74,12 @@ class EntriesScreen extends ConsumerWidget {
           ? Center(child: Text(l.noEntries))
           : ListView(
               children: [
-                ListTile(
+                _AmountTile(
                   title: Text(
                     l.balance,
                     style: Theme.of(context).textTheme.titleLarge,
                   ),
-                  trailing: Text(
+                  amount: Text(
                     money(context, currency, summary.balance),
                     style: Theme.of(context).textTheme.titleLarge,
                   ),
@@ -121,6 +127,19 @@ class EntriesScreen extends ConsumerWidget {
   }
 }
 
+/// Dòng tổng: số tiền cuối dòng, hoặc dưới tiêu đề khi chữ lớn (AC-38).
+class _AmountTile extends StatelessWidget {
+  const _AmountTile({required this.title, required this.amount});
+
+  final Widget title;
+  final Widget amount;
+
+  @override
+  Widget build(BuildContext context) => isLargeText(context)
+      ? ListTile(title: title, subtitle: amount)
+      : ListTile(title: title, trailing: amount);
+}
+
 /// Một khoản; chạm để sửa (AC-13), vuốt để xóa có hoàn tác (AC-14).
 class _EntryTile extends ConsumerWidget {
   const _EntryTile({
@@ -164,8 +183,12 @@ class _EntryTile extends ConsumerWidget {
       child: ListTile(
         contentPadding: const EdgeInsets.only(left: 72, right: 16),
         title: Text(title, maxLines: 2, overflow: TextOverflow.ellipsis),
-        subtitle: Text(shortDate(context, parseDateKey(entry.date))),
-        trailing: Text(amount),
+        subtitle: Text(
+          isLargeText(context)
+              ? '${shortDate(context, parseDateKey(entry.date))}\n$amount'
+              : shortDate(context, parseDateKey(entry.date)),
+        ),
+        trailing: isLargeText(context) ? null : Text(amount),
         onTap: () => context.push(
           isTransfer ? '/transfer/${entry.id}' : '/entry/${entry.id}',
         ),

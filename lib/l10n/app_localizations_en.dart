@@ -439,4 +439,20 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get licenses => 'Open source licenses';
+
+  @override
+  String get privacyPolicyPending => 'Web page coming soon';
+
+  @override
+  String contactEmail(String email) {
+    return 'Contact email: $email';
+  }
+
+  @override
+  String get securityEmailSubject => 'Ví Gọn security report';
+
+  @override
+  String linkOpenFailed(String target) {
+    return 'Could not open it. You can write to $target yourself';
+  }
 }

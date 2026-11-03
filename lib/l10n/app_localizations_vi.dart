@@ -438,4 +438,20 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get licenses => 'Giấy phép nguồn mở';
+
+  @override
+  String get privacyPolicyPending => 'Đang chuẩn bị trang web';
+
+  @override
+  String contactEmail(String email) {
+    return 'Email liên hệ: $email';
+  }
+
+  @override
+  String get securityEmailSubject => 'Báo lỗi bảo mật Ví Gọn';
+
+  @override
+  String linkOpenFailed(String target) {
+    return 'Không mở được. Bạn có thể tự gửi email tới $target';
+  }
 }

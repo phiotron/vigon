@@ -162,72 +162,81 @@ class _TransferScreenState extends ConsumerState<TransferScreen> {
           : SafeArea(
               child: Column(
                 children: [
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: accountPicker(
-                            l.transferFrom,
-                            _from ?? accounts.first.id,
-                            (v) => setState(() => _from = v),
+                  // Phần trên cuộn được, bàn phím luôn ở dưới cùng; cỡ chữ
+                  // 200% không làm tràn màn hình (AC-37, AC-38).
+                  Expanded(
+                    child: SingleChildScrollView(
+                      child: Column(
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 16),
+                            child: Row(
+                              children: [
+                                Expanded(
+                                  child: accountPicker(
+                                    l.transferFrom,
+                                    _from ?? accounts.first.id,
+                                    (v) => setState(() => _from = v),
+                                  ),
+                                ),
+                                const Padding(
+                                  padding: EdgeInsets.symmetric(horizontal: 8),
+                                  child: Icon(Icons.arrow_forward),
+                                ),
+                                Expanded(
+                                  child: accountPicker(
+                                    l.transferTo,
+                                    _to ?? accounts[1].id,
+                                    (v) => setState(() => _to = v),
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
-                        ),
-                        const Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 8),
-                          child: Icon(Icons.arrow_forward),
-                        ),
-                        Expanded(
-                          child: accountPicker(
-                            l.transferTo,
-                            _to ?? accounts[1].id,
-                            (v) => setState(() => _to = v),
+                          const SizedBox(height: 8),
+                          Text(
+                            money(context, currency, value ?? 0),
+                            style: Theme.of(context).textTheme.headlineLarge,
                           ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    money(context, currency, value ?? 0),
-                    style: Theme.of(context).textTheme.headlineLarge,
-                  ),
-                  if (_error != null)
-                    Text(
-                      _error!,
-                      style: TextStyle(
-                        color: Theme.of(context).colorScheme.error,
+                          if (_error != null)
+                            Text(
+                              _error!,
+                              style: TextStyle(
+                                color: Theme.of(context).colorScheme.error,
+                              ),
+                            ),
+                          ActionChip(
+                            avatar: const Icon(Icons.event, size: 18),
+                            label: Text(
+                              _date == dateOnly(ref.read(clockProvider)())
+                                  ? l.today
+                                  : shortDate(context, _date),
+                            ),
+                            onPressed: () async {
+                              final now = ref.read(clockProvider)();
+                              final picked = await showDatePicker(
+                                context: context,
+                                initialDate: _date,
+                                firstDate: DateTime(2000),
+                                lastDate: DateTime(now.year + 10),
+                              );
+                              if (picked != null) {
+                                setState(() => _date = dateOnly(picked));
+                              }
+                            },
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 16),
+                            child: TextField(
+                              controller: _note,
+                              maxLength: 200,
+                              decoration: InputDecoration(hintText: l.noteHint),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
-                  ActionChip(
-                    avatar: const Icon(Icons.event, size: 18),
-                    label: Text(
-                      _date == dateOnly(ref.read(clockProvider)())
-                          ? l.today
-                          : shortDate(context, _date),
-                    ),
-                    onPressed: () async {
-                      final now = ref.read(clockProvider)();
-                      final picked = await showDatePicker(
-                        context: context,
-                        initialDate: _date,
-                        firstDate: DateTime(2000),
-                        lastDate: DateTime(now.year + 10),
-                      );
-                      if (picked != null) {
-                        setState(() => _date = dateOnly(picked));
-                      }
-                    },
                   ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    child: TextField(
-                      controller: _note,
-                      maxLength: 200,
-                      decoration: InputDecoration(hintText: l.noteHint),
-                    ),
-                  ),
-                  const Spacer(),
                   Keypad(
                     decimalDigits: digits,
                     onKey: _onKey,

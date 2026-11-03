@@ -895,6 +895,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Open source licenses'**
   String get licenses;
+
+  /// No description provided for @privacyPolicyPending.
+  ///
+  /// In en, this message translates to:
+  /// **'Web page coming soon'**
+  String get privacyPolicyPending;
+
+  /// No description provided for @contactEmail.
+  ///
+  /// In en, this message translates to:
+  /// **'Contact email: {email}'**
+  String contactEmail(String email);
+
+  /// No description provided for @securityEmailSubject.
+  ///
+  /// In en, this message translates to:
+  /// **'Ví Gọn security report'**
+  String get securityEmailSubject;
+
+  /// No description provided for @linkOpenFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not open it. You can write to {target} yourself'**
+  String linkOpenFailed(String target);
 }
 
 class _AppLocalizationsDelegate

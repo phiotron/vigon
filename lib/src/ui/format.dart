@@ -54,3 +54,8 @@ Color expenseColor(BuildContext context) =>
     Theme.of(context).brightness == Brightness.dark
     ? const Color(0xFFEF9A9A)
     : const Color(0xFFC62828);
+
+/// Cỡ chữ hệ thống từ 130% trở lên: số tiền đặt dưới tiêu đề thay vì cuối
+/// dòng, để không bị cắt ở màn 360 dp (AC-38).
+bool isLargeText(BuildContext context) =>
+    MediaQuery.textScalerOf(context).scale(10) >= 13;

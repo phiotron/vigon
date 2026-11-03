@@ -143,5 +143,11 @@
   "aboutBody": "Dữ liệu chỉ lưu trên máy này. Ví Gọn không gửi dữ liệu đi đâu.",
   "privacyPolicy": "Chính sách quyền riêng tư",
   "reportSecurity": "Báo lỗi bảo mật",
-  "licenses": "Giấy phép nguồn mở"
+  "licenses": "Giấy phép nguồn mở",
+  "privacyPolicyPending": "Đang chuẩn bị trang web",
+  "contactEmail": "Email liên hệ: {email}",
+  "@contactEmail": {"placeholders": {"email": {"type": "String"}}},
+  "securityEmailSubject": "Báo lỗi bảo mật Ví Gọn",
+  "linkOpenFailed": "Không mở được. Bạn có thể tự gửi email tới {target}",
+  "@linkOpenFailed": {"placeholders": {"target": {"type": "String"}}}
 }
