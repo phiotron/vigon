@@ -36,3 +36,11 @@ const categoryIcons = <String, IconData>{
 };
 
 IconData iconFor(String key) => categoryIcons[key] ?? Icons.category;
+
+/// Bảng màu danh mục. Màu đậm để icon trắng đạt tương phản tối thiểu 3:1 (AC-40).
+const categoryColors = <int>[
+  0xFFC62828, 0xFFAD1457, 0xFF6A1B9A, 0xFF4527A0, //
+  0xFF283593, 0xFF1565C0, 0xFF0277BD, 0xFF00838F, //
+  0xFF00695C, 0xFF2E7D32, 0xFF558B2F, 0xFFE65100, //
+  0xFFBF360C, 0xFF5D4037, 0xFF455A64, 0xFF616161, //
+];

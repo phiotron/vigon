@@ -26,11 +26,13 @@ Mỗi giai đoạn kết thúc bằng: `flutter analyze` sạch, `flutter test` 
 - [x] Sửa, xóa có hoàn tác (AC-13, AC-14): test `entry_repository_test`, `entry_flow_test`
 - [ ] Đo AC-01 (mở màn nhập trong 300 ms) bằng đồng hồ trên máy thật: CHƯA đo
 
-### G3 · Kỳ xem, danh mục, tài khoản, tiền tệ — trạng thái: todo
-- [ ] Chọn kỳ, vuốt chuyển kỳ, cài đặt đầu tuần/đầu tháng (AC-10 tới AC-12)
-- [ ] Quản lý danh mục: thêm, sửa, sắp xếp, xóa có chuyển khoản (AC-16, AC-17)
-- [ ] Tài khoản, chuyển tiền, lọc theo tài khoản (AC-19, AC-20)
-- [ ] Tiền tệ theo vùng và định dạng số (AC-21, AC-22)
+### G3 · Kỳ xem, danh mục, tài khoản, tiền tệ — trạng thái: done (chờ thử máy thật)
+- [x] Chọn kỳ, vuốt chuyển kỳ, cài đặt đầu tuần/đầu tháng (AC-10 tới AC-12): test `period_test`, `g3_repositories_test`; vuốt ngang (AC-11) CHƯA thử tay
+- [x] Quản lý danh mục: thêm, sửa, sắp xếp, xóa có chuyển khoản (AC-16, AC-17): test `g3_repositories_test`, `g3_screens_test`
+- [x] Tài khoản, chuyển tiền, lọc theo tài khoản (AC-18 tới AC-20): test `g3_repositories_test`, `g3_screens_test`
+- [x] Tiền tệ theo vùng và định dạng số (AC-21, AC-22): test `g3_repositories_test`, `money_test`
+- [x] Widget test chạy ở màn 360×800 dp; đã sửa tràn 13 px ở màn Chuyển tiền
+- [ ] Thử tay trên máy thật: vuốt đổi kỳ, kéo sắp xếp danh mục, chuyển tiền
 
 ### G4 · Khoản định kỳ và ngân sách — trạng thái: todo
 - [ ] Chuỗi định kỳ, tự tạo khoản khi mở app, không trùng (AC-23 tới AC-25)

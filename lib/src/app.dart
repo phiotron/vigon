@@ -5,6 +5,9 @@ import 'package:go_router/go_router.dart';
 
 import '../l10n/app_localizations.dart';
 import 'data/database.dart';
+import 'features/accounts/accounts_screen.dart';
+import 'features/accounts/transfer_screen.dart';
+import 'features/categories/categories_screen.dart';
 import 'features/entries/entries_screen.dart';
 import 'features/entry/entry_editor_screen.dart';
 import 'features/home/home_screen.dart';
@@ -22,6 +25,23 @@ GoRouter createRouter() => GoRouter(
         GoRoute(
           path: 'settings',
           builder: (context, state) => const SettingsScreen(),
+        ),
+        GoRoute(
+          path: 'categories',
+          builder: (context, state) => const CategoriesScreen(),
+        ),
+        GoRoute(
+          path: 'accounts',
+          builder: (context, state) => const AccountsScreen(),
+        ),
+        GoRoute(
+          path: 'transfer',
+          builder: (context, state) => const TransferScreen(),
+        ),
+        GoRoute(
+          path: 'transfer/:id',
+          builder: (context, state) =>
+              TransferScreen(entryId: int.parse(state.pathParameters['id']!)),
         ),
         GoRoute(
           path: 'entries',

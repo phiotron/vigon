@@ -84,27 +84,10 @@ class _EntryEditorScreenState extends ConsumerState<EntryEditorScreen> {
   int get _digits =>
       currencyDecimalDigits(ref.read(currencyProvider).value ?? 'VND');
 
-  void _onKey(String key) {
-    setState(() {
-      _error = null;
-      if (key == keyBackspace) {
-        if (_expression.isNotEmpty) {
-          _expression = _expression.substring(0, _expression.length - 1);
-        }
-      } else if (key == keyEquals) {
-        final v = evaluateToMinorUnits(_expression, decimalDigits: _digits);
-        if (v != null && v > 0) _expression = minorUnitsToInput(v, _digits);
-      } else if (isOperator(key)) {
-        if (_expression.isEmpty) return;
-        final last = _expression[_expression.length - 1];
-        _expression = isOperator(last)
-            ? _expression.substring(0, _expression.length - 1) + key
-            : _expression + key;
-      } else {
-        if (_expression.length < 30) _expression += key;
-      }
-    });
-  }
+  void _onKey(String key) => setState(() {
+    _error = null;
+    _expression = applyKeypadKey(_expression, key, decimalDigits: _digits);
+  });
 
   /// Kiểm số tiền; trả về null và hiện lỗi nếu không hợp lệ (AC-05).
   int? _validAmount() {
@@ -366,14 +349,6 @@ class _EntryEditorScreenState extends ConsumerState<EntryEditorScreen> {
             ),
     );
   }
-}
-
-/// Đổi số tiền đơn vị nhỏ nhất thành chữ để sửa trên bàn phím, ví dụ 1250 cent → `12.5`.
-String minorUnitsToInput(int minorUnits, int decimalDigits) {
-  if (decimalDigits == 0) return '$minorUnits';
-  final s = (minorUnits / BigInt.from(10).pow(decimalDigits).toInt())
-      .toStringAsFixed(decimalDigits);
-  return s.contains('.') ? s.replaceFirst(RegExp(r'\.?0+$'), '') : s;
 }
 
 class _CategoryGrid extends ConsumerWidget {

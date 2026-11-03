@@ -116,3 +116,39 @@ class Keypad extends StatelessWidget {
     );
   }
 }
+
+/// Biểu thức mới sau khi bấm [key] trên bàn phím (AC-03).
+/// "=" thay biểu thức bằng kết quả; bấm hai phép liền nhau thì phép sau thay phép trước.
+String applyKeypadKey(
+  String expression,
+  String key, {
+  required int decimalDigits,
+}) {
+  if (key == keyBackspace) {
+    return expression.isEmpty
+        ? expression
+        : expression.substring(0, expression.length - 1);
+  }
+  if (key == keyEquals) {
+    final v = evaluateToMinorUnits(expression, decimalDigits: decimalDigits);
+    return v != null && v > 0
+        ? minorUnitsToInput(v, decimalDigits)
+        : expression;
+  }
+  if (isOperator(key)) {
+    if (expression.isEmpty) return expression;
+    final last = expression[expression.length - 1];
+    return isOperator(last)
+        ? expression.substring(0, expression.length - 1) + key
+        : expression + key;
+  }
+  return expression.length < 30 ? expression + key : expression;
+}
+
+/// Đổi số tiền đơn vị nhỏ nhất thành chữ để sửa trên bàn phím, ví dụ 1250 cent → `12.5`.
+String minorUnitsToInput(int minorUnits, int decimalDigits) {
+  if (decimalDigits == 0) return '$minorUnits';
+  final s = (minorUnits / BigInt.from(10).pow(decimalDigits).toInt())
+      .toStringAsFixed(decimalDigits);
+  return s.contains('.') ? s.replaceFirst(RegExp(r'\.?0+$'), '') : s;
+}

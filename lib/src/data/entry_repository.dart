@@ -37,6 +37,29 @@ class EntryRepository {
   Future<int> add(EntriesCompanion entry) =>
       _db.into(_db.entries).insert(entry);
 
+  /// Chuyển tiền giữa hai tài khoản; không tính là thu hay chi (AC-19).
+  Future<int> addTransfer({
+    required int fromAccountId,
+    required int toAccountId,
+    required int amount,
+    required String date,
+    String? note,
+  }) {
+    if (fromAccountId == toAccountId) {
+      throw ArgumentError('Hai tài khoản phải khác nhau');
+    }
+    return add(
+      EntriesCompanion.insert(
+        type: EntryType.transfer,
+        amount: amount,
+        accountId: fromAccountId,
+        toAccountId: Value(toAccountId),
+        date: date,
+        note: Value(note),
+      ),
+    );
+  }
+
   Future<void> update(Entry entry) => _db.update(_db.entries).replace(entry);
 
   /// Xóa và trả về bản ghi đã xóa để hoàn tác (AC-14).

@@ -14,6 +14,7 @@ class SettingsRepository {
   static const currencyKey = 'currency';
   static const weekStartKey = 'weekStart';
   static const monthStartDayKey = 'monthStartDay';
+  static const budgetKey = 'monthlyBudget';
 
   Stream<String?> _watch(String key) {
     final query = _db.select(_db.settings)..where((s) => s.key.equals(key));
@@ -71,6 +72,17 @@ class SettingsRepository {
 
   Future<void> setMonthStartDay(int day) =>
       _write(monthStartDayKey, '${day.clamp(1, 28)}');
+
+  /// Hạn mức chi mỗi tháng theo đơn vị nhỏ nhất; null là chưa đặt (AC-26).
+  Stream<int?> watchBudget() =>
+      _watch(budgetKey).map((v) => int.tryParse(v ?? ''));
+
+  Future<int?> readBudget() =>
+      _read(budgetKey).then((v) => int.tryParse(v ?? ''));
+
+  Future<void> setBudget(int? amount) => amount == null || amount <= 0
+      ? _remove(budgetKey)
+      : _write(budgetKey, '$amount');
 }
 
 /// Tiền tệ theo vùng trong mã ngôn ngữ máy, ví dụ `vi_VN` → VND.

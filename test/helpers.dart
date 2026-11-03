@@ -32,6 +32,7 @@ Future<AppDatabase> pumpApp(
   AppDatabase? db,
   List overrides = const [],
 }) async {
+  usePhoneScreen(tester);
   final database = db ?? memoryDatabase();
   await tester.runAsync(
     () => SettingsRepository(database).setLocaleCode(localeCode),
@@ -49,6 +50,14 @@ Future<AppDatabase> pumpApp(
   );
   await settle(tester);
   return database;
+}
+
+/// Màn hình dọc 360×800 dp, bề rộng nhỏ nhất SPEC hỗ trợ (mục 5).
+void usePhoneScreen(WidgetTester tester) {
+  tester.view
+    ..physicalSize = const Size(1080, 2400)
+    ..devicePixelRatio = 3;
+  addTearDown(tester.view.reset);
 }
 
 /// Gỡ cây widget và đóng cơ sở dữ liệu để không còn stream treo khi test kết thúc.

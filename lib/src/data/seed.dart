@@ -2,25 +2,25 @@ import 'package:drift/drift.dart';
 
 import 'database.dart';
 
-/// Danh mục chi mặc định (AC-15): khóa dịch, icon, màu.
+/// Danh mục chi mặc định (AC-15): khóa dịch, icon, màu trong [categoryColors].
 const defaultExpenseCategories = [
-  ('food', 'restaurant', 0xFFE57373),
-  ('transport', 'directions_bus', 0xFF64B5F6),
-  ('home', 'home', 0xFF8D6E63),
-  ('bills', 'receipt_long', 0xFFFFB74D),
-  ('shopping', 'shopping_bag', 0xFFBA68C8),
-  ('health', 'medical_services', 0xFF4DB6AC),
-  ('entertainment', 'movie', 0xFFF06292),
-  ('education', 'school', 0xFF7986CB),
-  ('family', 'family_restroom', 0xFFA1887F),
-  ('other', 'more_horiz', 0xFF90A4AE),
+  ('food', 'restaurant', 0xFFC62828),
+  ('transport', 'directions_bus', 0xFF1565C0),
+  ('home', 'home', 0xFF5D4037),
+  ('bills', 'receipt_long', 0xFFE65100),
+  ('shopping', 'shopping_bag', 0xFF6A1B9A),
+  ('health', 'medical_services', 0xFF00695C),
+  ('entertainment', 'movie', 0xFFAD1457),
+  ('education', 'school', 0xFF283593),
+  ('family', 'family_restroom', 0xFF00838F),
+  ('other', 'more_horiz', 0xFF455A64),
 ];
 
 /// Danh mục thu mặc định (AC-15).
 const defaultIncomeCategories = [
-  ('salary', 'payments', 0xFF81C784),
-  ('bonus', 'redeem', 0xFFAED581),
-  ('otherIncome', 'more_horiz', 0xFF90A4AE),
+  ('salary', 'payments', 0xFF2E7D32),
+  ('bonus', 'redeem', 0xFF558B2F),
+  ('otherIncome', 'more_horiz', 0xFF455A64),
 ];
 
 /// Ghi danh mục và tài khoản "Tiền mặt" mặc định khi tạo cơ sở dữ liệu lần đầu.

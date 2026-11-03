@@ -125,3 +125,13 @@ final startupProvider = FutureProvider<void>((ref) async {
       .read(settingsRepositoryProvider)
       .ensureCurrency(ref.read(deviceLocaleProvider));
 });
+
+/// Số dư hiện tại của từng tài khoản (AC-18, AC-19).
+final accountBalancesProvider = StreamProvider<Map<int, int>>(
+  (ref) => ref.watch(accountRepositoryProvider).watchBalances(),
+);
+
+/// Hạn mức chi mỗi tháng; null là chưa đặt (AC-26).
+final budgetProvider = StreamProvider<int?>(
+  (ref) => ref.watch(settingsRepositoryProvider).watchBudget(),
+);
