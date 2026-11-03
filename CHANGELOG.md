@@ -10,4 +10,5 @@
 - G5: xuất và khôi phục bản sao lưu `.vigon` (có mã băm, khôi phục trong một giao dịch), xuất CSV, khóa PIN 4 số (băm có muối trong bộ nhớ an toàn, khóa lại sau 1 phút ở nền, quên mã thì xóa dữ liệu), xóa toàn bộ dữ liệu. Test tự động đạt (91). APK release chưa build được (BUG-002), chưa thử máy thật (2026-11-03)
 - Sửa build APK release hỏng sau G5 (BUG-002): tắt Kotlin incremental; kiểm lại APK không có quyền INTERNET (2026-11-03)
 - Thử G3, G4, G5 trên Galaxy A13 (Android 14): đạt; còn mở CSV bằng Excel (2026-11-03)
+- G6 (một phần): màn Giới thiệu (phiên bản, chính sách, email báo lỗi bảo mật, giấy phép nguồn mở); bố cục cho cỡ chữ lớn; TalkBack bấm được icon danh mục (BUG-003); test accessibility tự động; chính sách quyền riêng tư vi/en (chưa đăng); SBOM, tự kiểm MASVS (2026-11-03)
 - Tài liệu: ARCHITECTURE, RUNBOOK, PROMPTS điền lần đầu; D-006, D-007; RETROSPECTIVE nháp (2026-11-03)

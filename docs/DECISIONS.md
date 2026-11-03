@@ -2,6 +2,12 @@
 
 Mỗi quyết định một mục, mới nhất ở trên cùng.
 
+## D-008 · Thông tin liên hệ ở một chỗ; bố cục co giãn theo cỡ chữ; test accessibility tự động · 2026-11-03
+- Bối cảnh: G6, SPEC F-12 và F-13 (AC-37 tới AC-41). Người dùng chọn email liên hệ `phamphuongphuong@gmail.com` và đăng chính sách trên Google Sites (đường dẫn có sau).
+- Quyết định: (1) Email và đường dẫn chính sách nằm trong `lib/src/app_info.dart`; khi đường dẫn còn trống, dòng "Chính sách quyền riêng tư" ở màn Giới thiệu bị tắt và ghi "Đang chuẩn bị trang web"; `/release` phải chặn nếu còn trống. Mở trang web và email bằng `url_launcher` qua intent (khai báo `<queries>`), không thêm quyền INTERNET. Phiên bản lấy từ `package_info_plus` qua `appVersionProvider` (test ghi đè). (2) Cỡ chữ hệ thống từ 130% (`isLargeText`): số tiền xuống dưới tiêu đề thay vì cuối dòng; lựa chọn Giao diện/Ngôn ngữ xếp dọc; màn nhập khoản và chuyển tiền cho phần trên cuộn, bàn phím ghim dưới. (3) `test/features/g6_accessibility_test.dart` chạy mọi màn chính ở sáng/tối, 100%/200% với các guideline của Flutter (vùng chạm, nhãn, tương phản) và bắt lỗi vẽ.
+- Lý do / phương án đã loại: Hiện chính sách ngay trong app (loại: SPEC chỉ yêu cầu liên kết, Play vẫn cần trang web). Giới hạn cỡ chữ của app (loại: trái WCAG 1.4.4). Chỉ thử tay (loại: không lặp lại được, dễ sót màn).
+- Hệ quả cần nhớ: Guideline tự động không thay được TalkBack thật và cỡ chữ lớn nhất trên máy (AC-38, AC-39 vẫn cần thử tay). Bọc `Semantics(excludeSemantics: true)` quanh nút thì phải tự gắn `onTap` (BUG-003). Thêm màn mới thì thêm route vào `_routes` của test accessibility.
+
 ## D-007 · Khóa PIN: mã băm có muối trong bộ nhớ an toàn, màn khóa phủ lên app · 2026-11-03
 - Bối cảnh: SPEC F-11 (AC-31 tới AC-34): PIN 4 số, lưu băm có muối trong bộ nhớ an toàn của hệ điều hành, khóa lại sau hơn 1 phút ở nền, quên mã thì chỉ xóa dữ liệu.
 - Quyết định: `flutter_secure_storage` (Android Keystore) giữ muối ngẫu nhiên 16 byte và mã băm SHA-256 lặp 20.000 vòng (gói `crypto`); không lưu mã. Màn khóa là lớp phủ trong `MaterialApp.builder`, phần app bên dưới chỉ bị ẩn (`Offstage`) nên không mất trạng thái. Thời điểm ra nền lấy từ `AppLifecycleListener`, so với `clockProvider` để test được.

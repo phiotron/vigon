@@ -4,17 +4,17 @@ App mobile CHỈ dành cho điện thoại. Mở Claude ngay trong thư mục n�
 
 - Mã app: APP-001
 - Thư mục: apps/APP-001-vi-gon
-- Giai đoạn hiện tại: G5 xong (đã thử máy thật), chờ người dùng duyệt để sang G6
+- Giai đoạn hiện tại: G6 (phần Claude làm được đã xong, chờ người dùng: TalkBack/cỡ chữ trên máy, đăng chính sách, đo nốt NFR)
 - Nền tảng: Android (v1); iOS để sau (D-001)
 - Quy mô: chuẩn
 - Stack: Flutter
 
 ## Điểm dừng (Claude cập nhật bằng /end; đọc mục này đầu tiên khi quay lại app sau thời gian dài)
 - Cập nhật lần cuối: 2026-11-03
-- Đang làm dở: không có. G3, G4, G5 đã thử trên Galaxy A13 qua adb ngày 2026-11-03, đạt (biên bản trong BACKLOG). Còn: người dùng mở CSV bằng Excel/Sheets; khôi phục file xuất từ chính máy
-- Bước tiếp theo: người dùng duyệt cổng G5, rồi làm G6 (accessibility, màn Giới thiệu, chính sách quyền riêng tư, đo NFR, SBOM/MASVS)
-- Đang chờ (ai/cái gì): người dùng: thử tay trên máy thật, trả lời tên cá nhân hay công ty và Play Age Signals, cài Command-line Tools cho Android SDK, tạo remote git và sao lưu `D:/DemoChung` ra ngoài ổ D
-- Lưu ý dễ vấp: (1) Galaxy A13 (SM-A135F, Android 14) chỉ chạy 32-bit, không build APK `arm64` riêng (BUG-001). (2) Điện thoại đang cài bản G5 (commit aefb38e), dữ liệu đã xóa sạch sau lần thử quên mã. Máy thử là máy người dùng đang dùng: trước mỗi lần chạm qua adb phải kiểm `mCurrentFocus` là Ví Gọn. (3) PIN 4 số chỉ chặn người tò mò, không phải mã hóa dữ liệu (D-007). (4) Flutter chưa có trong PATH, xem mục "Lệnh". (5) G3 tới G5 đã thử máy thật bằng adb; CSV mở bằng Excel chưa thử.
+- Đang làm dở: G6. Đã xong: màn Giới thiệu (AC-41), bố cục cỡ chữ 200%, test accessibility tự động, sửa BUG-003, chính sách vi/en (`docs/legal/privacy-policy.md`), SBOM, MASVS, SECURITY, COMPLIANCE, đo mở nguội và dung lượng. 98 test đạt. Chưa: đường dẫn chính sách trong `lib/src/app_info.dart`, TalkBack và cỡ chữ lớn nhất trên máy thật, NFR lưu/cuộn/pin/bộ nhớ
+- Bước tiếp theo: khi người dùng gửi đường dẫn chính sách thì điền `AppInfo.privacyPolicyUrl`, build lại, kiểm trên máy; đo nốt NFR khi máy rảnh; rồi `/release`
+- Đang chờ (ai/cái gì): người dùng: đăng chính sách lên Google Sites, thử TalkBack và cỡ chữ lớn nhất, mở CSV bằng Excel, trả lời tên cá nhân hay công ty và Play Age Signals, cài Command-line Tools cho Android SDK, tạo remote git và sao lưu `D:/DemoChung` ra ngoài ổ D
+- Lưu ý dễ vấp: (1) Galaxy A13 (SM-A135F, Android 14) chỉ chạy 32-bit, không build APK `arm64` riêng (BUG-001). (2) Điện thoại đang cài bản G6; dữ liệu Ví Gọn trên máy có thể là 10.000 khoản thử (khôi phục để đo bộ nhớ), xóa bằng "Xóa toàn bộ dữ liệu". Máy thử là máy người dùng đang dùng, và có phiên Claude khác điều khiển cùng máy (app dailyloop, focusgrove): trước mỗi lần chạm qua adb phải kiểm `mCurrentFocus` là Ví Gọn, không gộp nhiều lần chạm vào một lệnh. (3) PIN 4 số chỉ chặn người tò mò, không phải mã hóa dữ liệu (D-007). (4) Flutter chưa có trong PATH, xem mục "Lệnh". (5) G3 tới G5 đã thử máy thật bằng adb; CSV mở bằng Excel chưa thử.
 
 ## Mô tả
 - Mục đích: Ghi chép thu chi cá nhân nhanh, xem biểu đồ theo danh mục (chức năng tương đương Monefy)
@@ -32,6 +32,7 @@ Flutter 3.47.8 ở `C:/src/flutter`, CHƯA có trong PATH. Trong Git Bash chạy
 - Typecheck: `flutter analyze`
 - Định dạng: `dart format lib test`
 - Test: `flutter test`
+- SBOM: `python tool/make_sbom.py` (ghi `docs/sbom/vigon.cdx.json`)
 - Build thử trên máy: `flutter build apk --release` (KHÔNG thêm `--target-platform android-arm64`: máy 32-bit sẽ crash, xem BUG-001), cài bằng `adb install -r build/app/outputs/flutter-apk/app-release.apk`. Vẫn ký bằng khóa debug của template, CHƯA dùng để phát hành. Bản phát hành Play: `flutter build appbundle`, CHƯA chạy (cần khóa ký, G6).
 
 ## Quy ước riêng của app

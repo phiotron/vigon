@@ -37,9 +37,12 @@ class CategoryAvatar extends StatelessWidget {
       ),
     );
     if (semanticLabel == null) return ExcludeSemantics(child: avatar);
+    // excludeSemantics bỏ cả hành động chạm của InkWell, nên phải gắn onTap
+    // ở đây để TalkBack bấm được (AC-39).
     return Semantics(
       button: onTap != null,
       label: semanticLabel,
+      onTap: onTap,
       excludeSemantics: true,
       child: avatar,
     );

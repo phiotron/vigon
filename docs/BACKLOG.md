@@ -17,7 +17,7 @@ Mỗi giai đoạn kết thúc bằng: `flutter analyze` sạch, `flutter test` 
 - [ ] CI `.github/workflows/ci.yml` đã ghim Flutter 3.47.8 nhưng CHƯA chạy (repo chưa có remote)
 - [x] Thử trên máy Android thật: mở app, đổi giao diện, đổi ngôn ngữ, Back, giữ cài đặt sau khi tắt app (biên bản 2026-11-03)
 - [ ] Xoay máy thật khi bật tự xoay: app phải giữ dọc (cần người dùng xoay tay)
-- [ ] Sửa ở G6: nút "Theo hệ thống" trong Cài đặt bị xuống 2 dòng ở cỡ chữ mặc định, sẽ tệ hơn ở cỡ chữ 200% (AC-38)
+- [x] Sửa ở G6: nút "Theo hệ thống" trong Cài đặt bị xuống 2 dòng: ở cỡ chữ từ 130% các lựa chọn xếp dọc (D-008); cỡ chữ mặc định vẫn 2 dòng, đọc được
 
 ### G2 · Ghi khoản và màn chính — trạng thái: done
 - [x] Màn nhập số tiền với bàn phím số có phép tính (AC-01 tới AC-05): test `calculator_test`, `entry_flow_test`; thử máy thật 2026-11-03
@@ -48,18 +48,24 @@ Mỗi giai đoạn kết thúc bằng: `flutter analyze` sạch, `flutter test` 
 - [ ] Người dùng: xuất CSV, gửi file sang máy tính và mở bằng Excel/Sheets, xem tiếng Việt đúng (Claude không gửi file ra ngoài thay người dùng)
 - [ ] Khôi phục một file `.vigon` xuất từ chính điện thoại (lần thử dùng file tạo bằng `exportBackup` trên máy tính vì bảng chia sẻ không có mục lưu vào máy)
 
-### G6 · Khả năng tiếp cận, pháp lý, chuẩn bị phát hành — trạng thái: todo
-- [ ] Rà accessibility: vùng chạm, cỡ chữ 200%, TalkBack, tương phản (AC-37 tới AC-40)
-- [ ] Màn Giới thiệu: chính sách quyền riêng tư, email báo lỗi bảo mật, giấy phép nguồn mở (AC-41)
-- [ ] Viết chính sách quyền riêng tư (vi/en) và đăng ở một trang công khai
-- [ ] Đo NFR (mục 5b SPEC) và ghi vào `docs/TESTING.md`
-- [ ] SBOM, tự kiểm MASVS, hoàn tất các dòng áp dụng trong `docs/COMPLIANCE.md`
+### G6 · Khả năng tiếp cận, pháp lý, chuẩn bị phát hành — trạng thái: phần Claude làm được đã xong; chờ người dùng
+- [x] Rà accessibility tự động: vùng chạm, nhãn, tương phản, lỗi vẽ ở mọi màn chính, sáng/tối, cỡ chữ 100%/200% (`g6_accessibility_test`); sửa 4 chỗ vỡ ở 200% và BUG-003 (AC-37 tới AC-40)
+- [x] Máy thật: mọi nút bấm được trên các màn chính có nhãn (uiautomator, biên bản G6)
+- [ ] Người dùng: bật TalkBack, đi qua ghi khoản, màn chính, Cài đặt; đặt cỡ chữ lớn nhất rồi xem các màn chính (Claude không đổi cài đặt hệ thống của máy) (AC-38, AC-39)
+- [x] Màn Giới thiệu: phiên bản, chính sách, email báo lỗi bảo mật, giấy phép nguồn mở (AC-41): test và thử máy thật
+- [x] Viết chính sách quyền riêng tư vi/en: `docs/legal/privacy-policy.md`
+- [ ] Người dùng: đăng chính sách lên Google Sites, gửi đường dẫn; Claude điền `lib/src/app_info.dart`
+- [ ] Đo NFR còn thiếu: lưu ≤ 200 ms, cuộn 5.000 khoản, pin 15 phút, bộ nhớ với 10.000 khoản (đã đo: mở nguội, dung lượng, tác vụ nền; xem `docs/TESTING.md`)
+- [x] SBOM (`docs/sbom/vigon.cdx.json`, `tool/make_sbom.py`), tự kiểm MASVS (`docs/security/MASVS-SELF-CHECK.md`), SECURITY.md, cập nhật COMPLIANCE
+- [ ] COMPLIANCE còn "chưa": M-01, D-02, D-07, D-09, D-12, S-06, A-01, C-03, P-08, P-09, P-10 (phần lớn cần người dùng hoặc luật sư)
 - [ ] Closed test 12 người trong 14 ngày (P-09), rồi `/release`
 
 ## Việc kế tiếp (tối đa 5, theo thứ tự)
-1. G6: accessibility, màn Giới thiệu, chính sách quyền riêng tư, đo NFR, SBOM/MASVS (package_info_plus và url_launcher đã thêm vào pubspec cho màn Giới thiệu, chưa dùng)
-2. Câu còn mở của người dùng: phát hành dưới tên cá nhân hay công ty (EAA); Play Age Signals (D-12); luật sư xác nhận CRA (S-06) và DPIA VN (D-07)
-3. Người dùng: cài Android SDK Command-line Tools và chấp nhận giấy phép SDK; tạo remote git và chạy `bash scripts/backup.sh <thư mục ngoài ổ D>`
+1. Người dùng: thử TalkBack và cỡ chữ lớn nhất; đăng chính sách và gửi đường dẫn; mở CSV bằng Excel
+2. Đo nốt NFR khi máy rảnh hẳn (không phiên nào khác dùng máy); khôi phục file xuất từ chính máy
+3. /release: tạo khóa ký (cất ngoài repo, L-005), `flutter build appbundle`, cân nhắc `--obfuscate`, Data safety, closed test P-09
+4. Câu còn mở của người dùng: phát hành dưới tên cá nhân hay công ty (EAA); Play Age Signals (D-12); luật sư xác nhận CRA (S-06) và DPIA VN (D-07)
+5. Người dùng: cài Android SDK Command-line Tools và chấp nhận giấy phép SDK; tạo remote git và chạy `bash scripts/backup.sh <thư mục ngoài ổ D>`
 
 ## Lỗi đã biết (đang mở)
 Mỗi lỗi: BUG-xxx · mô tả · cách tái hiện · mức độ (chặn / nặng / nhẹ) · cách tạm tránh.
@@ -67,6 +73,7 @@ Mỗi lỗi: BUG-xxx · mô tả · cách tái hiện · mức độ (chặn / n
 
 ## Lỗi đã sửa đáng nhớ (nguồn cho bài học)
 Mỗi lỗi: BUG-xxx · nguyên nhân gốc · cách sửa · làm sao tránh lần sau.
+- BUG-003 · TalkBack đọc được tên 10 icon danh mục quanh biểu đồ nhưng không bấm được (uiautomator báo không clickable). Nguyên nhân gốc: `CategoryAvatar` bọc `Semantics(excludeSemantics: true)` làm mất cả hành động chạm của `InkWell` bên trong; guideline nhãn của Flutter không bắt được vì nút không còn hành động chạm. Cách sửa: gắn `onTap` vào chính `Semantics` (`lib/src/ui/category_avatar.dart`), test chặn trong `g6_accessibility_test`. Tránh lần sau: dùng `excludeSemantics` trên nút thì luôn kiểm `hasTapAction` (D-008).
 - BUG-001 · App crash ngay khi mở trên Galaxy A13: "Could not find libflutter.so, looked for armeabi-v7a". Nguyên nhân gốc: APK build với `--target-platform android-arm64`, nhưng máy có chip 64-bit lại chạy hệ điều hành chỉ 32-bit (`ro.product.cpu.abilist64` rỗng). Cách sửa: build APK đủ kiến trúc (`flutter build apk --release`); bản phát hành dùng AAB thì Play tự chia theo kiến trúc. Tránh lần sau: không build APK một kiến trúc để thử; kiểm `adb shell getprop ro.product.cpu.abilist` của máy thử. Test trên máy tính và giả lập không bắt được lỗi này (L-003).
 - BUG-002 · `flutter build apk --release` thất bại ở `:android_file_picker:compileReleaseKotlin` với "Could not close incremental caches", xuất hiện sau khi G5 thêm các gói plugin. Nguyên nhân nghi: dự án ở ổ D:, pub cache ở ổ C:, Kotlin không đóng được bộ đệm biên dịch tăng dần (CHƯA kiểm chứng bằng cách bỏ dòng sửa rồi build lại). Cách sửa: `kotlin.incremental=false` trong `android/gradle.properties`; build release đạt ngày 2026-11-03. Tránh lần sau: dự án Flutter trên Windows mà pub cache khác ổ thì tắt Kotlin incremental ngay từ đầu (build chậm hơn chút, không ảnh hưởng app).
 
@@ -78,9 +85,13 @@ Mỗi lỗi: BUG-xxx · nguyên nhân gốc · cách sửa · làm sao tránh l�
 - Widget màn hình chính; mở khóa bằng vân tay
 - Mã hóa file sao lưu bằng mật khẩu (file `.vigon` hiện là JSON thường, D-006)
 - Gói Pro hoặc nguồn thu khác
+- Che nội dung ở màn đa nhiệm (`FLAG_SECURE`) để ảnh xem trước không lộ số liệu (MASVS-STORAGE)
+- Nút lọc tài khoản ở màn chính hiện tên tài khoản đang lọc (đang chỉ ghi "Tài khoản")
+- Tên tiếng Anh riêng cho store (gợi ý: Neat Wallet, Tidy Wallet, Pocket Ledger), cần tra trùng
 
 ## Biên bản thử máy thật
 Mỗi lần thử: ngày · máy và phiên bản hệ điều hành · bản app · đã thử gì · kết quả · lỗi phát hiện.
-- 2026-11-03 · Galaxy A13 SM-A135F, Android 14 · G5, APK release commit aefb38e · Claude điều khiển qua adb (chạm, vuốt, đọc màn hình bằng uiautomator). Mở nguội 582 tới 999 ms (`am start -W`). G3: vuốt ngang đổi tháng và tuần (tuần bắt đầu thứ Hai), "Toàn thời gian"; kéo tay nắm đưa Đi lại xuống dưới Hóa đơn, giữ sau khi thoát ra, vòng icon màn chính đổi theo; thêm tài khoản TestBank 500.000, chuyển 100.000 từ Tiền mặt, số dư hai bên đúng, màn chính không tính chuyển tiền là chi; lọc theo TestBank cho số dư 0. G4: ngân sách 150.000, thanh tiến độ khoảng 55%, chi thêm 100.000 thì thanh đỏ và báo vượt 32.403; khoản 60.000 lặp hằng ngày từ 01/11 tạo đúng 3 khoản 01, 02, 03/11, mở nguội lại 2 lần không trùng. G5: xuất sao lưu và CSV mở bảng chia sẻ, không xin quyền bộ nhớ (AC-28); khôi phục qua trình chọn file hệ thống, không xin quyền (AC-29), có hỏi xác nhận, dữ liệu được thay đúng, khoản định kỳ hằng tháng không trùng; đặt PIN, ra nền 20 giây không khóa, 70 giây thì khóa (AC-32), mở nguội thì khóa ngay; mã sai báo "Sai mã PIN", mã đúng mở được; quên mã qua 3 hộp thoại rồi xóa, mở lại không còn PIN, dữ liệu về mặc định (AC-34). Kết quả: đạt. Ghi chú: (1) khôi phục làm giao diện và ngôn ngữ về "theo hệ thống" vì file sao lưu không mang hai cài đặt này (đúng thiết kế, nên nói rõ trong màn khôi phục ở G6); (2) nút lọc tài khoản ở màn chính chỉ ghi "Tài khoản", không hiện tên tài khoản đang lọc (xét ở G6); (3) ba hiện tượng lạ (mở lại vào thẳng màn "Thu mới" và Back thoát app, bảng thêm tài khoản tự đóng, màn khóa có sẵn 1 chấm rồi biến mất) chỉ xảy ra khi có người khác đang dùng máy cùng lúc, thử lại riêng đều không tái hiện; (4) chưa mở CSV bằng Excel, chưa khôi phục file xuất từ chính máy (xem G5).
+- 2026-11-03 · Galaxy A13 SM-A135F, Android 14 · G6, APK release (sau commit ecbb7a6 và sửa BUG-003) · Claude qua adb. Mở nguội 5 lần TotalTime trung vị 633 ms; bản profile `--trace-startup` khung hình Flutter đầu 1,09 s. Rà cây accessibility (uiautomator, chỉ nút của Ví Gọn): màn chính 18 nút, khoản chi mới 22, Cài đặt 15 + 10, Giới thiệu 3, Giấy phép 10, Danh mục 14, Tài khoản 3, Khoản định kỳ 1, Các khoản 2; không nút nào thiếu nhãn. Trước khi sửa BUG-003, icon danh mục không clickable; sau sửa thì clickable. Màn Giới thiệu: "Phiên bản 1.0.0 (1)", dòng chính sách tắt kèm "Đang chuẩn bị trang web", "Báo lỗi bảo mật" mở Gmail soạn thư tới đúng email với tiêu đề "Báo lỗi bảo mật Ví Gọn" (do Claude chạm nhầm; đã chọn Loại bỏ, không gửi), trang giấy phép mở được. Không có service, không có job nền. Đã khôi phục file thử 10.000 khoản để đo bộ nhớ, nhưng app FocusGrove rồi dailyloop lên trên (phiên khác dùng máy) nên chưa xác nhận kết quả; dữ liệu Ví Gọn trên máy có thể đang là 10.000 khoản thử. CHƯA: TalkBack thật, cỡ chữ lớn nhất trên máy.
+- 2026-11-03 · Galaxy A13 SM-A135F, Android 14 · G5, APK release commit aefb38e · Claude điều khiển qua adb (chạm, vuốt, đọc màn hình bằng uiautomator). Mở nguội 582 tới 999 ms (`am start -W`). G3: vuốt ngang đổi tháng và tuần (tuần bắt đầu thứ Hai), "Toàn thời gian"; kéo tay nắm đưa Đi lại xuống dưới Hóa đơn, giữ sau khi thoát ra, vòng icon màn chính đổi theo; thêm tài khoản TestBank 500.000, chuyển 100.000 từ Tiền mặt, số dư hai bên đúng, màn chính không tính chuyển tiền là chi; lọc theo TestBank cho số dư 0. G4: ngân sách 150.000, thanh tiến độ khoảng 55%, chi thêm 100.000 thì thanh đỏ và báo vượt 32.403; khoản 60.000 lặp hằng ngày từ 01/11 tạo đúng 3 khoản 01, 02, 03/11, mở nguội lại 2 lần không trùng. G5: xuất sao lưu và CSV mở bảng chia sẻ, không xin quyền bộ nhớ (AC-28); khôi phục qua trình chọn file hệ thống, không xin quyền (AC-29), có hỏi xác nhận, dữ liệu được thay đúng, khoản định kỳ hằng tháng không trùng; đặt PIN, ra nền 20 giây không khóa, 70 giây thì khóa (AC-32), mở nguội thì khóa ngay; mã sai báo "Sai mã PIN", mã đúng mở được; quên mã qua 3 hộp thoại rồi xóa, mở lại không còn PIN, dữ liệu về mặc định (AC-34). Kết quả: đạt. Ghi chú: (1) sau khôi phục giao diện và ngôn ngữ về "theo hệ thống": do file thử tạo trên máy tính không có hai cài đặt này; file xuất từ app có mang cài đặt (D-006), không phải lỗi; (2) nút lọc tài khoản ở màn chính chỉ ghi "Tài khoản", không hiện tên tài khoản đang lọc (xét ở G6); (3) ba hiện tượng lạ (mở lại vào thẳng màn "Thu mới" và Back thoát app, bảng thêm tài khoản tự đóng, màn khóa có sẵn 1 chấm rồi biến mất) chỉ xảy ra khi có người khác đang dùng máy cùng lúc, thử lại riêng đều không tái hiện; (4) chưa mở CSV bằng Excel, chưa khôi phục file xuất từ chính máy (xem G5).
 - 2026-11-03 · Galaxy A13 SM-A135F, Android 14 · G2, APK release · màn chính có 10 icon danh mục quanh vòng tròn, nút −/+ ở nửa dưới; bấm − nhập 120+35, Choose category, Food → lưu ₫155, biểu đồ 100% Food, số dư -₫155 (đọc bằng uiautomator). Lần chạm − đầu tiên mở nhầm "New income", chạm lại 2 lần đều đúng; lúc đó người dùng cũng đang cầm máy (bảng thông báo bị kéo xuống), CHƯA tái hiện được, theo dõi tiếp.
 - 2026-11-03 · Samsung Galaxy A13 SM-A135F, Android 14 (API 34), chỉ 32-bit, Exynos 850 · G1, APK release (khóa debug) · mở app; Cài đặt → Tối, → English; Back về màn chính; tắt hẳn rồi mở lại 5 lần · Lần đầu crash (BUG-001, đã sửa). Sau khi sửa: chữ tiếng Việt và tiếng Anh đúng, giao diện tối đổi ngay, Back đúng, cài đặt còn sau khi mở lại, không crash. `WaitTime` của `am start -W` 5 lần: 835, 1050, 1676, 2081, 2641 ms (trung vị 1676 ms; số này tính tới khung hình Android đầu tiên, chưa phải khung hình Flutter, đo NFR chuẩn ở G6). APK đủ kiến trúc 53,7 MB; ngưỡng ≤ 25 MB trong SPEC là cho một kiến trúc, sẽ đo bằng AAB ở G6. Chưa thử xoay máy.

@@ -145,4 +145,21 @@ void main() {
     expect(find.byType(LicensePage), findsOneWidget);
     await disposeApp(tester, db);
   });
+
+  testWidgets('icon danh mục quanh biểu đồ bấm được bằng TalkBack (AC-39)', (
+    tester,
+  ) async {
+    final handle = tester.ensureSemantics();
+    final db = await pumpApp(tester);
+    final label = RegExp('^Thêm khoản chi: Ăn uống');
+    expect(
+      tester.getSemantics(find.bySemanticsLabel(label)),
+      isSemantics(isButton: true, hasTapAction: true),
+    );
+    tester.semantics.tap(find.semantics.byLabel(label));
+    await settle(tester);
+    expect(find.text('Khoản chi mới'), findsOneWidget);
+    handle.dispose();
+    await disposeApp(tester, db);
+  });
 }
