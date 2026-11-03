@@ -92,7 +92,7 @@ void main() {
     final list = find.byType(Scrollable).first;
 
     await binding.watchPerformance(() async {
-      await tester.tap(find.byType(ExpansionTile).first);
+      await tester.tap(find.byIcon(Icons.expand_more).first);
       await tester.pumpAndSettle();
     }, reportKey: 'expand_5000');
     debugPrint('PERF expand_5000=${binding.reportData?['expand_5000']}');

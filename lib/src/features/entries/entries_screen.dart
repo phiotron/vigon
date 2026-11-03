@@ -13,11 +13,20 @@ import '../../ui/format.dart';
 import '../../ui/messenger.dart';
 
 /// Danh sách khoản trong kỳ, gom theo danh mục, có tổng và phần trăm (AC-08).
-class EntriesScreen extends ConsumerWidget {
+/// Dựng lười (chỉ các dòng đang nhìn thấy) để nhóm hàng nghìn khoản vẫn mượt (NFR 5b).
+class EntriesScreen extends ConsumerStatefulWidget {
   const EntriesScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<EntriesScreen> createState() => _EntriesScreenState();
+}
+
+class _EntriesScreenState extends ConsumerState<EntriesScreen> {
+  /// Các nhóm đang mở, khóa dạng `e<id>` (chi) hoặc `i<id>` (thu).
+  final _open = <String>{};
+
+  @override
+  Widget build(BuildContext context) {
     final l = AppLocalizations.of(context);
     final period = ref.watch(periodProvider);
     final rows = ref.watch(periodEntriesProvider).value ?? const <EntryView>[];
@@ -30,98 +39,133 @@ class EntriesScreen extends ConsumerWidget {
     final transfers = rows
         .where((r) => r.entry.type == EntryType.transfer)
         .toList();
+    final byCategory = <int, List<EntryView>>{};
+    for (final r in rows) {
+      final id = r.category?.id;
+      if (id != null) (byCategory[id] ??= []).add(r);
+    }
     final large = isLargeText(context);
+    final theme = Theme.of(context);
 
-    List<Widget> section(
+    // Mỗi phần tử là một hàm dựng dòng; ListView.builder chỉ gọi cho dòng đang hiện.
+    final items = <Widget Function()>[
+      () => _AmountTile(
+        title: Text(l.balance, style: theme.textTheme.titleLarge),
+        amount: Text(
+          money(context, currency, summary.balance),
+          style: theme.textTheme.titleLarge,
+        ),
+      ),
+      () => const Divider(),
+    ];
+
+    void section(
+      String prefix,
       String title,
       Color color,
       int total,
       List<CategoryTotal> totals,
-    ) => [
-      _AmountTile(
-        title: Text(title, style: Theme.of(context).textTheme.titleMedium),
-        amount: Text(
-          money(context, currency, total),
-          style: Theme.of(context).textTheme.titleMedium
-              ?.copyWith(color: color),
-        ),
-      ),
-      for (final t in totals)
-        ExpansionTile(
-          leading: CategoryAvatar(category: t.category, size: 40),
-          title: Text(categoryLabel(l, t.category)),
-          subtitle: Text(
-            large
-                ? '${percent(context, t.percent)} · '
-                      '${money(context, currency, t.total)}'
-                : percent(context, t.percent),
+    ) {
+      items.add(
+        () => _AmountTile(
+          title: Text(title, style: theme.textTheme.titleMedium),
+          amount: Text(
+            money(context, currency, total),
+            style: theme.textTheme.titleMedium?.copyWith(color: color),
           ),
-          trailing: large ? null : Text(money(context, currency, t.total)),
-          children: [
-            for (final r in rows.where((r) => r.category?.id == t.category.id))
-              _EntryTile(
+        ),
+      );
+      for (final t in totals) {
+        final key = '$prefix${t.category.id}';
+        final open = _open.contains(key);
+        items.add(
+          () => Semantics(
+            expanded: open,
+            child: ListTile(
+              leading: CategoryAvatar(category: t.category, size: 40),
+              title: Text(categoryLabel(l, t.category)),
+              subtitle: Text(
+                large
+                    ? '${percent(context, t.percent)} · '
+                          '${money(context, currency, t.total)}'
+                    : percent(context, t.percent),
+              ),
+              trailing: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  if (!large) Text(money(context, currency, t.total)),
+                  Icon(open ? Icons.expand_less : Icons.expand_more),
+                ],
+              ),
+              onTap: () =>
+                  setState(() => open ? _open.remove(key) : _open.add(key)),
+            ),
+          ),
+        );
+        if (open) {
+          for (final r in byCategory[t.category.id] ?? const <EntryView>[]) {
+            items.add(
+              () => _EntryTile(
                 row: r,
                 title: r.entry.note ?? categoryLabel(l, t.category),
                 amount: money(context, currency, r.entry.amount),
               ),
-          ],
+            );
+          }
+        }
+      }
+    }
+
+    if (summary.expense > 0) {
+      section(
+        'e',
+        l.expense,
+        expenseColor(context),
+        summary.expense,
+        summary.expenseByCategory,
+      );
+    }
+    if (summary.income > 0) {
+      section(
+        'i',
+        l.income,
+        incomeColor(context),
+        summary.income,
+        summary.incomeByCategory,
+      );
+    }
+    if (transfers.isNotEmpty) {
+      items.add(
+        () => ListTile(
+          title: Text(l.transfer, style: theme.textTheme.titleMedium),
         ),
-    ];
+      );
+      for (final r in transfers) {
+        items.add(
+          () => _EntryTile(
+            row: r,
+            title: l.transferLabel(
+              accounts[r.entry.accountId] == null
+                  ? ''
+                  : accountLabel(l, accounts[r.entry.accountId]!),
+              accounts[r.entry.toAccountId] == null
+                  ? ''
+                  : accountLabel(l, accounts[r.entry.toAccountId]!),
+            ),
+            amount: money(context, currency, r.entry.amount),
+          ),
+        );
+      }
+    }
+    items.add(() => const SizedBox(height: 24));
 
     return Scaffold(
       appBar: AppBar(title: Text(periodTitle(context, period))),
       body: rows.isEmpty
           ? Center(child: Text(l.noEntries))
-          : ListView(
-              children: [
-                _AmountTile(
-                  title: Text(
-                    l.balance,
-                    style: Theme.of(context).textTheme.titleLarge,
-                  ),
-                  amount: Text(
-                    money(context, currency, summary.balance),
-                    style: Theme.of(context).textTheme.titleLarge,
-                  ),
-                ),
-                const Divider(),
-                if (summary.expense > 0)
-                  ...section(
-                    l.expense,
-                    expenseColor(context),
-                    summary.expense,
-                    summary.expenseByCategory,
-                  ),
-                if (summary.income > 0)
-                  ...section(
-                    l.income,
-                    incomeColor(context),
-                    summary.income,
-                    summary.incomeByCategory,
-                  ),
-                if (transfers.isNotEmpty) ...[
-                  ListTile(
-                    title: Text(
-                      l.transfer,
-                      style: Theme.of(context).textTheme.titleMedium,
-                    ),
-                  ),
-                  for (final r in transfers)
-                    _EntryTile(
-                      row: r,
-                      title: l.transferLabel(
-                        accounts[r.entry.accountId] == null
-                            ? ''
-                            : accountLabel(l, accounts[r.entry.accountId]!),
-                        accounts[r.entry.toAccountId] == null
-                            ? ''
-                            : accountLabel(l, accounts[r.entry.toAccountId]!),
-                      ),
-                      amount: money(context, currency, r.entry.amount),
-                    ),
-                ],
-                const SizedBox(height: 24),
-              ],
+          : ListView.builder(
+              itemCount: items.length,
+              itemBuilder: (context, i) => items[i](),
             ),
     );
   }
