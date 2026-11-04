@@ -1,4 +1,10 @@
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+    <!-- F-25 nhắc ghi chép: chỉ hai quyền này. Không INTERNET, không báo thức chính xác. -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
+    <!-- Plugin thông báo tự thêm VIBRATE; app không rung nên gỡ để khỏi thêm quyền ngoài danh sách. -->
+    <uses-permission android:name="android.permission.VIBRATE" tools:node="remove"/>
     <application
         android:label="Ví Gọn"
         android:allowBackup="false"
@@ -38,6 +44,16 @@
             <meta-data
                 android:name="android.appwidget.provider"
                 android:resource="@xml/vigon_widget_info"/>
+        </receiver>
+        <!-- F-25: lịch nhắc hằng ngày của flutter_local_notifications; BootReceiver đặt lại lịch sau khi máy khởi động lại. -->
+        <receiver android:exported="false" android:name="com.dexterous.flutterlocalnotifications.ScheduledNotificationReceiver" />
+        <receiver android:exported="false" android:name="com.dexterous.flutterlocalnotifications.ScheduledNotificationBootReceiver">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED"/>
+                <action android:name="android.intent.action.MY_PACKAGE_REPLACED"/>
+                <action android:name="android.intent.action.QUICKBOOT_POWERON" />
+                <action android:name="com.htc.intent.action.QUICKBOOT_POWERON"/>
+            </intent-filter>
         </receiver>
         <!-- Don't delete the meta-data below.
              This is used by the Flutter tool to generate GeneratedPluginRegistrant.java -->

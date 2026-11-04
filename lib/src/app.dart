@@ -15,6 +15,7 @@ import 'features/home/home_screen.dart';
 import 'features/lock/app_lock.dart';
 import 'features/lock/lock_screen.dart';
 import 'features/recurring/recurring_screen.dart';
+import 'features/reminder/reminder_providers.dart';
 import 'features/settings/secure_window.dart';
 import 'features/settings/settings_screen.dart';
 import 'features/widget/deep_link.dart';
@@ -100,6 +101,7 @@ class VigonApp extends ConsumerWidget {
     ref.watch(startupProvider);
     ref.watch(secureWindowSyncProvider);
     ref.watch(widgetSyncProvider);
+    ref.watch(reminderSyncProvider);
     final themeMode = ref.watch(themeModeProvider).value ?? ThemeMode.system;
     final localeCode = ref.watch(localeCodeProvider).value;
     final lock = ref.watch(lockProvider);
@@ -108,13 +110,16 @@ class VigonApp extends ConsumerWidget {
       // Màn khóa phủ lên toàn app; phần bên dưới ẩn khỏi trình đọc màn hình (AC-32).
       builder: (context, child) => DeepLinkBinder(
         router: appRouter,
-        child: AppLifecycleWatcher(
-          child: Stack(
-            children: [
-              Offstage(offstage: lock != AppLockState.unlocked, child: child),
-              if (lock != AppLockState.unlocked)
-                LockScreen(checking: lock == AppLockState.checking),
-            ],
+        child: ReminderTapBinder(
+          router: appRouter,
+          child: AppLifecycleWatcher(
+            child: Stack(
+              children: [
+                Offstage(offstage: lock != AppLockState.unlocked, child: child),
+                if (lock != AppLockState.unlocked)
+                  LockScreen(checking: lock == AppLockState.checking),
+              ],
+            ),
           ),
         ),
       ),

@@ -17,6 +17,8 @@ class SettingsRepository {
   static const budgetKey = 'monthlyBudget';
   static const secureWindowKey = 'secureWindow';
   static const widgetShowAmountsKey = 'widgetShowAmounts';
+  static const reminderEnabledKey = 'reminderEnabled';
+  static const reminderTimeKey = 'reminderTime';
 
   Stream<String?> _watch(String key) {
     final query = _db.select(_db.settings)..where((s) => s.key.equals(key));
@@ -93,6 +95,29 @@ class SettingsRepository {
   Future<void> setWidgetShowAmounts(bool on) =>
       on ? _write(widgetShowAmountsKey, '1') : _remove(widgetShowAmountsKey);
 
+  /// Nhắc ghi chép hằng ngày bật hay tắt (AC-61). Mặc định tắt.
+  Stream<bool> watchReminderEnabled() =>
+      _watch(reminderEnabledKey).map((v) => v == '1');
+
+  Future<bool> readReminderEnabled() =>
+      _read(reminderEnabledKey).then((v) => v == '1');
+
+  Future<void> setReminderEnabled(bool on) =>
+      on ? _write(reminderEnabledKey, '1') : _remove(reminderEnabledKey);
+
+  /// Giờ nhắc, lưu dạng `HH:mm`. Mặc định 20:00 (AC-61).
+  Stream<TimeOfDay> watchReminderTime() =>
+      _watch(reminderTimeKey).map(parseReminderTime);
+
+  Future<TimeOfDay> readReminderTime() =>
+      _read(reminderTimeKey).then(parseReminderTime);
+
+  Future<void> setReminderTime(TimeOfDay time) => _write(
+    reminderTimeKey,
+    '${time.hour.toString().padLeft(2, '0')}:'
+    '${time.minute.toString().padLeft(2, '0')}',
+  );
+
   /// Hạn mức chi mỗi tháng theo đơn vị nhỏ nhất; null là chưa đặt (AC-26).
   Stream<int?> watchBudget() =>
       _watch(budgetKey).map((v) => int.tryParse(v ?? ''));
@@ -103,6 +128,19 @@ class SettingsRepository {
   Future<void> setBudget(int? amount) => amount == null || amount <= 0
       ? _remove(budgetKey)
       : _write(budgetKey, '$amount');
+}
+
+/// Giờ nhắc mặc định (AC-61).
+const defaultReminderTime = TimeOfDay(hour: 20, minute: 0);
+
+/// Đọc `HH:mm`; thiếu hoặc sai thì dùng [defaultReminderTime].
+TimeOfDay parseReminderTime(String? value) {
+  final m = RegExp(r'^(\d{1,2}):(\d{2})$').firstMatch(value ?? '');
+  if (m == null) return defaultReminderTime;
+  final h = int.parse(m[1]!);
+  final min = int.parse(m[2]!);
+  if (h > 23 || min > 59) return defaultReminderTime;
+  return TimeOfDay(hour: h, minute: min);
 }
 
 /// Tiền tệ theo vùng trong mã ngôn ngữ máy, ví dụ `vi_VN` → VND.

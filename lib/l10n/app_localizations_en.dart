@@ -34,6 +34,47 @@ class AppLocalizationsEn extends AppLocalizations {
   String get languageSystem => 'System';
 
   @override
+  String get reminderSection => 'Reminder';
+
+  @override
+  String get reminderSwitch => 'Daily reminder';
+
+  @override
+  String get reminderSwitchNote =>
+      'One notification a day at the time you choose, with no figures in it';
+
+  @override
+  String get reminderTime => 'Reminder time';
+
+  @override
+  String get reminderExplainTitle => 'Turn on the reminder?';
+
+  @override
+  String get reminderExplainBody =>
+      'Ví Gọn will send one notification every day at the time you choose, to remind you to record your spending. The notification contains no figures.';
+
+  @override
+  String get reminderContinue => 'Continue';
+
+  @override
+  String get reminderDenied =>
+      'Notifications are not allowed. Turn on notifications for Ví Gọn in the system settings.';
+
+  @override
+  String get reminderOpenSettings => 'Open settings';
+
+  @override
+  String get reminderChannelName => 'Reminder';
+
+  @override
+  String get reminderChannelDescription =>
+      'A daily reminder to record your spending';
+
+  @override
+  String get reminderNotificationBody =>
+      'Have you recorded your spending today?';
+
+  @override
   String get emptyPeriod => 'Tap − to record your first expense';
 
   @override
@@ -490,6 +531,63 @@ class AppLocalizationsEn extends AppLocalizations {
       'Data is stored only on this phone. Export a backup regularly.';
 
   @override
+  String get autoBackup => 'Automatic backup';
+
+  @override
+  String get autoBackupNote =>
+      'Ví Gọn only writes files to the folder you choose. Uploading to Google Drive or Dropbox is done by that app.';
+
+  @override
+  String autoBackupFolder(String name) {
+    return 'Folder: $name';
+  }
+
+  @override
+  String get autoBackupFolderUnknown => 'Chosen folder';
+
+  @override
+  String autoBackupLast(String time) {
+    return 'Last: $time';
+  }
+
+  @override
+  String get autoBackupNever => 'No backup yet';
+
+  @override
+  String get autoBackupErrorFolder =>
+      'Could not write to the folder. Choose the folder again';
+
+  @override
+  String get autoBackupErrorOther =>
+      'Backup failed. Try again with Back up now';
+
+  @override
+  String get autoBackupNow => 'Back up now';
+
+  @override
+  String get autoBackupChooseFolder => 'Choose folder again';
+
+  @override
+  String get autoBackupDone => 'Backup saved';
+
+  @override
+  String get autoBackupOffDone =>
+      'Automatic backup is off. Files already written stay in the folder.';
+
+  @override
+  String get autoBackupPickFailed => 'Could not open the folder picker';
+
+  @override
+  String get autoBackupPasswordTitle => 'Automatic backup password';
+
+  @override
+  String get autoBackupPasswordWarning =>
+      'If you forget the password, the backup files cannot be opened; you need it to restore on another device.';
+
+  @override
+  String get autoBackupTurnOn => 'Turn on';
+
+  @override
   String get restoreConfirm =>
       'Your current data will be replaced by the backup. Continue?';
 
@@ -561,6 +659,26 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get secureWindowNote =>
       'Blocks screenshots and hides content in the recent apps list';
+
+  @override
+  String get widgetShowAmounts => 'Show amounts on widget';
+
+  @override
+  String get widgetShowAmountsNote =>
+      'Anyone holding the phone can see this number on the home screen. While PIN lock is on, the widget always hides amounts.';
+
+  @override
+  String widgetSpentThisMonth(String spent) {
+    return 'Spent this month: $spent';
+  }
+
+  @override
+  String widgetSpentOfBudget(String spent, String budget) {
+    return 'Spent this month: $spent / $budget';
+  }
+
+  @override
+  String get widgetLockedByPin => 'Locked with PIN';
 
   @override
   String get about => 'About';

@@ -146,6 +146,78 @@ abstract class AppLocalizations {
   /// **'System'**
   String get languageSystem;
 
+  /// No description provided for @reminderSection.
+  ///
+  /// In en, this message translates to:
+  /// **'Reminder'**
+  String get reminderSection;
+
+  /// No description provided for @reminderSwitch.
+  ///
+  /// In en, this message translates to:
+  /// **'Daily reminder'**
+  String get reminderSwitch;
+
+  /// No description provided for @reminderSwitchNote.
+  ///
+  /// In en, this message translates to:
+  /// **'One notification a day at the time you choose, with no figures in it'**
+  String get reminderSwitchNote;
+
+  /// No description provided for @reminderTime.
+  ///
+  /// In en, this message translates to:
+  /// **'Reminder time'**
+  String get reminderTime;
+
+  /// No description provided for @reminderExplainTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Turn on the reminder?'**
+  String get reminderExplainTitle;
+
+  /// No description provided for @reminderExplainBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Ví Gọn will send one notification every day at the time you choose, to remind you to record your spending. The notification contains no figures.'**
+  String get reminderExplainBody;
+
+  /// No description provided for @reminderContinue.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue'**
+  String get reminderContinue;
+
+  /// No description provided for @reminderDenied.
+  ///
+  /// In en, this message translates to:
+  /// **'Notifications are not allowed. Turn on notifications for Ví Gọn in the system settings.'**
+  String get reminderDenied;
+
+  /// No description provided for @reminderOpenSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Open settings'**
+  String get reminderOpenSettings;
+
+  /// No description provided for @reminderChannelName.
+  ///
+  /// In en, this message translates to:
+  /// **'Reminder'**
+  String get reminderChannelName;
+
+  /// No description provided for @reminderChannelDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'A daily reminder to record your spending'**
+  String get reminderChannelDescription;
+
+  /// No description provided for @reminderNotificationBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Have you recorded your spending today?'**
+  String get reminderNotificationBody;
+
   /// No description provided for @emptyPeriod.
   ///
   /// In en, this message translates to:
@@ -992,6 +1064,102 @@ abstract class AppLocalizations {
   /// **'Data is stored only on this phone. Export a backup regularly.'**
   String get backupReminder;
 
+  /// No description provided for @autoBackup.
+  ///
+  /// In en, this message translates to:
+  /// **'Automatic backup'**
+  String get autoBackup;
+
+  /// No description provided for @autoBackupNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Ví Gọn only writes files to the folder you choose. Uploading to Google Drive or Dropbox is done by that app.'**
+  String get autoBackupNote;
+
+  /// No description provided for @autoBackupFolder.
+  ///
+  /// In en, this message translates to:
+  /// **'Folder: {name}'**
+  String autoBackupFolder(String name);
+
+  /// No description provided for @autoBackupFolderUnknown.
+  ///
+  /// In en, this message translates to:
+  /// **'Chosen folder'**
+  String get autoBackupFolderUnknown;
+
+  /// No description provided for @autoBackupLast.
+  ///
+  /// In en, this message translates to:
+  /// **'Last: {time}'**
+  String autoBackupLast(String time);
+
+  /// No description provided for @autoBackupNever.
+  ///
+  /// In en, this message translates to:
+  /// **'No backup yet'**
+  String get autoBackupNever;
+
+  /// No description provided for @autoBackupErrorFolder.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not write to the folder. Choose the folder again'**
+  String get autoBackupErrorFolder;
+
+  /// No description provided for @autoBackupErrorOther.
+  ///
+  /// In en, this message translates to:
+  /// **'Backup failed. Try again with Back up now'**
+  String get autoBackupErrorOther;
+
+  /// No description provided for @autoBackupNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Back up now'**
+  String get autoBackupNow;
+
+  /// No description provided for @autoBackupChooseFolder.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose folder again'**
+  String get autoBackupChooseFolder;
+
+  /// No description provided for @autoBackupDone.
+  ///
+  /// In en, this message translates to:
+  /// **'Backup saved'**
+  String get autoBackupDone;
+
+  /// No description provided for @autoBackupOffDone.
+  ///
+  /// In en, this message translates to:
+  /// **'Automatic backup is off. Files already written stay in the folder.'**
+  String get autoBackupOffDone;
+
+  /// No description provided for @autoBackupPickFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not open the folder picker'**
+  String get autoBackupPickFailed;
+
+  /// No description provided for @autoBackupPasswordTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Automatic backup password'**
+  String get autoBackupPasswordTitle;
+
+  /// No description provided for @autoBackupPasswordWarning.
+  ///
+  /// In en, this message translates to:
+  /// **'If you forget the password, the backup files cannot be opened; you need it to restore on another device.'**
+  String get autoBackupPasswordWarning;
+
+  /// No description provided for @autoBackupTurnOn.
+  ///
+  /// In en, this message translates to:
+  /// **'Turn on'**
+  String get autoBackupTurnOn;
+
   /// No description provided for @restoreConfirm.
   ///
   /// In en, this message translates to:
@@ -1117,6 +1285,36 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Blocks screenshots and hides content in the recent apps list'**
   String get secureWindowNote;
+
+  /// No description provided for @widgetShowAmounts.
+  ///
+  /// In en, this message translates to:
+  /// **'Show amounts on widget'**
+  String get widgetShowAmounts;
+
+  /// No description provided for @widgetShowAmountsNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Anyone holding the phone can see this number on the home screen. While PIN lock is on, the widget always hides amounts.'**
+  String get widgetShowAmountsNote;
+
+  /// No description provided for @widgetSpentThisMonth.
+  ///
+  /// In en, this message translates to:
+  /// **'Spent this month: {spent}'**
+  String widgetSpentThisMonth(String spent);
+
+  /// No description provided for @widgetSpentOfBudget.
+  ///
+  /// In en, this message translates to:
+  /// **'Spent this month: {spent} / {budget}'**
+  String widgetSpentOfBudget(String spent, String budget);
+
+  /// No description provided for @widgetLockedByPin.
+  ///
+  /// In en, this message translates to:
+  /// **'Locked with PIN'**
+  String get widgetLockedByPin;
 
   /// No description provided for @about.
   ///

@@ -34,6 +34,45 @@ class AppLocalizationsVi extends AppLocalizations {
   String get languageSystem => 'Theo máy';
 
   @override
+  String get reminderSection => 'Nhắc ghi chép';
+
+  @override
+  String get reminderSwitch => 'Nhắc ghi chép hằng ngày';
+
+  @override
+  String get reminderSwitchNote =>
+      'Mỗi ngày một thông báo vào giờ bạn chọn, không chứa số liệu';
+
+  @override
+  String get reminderTime => 'Giờ nhắc';
+
+  @override
+  String get reminderExplainTitle => 'Bật nhắc ghi chép?';
+
+  @override
+  String get reminderExplainBody =>
+      'Ví Gọn sẽ gửi một thông báo mỗi ngày vào giờ bạn chọn để nhắc ghi khoản. Thông báo không chứa số liệu.';
+
+  @override
+  String get reminderContinue => 'Tiếp tục';
+
+  @override
+  String get reminderDenied =>
+      'Chưa có quyền gửi thông báo. Hãy bật thông báo cho Ví Gọn trong cài đặt hệ thống.';
+
+  @override
+  String get reminderOpenSettings => 'Mở cài đặt';
+
+  @override
+  String get reminderChannelName => 'Nhắc ghi chép';
+
+  @override
+  String get reminderChannelDescription => 'Nhắc ghi chi tiêu mỗi ngày';
+
+  @override
+  String get reminderNotificationBody => 'Hôm nay bạn đã ghi chi tiêu chưa?';
+
+  @override
   String get emptyPeriod => 'Bấm − để ghi khoản chi đầu tiên';
 
   @override
@@ -482,6 +521,63 @@ class AppLocalizationsVi extends AppLocalizations {
       'Dữ liệu chỉ nằm trên máy này. Nên xuất bản sao lưu thường xuyên.';
 
   @override
+  String get autoBackup => 'Sao lưu tự động';
+
+  @override
+  String get autoBackupNote =>
+      'Ví Gọn chỉ ghi file vào thư mục bạn chọn. Việc tải lên Google Drive hay Dropbox do app đó thực hiện.';
+
+  @override
+  String autoBackupFolder(String name) {
+    return 'Thư mục: $name';
+  }
+
+  @override
+  String get autoBackupFolderUnknown => 'Thư mục đã chọn';
+
+  @override
+  String autoBackupLast(String time) {
+    return 'Lần cuối: $time';
+  }
+
+  @override
+  String get autoBackupNever => 'Chưa sao lưu lần nào';
+
+  @override
+  String get autoBackupErrorFolder =>
+      'Không ghi được vào thư mục. Chọn lại thư mục';
+
+  @override
+  String get autoBackupErrorOther =>
+      'Sao lưu không thành công. Thử lại bằng Sao lưu ngay';
+
+  @override
+  String get autoBackupNow => 'Sao lưu ngay';
+
+  @override
+  String get autoBackupChooseFolder => 'Chọn lại thư mục';
+
+  @override
+  String get autoBackupDone => 'Đã sao lưu';
+
+  @override
+  String get autoBackupOffDone =>
+      'Đã tắt sao lưu tự động. File đã ghi vẫn còn trong thư mục.';
+
+  @override
+  String get autoBackupPickFailed => 'Không mở được bộ chọn thư mục';
+
+  @override
+  String get autoBackupPasswordTitle => 'Mật khẩu sao lưu tự động';
+
+  @override
+  String get autoBackupPasswordWarning =>
+      'Quên mật khẩu thì không mở được các file sao lưu; bạn cần nhớ nó khi khôi phục trên máy khác.';
+
+  @override
+  String get autoBackupTurnOn => 'Bật';
+
+  @override
   String get restoreConfirm =>
       'Dữ liệu hiện tại sẽ bị thay thế bằng bản sao lưu. Tiếp tục?';
 
@@ -553,6 +649,26 @@ class AppLocalizationsVi extends AppLocalizations {
   @override
   String get secureWindowNote =>
       'Chặn chụp màn hình và ẩn nội dung trong danh sách app gần đây';
+
+  @override
+  String get widgetShowAmounts => 'Hiện số tiền trên widget';
+
+  @override
+  String get widgetShowAmountsNote =>
+      'Ai cầm máy cũng nhìn thấy số này trên màn hình chờ. Khi đang bật khóa PIN, widget luôn ẩn số.';
+
+  @override
+  String widgetSpentThisMonth(String spent) {
+    return 'Tháng này đã chi $spent';
+  }
+
+  @override
+  String widgetSpentOfBudget(String spent, String budget) {
+    return 'Tháng này đã chi $spent / $budget';
+  }
+
+  @override
+  String get widgetLockedByPin => 'Đã khóa bằng PIN';
 
   @override
   String get about => 'Giới thiệu';

@@ -11,6 +11,7 @@ import 'auto_backup_section.dart';
 import 'budget_dialog.dart';
 import 'currency_picker.dart';
 import 'data_actions.dart';
+import 'reminder_section.dart';
 import 'secure_window.dart';
 import 'widget_section.dart';
 
@@ -156,6 +157,7 @@ class SettingsScreen extends ConsumerWidget {
             onChanged: repo.setSecureWindow,
           ),
           const WidgetAmountsSwitch(),
+          ReminderSection(header: header(l.reminderSection)),
           header(l.dataSection),
           Padding(
             padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),

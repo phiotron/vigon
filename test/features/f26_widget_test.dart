@@ -356,7 +356,7 @@ void main() {
         100,
         scrollable: find.byType(Scrollable).first,
       );
-      await tester.drag(find.byType(ListView), const Offset(0, -200));
+      await tester.ensureVisible(toggle);
       await settle(tester);
       expect(tester.widget<SwitchListTile>(toggle).value, isFalse);
       expect(
@@ -466,7 +466,24 @@ void main() {
           .firstMatch(manifest)!
           .group(0)!;
       expect(receiver, contains('android:exported="false"'));
-      expect(manifest.contains('<uses-permission'), isFalse);
+      // Widget không thêm quyền nào; chỉ còn hai quyền thông báo của F-25.
+      // Bỏ qua các dòng khai báo để GỠ quyền (tools:node="remove").
+      final perms = RegExp(r'<uses-permission[^>]*>')
+          .allMatches(manifest)
+          .map((m) => m.group(0)!)
+          .where((tag) => !tag.contains('tools:node="remove"'))
+          .map(
+            (tag) =>
+                RegExp(r'android:name="([^"]+)"').firstMatch(tag)!.group(1)!,
+          )
+          .toSet();
+      expect(
+        perms.difference({
+          'android.permission.POST_NOTIFICATIONS',
+          'android.permission.RECEIVE_BOOT_COMPLETED',
+        }),
+        isEmpty,
+      );
     });
 
     test(
