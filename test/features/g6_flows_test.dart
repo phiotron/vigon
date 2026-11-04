@@ -128,7 +128,7 @@ void main() {
     expect(find.text('1 khoản sẽ được chuyển sang:'), findsOneWidget);
     await tester.tap(
       find.descendant(
-        of: find.byType(SimpleDialog),
+        of: find.byType(AlertDialog),
         matching: find.text('Đi lại'),
       ),
     );

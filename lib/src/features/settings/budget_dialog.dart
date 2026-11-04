@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:intl/intl.dart';
 
 import '../../../l10n/app_localizations.dart';
 import '../../data/calculator.dart';
@@ -8,15 +9,22 @@ import '../../data/money.dart';
 import '../../providers.dart';
 import '../entry/keypad.dart' show minorUnitsToInput;
 
-/// Đặt hoặc bỏ hạn mức chi mỗi tháng (AC-26).
+/// Ký hiệu tiền tệ, ví dụ "₫"; không có ký hiệu riêng thì là chính mã.
+String currencySymbol(String code) =>
+    NumberFormat.simpleCurrency(name: code).currencySymbol;
+
+/// Đặt hoặc bỏ hạn mức chi mỗi tháng (AC-26), theo 5.3 và 5.4: ô Số tiền tự
+/// focus, lỗi ngay dưới ô; Bỏ ngân sách (khi đang đặt), Hủy, Lưu.
 Future<void> showBudgetDialog(BuildContext context, WidgetRef ref) async {
-  final digits = currencyDecimalDigits(
-    ref.read(currencyProvider).value ?? 'VND',
-  );
+  final currency = ref.read(currencyProvider).value ?? 'VND';
   final current = ref.read(budgetProvider).value;
   final result = await showDialog<(int?,)>(
     context: context,
-    builder: (context) => _BudgetDialog(current: current, digits: digits),
+    builder: (context) => _BudgetDialog(
+      current: current,
+      digits: currencyDecimalDigits(currency),
+      symbol: currencySymbol(currency),
+    ),
   );
   if (result != null) {
     await ref.read(settingsRepositoryProvider).setBudget(result.$1);
@@ -25,10 +33,15 @@ Future<void> showBudgetDialog(BuildContext context, WidgetRef ref) async {
 
 /// Hộp thoại tự giữ ô nhập để giải phóng đúng lúc, sau hiệu ứng đóng.
 class _BudgetDialog extends StatefulWidget {
-  const _BudgetDialog({required this.current, required this.digits});
+  const _BudgetDialog({
+    required this.current,
+    required this.digits,
+    required this.symbol,
+  });
 
   final int? current;
   final int digits;
+  final String symbol;
 
   @override
   State<_BudgetDialog> createState() => _BudgetDialogState();
@@ -73,11 +86,19 @@ class _BudgetDialogState extends State<_BudgetDialog> {
         inputFormatters: [
           FilteringTextInputFormatter.allow(RegExp(r'[0-9.,]')),
         ],
-        decoration: InputDecoration(errorText: _error),
+        style: const TextStyle(fontFeatures: [FontFeature.tabularFigures()]),
+        decoration: InputDecoration(
+          labelText: l.amountLabel,
+          suffixText: widget.symbol,
+          errorText: _error,
+        ),
       ),
       actions: [
         if (widget.current != null)
           TextButton(
+            style: TextButton.styleFrom(
+              foregroundColor: Theme.of(context).colorScheme.error,
+            ),
             onPressed: () => Navigator.pop(context, (null,)),
             child: Text(l.budgetRemove),
           ),

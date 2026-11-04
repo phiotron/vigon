@@ -169,5 +169,9 @@
   "cannotUndo": "This cannot be undone",
   "previousMonth": "Previous month",
   "nextMonth": "Next month",
-  "rangeHint": "Pick the first day, then the last day"
+  "rangeHint": "Pick the first day, then the last day",
+  "amountLabel": "Amount",
+  "initialBalanceHelper": "Leave empty for 0. Negative amounts are allowed.",
+  "recurringEditNote": "Applies to the records it creates from now on.",
+  "deleteCategoryEmptyBody": "This category has no records."
 }

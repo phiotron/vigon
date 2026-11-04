@@ -967,6 +967,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Pick the first day, then the last day'**
   String get rangeHint;
+
+  /// No description provided for @amountLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Amount'**
+  String get amountLabel;
+
+  /// No description provided for @initialBalanceHelper.
+  ///
+  /// In en, this message translates to:
+  /// **'Leave empty for 0. Negative amounts are allowed.'**
+  String get initialBalanceHelper;
+
+  /// No description provided for @recurringEditNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Applies to the records it creates from now on.'**
+  String get recurringEditNote;
+
+  /// No description provided for @deleteCategoryEmptyBody.
+  ///
+  /// In en, this message translates to:
+  /// **'This category has no records.'**
+  String get deleteCategoryEmptyBody;
 }
 
 class _AppLocalizationsDelegate

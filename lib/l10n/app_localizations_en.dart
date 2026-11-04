@@ -481,4 +481,18 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get rangeHint => 'Pick the first day, then the last day';
+
+  @override
+  String get amountLabel => 'Amount';
+
+  @override
+  String get initialBalanceHelper =>
+      'Leave empty for 0. Negative amounts are allowed.';
+
+  @override
+  String get recurringEditNote =>
+      'Applies to the records it creates from now on.';
+
+  @override
+  String get deleteCategoryEmptyBody => 'This category has no records.';
 }
