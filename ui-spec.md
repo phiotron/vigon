@@ -155,7 +155,7 @@ Màn chính "/"
 
 - Nút phép tính (`÷ × − +`, `=`) tô màu phụ để phân biệt với chữ số.
 - Nút lớn cuối hàng ghi **"Lưu"**; nếu chưa chọn danh mục thì ghi **"Chọn danh mục"**. Màu đỏ (chi) hoặc xanh (thu); chữ đen trên giao diện tối, trắng trên giao diện sáng.
-- Quy tắc gõ: tối đa 30 ký tự; bấm hai phép tính liền nhau thì phép sau thay phép trước; không cho bắt đầu bằng phép tính; `⌫` xóa ký tự cuối; `=` thay cả biểu thức bằng kết quả (nếu hợp lệ và lớn hơn 0).
+- Quy tắc gõ: tối đa 30 ký tự; kết quả tối đa 1.000.000.000.000 đơn vị nhỏ nhất (VND: 1.000 tỷ đồng), vượt thì báo "Phép tính không hợp lệ"; bấm hai phép tính liền nhau thì phép sau thay phép trước; không cho bắt đầu bằng phép tính; `⌫` xóa ký tự cuối; `=` thay cả biểu thức bằng kết quả (nếu hợp lệ và lớn hơn 0).
 - Tính toán: nhân chia trước, cộng trừ sau; kết quả làm tròn tới đơn vị nhỏ nhất của tiền tệ.
 
 **Lưới chọn danh mục** (bảng kéo từ dưới lên): tiêu đề "Chọn danh mục", lưới icon tròn kèm tên (tối đa 2 dòng), mỗi ô rộng tối đa 96 dp; chạm một danh mục là chọn và đóng. Loại danh mục theo loại khoản (chi hoặc thu).
@@ -477,10 +477,10 @@ Ghi theo code hiện tại; chi tiết và mức độ nằm ở `docs/BACKLOG.m
 
 - **Chưa có chức năng xóa hay ẩn tài khoản**; chưa có tìm kiếm khoản; chưa có sửa tần suất/danh mục của chuỗi định kỳ (chỉ sửa số tiền và ghi chú).
 - **PIN:** không đếm lần nhập sai, không làm chậm; giờ ra nền lấy từ đồng hồ máy nên đổi giờ máy có thể qua được hạn 1 phút. PIN chỉ chặn người cầm máy, không mã hóa dữ liệu (D-007).
-- **"Hôm nay" đọc một lần:** nếu app sống qua nửa đêm, thanh ngân sách và kỳ mặc định vẫn là tháng cũ tới khi app bị tắt.
+- **Kỳ mặc định** ở màn chính là tháng lúc mở app; app sống qua nửa đêm thì kỳ đang xem không tự nhảy (thanh ngân sách thì tự sang tháng mới khi quay lại từ nền).
 - **Khôi phục** hỏi xác nhận trước khi kiểm file (dữ liệu vẫn an toàn vì kiểm hết trước khi xóa).
 - **Đổi tiền tệ** USD→VND làm tròn phần lẻ, đổi lại không hoàn được.
-- **Không giới hạn số tiền tối đa**; phép tính dùng số thực nên một số ca làm tròn nửa có thể lệch 1 đơn vị nhỏ nhất; số quá lớn có nguy cơ tràn khi cộng tổng.
+- **Số tiền một khoản tối đa 1.000.000.000.000 đơn vị nhỏ nhất**; vượt thì chỉ báo "Phép tính không hợp lệ" (chưa có thông báo riêng "quá lớn").
 - **Danh mục chi vượt số icon xếp vừa quanh biểu đồ** thì danh mục thừa không chạm được từ biểu đồ (vẫn chọn được ở lưới chọn danh mục). Với 10 danh mục mặc định trên màn 360 dp thì đủ chỗ.
 - **Màn Các khoản:** số tiền ở dòng khoản con căn mép phải xa hơn số tiền ở dòng danh mục (do danh mục có thêm mũi tên); chỉ là lệch thị giác.
 - **Nút lọc tài khoản** ở màn chính chỉ là icon ví, không hiện tên tài khoản đang lọc.

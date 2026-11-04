@@ -29,6 +29,11 @@ Cập nhật khi viết test hoặc khi thử tay. Một AC chưa có dòng ở 
 | AC (SPEC) | Cách | Test hoặc biên bản (tên test / mục trong BACKLOG) | Kết quả lần cuối (ngày, lệnh hoặc máy, đạt/hỏng) |
 |-----------|------|----------------------------------------------------|-----------------------------------------------------|
 | AC-01 | tự động + đo | `entry_flow_test`; `integration_test/perf_test.dart`: từ chạm "−" tới khung hình đầu có bàn phím, 5 lần | 2026-11-03 Galaxy A13 bản profile: 84/80/82/80/81 ms; đạt |
+| AC-04 | tự động | `g6_flows_test` (ghi chú cắt ở 200 ký tự, chọn tài khoản thứ hai, chọn ngày trong hộp chọn ngày) | 2026-11-04 flutter test 116/116 đạt |
+| AC-10 | tự động | `g6_flows_test` (kỳ Tuần bắt đầu Thứ Hai, kỳ sau, kỳ Năm); `period_test`; "Khoảng tùy chọn" chưa có test giao diện | 2026-11-04 đạt (trừ khoảng tùy chọn) |
+| AC-16, AC-17 | tự động | `g3_screens_test` (thêm danh mục), `g6_flows_test` (đổi tên, màu, icon; xóa danh mục và chuyển khoản sang danh mục khác) | 2026-11-04 đạt |
+| AC-20 | tự động | `g6_flows_test` (lọc theo Thẻ rồi bỏ lọc, số dư đổi đúng) | 2026-11-04 đạt |
+| AC-26 | tự động | `g6_flows_test` (số 0 bị từ chối, đặt 1.000.000, chạm thanh để bỏ), `g4_screens_test` | 2026-11-04 đạt |
 | AC-08 | tự động | `summary_test` (6, 7, 12, 13 danh mục bằng nhau và ca khoản rất nhỏ/lớn: phần trăm hiển thị cộng đúng 100,0) | 2026-11-03 flutter test 107/107 đạt |
 | AC-12 | tự động | `g6_accessibility_test` "đổi ngày đầu tuần khi đang xem Tuần" | 2026-11-03 đạt |
 | AC-32 | tự động + tay | `g5_lock_test` (kể cả bộ nhớ an toàn lỗi vẫn hiện màn khóa); biên bản G5 | 2026-11-03 đạt |

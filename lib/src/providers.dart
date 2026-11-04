@@ -5,6 +5,7 @@ import 'package:package_info_plus/package_info_plus.dart';
 import 'data/account_repository.dart';
 import 'data/category_repository.dart';
 import 'data/database.dart';
+import 'data/dates.dart';
 import 'data/entry_repository.dart';
 import 'data/period.dart';
 import 'data/recurring_repository.dart';
@@ -167,11 +168,27 @@ final recurringRulesProvider = StreamProvider<List<RecurringRule>>(
   (ref) => ref.watch(recurringRepositoryProvider).watch(),
 );
 
+/// Ngày hôm nay. Làm mới khi app quay lại từ nền, để app sống qua nửa đêm hay
+/// qua ngày đầu tháng vẫn tính ngân sách đúng tháng.
+class TodayNotifier extends Notifier<DateTime> {
+  @override
+  DateTime build() => dateOnly(ref.read(clockProvider)());
+
+  void refresh() {
+    final today = dateOnly(ref.read(clockProvider)());
+    if (today != state) state = today;
+  }
+}
+
+final todayProvider = NotifierProvider<TodayNotifier, DateTime>(
+  TodayNotifier.new,
+);
+
 /// Tổng chi của tháng hiện tại (theo ngày bắt đầu tháng), mọi tài khoản (AC-27).
 final budgetSpentProvider = StreamProvider<int>((ref) {
   final month = Period.containing(
     PeriodType.month,
-    ref.read(clockProvider)(),
+    ref.watch(todayProvider),
     monthStartDay: ref.watch(monthStartDayProvider).value ?? 1,
   );
   return ref

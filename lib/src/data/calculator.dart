@@ -4,12 +4,16 @@ import 'dart:math';
 const opAdd = '+', opSub = '−', opMul = '×', opDiv = '÷';
 const _ops = {opAdd, opSub, opMul, opDiv};
 
+/// Số tiền tối đa một khoản, theo đơn vị nhỏ nhất (VND: 1.000 tỷ đồng). Nhỏ hơn
+/// nhiều so với giới hạn số nguyên 64-bit nên cộng hàng nghìn khoản không tràn.
+const maxMinorUnits = 1000000000000;
+
 bool isOperator(String s) => _ops.contains(s);
 
 /// Tính biểu thức trên bàn phím, ví dụ `120+35` hoặc `12.5×2`, ra số tiền
 /// theo đơn vị nhỏ nhất với [decimalDigits] chữ số thập phân.
 /// Nhân chia trước, cộng trừ sau. Trả về null khi biểu thức rỗng hoặc sai
-/// (chia cho 0, thiếu số sau phép tính, nhiều dấu chấm).
+/// (chia cho 0, thiếu số sau phép tính, nhiều dấu chấm) hoặc kết quả vượt [maxMinorUnits].
 int? evaluateToMinorUnits(String expression, {required int decimalDigits}) {
   final tokens = _tokenize(expression);
   if (tokens == null || tokens.isEmpty) return null;
@@ -46,7 +50,12 @@ int? evaluateToMinorUnits(String expression, {required int decimalDigits}) {
   for (var i = 0; i < signs.length; i++) {
     result = signs[i] == opAdd ? result + terms[i + 1] : result - terms[i + 1];
   }
-  return (result * pow(10, decimalDigits)).round();
+  // Bỏ nhiễu số thực (1.005 × 100 = 100.49999999999999) trước khi làm tròn nửa lên.
+  final scaled = double.parse(
+    (result * pow(10, decimalDigits)).toStringAsPrecision(15),
+  );
+  if (scaled.abs() > maxMinorUnits) return null;
+  return scaled.round();
 }
 
 /// Tách thành [số, phép, số, phép, ..., số]; null nếu sai cú pháp.

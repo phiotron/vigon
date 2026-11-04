@@ -81,6 +81,9 @@ Mỗi lỗi: BUG-xxx · nguyên nhân gốc · cách sửa · làm sao tránh l�
 - BUG-008 · Nút chọn icon danh mục có tooltip là mã tiếng Anh ("local_cafe"), TalkBack đọc mã này, trái AC-36 và AC-39. Sửa: tên "Biểu tượng N" lấy từ file dịch.
 - BUG-009 · Màn nhập khoản và chuyển tiền: nếu ghi lỗi thì nút Lưu kẹt (cờ `_saving` không được đặt lại); khoản có ngày trước năm 2000 (từ file khôi phục) làm hộp chọn ngày lỗi. Sửa cả hai.
 - BUG-010 · Sau khôi phục sao lưu, bộ lọc tài khoản cũ còn nguyên; nếu tài khoản đó không còn thì màn chính trống. Sửa: khôi phục xong thì đặt lọc về "Tất cả tài khoản".
+- BUG-011 · Gõ số quá lớn (hơn 15 chữ số) làm số tiền bị chặn ở mức tối đa của số nguyên 64-bit (9,22 tỷ tỷ); cộng hai khoản như vậy sẽ tràn khi tính tổng. Ngoài ra 1.005 USD ra 100 cent thay vì 101 (nhiễu số thực). Sửa: số tiền một khoản tối đa 1.000.000.000.000 đơn vị nhỏ nhất (VND: 1.000 tỷ đồng; USD: 10 tỷ đô), vượt thì báo "Phép tính không hợp lệ"; bỏ nhiễu số thực trước khi làm tròn nửa lên. Test: `calculator_test`. Phát hiện bởi `/spec-review`.
+- BUG-012 · App sống qua nửa đêm hoặc qua ngày đầu tháng thì thanh ngân sách vẫn tính tháng cũ tới khi app bị tắt. Sửa: `todayProvider` làm mới khi app quay lại từ nền. Test: `g6_flows_test`.
+- BUG-013 · Hộp thoại Ngân sách và hộp thoại sửa khoản định kỳ giải phóng ô nhập (`TextEditingController`) ngay khi đóng, trong lúc hiệu ứng đóng còn vẽ: bản debug ném lỗi "used after being disposed" (bản release không hiện lỗi). Sửa: mỗi hộp thoại là một `StatefulWidget` tự giữ và giải phóng ô nhập. Phát hiện khi viết test AC-26; test: `g6_flows_test`.
 - BUG-004 · Mở một nhóm vài nghìn khoản ở màn Các khoản làm máy đứng hình (khung hình dựng 13,4 giây với 5.000 khoản). Nguyên nhân gốc: `ExpansionTile` dựng toàn bộ dòng con ngay khi mở, và cả màn là `ListView(children: [...])` không dựng lười. Cách sửa: `ListView.builder` với danh sách hàm dựng dòng, nhóm mở lưu trong state; còn 1 khung hình 46,8 ms lúc mở. Tránh lần sau: danh sách có thể dài thì luôn dùng `ListView.builder`; test dữ liệu lớn bằng `integration_test/perf_test.dart`, vì test 5 khoản không thấy lỗi này.
 - BUG-003 · TalkBack đọc được tên 10 icon danh mục quanh biểu đồ nhưng không bấm được (uiautomator báo không clickable). Nguyên nhân gốc: `CategoryAvatar` bọc `Semantics(excludeSemantics: true)` làm mất cả hành động chạm của `InkWell` bên trong; guideline nhãn của Flutter không bắt được vì nút không còn hành động chạm. Cách sửa: gắn `onTap` vào chính `Semantics` (`lib/src/ui/category_avatar.dart`), test chặn trong `g6_accessibility_test`. Tránh lần sau: dùng `excludeSemantics` trên nút thì luôn kiểm `hasTapAction` (D-008).
 - BUG-001 · App crash ngay khi mở trên Galaxy A13: "Could not find libflutter.so, looked for armeabi-v7a". Nguyên nhân gốc: APK build với `--target-platform android-arm64`, nhưng máy có chip 64-bit lại chạy hệ điều hành chỉ 32-bit (`ro.product.cpu.abilist64` rỗng). Cách sửa: build APK đủ kiến trúc (`flutter build apk --release`); bản phát hành dùng AAB thì Play tự chia theo kiến trúc. Tránh lần sau: không build APK một kiến trúc để thử; kiểm `adb shell getprop ro.product.cpu.abilist` của máy thử. Test trên máy tính và giả lập không bắt được lỗi này (L-003).
@@ -88,15 +91,15 @@ Mỗi lỗi: BUG-xxx · nguyên nhân gốc · cách sửa · làm sao tránh l�
 
 ## Phát hiện của `/spec-review` chưa xử lý (đã kiểm với code, xếp theo mức độ)
 Nguồn: agent `reviewer` chỉ đọc, 2026-11-03. Các lỗi đã sửa nằm ở BUG-005 tới BUG-010. Còn lại, chưa sửa vì ngoài SPEC hoặc cần người dùng quyết:
-- [ ] (nhẹ) "Hôm nay" chỉ đọc một lần: app sống qua nửa đêm thì thanh ngân sách và kỳ mặc định vẫn là tháng cũ tới khi app bị tắt (`providers.dart`)
+- [x] (nhẹ) "Hôm nay" chỉ đọc một lần: đã sửa phần thanh ngân sách (BUG-012); kỳ mặc định ở màn chính vẫn là tháng lúc mở app, người dùng tự đổi kỳ được
 - [ ] (nhẹ) PIN không đếm lần nhập sai, không làm chậm; giờ ra nền dùng đồng hồ tường nên đổi giờ máy qua được AC-32 (SPEC không đòi; D-007 đã nói PIN chỉ chặn người tò mò)
 - [ ] (nhẹ) Khôi phục hỏi xác nhận trước khi kiểm file (dữ liệu vẫn an toàn vì kiểm trước khi xóa); SPEC ghi kiểm trước rồi mới hỏi
 - [ ] (nhẹ) Đổi tiền tệ USD→VND làm tròn phần lẻ, đổi lại không hoàn được; chữ cảnh báo chưa nói rõ
-- [ ] (nhẹ) Không giới hạn số tiền tối đa; phép tính dùng số thực nên 1.005 USD có thể ra 100 thay vì 101 cent; số rất lớn có nguy cơ tràn khi cộng tổng
+- [x] (nhẹ) Không giới hạn số tiền tối đa, 1.005 USD ra 100 cent: đã sửa (BUG-011)
 - [ ] (nhẹ) Nếu có hơn 10 danh mục chi, danh mục thừa không chạm được từ vòng icon quanh biểu đồ (AC-06)
 - [ ] (nhẹ) CSV: tiêu đề cột và loại luôn tiếng Anh, số lẻ dùng dấu chấm; chưa thử Excel
 - [ ] (nhẹ) Danh sách tiền tệ chỉ 31 mã, chưa phải toàn bộ ISO 4217 (AC-21)
-- [ ] Thiếu test giao diện cho AC-04, AC-10 (khoảng tùy chọn), AC-16 (đổi tên/màu/icon), AC-17 (chọn danh mục thay thế), AC-20 (nút lọc), AC-26 (hộp thoại ngân sách); thiếu biên bản máy thật cho AC-14, AC-09, AC-37 tới AC-40 thật
+- [x] Đã thêm test giao diện cho AC-04, AC-10 (kỳ Tuần/Năm), AC-16, AC-17, AC-20, AC-26 (`g6_flows_test`). Còn thiếu: test chọn "Khoảng tùy chọn" bằng hộp chọn ngày, và biên bản máy thật cho AC-14, AC-09, AC-37 tới AC-40 (cần người dùng cho dùng máy)
 - [ ] Ký bản release đang bằng khóa debug (`android/app/build.gradle.kts`): phải đổi sang khóa phát hành ở `/release` (việc của người dùng: tạo và cất khóa)
 
 ## Ý tưởng ngoài SPEC (chưa được duyệt, KHÔNG tự làm)

@@ -51,4 +51,28 @@ void main() {
     expect(k('120+35', keyEquals), '155');
     expect(k('5÷0', keyEquals), '5÷0');
   });
+
+  test('số quá lớn bị từ chối thay vì tràn số nguyên', () {
+    expect(
+      evaluateToMinorUnits('999999999999999999999999999999', decimalDigits: 0),
+      isNull,
+    );
+    expect(evaluateToMinorUnits('1000000000001', decimalDigits: 0), isNull);
+    expect(
+      evaluateToMinorUnits('1000000000000', decimalDigits: 0),
+      1000000000000,
+    );
+    expect(
+      evaluateToMinorUnits('9999999999×9999999999', decimalDigits: 0),
+      isNull,
+    );
+    expect(evaluateToMinorUnits('10000000000.01', decimalDigits: 2), isNull);
+  });
+
+  test('làm tròn nửa lên đúng với số thập phân (1.005 USD = 101 cent)', () {
+    expect(evaluateToMinorUnits('1.005', decimalDigits: 2), 101);
+    expect(evaluateToMinorUnits('2.675', decimalDigits: 2), 268);
+    expect(evaluateToMinorUnits('0.1+0.2', decimalDigits: 2), 30);
+    expect(evaluateToMinorUnits('10÷3', decimalDigits: 2), 333);
+  });
 }

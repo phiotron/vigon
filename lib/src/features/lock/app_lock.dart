@@ -94,6 +94,7 @@ class _AppLifecycleWatcherState extends ConsumerState<AppLifecycleWatcher> {
       onHide: () => ref.read(lockProvider.notifier).onHidden(),
       onResume: () {
         ref.read(lockProvider.notifier).onResumed();
+        ref.read(todayProvider.notifier).refresh();
         ref
             .read(recurringRepositoryProvider)
             .generateDue(ref.read(clockProvider)());
