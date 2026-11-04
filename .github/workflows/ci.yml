@@ -25,3 +25,25 @@ jobs:
           flutter pub get
           flutter analyze
           if [ -d test ]; then flutter test; else echo "Chưa có thư mục test/."; fi
+
+  # PLAN-001 T6 (iOS-01, D-011): chỉ kiểm biên dịch iOS. KHÔNG ký, không TestFlight,
+  # không dùng bí mật. App Store đòi Xcode 26 / SDK iOS 26 trở lên (COMPLIANCE P-01).
+  # CHƯA chạy thử: máy phát triển là Windows; chạy lần đầu khi đẩy nhánh lên remote.
+  ios:
+    runs-on: macos-26
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - name: Kiểm phiên bản Xcode (P-01)
+        run: |
+          xcodebuild -version
+          major=$(xcodebuild -version | head -1 | awk '{print $2}' | cut -d. -f1)
+          if [ "$major" -lt 26 ]; then echo "Cần Xcode 26 trở lên, đang có $major"; exit 1; fi
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: 3.47.8
+          cache: true
+      - name: Build iOS không ký
+        run: |
+          flutter pub get
+          flutter build ios --release --no-codesign
