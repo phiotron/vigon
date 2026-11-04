@@ -2,6 +2,12 @@
 
 Mỗi quyết định một mục, mới nhất ở trên cùng.
 
+## D-012 · Mã cài đặt đi kèm PIN để phát hiện cài lại trên iOS · 2026-11-04
+- Bối cảnh: PLAN-001 T6 (iOS-02). Keychain iOS giữ mã PIN băm sau khi gỡ app, trong khi cơ sở dữ liệu SQLite bị xóa theo app; cài lại sẽ bị khóa bằng PIN cũ mà người dùng không còn dữ liệu để bảo vệ (D-007).
+- Quyết định: Khi đặt PIN, `PinService` ghi một mã cài đặt ngẫu nhiên 16 byte vào bộ nhớ an toàn (`pin_install_id`) và vào bảng settings (`pinInstallId`); đổi PIN dùng lại mã đã có. Lúc mở app, nếu bộ nhớ an toàn có PIN kèm mã mà settings không có đúng mã đó (cơ sở dữ liệu mới) thì xóa PIN cũ. PIN đặt trước bản này (không có mã) giữ nguyên để không mất khóa của người đang dùng. Lỗi đọc thì không xóa gì. Mã KHÔNG đi vào file `.vigon` (xuất bỏ khóa này, khôi phục bỏ qua nó, `Xóa toàn bộ dữ liệu` giữ nó), nên định dạng sao lưu không đổi (D-006).
+- Lý do / phương án đã loại: Cờ "đã chạy lần đầu" trong SharedPreferences (loại: cũng bị xóa theo app trên Android nhưng không phát hiện được lệch Keychain/DB). Luôn xóa PIN khi cơ sở dữ liệu trống (loại: xóa nhầm PIN của người vừa xóa dữ liệu rồi đặt lại).
+- Hệ quả cần nhớ: Chưa kiểm chứng trên Keychain iOS và Keystore Android thật. Trên iOS, cơ sở dữ liệu và Keychain mặc định vào bản sao lưu iCloud/máy tính và khớp nhau, nên PIN vẫn giữ khi chuyển máy; chính sách quyền riêng tư có thể cần nói thêm điều này.
+
 ## D-011 · Thêm bản iOS từ cùng codebase, build trên cloud · 2026-11-04
 - Bối cảnh: Người dùng muốn app chạy iPhone và Android theo bộ thiết kế mới (PLAN-001). D-001 để iOS sau vì cần máy Mac; máy phát triển vẫn là Windows.
 - Quyết định: Thêm nền tảng iOS bằng `flutter create --platforms ios --org com.phiotron .` (bundle id `com.phiotron.vigon`, trùng package Android). Build iOS trên cloud có máy macOS (người dùng chọn): CI chạy `flutter build ios --release --no-codesign` để chắc biên dịch được; bản ký và TestFlight qua Codemagic hoặc GitHub Actions khi người dùng có remote git và tài khoản Apple Developer. Làm ở giai đoạn T6 của PLAN-001, sau khi giao diện Android xong.

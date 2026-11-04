@@ -2,7 +2,7 @@
 
 Đã duyệt: 2026-11-04
 Ngày tạo: 2026-11-04
-Trạng thái: đang làm (T1)
+Trạng thái: đang làm (T1–T4 xong, T5 và T6 xong phần code; còn so ảnh, thử máy, build iOS)
 Liên quan SPEC: mục 4 và 5 (iOS vào phạm vi, giao diện theo `design-mobile/screens/`); mọi F-01…F-13 giữ nguyên chức năng. D-010, D-011.
 
 ## 1. Mục tiêu và lý do
@@ -55,4 +55,5 @@ Mỗi giai đoạn xong: `flutter analyze` sạch, `dart format lib test`, `flut
 - Cuối: `/check-ac APP-001` → `/spec-review APP-001 PLAN-001` → người dùng chọn gộp nhánh.
 
 ## 8. Câu hỏi còn mở
-- Dịch vụ build iOS: Codemagic hay GitHub Actions (quyết ở T6, cần remote git trước).
+- Dịch vụ build iOS: bước build KHÔNG ký chạy bằng GitHub Actions (job `ios` trong `.github/workflows/ci.yml`, cần đẩy lên remote); Codemagic hay GitHub Actions cho bước ký và TestFlight còn chờ người dùng.
+- Chọn danh mục ở màn ghi khoản: giữ lưu ngay (AC-02, 3 lần chạm) hay theo bản vẽ 3.3 (chưa lưu, 4 lần chạm, phải sửa SPEC)?
