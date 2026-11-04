@@ -15,6 +15,7 @@ import 'features/home/home_screen.dart';
 import 'features/lock/app_lock.dart';
 import 'features/lock/lock_screen.dart';
 import 'features/recurring/recurring_screen.dart';
+import 'features/settings/secure_window.dart';
 import 'features/settings/settings_screen.dart';
 import 'providers.dart';
 import 'ui/messenger.dart';
@@ -95,6 +96,7 @@ class VigonApp extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     ref.watch(startupProvider);
+    ref.watch(secureWindowSyncProvider);
     final themeMode = ref.watch(themeModeProvider).value ?? ThemeMode.system;
     final localeCode = ref.watch(localeCodeProvider).value;
     final lock = ref.watch(lockProvider);

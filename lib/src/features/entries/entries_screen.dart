@@ -11,6 +11,7 @@ import '../../providers.dart';
 import '../../ui/category_avatar.dart';
 import '../../ui/format.dart';
 import '../../ui/messenger.dart';
+import 'entry_search.dart';
 
 /// Danh sách khoản trong kỳ, gom theo danh mục, có tổng và phần trăm (AC-08).
 /// Dựng lười (chỉ các dòng đang nhìn thấy) để nhóm hàng nghìn khoản vẫn mượt (NFR 5b).
@@ -160,8 +161,13 @@ class _EntriesScreenState extends ConsumerState<EntriesScreen> {
     items.add(() => const SizedBox(height: 24));
 
     return Scaffold(
-      appBar: AppBar(title: Text(periodTitle(context, period))),
-      body: rows.isEmpty
+      appBar: EntriesAppBar(title: periodTitle(context, period)),
+      body: ref.watch(entrySearchProvider.select((s) => s.active))
+          ? EntrySearchResults(
+              tileBuilder: (r, title, amount) =>
+                  _EntryTile(row: r, title: title, amount: amount),
+            )
+          : rows.isEmpty
           ? Center(child: Text(l.noEntries))
           : ListView.builder(
               itemCount: items.length,
