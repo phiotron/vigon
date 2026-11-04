@@ -2,6 +2,12 @@
 
 Mỗi quyết định một mục, mới nhất ở trên cùng.
 
+## D-013 · Chọn danh mục thì lưu luôn, khác bản vẽ 3.3 · 2026-11-04
+- Bối cảnh: Bản vẽ S04 (3.3) và README thiết kế ghi "Chọn danh mục chỉ đóng lưới và điền chip, chưa lưu", nghĩa là 4 lần chạm. SPEC AC-02 yêu cầu từ màn chính tới lúc lưu tối đa 3 lần chạm (không tính chạm nhập số), và `entry_flow_test` kiểm đúng điều đó.
+- Quyết định: Người dùng chọn giữ AC-02 (2026-11-04). Ở màn ghi khoản, khi nút lớn đang ghi "Chọn danh mục" mà chưa có danh mục, chạm một ô trong lưới thì khoản được lưu ngay và về màn chính. Đường vào từ icon danh mục ở màn chính (đã có danh mục) vẫn vào thẳng trạng thái "Lưu". Không sửa SPEC.
+- Lý do / phương án đã loại: Theo bản vẽ, thêm một lần chạm (loại: trái mục tiêu ghi nhanh của SPEC; phải sửa SPEC và test).
+- Hệ quả cần nhớ: Bản vẽ 3.3 lệch code ở điểm này; khi xuất lại thiết kế từ design system phải sửa chú thích 3.3 cho khớp, tránh người đọc sau tưởng là lỗi. Đóng bảng danh mục mà không chọn thì không lưu (khớp bản vẽ).
+
 ## D-012 · Mã cài đặt đi kèm PIN để phát hiện cài lại trên iOS · 2026-11-04
 - Bối cảnh: PLAN-001 T6 (iOS-02). Keychain iOS giữ mã PIN băm sau khi gỡ app, trong khi cơ sở dữ liệu SQLite bị xóa theo app; cài lại sẽ bị khóa bằng PIN cũ mà người dùng không còn dữ liệu để bảo vệ (D-007).
 - Quyết định: Khi đặt PIN, `PinService` ghi một mã cài đặt ngẫu nhiên 16 byte vào bộ nhớ an toàn (`pin_install_id`) và vào bảng settings (`pinInstallId`); đổi PIN dùng lại mã đã có. Lúc mở app, nếu bộ nhớ an toàn có PIN kèm mã mà settings không có đúng mã đó (cơ sở dữ liệu mới) thì xóa PIN cũ. PIN đặt trước bản này (không có mã) giữ nguyên để không mất khóa của người đang dùng. Lỗi đọc thì không xóa gì. Mã KHÔNG đi vào file `.vigon` (xuất bỏ khóa này, khôi phục bỏ qua nó, `Xóa toàn bộ dữ liệu` giữ nó), nên định dạng sao lưu không đổi (D-006).

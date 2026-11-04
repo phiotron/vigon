@@ -56,4 +56,4 @@ Mỗi giai đoạn xong: `flutter analyze` sạch, `dart format lib test`, `flut
 
 ## 8. Câu hỏi còn mở
 - Dịch vụ build iOS: bước build KHÔNG ký chạy bằng GitHub Actions (job `ios` trong `.github/workflows/ci.yml`, cần đẩy lên remote); Codemagic hay GitHub Actions cho bước ký và TestFlight còn chờ người dùng.
-- Chọn danh mục ở màn ghi khoản: giữ lưu ngay (AC-02, 3 lần chạm) hay theo bản vẽ 3.3 (chưa lưu, 4 lần chạm, phải sửa SPEC)?
+- (Đã quyết 2026-11-04, D-013) Chọn danh mục ở màn ghi khoản: giữ lưu ngay theo AC-02; bản vẽ 3.3 lệch ở điểm này.
