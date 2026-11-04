@@ -119,13 +119,21 @@ class RecurringRepository {
       );
 
   /// Chạy lại chuỗi đã dừng từ hôm nay; không tạo bù các lần đã lỡ khi dừng.
-  Future<void> resume(int id, DateTime today) =>
-      (_db.update(_db.recurringRules)..where((r) => r.id.equals(id))).write(
-        RecurringRulesCompanion(
-          active: const Value(true),
-          lastGeneratedDate: Value(dateKey(addDays(today, -1))),
-        ),
-      );
+  Future<void> resume(int id, DateTime today) async {
+    final yesterday = dateKey(addDays(today, -1));
+    final last = (await find(id))?.lastGeneratedDate;
+    // Không lùi: chuỗi đã sinh khoản hôm nay mà tắt rồi bật lại cùng ngày thì
+    // không được sinh trùng.
+    final from = last != null && last.compareTo(yesterday) > 0
+        ? last
+        : yesterday;
+    await (_db.update(_db.recurringRules)..where((r) => r.id.equals(id))).write(
+      RecurringRulesCompanion(
+        active: const Value(true),
+        lastGeneratedDate: Value(from),
+      ),
+    );
+  }
 
   /// Sửa chuỗi cho các lần sau; khoản đã tạo không đổi (AC-25, AC-50).
   ///

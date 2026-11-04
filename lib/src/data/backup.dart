@@ -105,6 +105,9 @@ _Parsed _parseBackup(String content) {
   final entries = rows('entries', Entry.fromJson);
   final settings = rows('settings', Setting.fromJson);
   if (accounts.isEmpty) throw BackupFormatException('không có tài khoản');
+  if (accounts.every((a) => a.archived)) {
+    throw BackupFormatException('không có tài khoản nào đang hiện');
+  }
   return (
     accounts: accounts,
     categories: categories,
@@ -228,7 +231,7 @@ String exportCsv({
 }) {
   String cell(String v) {
     // Chặn Excel coi ghi chú như "=..." là công thức.
-    if (v.startsWith(RegExp(r'[=+\-@]'))) v = "'$v";
+    if (v.startsWith(RegExp(r'[=+\-@\t\r]'))) v = "'$v";
     // Ngoặc kép khi chứa dấu ngăn cột (cả `,` lẫn `;` cho chắc), ngoặc kép, xuống dòng.
     return RegExp(r'[",;\r\n]').hasMatch(v)
         ? '"${v.replaceAll('"', '""')}"'

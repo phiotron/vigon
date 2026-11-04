@@ -162,7 +162,7 @@ class _TransferScreenState extends ConsumerState<TransferScreen> {
             ),
         ],
       ),
-      body: accounts.length < 2
+      body: accounts.length < 2 && _original == null
           ? const SizedBox.shrink()
           : SafeArea(
               child: Column(
