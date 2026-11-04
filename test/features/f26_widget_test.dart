@@ -20,8 +20,14 @@ import '../helpers.dart';
 class FakeBridge implements HomeWidgetBridge {
   final calls = <String>[];
 
+  /// Hạn dùng đi kèm mỗi lần `show` (null nếu không có).
+  final validUntils = <DateTime?>[];
+
   @override
-  Future<void> show(String line) async => calls.add('show:${plain(line)}');
+  Future<void> show(String line, {DateTime? validUntil}) async {
+    calls.add('show:${plain(line)}');
+    validUntils.add(validUntil);
+  }
 
   @override
   Future<void> clear() async => calls.add('clear');
@@ -165,8 +171,15 @@ void main() {
     );
     const bridge = MethodChannelHomeWidgetBridge();
     await bridge.show('Đã khóa bằng PIN');
+    await bridge.show('Tháng này đã chi 1 ₫', validUntil: DateTime(2026, 12));
     await bridge.clear();
-    expect(calls, [('show', 'Đã khóa bằng PIN'), ('clear', null)]);
+    expect(calls.map((c) => c.$1), ['show', 'show', 'clear']);
+    expect(calls[0].$2, {'line': 'Đã khóa bằng PIN', 'validUntil': null});
+    expect(calls[1].$2, {
+      'line': 'Tháng này đã chi 1 ₫',
+      'validUntil': DateTime(2026, 12).millisecondsSinceEpoch,
+    });
+    expect(calls[2].$2, isNull);
   });
 
   testWidgets('không có phần Android thì bridge không ném lỗi', (tester) async {
@@ -507,12 +520,12 @@ void main() {
       },
     );
 
-    test('cỡ tối thiểu 2x1, không cập nhật theo chu kỳ', () {
+    test('cỡ tối thiểu 2x2 (110dp), cập nhật 30 phút để bỏ số cũ', () {
       final info = File('android/app/src/main/res/xml/vigon_widget_info.xml')
           .readAsStringSync();
       expect(info, contains('android:minWidth="110dp"'));
-      expect(info, contains('android:minHeight="40dp"'));
-      expect(info, contains('android:updatePeriodMillis="0"'));
+      expect(info, contains('android:minHeight="110dp"'));
+      expect(info, contains('android:updatePeriodMillis="1800000"'));
     });
   });
 }

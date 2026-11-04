@@ -212,14 +212,19 @@ final todayProvider = NotifierProvider<TodayNotifier, DateTime>(
 );
 
 /// Tổng chi của tháng hiện tại (theo ngày bắt đầu tháng), mọi tài khoản (AC-27).
-final budgetSpentProvider = StreamProvider<int>((ref) {
+///
+/// Chờ cài đặt ngày bắt đầu tháng đọc xong rồi mới tính: không đoán ngày 1, để
+/// không phát ra số của sai kỳ lúc khởi động (widget F-26 đẩy số này ra ngoài).
+final budgetSpentProvider = StreamProvider<int>((ref) async* {
+  final today = ref.watch(todayProvider);
+  final entries = ref.watch(entryRepositoryProvider);
+  final monthStartDay = await ref.watch(monthStartDayProvider.future);
   final month = Period.containing(
     PeriodType.month,
-    ref.watch(todayProvider),
-    monthStartDay: ref.watch(monthStartDayProvider).value ?? 1,
+    today,
+    monthStartDay: monthStartDay,
   );
-  return ref
-      .watch(entryRepositoryProvider)
+  yield* entries
       .watchEntries(month)
       .map((rows) => PeriodSummary.of(rows).expense);
 });

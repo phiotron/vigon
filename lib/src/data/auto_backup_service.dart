@@ -23,6 +23,9 @@ enum AutoBackupResult {
 
   /// Chưa bật hoặc thiếu thư mục/mật khẩu; không làm gì.
   notConfigured,
+
+  /// Đang có một lần sao lưu khác chạy; không làm gì, không ghi kết quả.
+  busy,
 }
 
 /// Cấu hình và kết quả gần nhất, đọc từ [SecretStore].
@@ -46,7 +49,8 @@ class AutoBackupState {
   bool get lastFailed =>
       lastResult != null &&
       lastResult != AutoBackupResult.ok &&
-      lastResult != AutoBackupResult.notConfigured;
+      lastResult != AutoBackupResult.notConfigured &&
+      lastResult != AutoBackupResult.busy;
 }
 
 /// Hàm mã hóa nội dung sao lưu; test thay bằng bản ít vòng lặp.
@@ -208,9 +212,10 @@ class AutoBackupService {
   }
 
   /// Sao lưu ngay (không xét ngày hay dữ liệu có đổi). Không ném lỗi; kết quả
-  /// được ghi lại và trả về.
+  /// được ghi lại và trả về. Đang có lần chạy khác thì trả [AutoBackupResult.busy]
+  /// (không ghi gì, không đụng kết quả lần trước).
   Future<AutoBackupResult> backupNow() async {
-    if (_running) return AutoBackupResult.notConfigured;
+    if (_running) return AutoBackupResult.busy;
     _running = true;
     try {
       return await _backup();

@@ -23,6 +23,10 @@ import 'features/widget/widget_sync.dart';
 import 'providers.dart';
 import 'ui/messenger.dart';
 
+/// Đường dẫn có `:id` mà id không phải số nguyên thì về màn chính, không ném lỗi.
+String? _idOrHome(BuildContext context, GoRouterState state) =>
+    int.tryParse(state.pathParameters['id'] ?? '') == null ? '/' : null;
+
 /// Mỗi lần gọi tạo router mới; test dùng để mỗi test bắt đầu ở màn chính.
 GoRouter createRouter() => GoRouter(
   routes: [
@@ -56,6 +60,7 @@ GoRouter createRouter() => GoRouter(
         ),
         GoRoute(
           path: 'transfer/:id',
+          redirect: _idOrHome,
           builder: (context, state) =>
               TransferScreen(entryId: int.parse(state.pathParameters['id']!)),
         ),
@@ -77,6 +82,7 @@ GoRouter createRouter() => GoRouter(
         ),
         GoRoute(
           path: 'entry/:id',
+          redirect: _idOrHome,
           builder: (context, state) => EntryEditorScreen(
             entryId: int.parse(state.pathParameters['id']!),
           ),

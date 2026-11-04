@@ -2,7 +2,9 @@ import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../data/dates.dart';
 import '../../data/money.dart';
+import '../../data/period.dart';
 import '../../providers.dart';
 import '../lock/app_lock.dart';
 import 'home_widget_bridge.dart';
@@ -20,6 +22,10 @@ final widgetShowAmountsProvider = StreamProvider<bool>(
 /// Đẩy nội dung widget sang Android khi mở app và mỗi khi thứ gì ảnh hưởng đổi:
 /// công tắc, bật/tắt PIN, số đã chi, hạn mức, tiền tệ, ngôn ngữ, sang ngày mới
 /// (`todayProvider` đổi khi app quay lại từ nền). `VigonApp` theo dõi provider này.
+///
+/// Khi app không chạy, Dart không đẩy được gì: dòng số tiền đi kèm hạn dùng (hết
+/// kỳ tháng) để phía Android tự bỏ số của kỳ cũ. Số "đang tải lại" (giữ giá trị
+/// kỳ trước lúc `todayProvider` vừa sang kỳ mới) cũng không bao giờ được đẩy.
 ///
 /// Số tiền chỉ được tính và đẩy khi công tắc bật VÀ PIN tắt VÀ trạng thái PIN đã
 /// biết chắc; mọi trường hợp khác (kể cả đang đọc trạng thái PIN, hay đọc lỗi)
@@ -49,10 +55,17 @@ final widgetSyncProvider = Provider<void>((ref) {
     return;
   }
   final spent = ref.watch(budgetSpentProvider);
+  final startDay = ref.watch(monthStartDayProvider);
+  final today = ref.watch(todayProvider);
   final budget = ref.watch(budgetProvider);
   final currency = ref.watch(currencyProvider);
   final locale = ref.watch(localeCodeProvider);
+  // `isLoading` với `hasValue`: số của kỳ cũ còn giữ lại khi đang tính lại cho kỳ
+  // mới (đổi ngày, đổi ngày bắt đầu tháng); không được coi là số của kỳ này.
   if (!spent.hasValue ||
+      spent.isLoading ||
+      !startDay.hasValue ||
+      startDay.isLoading ||
       !budget.hasValue ||
       !currency.hasValue ||
       !locale.hasValue) {
@@ -62,6 +75,11 @@ final widgetSyncProvider = Provider<void>((ref) {
   String fmt(int v) =>
       formatMoney(v, currencyCode: currency.requireValue, locale: language);
   final b = budget.requireValue;
+  final month = Period.containing(
+    PeriodType.month,
+    today,
+    monthStartDay: startDay.requireValue,
+  );
   _push(
     bridge,
     widgetContent(
@@ -69,6 +87,7 @@ final widgetSyncProvider = Provider<void>((ref) {
       pinEnabled: false,
       spentFormatted: () => fmt(spent.requireValue),
       budgetFormatted: b == null ? null : () => fmt(b),
+      validUntil: addDays(month.end, 1),
       language: language,
     ),
   );
@@ -85,5 +104,9 @@ String _language(Ref ref) {
 
 void _push(HomeWidgetBridge bridge, WidgetContent content) {
   final line = content.line;
-  unawaited(line == null ? bridge.clear() : bridge.show(line));
+  unawaited(
+    line == null
+        ? bridge.clear()
+        : bridge.show(line, validUntil: content.validUntil),
+  );
 }

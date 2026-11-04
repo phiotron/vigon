@@ -1,16 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Cỡ tối thiểu 2x1 ô. Không cập nhật theo chu kỳ: app đẩy dữ liệu khi có thay đổi. -->
+<!-- Cỡ tối thiểu 2 ô rộng x 2 ô cao (110dp): dòng trạng thái + nút 48dp + đệm cần ~86dp,
+     một hàng (40dp) sẽ bị cắt nút. App đẩy dữ liệu khi có thay đổi; updatePeriodMillis 30 phút
+     (mức tối thiểu Android cho phép) chỉ để widget tự bỏ số của kỳ cũ khi app không chạy. -->
 <appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android"
     android:description="@string/widget_description"
     android:initialLayout="@layout/vigon_widget"
-    android:minHeight="40dp"
-    android:minResizeHeight="40dp"
+    android:minHeight="110dp"
+    android:minResizeHeight="110dp"
     android:minResizeWidth="110dp"
     android:minWidth="110dp"
     android:previewImage="@mipmap/ic_launcher"
     android:previewLayout="@layout/vigon_widget"
     android:resizeMode="horizontal|vertical"
-    android:targetCellHeight="1"
+    android:targetCellHeight="2"
     android:targetCellWidth="2"
-    android:updatePeriodMillis="0"
+    android:updatePeriodMillis="1800000"
     android:widgetCategory="home_screen" />

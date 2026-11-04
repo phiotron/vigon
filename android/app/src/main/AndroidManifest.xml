@@ -28,6 +28,12 @@
               android:name="io.flutter.embedding.android.NormalTheme"
               android:resource="@style/NormalTheme"
               />
+            <!-- Mặc định Flutter 3.47 là BẬT (FlutterActivityLaunchConfigs.deepLinkEnabled
+                 trả true khi thiếu khóa này): tắt để intent từ app ngoài không đẩy
+                 đường dẫn tùy ý vào go_router. Nút widget và thông báo dùng DeepLinkChannel riêng. -->
+            <meta-data
+                android:name="flutter_deeplinking_enabled"
+                android:value="false"/>
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>

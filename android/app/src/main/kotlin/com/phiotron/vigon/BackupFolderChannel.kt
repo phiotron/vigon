@@ -1,8 +1,12 @@
 package com.phiotron.vigon
 
 import android.app.Activity
+import android.app.Application
+import android.content.ContentResolver
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.provider.DocumentsContract
@@ -10,6 +14,7 @@ import io.flutter.plugin.common.BinaryMessenger
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import java.io.FileNotFoundException
+import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
 /**
@@ -21,24 +26,72 @@ import java.util.concurrent.Executors
  * Lỗi trả về mã: permission_denied (quyền bị thu hồi), folder_missing (thư mục mất hoặc không
  * truy cập được), busy (đang có bộ chọn khác), bad_args, io_error.
  * Mọi việc đọc ghi chạy ở luồng nền; kết quả trả về luồng chính.
+ *
+ * Ghi file an toàn khi tiến trình bị giết giữa chừng: dữ liệu ghi vào file tạm
+ * `vigon-auto-tmp-<ms>.part` (KHÔNG khớp mẫu `vigon-auto-AAAAMMDD-GGPP.vigon` mà bộ dọn 7 bản
+ * của Dart đếm), ghi xong và đóng stream mới đổi tên. File cũ trùng tên chỉ bị bỏ sau khi đổi
+ * tên thành công (lỗi thì trả lại). File tạm mồ côi cũ hơn một ngày bị dọn. App chỉ ghi và xóa
+ * tên khớp đúng mẫu của mình, không bao giờ chạm file khác của người dùng.
  */
 class BackupFolderChannel(
-    private val activity: Activity,
+    hostActivity: Activity,
     messenger: BinaryMessenger,
 ) : MethodChannel.MethodCallHandler {
     companion object {
         const val CHANNEL = "vigon/backup_folder"
         private const val REQUEST_PICK_FOLDER = 4201
         private const val FILE_MIME = "application/octet-stream"
+        private const val TMP_PREFIX = "vigon-auto-tmp-"
+        private const val ORPHAN_MAX_AGE_MS = 24L * 60 * 60 * 1000
+
+        /** Tên file sao lưu tự động do Dart đặt. */
+        private val AUTO_NAME = Regex("^vigon-auto-\\d{8}-\\d{4}\\.vigon$")
+
+        /** File tạm/dự phòng do bên Kotlin tạo; nhóm 1 là mốc thời gian (ms). */
+        private val TMP_NAME = Regex("^vigon-auto-tmp-(\\d{1,19})\\.(part|old)$")
+
+        private fun ownedName(name: String) = AUTO_NAME.matches(name) || TMP_NAME.matches(name)
     }
 
-    private val resolver get() = activity.contentResolver
+    // Chỉ giữ Activity cho việc cần nó (mở bộ chọn); đọc ghi dùng applicationContext để luồng
+    // nền không giữ Activity. Cả hai được bỏ khi Activity bị hủy (xem dispose).
+    private val appContext: Context = hostActivity.applicationContext
+    private var activity: Activity? = hostActivity
+    private val resolver: ContentResolver get() = appContext.contentResolver
     private val main = Handler(Looper.getMainLooper())
-    private val worker = Executors.newSingleThreadExecutor()
+    private val worker: ExecutorService = Executors.newSingleThreadExecutor()
+    private val channel = MethodChannel(messenger, CHANNEL)
     private var pendingPick: MethodChannel.Result? = null
 
+    private val lifecycle = object : Application.ActivityLifecycleCallbacks {
+        override fun onActivityDestroyed(a: Activity) {
+            if (a === activity) dispose()
+        }
+
+        override fun onActivityCreated(a: Activity, savedInstanceState: Bundle?) {}
+        override fun onActivityStarted(a: Activity) {}
+        override fun onActivityResumed(a: Activity) {}
+        override fun onActivityPaused(a: Activity) {}
+        override fun onActivityStopped(a: Activity) {}
+        override fun onActivitySaveInstanceState(a: Activity, outState: Bundle) {}
+    }
+
     init {
-        MethodChannel(messenger, CHANNEL).setMethodCallHandler(this)
+        channel.setMethodCallHandler(this)
+        (appContext as? Application)?.registerActivityLifecycleCallbacks(lifecycle)
+    }
+
+    /**
+     * Gọi khi Activity bị hủy: thôi nhận lệnh, bỏ tham chiếu Activity, dừng luồng nền (việc đang
+     * chạy vẫn xong, việc mới không nhận). Bản mới được dựng ở `configureFlutterEngine`.
+     */
+    private fun dispose() {
+        (appContext as? Application)?.unregisterActivityLifecycleCallbacks(lifecycle)
+        channel.setMethodCallHandler(null)
+        pendingPick?.error("io_error", "Màn hình đã đóng", null)
+        pendingPick = null
+        activity = null
+        worker.shutdown()
     }
 
     override fun onMethodCall(call: MethodCall, result: MethodChannel.Result) {
@@ -48,8 +101,8 @@ class BackupFolderChannel(
                 val tree = call.argument<String>("treeUri")
                 val name = call.argument<String>("name")
                 val bytes = call.argument<ByteArray>("bytes")
-                if (tree == null || name == null || bytes == null || !validName(name)) {
-                    result.error("bad_args", "writeFile cần treeUri, name hợp lệ và bytes", null)
+                if (tree == null || name == null || bytes == null || !AUTO_NAME.matches(name)) {
+                    result.error("bad_args", "writeFile cần treeUri, name đúng mẫu vigon-auto-AAAAMMDD-GGPP.vigon và bytes", null)
                 } else {
                     runAsync(result) { writeFile(Uri.parse(tree), name, bytes) }
                 }
@@ -65,8 +118,9 @@ class BackupFolderChannel(
             "deleteFile" -> {
                 val tree = call.argument<String>("treeUri")
                 val name = call.argument<String>("name")
-                if (tree == null || name == null || !validName(name)) {
-                    result.error("bad_args", "deleteFile cần treeUri và name hợp lệ", null)
+                // Chỉ xóa file đúng mẫu tên của app: không bao giờ đụng file khác của người dùng.
+                if (tree == null || name == null || !ownedName(name)) {
+                    result.error("bad_args", "deleteFile cần treeUri và tên file của Ví Gọn", null)
                 } else {
                     runAsync(result) { deleteFile(Uri.parse(tree), name) }
                 }
@@ -113,6 +167,11 @@ class BackupFolderChannel(
             result.error("busy", "Đang mở bộ chọn thư mục", null)
             return
         }
+        val host = activity
+        if (host == null) {
+            result.error("io_error", "Màn hình đã đóng", null)
+            return
+        }
         val intent = Intent(Intent.ACTION_OPEN_DOCUMENT_TREE).addFlags(
             Intent.FLAG_GRANT_READ_URI_PERMISSION or
                 Intent.FLAG_GRANT_WRITE_URI_PERMISSION or
@@ -122,7 +181,7 @@ class BackupFolderChannel(
         pendingPick = result
         try {
             @Suppress("DEPRECATION")
-            activity.startActivityForResult(intent, REQUEST_PICK_FOLDER)
+            host.startActivityForResult(intent, REQUEST_PICK_FOLDER)
         } catch (e: Exception) {
             // Máy không có bộ chọn thư mục.
             pendingPick = null
@@ -131,6 +190,10 @@ class BackupFolderChannel(
     }
 
     private fun runAsync(result: MethodChannel.Result, block: () -> Any?) {
+        if (worker.isShutdown) {
+            result.error("io_error", "Màn hình đã đóng", null)
+            return
+        }
         worker.execute {
             try {
                 val value = block()
@@ -148,10 +211,6 @@ class BackupFolderChannel(
         }
     }
 
-    /** Tên file chỉ là một thành phần: không dấu gạch chéo, không rỗng. */
-    private fun validName(name: String) =
-        name.isNotEmpty() && !name.contains('/') && !name.contains('\\') && name != "." && name != ".."
-
     /** Quyền ghi vào [tree] còn không (người dùng có thể thu hồi trong cài đặt hệ thống). */
     private fun requireWritePermission(tree: Uri) {
         val ok = resolver.persistedUriPermissions.any { it.uri == tree && it.isWritePermission }
@@ -160,6 +219,9 @@ class BackupFolderChannel(
 
     private fun rootDocument(tree: Uri): Uri =
         DocumentsContract.buildDocumentUriUsingTree(tree, DocumentsContract.getTreeDocumentId(tree))
+
+    private fun docUri(tree: Uri, id: String): Uri =
+        DocumentsContract.buildDocumentUriUsingTree(tree, id)
 
     private fun folderName(tree: Uri): String? {
         val cursor = resolver.query(
@@ -196,37 +258,82 @@ class BackupFolderChannel(
         return out
     }
 
+    /** Đổi tên tài liệu; ném lỗi nếu nhà cung cấp không đổi được. Trả về Uri mới. */
+    private fun rename(doc: Uri, newName: String): Uri =
+        DocumentsContract.renameDocument(resolver, doc, newName)
+            ?: throw FileNotFoundException("Không đổi được tên file trong thư mục")
+
+    private fun deleteQuietly(doc: Uri) {
+        try {
+            DocumentsContract.deleteDocument(resolver, doc)
+        } catch (_: Exception) {
+        }
+    }
+
     private fun writeFile(tree: Uri, name: String, bytes: ByteArray) {
-        // Trùng tên (hai lần sao lưu trong cùng một phút): xóa bản cũ để nhà cung cấp không
-        // tự đổi tên thành "(1)".
-        deleteFile(tree, name)
+        val stamp = System.currentTimeMillis()
         val parent = rootDocument(tree)
-        val doc = DocumentsContract.createDocument(resolver, parent, FILE_MIME, name)
+        // 1) Ghi hết dữ liệu vào file tạm rồi đóng stream. Bị giết giữa chừng thì chỉ còn file
+        //    `.part` (không khớp mẫu tên nên không bị tính vào 7 bản; bị dọn sau một ngày).
+        val tmp = DocumentsContract.createDocument(resolver, parent, FILE_MIME, "$TMP_PREFIX$stamp.part")
             ?: throw FileNotFoundException("Không tạo được file trong thư mục")
         try {
-            val stream = resolver.openOutputStream(doc, "wt")
+            val stream = resolver.openOutputStream(tmp, "wt")
                 ?: throw FileNotFoundException("Không mở được file để ghi")
             stream.use {
                 it.write(bytes)
                 it.flush()
             }
-        } catch (e: Exception) {
-            // Không để lại file dở dang.
-            try {
-                DocumentsContract.deleteDocument(resolver, doc)
-            } catch (_: Exception) {
+            // 2) Trùng tên (hai lần sao lưu trong cùng một phút): dời bản cũ sang tên dự phòng
+            //    (nhà cung cấp không tự đổi thành "(1)"), đổi tên file tạm thành tên đích; chỉ khi
+            //    thành công mới bỏ bản cũ, lỗi thì trả bản cũ về.
+            val existing = listFiles(tree).filter { it.second == name }
+            var backedUp: Uri? = null
+            for ((i, e) in existing.withIndex()) {
+                val old = docUri(tree, e.first)
+                if (i == 0) {
+                    backedUp = rename(old, "$TMP_PREFIX$stamp.old")
+                } else {
+                    DocumentsContract.deleteDocument(resolver, old)
+                }
             }
+            try {
+                rename(tmp, name)
+            } catch (e: Exception) {
+                if (backedUp != null) {
+                    try {
+                        rename(backedUp, name)
+                    } catch (_: Exception) {
+                    }
+                }
+                throw e
+            }
+            if (backedUp != null) deleteQuietly(backedUp)
+        } catch (e: Exception) {
+            // Lỗi ở bước nào cũng bỏ file tạm (nếu đã đổi tên thì URI cũ không còn: xóa vô hại).
+            deleteQuietly(tmp)
             throw e
+        }
+        cleanOrphans(tree, stamp)
+    }
+
+    /** Dọn file `.part`/`.old` mồ côi cũ hơn một ngày; chỉ chạm đúng mẫu tên tạm của app. */
+    private fun cleanOrphans(tree: Uri, now: Long) {
+        try {
+            for ((id, display) in listFiles(tree)) {
+                val m = TMP_NAME.matchEntire(display) ?: continue
+                val ts = m.groupValues[1].toLongOrNull() ?: continue
+                if (now - ts > ORPHAN_MAX_AGE_MS) deleteQuietly(docUri(tree, id))
+            }
+        } catch (_: Exception) {
+            // Dọn dẹp không làm hỏng lần ghi đã xong.
         }
     }
 
     private fun deleteFile(tree: Uri, name: String) {
         for ((id, display) in listFiles(tree)) {
             if (display == name) {
-                DocumentsContract.deleteDocument(
-                    resolver,
-                    DocumentsContract.buildDocumentUriUsingTree(tree, id),
-                )
+                DocumentsContract.deleteDocument(resolver, docUri(tree, id))
             }
         }
     }

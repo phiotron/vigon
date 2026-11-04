@@ -552,6 +552,14 @@ class AppLocalizationsVi extends AppLocalizations {
       'Sao lưu không thành công. Thử lại bằng Sao lưu ngay';
 
   @override
+  String autoBackupFailedAt(String time, String error) {
+    return 'Lần thử $time: $error';
+  }
+
+  @override
+  String get autoBackupBusy => 'Đang sao lưu, thử lại sau giây lát';
+
+  @override
   String get autoBackupNow => 'Sao lưu ngay';
 
   @override

@@ -562,6 +562,15 @@ class AppLocalizationsEn extends AppLocalizations {
       'Backup failed. Try again with Back up now';
 
   @override
+  String autoBackupFailedAt(String time, String error) {
+    return 'Attempt $time: $error';
+  }
+
+  @override
+  String get autoBackupBusy =>
+      'A backup is already running, try again in a moment';
+
+  @override
   String get autoBackupNow => 'Back up now';
 
   @override

@@ -4,6 +4,7 @@ import 'package:crypto/crypto.dart';
 
 import 'database.dart';
 import 'seed.dart';
+import 'settings_repository.dart';
 
 const backupFormat = 'vigon-backup';
 const backupVersion = 1;
@@ -22,6 +23,16 @@ class BackupFormatException implements Exception {
 String _checksum(Object tables) =>
     sha256.convert(utf8.encode(jsonEncode(tables))).toString();
 
+/// Cài đặt "theo máy", không đi theo file sao lưu: công tắc hiện số tiền trên
+/// widget (AC-64) và công tắc nhắc ghi chép (AC-61). Hai việc này phải do người
+/// dùng bật trên chính máy này (có lời cảnh báo, có xin quyền), nên khi xuất
+/// không ghi vào file và khi khôi phục không áp từ file (kể cả file cũ 1.0/1.1
+/// còn chứa chúng); khôi phục xong cả hai về tắt. Giờ nhắc vẫn đi theo file.
+const deviceOnlySettingKeys = {
+  SettingsRepository.widgetShowAmountsKey,
+  SettingsRepository.reminderEnabledKey,
+};
+
 /// Xuất toàn bộ khoản, danh mục, tài khoản, chuỗi định kỳ, cài đặt ra JSON (AC-28).
 /// File không mã hóa; mã PIN không nằm trong file.
 Future<String> exportBackup(AppDatabase db, {required DateTime now}) async {
@@ -37,7 +48,8 @@ Future<String> exportBackup(AppDatabase db, {required DateTime now}) async {
     ],
     'entries': [for (final r in await db.select(db.entries).get()) r.toJson()],
     'settings': [
-      for (final r in await db.select(db.settings).get()) r.toJson(),
+      for (final r in await db.select(db.settings).get())
+        if (!deviceOnlySettingKeys.contains(r.key)) r.toJson(),
     ],
   };
   return const JsonEncoder.withIndent(' ').convert({
@@ -103,7 +115,11 @@ _Parsed _parseBackup(String content) {
   final categories = rows('categories', Category.fromJson);
   final rules = rows('recurringRules', RecurringRule.fromJson);
   final entries = rows('entries', Entry.fromJson);
-  final settings = rows('settings', Setting.fromJson);
+  // Bỏ cài đặt "theo máy" (file cũ có thể còn chứa): xem [deviceOnlySettingKeys].
+  final settings = [
+    for (final s in rows('settings', Setting.fromJson))
+      if (!deviceOnlySettingKeys.contains(s.key)) s,
+  ];
   if (accounts.isEmpty) throw BackupFormatException('không có tài khoản');
   if (accounts.every((a) => a.archived)) {
     throw BackupFormatException('không có tài khoản nào đang hiện');

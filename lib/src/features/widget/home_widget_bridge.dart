@@ -7,7 +7,10 @@ import 'package:flutter/services.dart';
 /// Nền tảng không có kênh này (test, iOS) thì bỏ qua, không lỗi.
 abstract class HomeWidgetBridge {
   /// Ghi dòng trạng thái [line] vào bộ nhớ widget rồi vẽ lại widget.
-  Future<void> show(String line);
+  ///
+  /// [validUntil]: với dòng số tiền, lúc hết kỳ tháng của số liệu. Quá lúc đó mà
+  /// app chưa đẩy số mới, phía Android xóa dòng và hiện "Mở app để cập nhật".
+  Future<void> show(String line, {DateTime? validUntil});
 
   /// XÓA dòng trạng thái khỏi bộ nhớ widget (không chỉ ẩn) rồi vẽ lại widget.
   Future<void> clear();
@@ -23,7 +26,10 @@ class MethodChannelHomeWidgetBridge implements HomeWidgetBridge {
   final MethodChannel channel;
 
   @override
-  Future<void> show(String line) => _invoke('show', line);
+  Future<void> show(String line, {DateTime? validUntil}) => _invoke('show', {
+    'line': line,
+    'validUntil': validUntil?.millisecondsSinceEpoch,
+  });
 
   @override
   Future<void> clear() => _invoke('clear');

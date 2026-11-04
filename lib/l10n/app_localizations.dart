@@ -1112,6 +1112,18 @@ abstract class AppLocalizations {
   /// **'Backup failed. Try again with Back up now'**
   String get autoBackupErrorOther;
 
+  /// No description provided for @autoBackupFailedAt.
+  ///
+  /// In en, this message translates to:
+  /// **'Attempt {time}: {error}'**
+  String autoBackupFailedAt(String time, String error);
+
+  /// No description provided for @autoBackupBusy.
+  ///
+  /// In en, this message translates to:
+  /// **'A backup is already running, try again in a moment'**
+  String get autoBackupBusy;
+
   /// No description provided for @autoBackupNow.
   ///
   /// In en, this message translates to:
