@@ -48,3 +48,6 @@ app.*.map.json
 
 # Tệp tạm của hệ thống tệp
 .fuse_hidden*
+
+# Worktree tạm của agent Claude (không commit)
+.claude/worktrees/
