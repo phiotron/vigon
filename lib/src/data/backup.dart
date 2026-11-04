@@ -4,6 +4,7 @@ import 'package:crypto/crypto.dart';
 
 import 'database.dart';
 import 'seed.dart';
+import 'settings_repository.dart';
 
 const backupFormat = 'vigon-backup';
 const backupVersion = 1;
@@ -22,8 +23,12 @@ class BackupFormatException implements Exception {
 String _checksum(Object tables) =>
     sha256.convert(utf8.encode(jsonEncode(tables))).toString();
 
+/// Mã cài đặt đi kèm PIN (iOS-02) gắn với máy, không phải dữ liệu: không xuất,
+/// không nhận từ file, và khôi phục hay xóa toàn bộ dữ liệu vẫn giữ.
+const _installIdKey = SettingsRepository.pinInstallIdKey;
+
 /// Xuất toàn bộ khoản, danh mục, tài khoản, chuỗi định kỳ, cài đặt ra JSON (AC-28).
-/// File không mã hóa; mã PIN không nằm trong file.
+/// File không mã hóa; mã PIN và mã cài đặt không nằm trong file.
 Future<String> exportBackup(AppDatabase db, {required DateTime now}) async {
   final tables = {
     'accounts': [
@@ -37,7 +42,8 @@ Future<String> exportBackup(AppDatabase db, {required DateTime now}) async {
     ],
     'entries': [for (final r in await db.select(db.entries).get()) r.toJson()],
     'settings': [
-      for (final r in await db.select(db.settings).get()) r.toJson(),
+      for (final r in await db.select(db.settings).get())
+        if (r.key != _installIdKey) r.toJson(),
     ],
   };
   return const JsonEncoder.withIndent(' ').convert({
@@ -121,7 +127,10 @@ Future<void> importBackup(AppDatabase db, String content) async {
         b.insertAll(db.categories, parsed.categories);
         b.insertAll(db.recurringRules, parsed.rules);
         b.insertAll(db.entries, parsed.entries);
-        b.insertAll(db.settings, parsed.settings);
+        b.insertAll(db.settings, [
+          for (final s in parsed.settings)
+            if (s.key != _installIdKey) s,
+        ]);
       });
     });
   } on BackupFormatException {
@@ -137,7 +146,9 @@ Future<void> _clearAll(AppDatabase db) async {
   await db.delete(db.recurringRules).go();
   await db.delete(db.categories).go();
   await db.delete(db.accounts).go();
-  await db.delete(db.settings).go();
+  await (db.delete(
+    db.settings,
+  )..where((s) => s.key.isNotValue(_installIdKey))).go();
 }
 
 /// Xóa toàn bộ dữ liệu rồi tạo lại danh mục, tài khoản mặc định như lúc mới cài (AC-42).

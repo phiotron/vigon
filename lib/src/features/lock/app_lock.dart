@@ -9,7 +9,10 @@ final secretStoreProvider = Provider<SecretStore>(
 );
 
 final pinServiceProvider = Provider<PinService>(
-  (ref) => PinService(ref.watch(secretStoreProvider)),
+  (ref) => PinService(
+    ref.watch(secretStoreProvider),
+    settings: () => ref.read(settingsRepositoryProvider),
+  ),
 );
 
 /// Bật khóa PIN hay chưa, để màn Cài đặt hiện đúng công tắc.
@@ -32,9 +35,16 @@ class LockNotifier extends Notifier<AppLockState> {
   }
 
   Future<void> _init() async {
+    final pin = ref.read(pinServiceProvider);
+    try {
+      // Cài lại trên iOS: Keychain còn PIN cũ nhưng cơ sở dữ liệu mới (iOS-02).
+      if (await pin.clearIfReinstalled()) ref.invalidate(pinEnabledProvider);
+    } catch (_) {
+      // Không đọc được bộ nhớ an toàn hay cơ sở dữ liệu: không xóa gì.
+    }
     var enabled = true;
     try {
-      enabled = await ref.read(pinServiceProvider).isEnabled();
+      enabled = await pin.isEnabled();
     } catch (_) {
       // Không đọc được bộ nhớ an toàn (Keystore hỏng): coi như đang khóa để
       // người dùng thấy màn khóa và nút "Quên mã" thay vì màn trắng.

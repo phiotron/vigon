@@ -16,6 +16,11 @@ class SettingsRepository {
   static const monthStartDayKey = 'monthStartDay';
   static const budgetKey = 'monthlyBudget';
 
+  /// Mã ngẫu nhiên của lần cài đặt, ghi cùng mã PIN (iOS-02). Gắn với lần cài
+  /// chứ không với dữ liệu: không xuất ra file sao lưu, khôi phục hay xóa toàn
+  /// bộ dữ liệu vẫn giữ (xem `backup.dart`).
+  static const pinInstallIdKey = 'pinInstallId';
+
   Stream<String?> _watch(String key) {
     final query = _db.select(_db.settings)..where((s) => s.key.equals(key));
     return query.watchSingleOrNull().map((row) => row?.value);
@@ -83,6 +88,11 @@ class SettingsRepository {
   Future<void> setBudget(int? amount) => amount == null || amount <= 0
       ? _remove(budgetKey)
       : _write(budgetKey, '$amount');
+
+  /// Mã cài đặt đi kèm mã PIN; null là cơ sở dữ liệu chưa từng đặt PIN.
+  Future<String?> readPinInstallId() => _read(pinInstallIdKey);
+
+  Future<void> setPinInstallId(String id) => _write(pinInstallIdKey, id);
 }
 
 /// Tiền tệ theo vùng trong mã ngôn ngữ máy, ví dụ `vi_VN` → VND.
