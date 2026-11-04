@@ -10,6 +10,7 @@ import '../lock/app_lock.dart';
 import 'budget_dialog.dart';
 import 'currency_picker.dart';
 import 'data_actions.dart';
+import 'reminder_section.dart';
 import 'secure_window.dart';
 
 /// Cài đặt (AC-12, AC-21, AC-35, AC-36 và các mục G4–G6).
@@ -153,6 +154,7 @@ class SettingsScreen extends ConsumerWidget {
             value: ref.watch(secureWindowEnabledProvider).value ?? false,
             onChanged: repo.setSecureWindow,
           ),
+          ReminderSection(header: header(l.reminderSection)),
           header(l.dataSection),
           Padding(
             padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),

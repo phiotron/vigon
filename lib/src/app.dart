@@ -15,6 +15,7 @@ import 'features/home/home_screen.dart';
 import 'features/lock/app_lock.dart';
 import 'features/lock/lock_screen.dart';
 import 'features/recurring/recurring_screen.dart';
+import 'features/reminder/reminder_providers.dart';
 import 'features/settings/secure_window.dart';
 import 'features/settings/settings_screen.dart';
 import 'providers.dart';
@@ -97,22 +98,27 @@ class VigonApp extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     ref.watch(startupProvider);
     ref.watch(secureWindowSyncProvider);
+    ref.watch(reminderSyncProvider);
+    final appRouter = router ?? _router;
     final themeMode = ref.watch(themeModeProvider).value ?? ThemeMode.system;
     final localeCode = ref.watch(localeCodeProvider).value;
     final lock = ref.watch(lockProvider);
     return MaterialApp.router(
       // Màn khóa phủ lên toàn app; phần bên dưới ẩn khỏi trình đọc màn hình (AC-32).
-      builder: (context, child) => AppLifecycleWatcher(
-        child: Stack(
-          children: [
-            Offstage(offstage: lock != AppLockState.unlocked, child: child),
-            if (lock != AppLockState.unlocked)
-              LockScreen(checking: lock == AppLockState.checking),
-          ],
+      builder: (context, child) => ReminderTapBinder(
+        router: appRouter,
+        child: AppLifecycleWatcher(
+          child: Stack(
+            children: [
+              Offstage(offstage: lock != AppLockState.unlocked, child: child),
+              if (lock != AppLockState.unlocked)
+                LockScreen(checking: lock == AppLockState.checking),
+            ],
+          ),
         ),
       ),
       onGenerateTitle: (context) => AppLocalizations.of(context).appTitle,
-      routerConfig: router ?? _router,
+      routerConfig: appRouter,
       scaffoldMessengerKey: rootMessengerKey,
       themeMode: themeMode,
       theme: ThemeData(
