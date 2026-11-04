@@ -11,6 +11,7 @@ import '../../data/summary.dart';
 import '../../l10n_names.dart';
 import '../../providers.dart';
 import '../../ui/category_avatar.dart';
+import '../../ui/category_grid.dart';
 import '../../ui/format.dart';
 import '../settings/budget_dialog.dart';
 import 'period_picker.dart';
@@ -155,7 +156,22 @@ class _ChartWithCategories extends ConsumerWidget {
           constraints.maxHeight / 2,
         );
         final fit = max(1, (2 * pi * ring / (_iconSize + 8)).floor());
-        final shown = categories.take(fit).toList();
+        // Không đủ chỗ: dành ô cuối cho "Danh mục khác" (AC-51).
+        final overflow = categories.length > fit;
+        final shown = categories.take(overflow ? fit - 1 : fit).toList();
+        final slots = shown.length + (overflow ? 1 : 0);
+
+        Widget onRing(int i, Widget child) => Positioned(
+          left:
+              center.dx +
+              ring * cos(-pi / 2 + 2 * pi * i / slots) -
+              _iconSize / 2,
+          top:
+              center.dy +
+              ring * sin(-pi / 2 + 2 * pi * i / slots) -
+              _iconSize / 2,
+          child: child,
+        );
 
         String label(Category c) {
           final name = categoryLabel(l, c);
@@ -196,16 +212,9 @@ class _ChartWithCategories extends ConsumerWidget {
                     ),
             ),
             for (var i = 0; i < shown.length; i++)
-              Positioned(
-                left:
-                    center.dx +
-                    ring * cos(-pi / 2 + 2 * pi * i / shown.length) -
-                    _iconSize / 2,
-                top:
-                    center.dy +
-                    ring * sin(-pi / 2 + 2 * pi * i / shown.length) -
-                    _iconSize / 2,
-                child: Tooltip(
+              onRing(
+                i,
+                Tooltip(
                   message: categoryLabel(l, shown[i]),
                   child: CategoryAvatar(
                     category: shown[i],
@@ -214,6 +223,22 @@ class _ChartWithCategories extends ConsumerWidget {
                       '/entry/new?type=expense&category=${shown[i].id}',
                     ),
                   ),
+                ),
+              ),
+            if (overflow)
+              onRing(
+                shown.length,
+                MoreCategoriesAvatar(
+                  size: _iconSize,
+                  onTap: () async {
+                    final id = await showCategorySheet(
+                      context,
+                      type: CategoryType.expense,
+                    );
+                    if (id != null && context.mounted) {
+                      context.push('/entry/new?type=expense&category=$id');
+                    }
+                  },
                 ),
               ),
           ],

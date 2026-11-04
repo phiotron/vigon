@@ -127,9 +127,44 @@ class RecurringRepository {
         ),
       );
 
-  /// Sửa số tiền, ghi chú của các lần sau; khoản đã tạo không đổi (AC-25).
-  Future<void> edit(int id, {required int amount, String? note}) =>
-      (_db.update(_db.recurringRules)..where((r) => r.id.equals(id))).write(
-        RecurringRulesCompanion(amount: Value(amount), note: Value(note)),
-      );
+  /// Sửa chuỗi cho các lần sau; khoản đã tạo không đổi (AC-25, AC-50).
+  ///
+  /// [frequency], [categoryId], [accountId] null nghĩa là giữ nguyên. Đổi tần
+  /// suất thì chuỗi bắt đầu lại từ ngày tới hạn kế tiếp theo lịch CŨ: `startDate`
+  /// là ngày đó và `lastGeneratedDate` là ngày liền trước, nên lần sinh đầu theo
+  /// tần suất mới chính là ngày đó, không sinh bù và không trùng khoản đã có.
+  /// Không đổi tần suất thì giữ nguyên cả hai ngày.
+  Future<void> edit(
+    int id, {
+    required int amount,
+    String? note,
+    RecurrenceFrequency? frequency,
+    int? categoryId,
+    int? accountId,
+  }) => _db.transaction(() async {
+    final rule = await find(id);
+    if (rule == null) return;
+    String? startDate;
+    String? lastGenerated;
+    if (frequency != null && frequency != rule.frequency) {
+      final next = nextDate(rule);
+      startDate = dateKey(next);
+      lastGenerated = dateKey(addDays(next, -1));
+    }
+    await (_db.update(_db.recurringRules)..where((r) => r.id.equals(id))).write(
+      RecurringRulesCompanion(
+        amount: Value(amount),
+        note: Value(note),
+        frequency: frequency == null ? const Value.absent() : Value(frequency),
+        categoryId: categoryId == null
+            ? const Value.absent()
+            : Value(categoryId),
+        accountId: accountId == null ? const Value.absent() : Value(accountId),
+        startDate: startDate == null ? const Value.absent() : Value(startDate),
+        lastGeneratedDate: lastGenerated == null
+            ? const Value.absent()
+            : Value(lastGenerated),
+      ),
+    );
+  });
 }
