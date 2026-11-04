@@ -114,12 +114,28 @@ Nguồn: agent `reviewer` chỉ đọc, 2026-11-03. Các lỗi đã sửa nằm 
 - [ ] (nhẹ) Mật khẩu sao lưu gõ dạng dấu rời (NFD) và dấu gộp (NFC) cho khóa khác nhau (không có thư viện chuẩn hóa Unicode); bàn phím Android thường cho NFC
 - [ ] (nhẹ) Nút "Hiện lại" ở mục tài khoản đã ẩn đọc cùng một nhãn cho mọi tài khoản (TalkBack không biết tài khoản nào); chưa có test accessibility cho bảng sửa tài khoản và mục này
 
+## Bản 1.2 (SPEC-1.2, người dùng yêu cầu 2026-11-04): đã làm trên nhánh `integration/spec-1.1`, chưa gộp vào nhánh chính, chưa phát hành
+- [x] F-24 sao lưu tự động vào thư mục người dùng chọn (Storage Access Framework, mã hóa AES-256-GCM, tối đa một lần mỗi ngày khi ra nền, giữ 7 file, nút "Sao lưu ngay" và "Chọn lại thư mục") · AC-58, AC-59, AC-60
+- [x] F-25 nhắc ghi chép hằng ngày (thông báo cục bộ, giờ chọn được, mặc định 20:00, lịch không chính xác theo phút, chạm mở màn Nhập khoản chi qua khóa PIN) · AC-61, AC-62; manifest thêm đúng `POST_NOTIFICATIONS` và `RECEIVE_BOOT_COMPLETED`
+- [x] F-26 widget màn hình chính (nút Chi/Thu, liên kết sâu qua khóa PIN, công tắc "Hiện số tiền trên widget", khi PIN bật chỉ hiện "Đã khóa bằng PIN") · AC-63, AC-64
+- 294 test tự động đạt (2026-11-04, `flutter test`); test từng AC ở `docs/TESTING.md` (AC-58 tới AC-64). Tài liệu: `ui-spec.md` (3.13, 4.8, 4.9, F-16 tới F-18), `CHANGELOG.md` mục 1.2.
+- [ ] Thử tay trên máy thật theo `docs/TESTING.md` mục "Kiểm tay bản 1.2" (M-1 tới M-7): chọn thư mục Google Drive và file được tải lên, sao lưu lúc ra nền và dọn còn 7 file, lỗi khi thu hồi quyền, hộp xin quyền thông báo, thông báo đúng giờ và chạm mở app (cả khi PIN bật), khởi động lại máy, giao diện và nút widget, widget khi bật PIN. CHƯA kiểm chứng trên máy nào
+- [ ] Chưa chạy lại `aapt2 dump permissions` trên APK release bản 1.2 (phải chỉ có `POST_NOTIFICATIONS`, `RECEIVE_BOOT_COMPLETED` và quyền nội bộ AndroidX) trước `/release`; `docs/COMPLIANCE.md` (D-02, D-11, P-10, S-04), `docs/SECURITY.md` và chính sách quyền riêng tư đã được cập nhật cho bản 1.2 trong cây làm việc (chưa commit), còn cần luật sư đọc lại, đăng chính sách và điền Data safety: CHƯA làm
+- [ ] (SPEC-1.2 AC-63 đã sửa thành 2×2, chờ người dùng xác nhận) AC-63 từng ghi widget cỡ tối thiểu 2×1, nhưng code đặt 2×2 (110 dp; một hàng 40 dp cắt mất nút khi có dòng trạng thái): người dùng chấp nhận 2×2 (rồi sửa SPEC) hoặc yêu cầu 2×1
+- [ ] (nhẹ) Widget không tự tính số của tháng mới khi app chưa mở: nay số cũ tự bị bỏ khi hết kỳ tháng (báo thức không chính xác và cập nhật 30 phút của hệ thống) và widget hiện "Mở app để cập nhật" tới lần mở app kế tiếp; phần tự tính số mới nằm ở mục "Ý tưởng". Chưa thử trên launcher thật
+- [x] Công tắc "Hiện số tiền trên widget" và công tắc nhắc ghi chép là cài đặt theo máy: không ghi vào file sao lưu, khôi phục không áp (file cũ có chứa chúng cũng vậy) và cả hai về tắt (test `restore_settings_test`; thay đổi chưa commit, chưa chạy lại cả bộ test)
+- [ ] (nhẹ) Mã hóa PBKDF2 (100.000 vòng) của sao lưu tự động bắt đầu lúc app ra nền; Android có thể đóng băng app ẩn nên một lần sao lưu có thể dang dở tới lần sau. Thời gian trên Galaxy A13 chưa đo
+- [ ] (nhẹ) Đổi múi giờ lúc app đóng thì lịch nhắc lệch tới lần mở app kế tiếp (lúc đó app đặt lại lịch theo múi giờ mới)
+
 ## Ý tưởng ngoài SPEC (chưa được duyệt, KHÔNG tự làm)
 - Bản iOS
-- Đồng bộ/sao lưu lên Google Drive, Dropbox
+- Đồng bộ/sao lưu lên Google Drive, Dropbox (sao lưu một chiều vào thư mục đã chọn đã làm ở 1.2, F-24)
+- **Đồng bộ hai chiều giữa nhiều máy qua Drive/Dropbox** (ghi 2026-11-04): ngoài phạm vi, cần khóa OAuth/ID khách do người dùng tự tạo (Google Cloud, Dropbox App Console), kéo theo quyền INTERNET, Data safety và chính sách quyền riêng tư viết lại
+- **Widget hiện số tiền khi đang bật khóa PIN** (ghi 2026-11-04): ngoài phạm vi, làm lộ số liệu ngoài màn khóa và vô hiệu khóa PIN (SPEC-1.2)
+- **Widget tự sang tháng mới** khi app chưa mở (ghi 2026-11-04): hiện chỉ Dart tính được số nên widget chỉ bỏ số cũ khi hết tháng và ghi "Mở app để cập nhật"; muốn tự hiện số tháng mới cần tính ở phía Android hoặc chạy nền theo ngày, cân nhắc quyền, pin và việc đọc dữ liệu ngoài app
 - Nhiều tiền tệ và quy đổi tỉ giá
-- Ngân sách theo danh mục; nhắc ghi chép bằng thông báo
-- Widget màn hình chính; mở khóa bằng vân tay
+- Ngân sách theo danh mục; nhắc ghi chép bằng thông báo (cả hai đã làm: 1.1 F-20, 1.2 F-25)
+- Widget màn hình chính (đã làm ở 1.2, F-26); mở khóa bằng vân tay
 - Mã hóa file sao lưu bằng mật khẩu (file `.vigon` hiện là JSON thường, D-006)
 - Gói Pro hoặc nguồn thu khác
 - Che nội dung ở màn đa nhiệm (`FLAG_SECURE`) để ảnh xem trước không lộ số liệu (MASVS-STORAGE)
