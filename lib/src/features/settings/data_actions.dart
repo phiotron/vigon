@@ -76,6 +76,12 @@ Future<void> restoreFromFile(BuildContext context, WidgetRef ref) async {
     showMessage(l.restoreFailed);
     return;
   }
+  try {
+    validateBackup(content);
+  } on BackupFormatException {
+    showMessage(l.restoreFailed);
+    return;
+  }
   if (!context.mounted) return;
   final ok = await _confirm(context, l.restore, l.restoreConfirm, l.confirm);
   if (!ok) return;

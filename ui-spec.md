@@ -108,7 +108,7 @@ Màn chính "/"
 | 6 | **Hai nút lớn** | Đỏ "−" bên trái (thêm khoản chi) và xanh "+" bên phải (thêm khoản thu), cao tối thiểu 64 dp, ở vùng ngón cái |
 
 **Nút trên thanh tiêu đề:**
-- **Icon ví "Tài khoản"** — chỉ hiện khi có từ 2 tài khoản. Mở menu: "Tất cả tài khoản" và từng tài khoản; chọn một thì toàn bộ số liệu màn chính và màn Các khoản chỉ tính khoản của tài khoản đó (khoản chuyển tiền tính nếu tài khoản là nguồn hoặc đích). Lựa chọn nằm trong bộ nhớ của phiên chạy, KHÔNG lưu khi tắt app.
+- **Icon ví "Tài khoản"** — chỉ hiện khi có từ 2 tài khoản; khi đang lọc, trình đọc màn hình nghe "Tài khoản: <tên>". Mở menu: "Tất cả tài khoản" và từng tài khoản; chọn một thì toàn bộ số liệu màn chính và màn Các khoản chỉ tính khoản của tài khoản đó (khoản chuyển tiền tính nếu tài khoản là nguồn hoặc đích). Lựa chọn nằm trong bộ nhớ của phiên chạy, KHÔNG lưu khi tắt app.
 - **Icon danh sách "Các khoản"** → `/entries`.
 - **Icon bánh răng "Cài đặt"** → `/settings`.
 
@@ -329,7 +329,7 @@ Tiêu đề "Thêm tài khoản"/"Sửa tài khoản"; ô **"Tên"** (tối đa 
 Tiêu đề "Ngân sách tháng", ô nhập số tiền (bàn phím số, tự focus). Nút: **"Bỏ ngân sách"** (chỉ khi đang có), **"Hủy"**, **"Lưu"**. Số tiền phải lớn hơn 0, không thì lỗi "Số tiền phải lớn hơn 0". Lưu thì thanh ngân sách hiện ngay ở màn chính; bỏ thì thanh biến mất. Ngân sách tính theo **tháng hiện tại** (theo ngày bắt đầu tháng), mọi tài khoản, độc lập với kỳ đang xem.
 
 ### 4.6 Hộp thoại chọn tiền tệ (`settings_screen.dart`)
-Hộp thoại danh sách: dòng ghi chú "Đổi tiền tệ chỉ đổi ký hiệu, không quy đổi số tiền." và 31 mã (VND, USD, EUR, GBP, JPY, KRW, CNY, TWD, HKD, SGD, THB, MYR, IDR, PHP, INR, AUD, NZD, CAD, CHF, SEK, NOK, DKK, PLN, CZK, HUF, TRY, BRL, MXN, ZAR, AED, SAR); dòng đang dùng có ✓. Chọn mã khác → đổi ngay (xem F-9).
+Hộp thoại danh sách: dòng ghi chú "Đổi tiền tệ chỉ đổi ký hiệu, không quy đổi tỉ giá…" (kèm giải thích nhân/chia khi số chữ số thập phân khác nhau và có thể mất phần lẻ khi đổi ngược) và 31 mã (VND, USD, EUR, GBP, JPY, KRW, CNY, TWD, HKD, SGD, THB, MYR, IDR, PHP, INR, AUD, NZD, CAD, CHF, SEK, NOK, DKK, PLN, CZK, HUF, TRY, BRL, MXN, ZAR, AED, SAR); dòng đang dùng có ✓. Chọn mã khác → đổi ngay (xem F-9).
 
 ### 4.7 Hộp thoại sửa chuỗi định kỳ (`recurring_screen.dart`)
 Tiêu đề "Khoản định kỳ"; ô số tiền (chỉ nhận `0-9 . ,`), ô ghi chú (tối đa 200); **"Hủy"** / **"Lưu"**. Số tiền ≤ 0 hoặc sai → "Số tiền phải lớn hơn 0".
@@ -400,9 +400,9 @@ Cài đặt → gạt công tắc "Khóa bằng mã PIN" → màn "Đặt mã PI
 
 ### F-13 · Khôi phục từ bản sao lưu
 1. Cài đặt → "Khôi phục từ bản sao lưu" → trình chọn file hệ thống → chọn file `.vigon`.
-2. Đọc file; không đọc được → thông báo "File không hợp lệ hoặc bị hỏng. Dữ liệu hiện tại không thay đổi."
-3. Hộp thoại "Dữ liệu hiện tại sẽ bị thay thế bằng bản sao lưu. Tiếp tục?" → "Đồng ý" / "Hủy".
-4. Đồng ý → kiểm định dạng, phiên bản, mã kiểm tra và từng dòng dữ liệu; hợp lệ thì **xóa dữ liệu cũ và ghi dữ liệu mới trong một giao dịch**. Bất kỳ lỗi nào (định dạng, mã kiểm tra, khóa ngoại sai, số tiền ≤ 0) thì giữ nguyên dữ liệu cũ và báo "File không hợp lệ hoặc bị hỏng…".
+2. App **kiểm file trước** (định dạng, phiên bản, mã kiểm tra, từng dòng) mà chưa ghi gì; file hỏng hoặc không đọc được → thông báo ngay "File không hợp lệ hoặc bị hỏng. Dữ liệu hiện tại không thay đổi.", không hỏi xác nhận.
+3. File hợp lệ → hộp thoại "Dữ liệu hiện tại sẽ bị thay thế bằng bản sao lưu. Tiếp tục?" → "Đồng ý" / "Hủy".
+4. Đồng ý → **xóa dữ liệu cũ và ghi dữ liệu mới trong một giao dịch**. Lỗi ràng buộc lúc ghi (khóa ngoại sai, số tiền ≤ 0) thì giao dịch quay lui, giữ nguyên dữ liệu cũ và báo "File không hợp lệ hoặc bị hỏng…".
 5. Thành công: "Đã khôi phục dữ liệu"; bộ lọc tài khoản đặt lại "Tất cả". Cài đặt (giao diện, ngôn ngữ, tiền tệ, ngân sách…) lấy theo file.
 
 ### F-14 · Xóa toàn bộ dữ liệu
@@ -478,12 +478,11 @@ Ghi theo code hiện tại; chi tiết và mức độ nằm ở `docs/BACKLOG.m
 - **Chưa có chức năng xóa hay ẩn tài khoản**; chưa có tìm kiếm khoản; chưa có sửa tần suất/danh mục của chuỗi định kỳ (chỉ sửa số tiền và ghi chú).
 - **PIN:** không đếm lần nhập sai, không làm chậm; giờ ra nền lấy từ đồng hồ máy nên đổi giờ máy có thể qua được hạn 1 phút. PIN chỉ chặn người cầm máy, không mã hóa dữ liệu (D-007).
 - **Kỳ mặc định** ở màn chính là tháng lúc mở app; app sống qua nửa đêm thì kỳ đang xem không tự nhảy (thanh ngân sách thì tự sang tháng mới khi quay lại từ nền).
-- **Khôi phục** hỏi xác nhận trước khi kiểm file (dữ liệu vẫn an toàn vì kiểm hết trước khi xóa).
-- **Đổi tiền tệ** USD→VND làm tròn phần lẻ, đổi lại không hoàn được.
+- **Đổi tiền tệ** USD→VND làm tròn phần lẻ, đổi lại không hoàn được (hộp chọn tiền tệ đã nói rõ điều này).
 - **Số tiền một khoản tối đa 1.000.000.000.000 đơn vị nhỏ nhất**; vượt thì chỉ báo "Phép tính không hợp lệ" (chưa có thông báo riêng "quá lớn").
 - **Danh mục chi vượt số icon xếp vừa quanh biểu đồ** thì danh mục thừa không chạm được từ biểu đồ (vẫn chọn được ở lưới chọn danh mục). Với 10 danh mục mặc định trên màn 360 dp thì đủ chỗ.
 - **Màn Các khoản:** số tiền ở dòng khoản con căn mép phải xa hơn số tiền ở dòng danh mục (do danh mục có thêm mũi tên); chỉ là lệch thị giác.
-- **Nút lọc tài khoản** ở màn chính chỉ là icon ví, không hiện tên tài khoản đang lọc.
+- **Nút lọc tài khoản** ở màn chính vẫn chỉ là icon ví (không hiện tên bằng chữ trên màn hình); tên tài khoản đang lọc chỉ có ở tooltip và trình đọc màn hình.
 - **Tài khoản ví ở màn chính** là menu lọc, không phải màn Tài khoản (màn đó vào qua Cài đặt).
 - **CSV:** tiêu đề cột và loại khoản (expense, income, transfer) luôn tiếng Anh; số lẻ dùng dấu chấm; chưa thử mở bằng Excel.
 - **Chưa thử trên máy thật:** TalkBack thật và cỡ chữ lớn nhất.

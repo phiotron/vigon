@@ -293,7 +293,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get currencyNote =>
-      'Changing the currency only changes the symbol. Amounts are not converted.';
+      'Changing the currency only changes the symbol; no exchange rate is applied. If the two currencies have a different number of decimals (for example VND and USD), amounts are multiplied or divided so the numbers you see stay the same; switching back may lose the fractional part.';
 
   @override
   String get weekStart => 'First day of week';

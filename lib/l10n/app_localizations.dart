@@ -641,7 +641,7 @@ abstract class AppLocalizations {
   /// No description provided for @currencyNote.
   ///
   /// In en, this message translates to:
-  /// **'Changing the currency only changes the symbol. Amounts are not converted.'**
+  /// **'Changing the currency only changes the symbol; no exchange rate is applied. If the two currencies have a different number of decimals (for example VND and USD), amounts are multiplied or divided so the numbers you see stay the same; switching back may lose the fractional part.'**
   String get currencyNote;
 
   /// No description provided for @weekStart.

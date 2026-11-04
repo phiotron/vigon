@@ -53,7 +53,17 @@ Future<String> exportBackup(AppDatabase db, {required DateTime now}) async {
 /// Thay toàn bộ dữ liệu bằng bản sao lưu (AC-29). Kiểm tra định dạng, phiên
 /// bản, mã băm và đọc hết dữ liệu TRƯỚC khi xóa; ghi trong một giao dịch nên
 /// có lỗi giữa chừng thì dữ liệu hiện có giữ nguyên.
-Future<void> importBackup(AppDatabase db, String content) async {
+typedef _Parsed = ({
+  List<Account> accounts,
+  List<Category> categories,
+  List<RecurringRule> rules,
+  List<Entry> entries,
+  List<Setting> settings,
+});
+
+/// Đọc và kiểm hết file (định dạng, phiên bản, mã băm, từng dòng) mà KHÔNG đụng
+/// cơ sở dữ liệu. Ném [BackupFormatException] nếu có gì sai.
+_Parsed _parseBackup(String content) {
   final Map<String, dynamic> root;
   try {
     root = jsonDecode(content) as Map<String, dynamic>;
@@ -89,16 +99,29 @@ Future<void> importBackup(AppDatabase db, String content) async {
   final entries = rows('entries', Entry.fromJson);
   final settings = rows('settings', Setting.fromJson);
   if (accounts.isEmpty) throw BackupFormatException('không có tài khoản');
+  return (
+    accounts: accounts,
+    categories: categories,
+    rules: rules,
+    entries: entries,
+    settings: settings,
+  );
+}
 
+/// Kiểm file sao lưu mà không ghi gì; dùng để báo file hỏng TRƯỚC khi hỏi xác nhận (AC-29).
+void validateBackup(String content) => _parseBackup(content);
+
+Future<void> importBackup(AppDatabase db, String content) async {
+  final parsed = _parseBackup(content);
   try {
     await db.transaction(() async {
       await _clearAll(db);
       await db.batch((b) {
-        b.insertAll(db.accounts, accounts);
-        b.insertAll(db.categories, categories);
-        b.insertAll(db.recurringRules, rules);
-        b.insertAll(db.entries, entries);
-        b.insertAll(db.settings, settings);
+        b.insertAll(db.accounts, parsed.accounts);
+        b.insertAll(db.categories, parsed.categories);
+        b.insertAll(db.recurringRules, parsed.rules);
+        b.insertAll(db.entries, parsed.entries);
+        b.insertAll(db.settings, parsed.settings);
       });
     });
   } on BackupFormatException {

@@ -78,6 +78,25 @@ void main() {
   }
 
   group('sao lưu và khôi phục (AC-28, AC-29)', () {
+    test(
+      'validateBackup báo file hỏng mà không đụng dữ liệu (AC-29)',
+      () async {
+        await sampleData();
+        final before = await snapshot(db);
+        final json = await exportBackup(db, now: now);
+        validateBackup(json); // file đúng thì không ném lỗi
+        expect(
+          () => validateBackup(json.replaceFirst('155000', '999')),
+          throwsA(isA<BackupFormatException>()),
+        );
+        expect(
+          () => validateBackup('không phải json'),
+          throwsA(isA<BackupFormatException>()),
+        );
+        expect(await snapshot(db), before);
+      },
+    );
+
     test('xuất rồi khôi phục vào máy khác ra đúng dữ liệu', () async {
       await sampleData();
       final json = await exportBackup(db, now: now);

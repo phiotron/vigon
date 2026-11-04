@@ -293,7 +293,7 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get currencyNote =>
-      'Đổi tiền tệ chỉ đổi ký hiệu, không quy đổi số tiền.';
+      'Đổi tiền tệ chỉ đổi ký hiệu, không quy đổi tỉ giá. Nếu hai tiền tệ có số chữ số thập phân khác nhau (ví dụ VND và USD), số tiền được nhân hoặc chia để giữ nguyên con số; đổi ngược lại có thể mất phần lẻ.';
 
   @override
   String get weekStart => 'Ngày đầu tuần';

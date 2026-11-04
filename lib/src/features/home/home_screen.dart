@@ -32,7 +32,9 @@ class HomeScreen extends ConsumerWidget {
           if (accounts.length > 1)
             PopupMenuButton<int>(
               icon: const Icon(Icons.account_balance_wallet_outlined),
-              tooltip: l.account,
+              tooltip: accountFilter == null
+                  ? l.account
+                  : '${l.account}: ${accountLabel(l, accounts.firstWhere((a) => a.id == accountFilter, orElse: () => accounts.first))}',
               initialValue: accountFilter ?? -1,
               onSelected: (id) => ref
                   .read(accountFilterProvider.notifier)

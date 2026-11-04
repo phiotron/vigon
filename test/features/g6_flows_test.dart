@@ -77,7 +77,8 @@ void main() {
     await tester.tap(find.text('Thẻ').last);
     await settle(tester);
     expect(findPlainText('Số dư: -30.000 ₫'), findsOneWidget);
-    await tester.tap(find.byTooltip('Tài khoản'));
+    // Nút lọc đọc tên tài khoản đang lọc.
+    await tester.tap(find.byTooltip('Tài khoản: Thẻ'));
     await settle(tester);
     await tester.tap(find.text('Tất cả tài khoản'));
     await settle(tester);
@@ -228,6 +229,39 @@ void main() {
       findPlainText('Ngân sách tháng: Đã chi 0 ₫ / 1.000.000 ₫'),
       findsOneWidget,
     );
+    await disposeApp(tester, db);
+  });
+
+  testWidgets('chọn Khoảng tùy chọn bằng hộp chọn ngày (AC-10)', (
+    tester,
+  ) async {
+    final db = await pumpApp(tester);
+    await tester.tap(find.text('Tháng 11 năm 2026'));
+    await settle(tester);
+    await tester.tap(find.text('Khoảng tùy chọn'));
+    await settle(tester);
+    // Hộp chọn khoảng ngày của Material: chạm ngày đầu rồi ngày cuối, bấm Lưu.
+    await tester.tap(find.text('5').first);
+    await tester.pump();
+    await tester.tap(find.text('9').first);
+    await tester.pump();
+    // Tiêu đề hộp chọn khoảng ngày của Material tràn vài px ở màn 360 dp: lỗi của
+    // thư viện (không phải của app), chỉ bỏ qua đúng lỗi tràn này.
+    final overflow = tester.takeException();
+    if (overflow != null) {
+      expect(overflow.toString(), contains('overflowed'));
+    }
+    await tester.tap(find.text('Lưu'));
+    await settle(tester);
+    final again = tester.takeException();
+    if (again != null) expect(again.toString(), contains('overflowed'));
+    expect(find.textContaining('5 thg 11'), findsOneWidget);
+    expect(find.textContaining('9 thg 11'), findsOneWidget);
+    // Kỳ sau dịch cả khoảng đi đúng số ngày (5 ngày).
+    await tester.tap(find.byTooltip('Kỳ sau'));
+    await settle(tester);
+    expect(find.textContaining('10 thg 11'), findsOneWidget);
+    expect(find.textContaining('14 thg 11'), findsOneWidget);
     await disposeApp(tester, db);
   });
 }
