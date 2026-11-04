@@ -113,6 +113,7 @@ Nguồn: agent `reviewer` chỉ đọc, 2026-11-03. Các lỗi đã sửa nằm 
 - Gói Pro hoặc nguồn thu khác
 - Che nội dung ở màn đa nhiệm (`FLAG_SECURE`) để ảnh xem trước không lộ số liệu (MASVS-STORAGE)
 - Nút lọc tài khoản ở màn chính hiện tên tài khoản đang lọc (đang chỉ ghi "Tài khoản")
+- Bản icon đơn sắc (`<monochrome>`) cho biểu tượng chủ đề của Android 13+
 - Tên tiếng Anh riêng cho store (gợi ý: Neat Wallet, Tidy Wallet, Pocket Ledger), cần tra trùng
 
 ## Biên bản thử máy thật

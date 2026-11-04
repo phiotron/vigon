@@ -15,4 +15,5 @@
 - Sửa thêm 3 lỗi: số tiền quá lớn làm tràn tổng và làm tròn 1.005 USD sai (BUG-011), thanh ngân sách không sang tháng mới khi app sống qua nửa đêm (BUG-012), hộp thoại ngân sách và khoản định kỳ giải phóng ô nhập quá sớm (BUG-013); thêm 9 test giao diện (116 test) (2026-11-04)
 - Chuẩn bị ký bản phát hành: `build.gradle.kts` đọc `android/key.properties` (ngoài repo), build `appbundle` bị chặn khi thiếu khóa; `docs/RELEASE.md` điền đủ kèm hướng dẫn tạo khóa cho người dùng (2026-11-04)
 - Khôi phục sao lưu kiểm file trước khi hỏi xác nhận; cảnh báo đổi tiền tệ rõ hơn; nút lọc tài khoản đọc tên tài khoản; thêm test Khoảng tùy chọn và kiểm file sao lưu (118 test) (2026-11-04)
+- Chốt logo hai thẻ xếp chồng (D-009): icon launcher Android thích ứng + PNG cho máy cũ, icon Play Store 512×512; thay icon Flutter mặc định (2026-11-04)
 - Tài liệu: ARCHITECTURE, RUNBOOK, PROMPTS điền lần đầu; D-006, D-007; RETROSPECTIVE nháp (2026-11-03)

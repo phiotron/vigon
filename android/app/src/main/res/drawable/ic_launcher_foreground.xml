@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Logo Ví Gọn (hai thẻ xếp chồng), đặt trong vùng an toàn của icon thích ứng 108dp.
+     Hình trùng với docs/store/brand/ và canvas Design; sửa thì sửa cả hai. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <group
+        android:scaleX="0.2"
+        android:scaleY="0.2"
+        android:translateX="3"
+        android:translateY="1.6">
+        <group
+            android:translateX="-8"
+            android:translateY="4">
+            <group
+                android:pivotX="246"
+                android:pivotY="228"
+                android:rotation="-14">
+                <path
+                    android:fillColor="#8CD5BF"
+                    android:pathData="M162,150 H330 A36,36 0 0 1 366,186 V270 A36,36 0 0 1 330,306 H162 A36,36 0 0 1 126,270 V186 A36,36 0 0 1 162,150 Z" />
+            </group>
+            <group
+                android:pivotX="276"
+                android:pivotY="292"
+                android:rotation="8">
+                <path
+                    android:fillColor="#F7FAF8"
+                    android:pathData="M190,210 H362 A40,40 0 0 1 402,250 V334 A40,40 0 0 1 362,374 H190 A40,40 0 0 1 150,334 V250 A40,40 0 0 1 190,210 Z" />
+                <path
+                    android:fillColor="#0E5244"
+                    android:pathData="M196,262 H280 A10,10 0 0 1 290,272 V272 A10,10 0 0 1 280,282 H196 A10,10 0 0 1 186,272 V272 A10,10 0 0 1 196,262 Z" />
+                <path
+                    android:fillAlpha="0.35"
+                    android:fillColor="#0E5244"
+                    android:pathData="M196,302 H240 A10,10 0 0 1 250,312 V312 A10,10 0 0 1 240,322 H196 A10,10 0 0 1 186,312 V312 A10,10 0 0 1 196,302 Z" />
+                <path
+                    android:fillColor="#E65100"
+                    android:pathData="M342,292 a24,24 0 1,0 48,0 a24,24 0 1,0 -48,0 Z" />
+            </group>
+        </group>
+    </group>
+</vector>

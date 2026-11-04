@@ -39,7 +39,7 @@ Lưu ý: nhánh "có khóa" trong `build.gradle.kts` CHƯA được chạy thử
 Nội dung nháp đầy đủ: `docs/store/listing.md`. Ảnh chụp: `docs/store/screenshots/` (6 ảnh 1080×2160, dữ liệu mẫu).
 - Tên: **Ví Gọn**. Tên tiếng Anh: CHƯA chốt (gợi ý trong listing.md; phải tra trùng).
 - Mô tả ngắn và dài (vi/en): đã viết, chờ người dùng duyệt.
-- Ảnh chụp màn hình: đã chụp (6 ảnh). CHƯA có icon 512×512 và ảnh bìa 1024×500 (người dùng đang thiết kế trên canvas Design).
+- Ảnh chụp màn hình: đã chụp (6 ảnh). Icon 512×512: đã chốt logo và có file (`docs/store/brand/icon-512.png`, D-009). Ảnh bìa 1024×500: đã vẽ trên canvas Design, CHƯA có PNG (người dùng xuất bằng Share › Export).
 - Phân loại: Finance; độ tuổi: từ 13 tuổi, không nhắm trẻ em (chờ quyết Play Age Signals, COMPLIANCE D-12).
 - Data safety: không thu thập, không chia sẻ (khớp `docs/SECURITY.md`).
 - Đường dẫn chính sách quyền riêng tư: **CHƯA có**. Nội dung ở `docs/legal/privacy-policy.md`; người dùng đăng lên Google Sites rồi gửi đường dẫn, điền vào `lib/src/app_info.dart` (`AppInfo.privacyPolicyUrl`) và Play Console.
@@ -48,7 +48,7 @@ Nội dung nháp đầy đủ: `docs/store/listing.md`. Ảnh chụp: `docs/stor
 ## Điều kiện chặn phát hành (còn lại, 2026-11-04)
 - [ ] Khóa ký phát hành (mục trên)
 - [ ] Đường dẫn chính sách quyền riêng tư công khai
-- [ ] Icon 512×512 và ảnh bìa 1024×500
+- [ ] Xuất PNG ảnh bìa 1024×500 từ canvas Design (icon 512×512 đã có); tra trùng nhãn hiệu cho logo và tên
 - [ ] Thử TalkBack thật và cỡ chữ lớn nhất (AC-38, AC-39); mở CSV bằng Excel
 - [ ] Người dùng quyết: tên cá nhân hay công ty, Play Age Signals; luật sư xác nhận CRA (S-06), DPIA ở Việt Nam (D-07)
 - [ ] COMPLIANCE.md còn dòng "chưa" (xem BACKLOG G6) và kiểm lại hạn chót Apple/Google trong ngày nộp

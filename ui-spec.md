@@ -30,6 +30,7 @@ Nội dung chữ lấy từ `lib/l10n/app_vi.arb` (tiếng Việt, mặc định
 | Lớp phủ toàn app | `AppLifecycleWatcher` (theo dõi ra nền/quay lại) bọc `Stack` gồm: app (bị `Offstage` khi khóa) và `LockScreen` (khi bật PIN và đang khóa) |
 | Thông báo nổi | `rootMessengerKey` (một `ScaffoldMessenger` gốc) để thanh "Đã xóa · Hoàn tác" còn hiện sau khi đóng màn sửa |
 | Dữ liệu | Không có mạng. Mọi thay đổi ghi ngay vào SQLite khi bấm Lưu/xác nhận |
+| Icon app | Logo "hai thẻ xếp chồng" (D-009): icon thích ứng Android (nền xanh đậm `#0E5244`), không còn icon Flutter mặc định |
 
 ### Bảng route (`lib/src/app.dart`)
 
