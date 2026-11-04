@@ -43,11 +43,11 @@ Không phải tư vấn pháp lý: trước khi mở bán ở nước nào cần
 | C-01 | Bán hàng số/thuê bao | Hiển thị giá và điều kiện trước khi thanh toán; cho hủy ngay trong app; nhắc trước khi gia hạn | L4 "Bảo vệ người tiêu dùng" | không áp dụng | Miễn phí, không bán gì, 2026-11-03 |
 | C-02 | Bán trực tuyến cho người tiêu dùng EU | Chức năng rút khỏi hợp đồng (Điều 11a Chỉ thị 2023/2673, áp dụng từ 19/06/2026) | L4 | không áp dụng | Không bán trực tuyến, 2026-11-03 |
 | C-03 | Bán ở EU | Trách nhiệm sản phẩm (Chỉ thị 2024/2853, sản phẩm đưa ra thị trường sau 09/12/2026): công bố thời hạn cập nhật bảo mật, lưu hồ sơ kiểm thử và vòng đời | L4 | chưa | |
-| P-01 | Phát hành iOS | Build bằng Xcode 26 trở lên với SDK iOS 26 trở lên (từ 28/04/2026) | L5 Apple | không áp dụng | v1 chỉ Android (D-001), 2026-11-03 |
-| P-02 | Phát hành iOS | App privacy details khi nộp; tệp `PrivacyInfo.xcprivacy`; SDK phổ biến kèm privacy manifest và chữ ký | L5 Apple | không áp dụng | v1 chỉ Android (D-001), 2026-11-03 |
-| P-03 | Phát hành iOS | `ITSAppUsesNonExemptEncryption` trong Info.plist (NO nếu không mã hóa hoặc chỉ mã hóa miễn trừ) | L5 Apple, L6 | không áp dụng | v1 chỉ Android (D-001), 2026-11-03 |
-| P-04 | Phát hành iOS, có theo dõi | App Tracking Transparency (từ iOS 14.5; màn hình riêng cho EU từ iOS 27.2) | L5 Apple | không áp dụng | v1 chỉ Android, không theo dõi, 2026-11-03 |
-| P-05 | Phát hành iOS | Bảng câu hỏi xếp hạng độ tuổi mới (Việt Nam: 00+, 12+, 16+, 18+ từ 18/06/2026) | L5 Apple | không áp dụng | v1 chỉ Android (D-001), 2026-11-03 |
+| P-01 | Phát hành iOS | Build bằng Xcode 26 trở lên với SDK iOS 26 trở lên (từ 28/04/2026) | L5 Apple | chưa | iOS đưa vào phạm vi 2026-11-04 (D-011, PLAN-001 T6); kiểm khi build iOS |
+| P-02 | Phát hành iOS | App privacy details khi nộp; tệp `PrivacyInfo.xcprivacy`; SDK phổ biến kèm privacy manifest và chữ ký | L5 Apple | chưa | iOS đưa vào phạm vi 2026-11-04 (D-011, PLAN-001 T6); kiểm khi build iOS |
+| P-03 | Phát hành iOS | `ITSAppUsesNonExemptEncryption` trong Info.plist (NO nếu không mã hóa hoặc chỉ mã hóa miễn trừ) | L5 Apple, L6 | chưa | iOS đưa vào phạm vi 2026-11-04 (D-011, PLAN-001 T6); kiểm khi build iOS |
+| P-04 | Phát hành iOS, có theo dõi | App Tracking Transparency (từ iOS 14.5; màn hình riêng cho EU từ iOS 27.2) | L5 Apple | không áp dụng | Không theo dõi người dùng, không SDK (D-002); iOS thêm theo D-011, 2026-11-04 |
+| P-05 | Phát hành iOS | Bảng câu hỏi xếp hạng độ tuổi mới (Việt Nam: 00+, 12+, 16+, 18+ từ 18/06/2026) | L5 Apple | chưa | iOS đưa vào phạm vi 2026-11-04 (D-011, PLAN-001 T6); kiểm khi build iOS |
 | P-06 | Phát hành Android | targetSdk = API 36 cho app mới và bản cập nhật (từ 31/08/2026, gia hạn tới 01/11/2026) | L5 Google | đạt | targetSdkVersion 36 (`aapt2 dump badging` bản release), 2026-11-03 |
 | P-07 | Phát hành Android | Hỗ trợ trang bộ nhớ 16 KB (bắt buộc với bản cập nhật từ 01/02/2027) | L5 Google | đạt | `zipalign -c -P 16 -v 4` đạt; `llvm-readelf -lW` các `.so` arm64: LOAD align 0x4000 hoặc 0x10000, 2026-11-03 |
 | P-08 | Phát hành Android | Xác minh nhà phát triển (từ 30/09/2026 tại Brazil, Indonesia, Singapore, Thái Lan; toàn cầu năm 2027) | L5 Google | chưa | |

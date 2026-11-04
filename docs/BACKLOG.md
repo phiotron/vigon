@@ -62,6 +62,17 @@ Mỗi giai đoạn kết thúc bằng: `flutter analyze` sạch, `flutter test` 
 - [ ] COMPLIANCE còn "chưa": M-01, D-02, D-07, D-09, D-12, S-06, A-01, C-03, P-08, P-09, P-10 (phần lớn cần người dùng hoặc luật sư)
 - [ ] Closed test 12 người trong 14 ngày (P-09), rồi `/release`
 
+### PLAN-001 · Giao diện theo thiết kế và bản iOS — nhánh `feature/PLAN-001`, duyệt 2026-11-04
+Kế hoạch: `docs/plans/PLAN-001-giao-dien-theo-thiet-ke-va-ban-ios.md`. Mỗi giai đoạn dừng ở cổng chờ người dùng.
+- [ ] T1 · Nền thiết kế: token sinh từ `tokens.json`, theme mới, font Be Vietnam Pro, gói Material Symbols (UI-01, UI-02, UI-05) — trạng thái: đang làm
+- [ ] T2 · Thành phần dùng chung, bộ icon và màu danh mục mới (UI-03)
+- [ ] T3 · Màn S01–S05, lịch khoảng tùy chọn (UI-04, UI-06)
+- [ ] T4 · Màn S06–S12 (UI-04)
+- [ ] T5 · Màn S13–S16, so ảnh với bản vẽ, APK release, thử Galaxy A13 (UI-04)
+- [ ] T6 · iOS: nền tảng, Info.plist, privacy manifest, PIN sau cài lại, CI macOS (iOS-01 tới iOS-03)
+- [ ] Người dùng: remote git, tài khoản Apple Developer, TestFlight, thử iPhone với VoiceOver
+- [ ] Chụp lại ảnh store theo giao diện mới (`docs/store`)
+
 ## Việc kế tiếp (tối đa 5, theo thứ tự)
 1. Người dùng: thử TalkBack và cỡ chữ lớn nhất; đăng chính sách và gửi đường dẫn; mở CSV bằng Excel
 2. Đo nốt NFR khi máy rảnh hẳn (không phiên nào khác dùng máy); khôi phục file xuất từ chính máy

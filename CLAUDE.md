@@ -5,7 +5,8 @@ App mobile CHỈ dành cho điện thoại. Mở Claude ngay trong thư mục n�
 - Mã app: APP-001
 - Thư mục: apps/APP-001-vi-gon
 - Giai đoạn hiện tại: G6 (phần Claude làm được đã xong, chờ người dùng: TalkBack/cỡ chữ trên máy, đăng chính sách, đo nốt NFR)
-- Nền tảng: Android (v1); iOS để sau (D-001)
+- Nền tảng: Android; iOS đang thêm theo PLAN-001 giai đoạn T6, build trên cloud (D-011)
+- Đang làm: PLAN-001 (giao diện theo `design-mobile/screens/`, D-010) trên nhánh `feature/PLAN-001`
 - Quy mô: chuẩn
 - Stack: Flutter
 
