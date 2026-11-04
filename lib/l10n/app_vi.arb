@@ -107,6 +107,8 @@
   "budgetProgress": "Đã chi {spent} / {limit}",
   "budgetOver": "Vượt {amount}",
   "budgetRemove": "Bỏ ngân sách",
+  "categoryBudget": "Ngân sách tháng của danh mục",
+  "categoryBudgetHint": "Để trống nếu không đặt",
 
   "recurring": "Khoản định kỳ",
   "noRecurring": "Chưa có khoản định kỳ. Bật Lặp lại khi ghi khoản.",

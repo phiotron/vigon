@@ -115,6 +115,8 @@
   "budgetOver": "Over by {amount}",
   "@budgetOver": {"placeholders": {"amount": {"type": "String"}}},
   "budgetRemove": "Remove budget",
+  "categoryBudget": "Category monthly budget",
+  "categoryBudgetHint": "Leave empty for none",
 
   "recurring": "Repeating records",
   "noRecurring": "No repeating records yet. Turn on Repeat when adding a record.",

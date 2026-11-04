@@ -1,11 +1,16 @@
+import 'package:drift/drift.dart' show Value;
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../l10n/app_localizations.dart';
+import '../../data/calculator.dart';
 import '../../data/database.dart';
+import '../../data/money.dart';
 import '../../l10n_names.dart';
 import '../../providers.dart';
 import '../../ui/category_avatar.dart';
+import '../entry/keypad.dart' show minorUnitsToInput;
 import 'category_icons.dart';
 
 /// Quản lý danh mục chi và thu: thêm, sửa, sắp xếp, xóa (F-05).
@@ -121,7 +126,16 @@ class _CategoryEditorState extends ConsumerState<_CategoryEditor> {
   late final _name = TextEditingController();
   late String _icon = widget.category?.icon ?? 'more_horiz';
   late int _color = widget.category?.color ?? categoryColors.first;
+  late final int _digits = currencyDecimalDigits(
+    ref.read(currencyProvider).value ?? 'VND',
+  );
+  late final _budget = TextEditingController(
+    text: widget.category?.budget == null
+        ? ''
+        : minorUnitsToInput(widget.category!.budget!, _digits),
+  );
   String? _error;
+  String? _budgetError;
 
   @override
   void didChangeDependencies() {
@@ -135,6 +149,7 @@ class _CategoryEditorState extends ConsumerState<_CategoryEditor> {
   @override
   void dispose() {
     _name.dispose();
+    _budget.dispose();
     super.dispose();
   }
 
@@ -145,10 +160,32 @@ class _CategoryEditorState extends ConsumerState<_CategoryEditor> {
       setState(() => _error = l.nameRequired);
       return;
     }
+    // Hạn mức tháng chỉ cho danh mục chi; để trống là không đặt (AC-54).
+    int? budget;
+    final budgetText = _budget.text.trim();
+    if (widget.type == CategoryType.expense && budgetText.isNotEmpty) {
+      budget = evaluateToMinorUnits(
+        budgetText.replaceAll(',', '.'),
+        decimalDigits: _digits,
+      );
+      if (budget == null || budget <= 0) {
+        setState(() {
+          _error = null;
+          _budgetError = l.amountMustBePositive;
+        });
+        return;
+      }
+    }
     final repo = ref.read(categoryRepositoryProvider);
     final c = widget.category;
     if (c == null) {
-      await repo.add(type: widget.type, name: name, icon: _icon, color: _color);
+      await repo.add(
+        type: widget.type,
+        name: name,
+        icon: _icon,
+        color: _color,
+        budget: budget,
+      );
     } else {
       // Không đổi tên thì giữ tên mặc định theo ngôn ngữ.
       final unchangedName = name == categoryLabel(l, c) && c.nameKey != null;
@@ -157,6 +194,9 @@ class _CategoryEditorState extends ConsumerState<_CategoryEditor> {
         name: unchangedName ? null : name,
         icon: _icon,
         color: _color,
+        budget: widget.type == CategoryType.expense
+            ? Value(budget)
+            : const Value.absent(),
       );
     }
     if (mounted) Navigator.pop(context);
@@ -209,84 +249,118 @@ class _CategoryEditorState extends ConsumerState<_CategoryEditor> {
         isEdit &&
         (ref.watch(categoriesProvider(widget.type)).value?.length ?? 0) > 1;
     return SafeArea(
-      child: SingleChildScrollView(
-        padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              isEdit ? l.editCategory : l.addCategory,
-              style: Theme.of(context).textTheme.titleLarge,
-            ),
-            const SizedBox(height: 12),
-            TextField(
-              controller: _name,
-              maxLength: 50,
-              autofocus: !isEdit,
-              decoration: InputDecoration(labelText: l.name, errorText: _error),
-            ),
-            Text(l.icon, style: Theme.of(context).textTheme.titleSmall),
-            const SizedBox(height: 8),
-            Wrap(
-              spacing: 4,
-              runSpacing: 4,
-              children: [
-                for (final (index, entry) in categoryIcons.entries.indexed)
-                  IconButton(
-                    isSelected: entry.key == _icon,
-                    style: IconButton.styleFrom(
-                      backgroundColor: entry.key == _icon
-                          ? Color(_color)
-                          : null,
-                      foregroundColor: entry.key == _icon ? Colors.white : null,
-                    ),
-                    icon: Icon(entry.value),
-                    key: ValueKey('icon-${entry.key}'),
-                    tooltip: l.iconNumber(index + 1),
-                    onPressed: () => setState(() => _icon = entry.key),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Flexible(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    isEdit ? l.editCategory : l.addCategory,
+                    style: Theme.of(context).textTheme.titleLarge,
                   ),
-              ],
-            ),
-            const SizedBox(height: 12),
-            Text(l.color, style: Theme.of(context).textTheme.titleSmall),
-            const SizedBox(height: 8),
-            Wrap(
-              spacing: 8,
-              runSpacing: 8,
-              children: [
-                for (final color in categoryColors)
-                  Semantics(
-                    button: true,
-                    selected: color == _color,
-                    label: '${l.color} ${categoryColors.indexOf(color) + 1}',
-                    child: InkWell(
-                      customBorder: const CircleBorder(),
-                      onTap: () => setState(() => _color = color),
-                      child: Container(
-                        width: 48,
-                        height: 48,
-                        decoration: BoxDecoration(
-                          color: Color(color),
-                          shape: BoxShape.circle,
-                          border: color == _color
-                              ? Border.all(
-                                  color: Theme.of(context)
-                                      .colorScheme
-                                      .onSurface,
-                                  width: 3,
-                                )
-                              : null,
-                        ),
-                        child: color == _color
-                            ? const Icon(Icons.check, color: Colors.white)
-                            : null,
+                  const SizedBox(height: 12),
+                  TextField(
+                    controller: _name,
+                    maxLength: 50,
+                    autofocus: !isEdit,
+                    decoration: InputDecoration(
+                      labelText: l.name,
+                      errorText: _error,
+                    ),
+                  ),
+                  if (widget.type == CategoryType.expense)
+                    TextField(
+                      key: const ValueKey('category-budget'),
+                      controller: _budget,
+                      keyboardType: const TextInputType.numberWithOptions(
+                        decimal: true,
+                      ),
+                      inputFormatters: [
+                        FilteringTextInputFormatter.allow(RegExp(r'[0-9.,]')),
+                      ],
+                      decoration: InputDecoration(
+                        labelText: l.categoryBudget,
+                        helperText: l.categoryBudgetHint,
+                        errorText: _budgetError,
                       ),
                     ),
+                  const SizedBox(height: 8),
+                  Text(l.icon, style: Theme.of(context).textTheme.titleSmall),
+                  const SizedBox(height: 8),
+                  Wrap(
+                    spacing: 4,
+                    runSpacing: 4,
+                    children: [
+                      for (final (index, entry)
+                          in categoryIcons.entries.indexed)
+                        IconButton(
+                          isSelected: entry.key == _icon,
+                          style: IconButton.styleFrom(
+                            backgroundColor: entry.key == _icon
+                                ? Color(_color)
+                                : null,
+                            foregroundColor: entry.key == _icon
+                                ? Colors.white
+                                : null,
+                          ),
+                          icon: Icon(entry.value),
+                          key: ValueKey('icon-${entry.key}'),
+                          tooltip: l.iconNumber(index + 1),
+                          onPressed: () => setState(() => _icon = entry.key),
+                        ),
+                    ],
                   ),
-              ],
+                  const SizedBox(height: 12),
+                  Text(l.color, style: Theme.of(context).textTheme.titleSmall),
+                  const SizedBox(height: 8),
+                  Wrap(
+                    spacing: 8,
+                    runSpacing: 8,
+                    children: [
+                      for (final color in categoryColors)
+                        Semantics(
+                          button: true,
+                          selected: color == _color,
+                          label:
+                              '${l.color} ${categoryColors.indexOf(color) + 1}',
+                          child: InkWell(
+                            customBorder: const CircleBorder(),
+                            onTap: () => setState(() => _color = color),
+                            child: Container(
+                              width: 48,
+                              height: 48,
+                              decoration: BoxDecoration(
+                                color: Color(color),
+                                shape: BoxShape.circle,
+                                border: color == _color
+                                    ? Border.all(
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .onSurface,
+                                        width: 3,
+                                      )
+                                    : null,
+                              ),
+                              child: color == _color
+                                  ? const Icon(Icons.check, color: Colors.white)
+                                  : null,
+                            ),
+                          ),
+                        ),
+                    ],
+                  ),
+                ],
+              ),
             ),
-            const SizedBox(height: 16),
-            Row(
+          ),
+          // Nút nằm ngoài vùng cuộn để "Lưu" luôn thấy dù thêm ô hạn mức.
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+            child: Row(
               children: [
                 if (canDelete)
                   TextButton.icon(
@@ -298,8 +372,8 @@ class _CategoryEditorState extends ConsumerState<_CategoryEditor> {
                 FilledButton(onPressed: _save, child: Text(l.save)),
               ],
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
