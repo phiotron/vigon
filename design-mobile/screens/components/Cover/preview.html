@@ -1,0 +1,31 @@
+<!-- @dsCard height=288 -->
+<!doctype html>
+<html lang="vi">
+<head><meta charset="utf-8"><title>Ví Gọn — bìa</title>
+<style>
+html,body{margin:0;background:var(--surface)}
+.cover{position:relative;width:960px;height:288px;overflow:hidden;background:var(--surface);font-family:var(--font-sans)}
+.cover svg{position:absolute;left:480px;top:0}
+.slab{fill:var(--primary-container)}
+.arc{fill:none;stroke-width:44px}
+.arc.pri{stroke:var(--primary)} .arc.exp{stroke:var(--expense)} .arc.inc{stroke:var(--income)}
+.disc.ink{fill:var(--ink)} .disc.exp{fill:var(--expense)} .disc.inc{fill:var(--income)} .disc.pri{fill:var(--primary)}
+.txt{position:absolute;left:40px;bottom:32px;max-width:420px}
+.name{margin:0;font-size:120px;line-height:.92;font-weight:700;color:var(--ink);letter-spacing:-2px}
+.tag{margin:36px 0 0;font-size:14px;line-height:20px;color:var(--ink-muted)}
+</style></head>
+<body>
+<div class="cover">
+<svg width="480" height="288" viewBox="0 0 480 288" aria-hidden="true">
+<!-- blocks: primary-container slab 416×288 (bleeds top, right, bottom); donut primary / expense / income; discs ink, expense, income, primary at tap-min 48
+     arrangement: one tall tint slab with the ring sitting across its left edge, satellites on an orbit like the category icons round the chart
+     pattern row: literal motif — the home screen's donut ring with category discs around it; this is the one picture people know Ví Gọn by
+     scales: disc = tap-min (48), ring stroke 44 ≈ tap-min − space-1, orbit gap space-6; discs radius-full -->
+<rect class="slab" x="64" y="0" width="416" height="288"/>
+<circle class="arc pri" cx="300" cy="144" r="92" stroke-dasharray="314.9 578.1" stroke-dashoffset="0.0" transform="rotate(-90 300 144)"/><circle class="arc exp" cx="300" cy="144" r="92" stroke-dasharray="153.1 578.1" stroke-dashoffset="-317.9" transform="rotate(-90 300 144)"/><circle class="arc inc" cx="300" cy="144" r="92" stroke-dasharray="101.0 578.1" stroke-dashoffset="-474.0" transform="rotate(-90 300 144)"/>
+<circle class="disc ink" cx="300.0" cy="-6.0" r="24"/><circle class="disc exp" cx="429.9" cy="69.0" r="24"/><circle class="disc inc" cx="429.9" cy="219.0" r="24"/><circle class="disc pri" cx="170.1" cy="219.0" r="24"/><circle class="disc ink" cx="170.1" cy="69.0" r="24"/>
+</svg>
+<div class="txt"><p class="name">Ví Gọn</p><p class="tag">Sổ thu chi gọn trong vài chạm. Dữ liệu chỉ nằm trên máy.</p></div>
+</div>
+</body>
+</html>
