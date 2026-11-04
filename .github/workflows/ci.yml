@@ -1,27 +1,30 @@
-# CI mẫu cho app Flutter. CHƯA được chạy thử trong bộ khung này: kiểm tra lại phiên bản action và Flutter khi chốt stack.
-# Chưa có pubspec.yaml thì job bỏ qua và báo thành công.
-# Ghim Flutter 3.47.8 cho khớp máy phát triển (D-003).
+# CI Android/Dart: phân tích + unit/widget test trên Ubuntu (rẻ), chạy mọi push và PR.
+# Ghim Flutter 3.47.8 cho khớp máy phát triển (D-003). iOS ở ios.yml (macOS, chỉ nhánh main).
 name: CI
 on:
   push:
   pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
-  check:
+  android-check:
+    name: Analyze + test (Android/Dart)
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
-      - name: Kiểm tra có pubspec.yaml
-        id: has
-        run: |
-          if [ -f pubspec.yaml ]; then echo "ok=true" >> "$GITHUB_OUTPUT"; else echo "Chưa có pubspec.yaml, bỏ qua."; echo "ok=false" >> "$GITHUB_OUTPUT"; fi
       - uses: subosito/flutter-action@v2
-        if: steps.has.outputs.ok == 'true'
         with:
           flutter-version: 3.47.8
+          channel: stable
           cache: true
-      - name: Cài đặt, phân tích, test
-        if: steps.has.outputs.ok == 'true'
-        run: |
-          flutter pub get
-          flutter analyze
-          if [ -d test ]; then flutter test; else echo "Chưa có thư mục test/."; fi
+      - name: Cài gói
+        run: flutter pub get
+      - name: Phân tích
+        run: flutter analyze
+      - name: Test
+        run: flutter test

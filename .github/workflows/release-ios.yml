@@ -1,0 +1,163 @@
+# Phát hành iOS: build bản Release đã ký → .ipa → tải lên App Store Connect (TestFlight).
+# CHỈ chạy tay (workflow_dispatch). CHƯA KIỂM CHỨNG: chưa có tài khoản Apple Developer (2026-11-04).
+#
+# GitHub Secrets cần tạo (repo phiotron/vigon › Settings › Secrets and variables › Actions):
+#   IOS_TEAM_ID                  Team ID 10 ký tự (developer.apple.com › Membership)
+#   IOS_DIST_CERT_P12_BASE64     Chứng chỉ "Apple Distribution" xuất .p12, mã hoá base64 (base64 -i cert.p12)
+#   IOS_DIST_CERT_PASSWORD       Mật khẩu đặt khi xuất .p12
+#   IOS_PROFILE_BASE64           Provisioning profile "App Store" cho com.phiotron.vigon (.mobileprovision, base64)
+#   ASC_KEY_ID                   App Store Connect API key ID (Users and Access › Integrations › Keys, vai trò App Manager)
+#   ASC_ISSUER_ID                Issuer ID của API key
+#   ASC_KEY_P8_BASE64            File AuthKey_XXXX.p8, base64
+# Không commit các file trên vào repo (.gitignore đã chặn *.p12, *.mobileprovision).
+name: Release iOS
+
+on:
+  workflow_dispatch:
+    inputs:
+      build_name:
+        description: 'Phiên bản hiển thị (để trống = lấy từ pubspec.yaml)'
+        required: false
+        default: ''
+      upload:
+        description: 'Tải lên App Store Connect / TestFlight'
+        type: boolean
+        default: true
+
+concurrency:
+  group: release-ios
+  cancel-in-progress: false
+
+jobs:
+  release:
+    name: Build ký + TestFlight
+    runs-on: macos-26
+    timeout-minutes: 60
+    env:
+      KEYCHAIN: ${{ runner.temp }}/vigon-signing.keychain-db
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Kiểm đủ secrets
+        env:
+          IOS_TEAM_ID: ${{ secrets.IOS_TEAM_ID }}
+          IOS_DIST_CERT_P12_BASE64: ${{ secrets.IOS_DIST_CERT_P12_BASE64 }}
+          IOS_DIST_CERT_PASSWORD: ${{ secrets.IOS_DIST_CERT_PASSWORD }}
+          IOS_PROFILE_BASE64: ${{ secrets.IOS_PROFILE_BASE64 }}
+          ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
+          ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
+          ASC_KEY_P8_BASE64: ${{ secrets.ASC_KEY_P8_BASE64 }}
+        run: |
+          missing=0
+          for v in IOS_TEAM_ID IOS_DIST_CERT_P12_BASE64 IOS_DIST_CERT_PASSWORD IOS_PROFILE_BASE64 ASC_KEY_ID ASC_ISSUER_ID ASC_KEY_P8_BASE64; do
+            if [ -z "${!v}" ]; then echo "::error::Thiếu secret $v"; missing=1; fi
+          done
+          exit $missing
+
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: 3.47.8
+          channel: stable
+          cache: true
+
+      - name: Cài chứng chỉ + provisioning profile vào keychain tạm
+        env:
+          IOS_DIST_CERT_P12_BASE64: ${{ secrets.IOS_DIST_CERT_P12_BASE64 }}
+          IOS_DIST_CERT_PASSWORD: ${{ secrets.IOS_DIST_CERT_PASSWORD }}
+          IOS_PROFILE_BASE64: ${{ secrets.IOS_PROFILE_BASE64 }}
+        run: |
+          KEYCHAIN_PASSWORD=$(openssl rand -hex 24)
+          echo "::add-mask::$KEYCHAIN_PASSWORD"
+          CERT="$RUNNER_TEMP/dist.p12"
+          PROFILE="$RUNNER_TEMP/vigon.mobileprovision"
+          echo "$IOS_DIST_CERT_P12_BASE64" | base64 --decode > "$CERT"
+          echo "$IOS_PROFILE_BASE64" | base64 --decode > "$PROFILE"
+
+          security create-keychain -p "$KEYCHAIN_PASSWORD" "$KEYCHAIN"
+          security set-keychain-settings -lut 21600 "$KEYCHAIN"
+          security unlock-keychain -p "$KEYCHAIN_PASSWORD" "$KEYCHAIN"
+          security import "$CERT" -P "$IOS_DIST_CERT_PASSWORD" -A -t cert -f pkcs12 -k "$KEYCHAIN"
+          security set-key-partition-list -S apple-tool:,apple: -k "$KEYCHAIN_PASSWORD" "$KEYCHAIN"
+          security list-keychains -d user -s "$KEYCHAIN" $(security list-keychains -d user | tr -d '"')
+
+          security cms -D -i "$PROFILE" > "$RUNNER_TEMP/profile.plist"
+          UUID=$(plutil -extract UUID raw "$RUNNER_TEMP/profile.plist")
+          NAME=$(plutil -extract Name raw "$RUNNER_TEMP/profile.plist")
+          mkdir -p "$HOME/Library/MobileDevice/Provisioning Profiles"
+          cp "$PROFILE" "$HOME/Library/MobileDevice/Provisioning Profiles/$UUID.mobileprovision"
+          echo "PROFILE_NAME=$NAME" >> "$GITHUB_ENV"
+          rm -f "$CERT"
+
+      - name: Chuẩn bị cấu hình Flutter (số build = số lần chạy)
+        run: |
+          flutter pub get
+          ARGS="--release --config-only --build-number=${{ github.run_number }}"
+          if [ -n "${{ inputs.build_name }}" ]; then ARGS="$ARGS --build-name=${{ inputs.build_name }}"; fi
+          flutter build ios $ARGS
+
+      - name: Archive (ký thủ công)
+        env:
+          IOS_TEAM_ID: ${{ secrets.IOS_TEAM_ID }}
+        run: |
+          set -o pipefail
+          mkdir -p ci-logs
+          xcodebuild -workspace ios/Runner.xcworkspace -scheme Runner -configuration Release \
+            -destination 'generic/platform=iOS' -archivePath build/ios/Runner.xcarchive archive \
+            DEVELOPMENT_TEAM="$IOS_TEAM_ID" CODE_SIGN_STYLE=Manual \
+            CODE_SIGN_IDENTITY="Apple Distribution" PROVISIONING_PROFILE_SPECIFIER="$PROFILE_NAME" \
+            OTHER_CODE_SIGN_FLAGS="--keychain $KEYCHAIN" 2>&1 | tee ci-logs/archive.log
+
+      - name: Xuất .ipa
+        env:
+          IOS_TEAM_ID: ${{ secrets.IOS_TEAM_ID }}
+        run: |
+          set -o pipefail
+          cat > "$RUNNER_TEMP/ExportOptions.plist" <<EOF
+          <?xml version="1.0" encoding="UTF-8"?>
+          <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+          <plist version="1.0">
+          <dict>
+            <key>method</key><string>app-store-connect</string>
+            <key>teamID</key><string>${IOS_TEAM_ID}</string>
+            <key>signingStyle</key><string>manual</string>
+            <key>signingCertificate</key><string>Apple Distribution</string>
+            <key>provisioningProfiles</key>
+            <dict><key>com.phiotron.vigon</key><string>${PROFILE_NAME}</string></dict>
+            <key>uploadSymbols</key><true/>
+            <key>manageAppVersionAndBuildNumber</key><false/>
+          </dict>
+          </plist>
+          EOF
+          xcodebuild -exportArchive -archivePath build/ios/Runner.xcarchive \
+            -exportOptionsPlist "$RUNNER_TEMP/ExportOptions.plist" -exportPath build/ios/ipa 2>&1 | tee ci-logs/export.log
+          ls -la build/ios/ipa
+
+      - name: Tải lên App Store Connect (TestFlight)
+        if: inputs.upload
+        env:
+          ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
+          ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
+          ASC_KEY_P8_BASE64: ${{ secrets.ASC_KEY_P8_BASE64 }}
+        run: |
+          mkdir -p "$HOME/.appstoreconnect/private_keys"
+          echo "$ASC_KEY_P8_BASE64" | base64 --decode > "$HOME/.appstoreconnect/private_keys/AuthKey_${ASC_KEY_ID}.p8"
+          IPA=$(ls build/ios/ipa/*.ipa | head -n1)
+          xcrun altool --validate-app -f "$IPA" -t ios --apiKey "$ASC_KEY_ID" --apiIssuer "$ASC_ISSUER_ID"
+          xcrun altool --upload-app -f "$IPA" -t ios --apiKey "$ASC_KEY_ID" --apiIssuer "$ASC_ISSUER_ID"
+
+      - name: Lưu .ipa + log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ios-release-${{ github.run_number }}
+          path: |
+            build/ios/ipa/*.ipa
+            ci-logs/
+          retention-days: 7
+          if-no-files-found: ignore
+
+      - name: Dọn keychain + khoá API
+        if: always()
+        run: |
+          security delete-keychain "$KEYCHAIN" || true
+          rm -rf "$HOME/.appstoreconnect/private_keys" "$HOME/Library/MobileDevice/Provisioning Profiles"/*.mobileprovision

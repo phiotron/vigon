@@ -1,0 +1,111 @@
+# CI iOS: build bản simulator (không ký) + mở app và chạy integration test trên iOS Simulator.
+# Repo private → phút macOS tính ×10 quota: chỉ chạy khi push nhánh main có đổi code, hoặc chạy tay.
+# Máy làm việc là Windows, không có Mac/iPhone → đây là nơi DUY NHẤT build + thử iOS (A002 D-001).
+name: iOS
+
+on:
+  push:
+    branches: [main]
+    paths-ignore:
+      - '**/*.md'
+      - 'docs/**'
+      - 'store/**'
+      - 'design/**'
+      - 'notes/**'
+      - 'android/**'
+      - 'tool/**'
+  workflow_dispatch:
+
+concurrency:
+  group: ios-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  BUNDLE_ID: com.phiotron.vigon
+
+jobs:
+  ios-simulator:
+    name: Build + test iOS Simulator
+    runs-on: macos-26
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: 3.47.8
+          channel: stable
+          cache: true
+
+      - name: Phiên bản công cụ
+        run: |
+          mkdir -p ci-logs
+          { xcodebuild -version; flutter --version; xcrun simctl list runtimes; } 2>&1 | tee ci-logs/versions.txt
+
+      - name: Cài gói
+        run: flutter pub get
+
+      - name: Kiểm Info.plist + PrivacyInfo.xcprivacy
+        run: |
+          plutil -lint ios/Runner/Info.plist ios/Runner/PrivacyInfo.xcprivacy
+          test "$(plutil -extract CFBundleDisplayName raw ios/Runner/Info.plist)" = "Ví Gọn"
+          test "$(plutil -extract ITSAppUsesNonExemptEncryption raw ios/Runner/Info.plist)" = "false"
+          test "$(plutil -extract NSPrivacyTracking raw ios/Runner/PrivacyInfo.xcprivacy)" = "false"
+          # Không xin quyền nào (D-002): không có khoá NS...UsageDescription.
+          if grep -q "UsageDescription" ios/Runner/Info.plist; then echo "Info.plist có xin quyền"; exit 1; fi
+
+      - name: Build iOS simulator (debug, không ký)
+        run: |
+          set -o pipefail
+          flutter build ios --simulator --debug 2>&1 | tee ci-logs/build-ios-simulator.log
+          APP=build/ios/iphonesimulator/Runner.app
+          test -f "$APP/PrivacyInfo.xcprivacy"
+          plutil -p "$APP/Info.plist" | tee ci-logs/built-info-plist.txt
+          ls "$APP/Frameworks" | tee ci-logs/frameworks.txt
+
+      - name: Khởi động iOS Simulator (iPhone)
+        id: sim
+        run: |
+          UDID=$(xcrun simctl list devices available --json | python3 -c '
+          import json, sys
+          d = json.load(sys.stdin)["devices"]
+          rts = sorted((r for r in d if "iOS" in r), key=lambda r: [int(x) for x in r.split("iOS-")[-1].split("-")], reverse=True)
+          for r in rts:
+              for dev in d[r]:
+                  if dev["name"].startswith("iPhone") and dev.get("isAvailable", True):
+                      print(dev["udid"]); sys.exit(0)
+          sys.exit(1)')
+          echo "udid=$UDID" >> "$GITHUB_OUTPUT"
+          xcrun simctl list devices | grep "$UDID" | tee ci-logs/simulator.txt
+          xcrun simctl boot "$UDID" || true
+          xcrun simctl bootstatus "$UDID" -b
+
+      - name: Cài + mở app, chụp màn hình
+        run: |
+          UDID=${{ steps.sim.outputs.udid }}
+          xcrun simctl install "$UDID" build/ios/iphonesimulator/Runner.app
+          xcrun simctl launch "$UDID" "$BUNDLE_ID" | tee ci-logs/launch.txt
+          sleep 20
+          xcrun simctl io "$UDID" screenshot ci-logs/launch.png
+          # App phải còn sống sau 20 giây (không văng khi mở DB/secure storage).
+          xcrun simctl spawn "$UDID" launchctl list | grep "$BUNDLE_ID"
+          xcrun simctl terminate "$UDID" "$BUNDLE_ID" || true
+
+      - name: Integration test trên simulator
+        run: |
+          set -o pipefail
+          flutter test integration_test/perf_test.dart -d ${{ steps.sim.outputs.udid }} --reporter expanded 2>&1 | tee ci-logs/integration-test.log
+
+      - name: Log hệ thống simulator (khi lỗi)
+        if: failure() && steps.sim.outputs.udid != ''
+        run: |
+          xcrun simctl spawn ${{ steps.sim.outputs.udid }} log show --last 10m --style compact \
+            --predicate 'process == "Runner"' > ci-logs/simulator-runner.log 2>&1 || true
+
+      - name: Tải log + ảnh chụp
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ios-simulator-logs
+          path: ci-logs/
+          retention-days: 14
