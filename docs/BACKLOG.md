@@ -64,7 +64,8 @@ Mỗi giai đoạn kết thúc bằng: `flutter analyze` sạch, `flutter test` 
 
 ### PLAN-001 · Giao diện theo thiết kế và bản iOS — nhánh `feature/PLAN-001`, duyệt 2026-11-04
 Kế hoạch: `docs/plans/PLAN-001-giao-dien-theo-thiet-ke-va-ban-ios.md`. Mỗi giai đoạn dừng ở cổng chờ người dùng.
-- [ ] T1 · Nền thiết kế: token sinh từ `tokens.json`, theme mới, font Be Vietnam Pro, gói Material Symbols (UI-01, UI-02, UI-05) — trạng thái: đang làm
+- [x] T1 · Nền thiết kế (UI-01, UI-02, UI-05), 2026-11-04: `tool/gen_tokens.py` → `lib/src/ui/tokens.g.dart`; `lib/src/ui/theme.dart` (ColorScheme từ token, `ViGonColors`, 12 kiểu chữ, AppBar căn trái, hộp thoại, bảng kéo, thanh thông báo, chip, ô nhập); font Be Vietnam Pro 400–700 + OFL trong màn giấy phép; gói `material_symbols_icons`; nút −/+ và màu thu/chi lấy từ token. `flutter analyze` sạch, `flutter test` 122 đạt (thêm `test/ui/theme_test.dart`: token khớp, theme, font, tương phản); sửa 2 test chạm dòng nằm dưới mép màn (`ensureVisible`). APK release không có INTERNET (`aapt2`). CHƯA xem bằng mắt trên máy (để T5)
+  - Lưu ý dung lượng: gói icon có 3 font 34 MB; CHỈ được cắt gọn khi code có dùng ít nhất một icon `Symbols.*` (đo: không dùng → APK 77,1 MB; dùng 2 icon → 62,2 MB, ba font còn ~12 KB). T2 dùng icon nên hết; trước T2 không build bản để phát hành
 - [ ] T2 · Thành phần dùng chung, bộ icon và màu danh mục mới (UI-03)
 - [ ] T3 · Màn S01–S05, lịch khoảng tùy chọn (UI-04, UI-06)
 - [ ] T4 · Màn S06–S12 (UI-04)

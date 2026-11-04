@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import '../../l10n/app_localizations.dart';
 import '../data/money.dart';
 import '../data/period.dart';
+import 'theme.dart';
 
 String _locale(BuildContext context) =>
     Localizations.localeOf(context).languageCode;
@@ -44,16 +45,11 @@ String periodTitle(BuildContext context, Period p) {
   };
 }
 
-/// Màu cho số tiền thu và chi, đủ tương phản trên nền sáng và tối (AC-40).
-Color incomeColor(BuildContext context) =>
-    Theme.of(context).brightness == Brightness.dark
-    ? const Color(0xFF81C784)
-    : const Color(0xFF2E7D32);
+/// Màu cho số tiền thu và chi theo token, đủ tương phản trên nền sáng và
+/// tối (AC-40).
+Color incomeColor(BuildContext context) => context.vg.income;
 
-Color expenseColor(BuildContext context) =>
-    Theme.of(context).brightness == Brightness.dark
-    ? const Color(0xFFEF9A9A)
-    : const Color(0xFFC62828);
+Color expenseColor(BuildContext context) => context.vg.expense;
 
 /// Cỡ chữ hệ thống từ 130% trở lên: số tiền đặt dưới tiêu đề thay vì cuối
 /// dòng, để không bị cắt ở màn 360 dp (AC-38).

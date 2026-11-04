@@ -12,6 +12,7 @@ import '../../l10n_names.dart';
 import '../../providers.dart';
 import '../../ui/category_avatar.dart';
 import '../../ui/format.dart';
+import '../../ui/theme.dart';
 import '../settings/budget_dialog.dart';
 import 'period_picker.dart';
 
@@ -334,24 +335,29 @@ class _AddButtons extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context);
-    Widget button(String tooltip, IconData icon, Color color, String type) =>
-        Expanded(
-          child: Tooltip(
-            message: tooltip,
-            child: FilledButton(
-              style: FilledButton.styleFrom(
-                backgroundColor: color,
-                foregroundColor: Colors.white,
-                minimumSize: const Size.fromHeight(64),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(16),
-                ),
-              ),
-              onPressed: () => context.push('/entry/new?type=$type'),
-              child: Icon(icon, size: 36, semanticLabel: tooltip),
+    Widget button(
+      String tooltip,
+      IconData icon,
+      Color color,
+      Color onColor,
+      String type,
+    ) => Expanded(
+      child: Tooltip(
+        message: tooltip,
+        child: FilledButton(
+          style: FilledButton.styleFrom(
+            backgroundColor: color,
+            foregroundColor: onColor,
+            minimumSize: const Size.fromHeight(64),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16),
             ),
           ),
-        );
+          onPressed: () => context.push('/entry/new?type=$type'),
+          child: Icon(icon, size: 36, semanticLabel: tooltip),
+        ),
+      ),
+    );
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 12, 16, 16),
       child: Row(
@@ -359,11 +365,18 @@ class _AddButtons extends StatelessWidget {
           button(
             l.addExpense,
             Icons.remove,
-            const Color(0xFFC62828),
+            context.vg.expense,
+            context.vg.onExpense,
             'expense',
           ),
           const SizedBox(width: 16),
-          button(l.addIncome, Icons.add, const Color(0xFF2E7D32), 'income'),
+          button(
+            l.addIncome,
+            Icons.add,
+            context.vg.income,
+            context.vg.onIncome,
+            'income',
+          ),
         ],
       ),
     );

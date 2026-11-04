@@ -138,6 +138,8 @@ void main() {
       find.byType(ListView).first,
       const Offset(0, -300),
     );
+    await tester.ensureVisible(find.text('Giới thiệu'));
+    await settle(tester);
     await tester.tap(find.text('Giới thiệu'));
     await settle(tester);
     expect(find.text('Phiên bản 1.0.0 (1)'), findsOneWidget);

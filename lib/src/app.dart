@@ -18,6 +18,7 @@ import 'features/recurring/recurring_screen.dart';
 import 'features/settings/settings_screen.dart';
 import 'providers.dart';
 import 'ui/messenger.dart';
+import 'ui/theme.dart';
 
 /// Mỗi lần gọi tạo router mới; test dùng để mỗi test bắt đầu ở màn chính.
 GoRouter createRouter() => GoRouter(
@@ -84,7 +85,8 @@ GoRouter createRouter() => GoRouter(
 
 final _router = createRouter();
 
-const _seedColor = Color(0xFF2E7D6B);
+final _lightTheme = buildTheme(Brightness.light);
+final _darkTheme = buildTheme(Brightness.dark);
 
 class VigonApp extends ConsumerWidget {
   const VigonApp({super.key, this.router});
@@ -113,15 +115,8 @@ class VigonApp extends ConsumerWidget {
       routerConfig: router ?? _router,
       scaffoldMessengerKey: rootMessengerKey,
       themeMode: themeMode,
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: _seedColor),
-      ),
-      darkTheme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: _seedColor,
-          brightness: Brightness.dark,
-        ),
-      ),
+      theme: _lightTheme,
+      darkTheme: _darkTheme,
       locale: localeCode == null ? null : Locale(localeCode),
       supportedLocales: AppLocalizations.supportedLocales,
       localizationsDelegates: const [

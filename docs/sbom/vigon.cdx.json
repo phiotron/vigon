@@ -1,10 +1,10 @@
 {
  "bomFormat": "CycloneDX",
  "specVersion": "1.5",
- "serialNumber": "urn:uuid:1b6e1039-f09f-4051-bc81-2e8027e7aaf9",
+ "serialNumber": "urn:uuid:7dd50a08-a37e-4a5a-acbf-8d8efc36870c",
  "version": 1,
  "metadata": {
-  "timestamp": "2026-11-03T08:49:09Z",
+  "timestamp": "2026-11-04T02:49:46Z",
   "tools": [
    {
     "name": "tool/make_sbom.py"
@@ -780,6 +780,20 @@
    "name": "material_color_utilities",
    "version": "0.13.0",
    "purl": "pkg:pub/material_color_utilities@0.13.0",
+   "licenses": [
+    {
+     "license": {
+      "id": "Apache-2.0"
+     }
+    }
+   ]
+  },
+  {
+   "type": "library",
+   "bom-ref": "pkg:pub/material_symbols_icons@4.2960.0",
+   "name": "material_symbols_icons",
+   "version": "4.2960.0",
+   "purl": "pkg:pub/material_symbols_icons@4.2960.0",
    "licenses": [
     {
      "license": {
@@ -1971,6 +1985,12 @@
    "ref": "pkg:pub/material_color_utilities@0.13.0",
    "dependsOn": [
     "pkg:pub/collection@1.19.1"
+   ]
+  },
+  {
+   "ref": "pkg:pub/material_symbols_icons@4.2960.0",
+   "dependsOn": [
+    "pkg:pub/flutter@0.0.0"
    ]
   },
   {
