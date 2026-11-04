@@ -50,9 +50,9 @@ Future<void> _shot(WidgetTester tester, String name, String theme) async {
 
 void _phone(WidgetTester tester) {
   // Mặc định test vẽ bóng đổ thành khối đặc (viền đen); bật bóng thật. Bộ test
-  // đặt lại cờ này ở đầu mỗi bài nên phải đặt trong bài.
+  // đặt lại cờ này ở đầu mỗi bài và kiểm nó trước khi chạy addTearDown, nên
+  // mỗi bài phải tự đặt lại `debugDisableShadows = true` ở cuối.
   debugDisableShadows = false;
-  addTearDown(() => debugDisableShadows = true);
   tester.view
     ..physicalSize = const Size(720, 1600)
     ..devicePixelRatio = 2;
@@ -271,6 +271,7 @@ void main() {
       testWidgets('${entry.key} · $theme', (tester) async {
         await _open(tester, theme);
         await entry.value(tester, () => _shot(tester, entry.key, theme));
+        debugDisableShadows = true;
       }, timeout: const Timeout(Duration(seconds: 90)));
     }
 
@@ -290,6 +291,7 @@ void main() {
       _phone(tester);
       await settle(tester);
       await _shot(tester, '1.1_khoa_pin', theme);
+      debugDisableShadows = true;
     });
   }
 }
