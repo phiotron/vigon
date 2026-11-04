@@ -12,6 +12,7 @@ import 'budget_dialog.dart';
 import 'currency_picker.dart';
 import 'data_actions.dart';
 import 'secure_window.dart';
+import 'widget_section.dart';
 
 /// Cài đặt (AC-12, AC-21, AC-35, AC-36 và các mục G4–G6).
 class SettingsScreen extends ConsumerWidget {
@@ -154,6 +155,7 @@ class SettingsScreen extends ConsumerWidget {
             value: ref.watch(secureWindowEnabledProvider).value ?? false,
             onChanged: repo.setSecureWindow,
           ),
+          const WidgetAmountsSwitch(),
           header(l.dataSection),
           Padding(
             padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),

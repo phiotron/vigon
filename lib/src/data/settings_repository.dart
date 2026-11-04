@@ -16,6 +16,7 @@ class SettingsRepository {
   static const monthStartDayKey = 'monthStartDay';
   static const budgetKey = 'monthlyBudget';
   static const secureWindowKey = 'secureWindow';
+  static const widgetShowAmountsKey = 'widgetShowAmounts';
 
   Stream<String?> _watch(String key) {
     final query = _db.select(_db.settings)..where((s) => s.key.equals(key));
@@ -83,6 +84,14 @@ class SettingsRepository {
 
   Future<void> setSecureWindow(bool on) =>
       on ? _write(secureWindowKey, '1') : _remove(secureWindowKey);
+
+  /// Cho widget màn hình chính hiện số tiền đã chi tháng này (AC-64).
+  /// Mặc định tắt; khi khóa PIN bật thì widget vẫn ẩn số.
+  Stream<bool> watchWidgetShowAmounts() =>
+      _watch(widgetShowAmountsKey).map((v) => v == '1');
+
+  Future<void> setWidgetShowAmounts(bool on) =>
+      on ? _write(widgetShowAmountsKey, '1') : _remove(widgetShowAmountsKey);
 
   /// Hạn mức chi mỗi tháng theo đơn vị nhỏ nhất; null là chưa đặt (AC-26).
   Stream<int?> watchBudget() =>

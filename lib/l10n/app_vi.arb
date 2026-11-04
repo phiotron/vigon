@@ -200,6 +200,13 @@
   "pinProgress": "Đã nhập {count} trên 4 số",
   "secureWindow": "Che nội dung khi chuyển app",
   "secureWindowNote": "Chặn chụp màn hình và ẩn nội dung trong danh sách app gần đây",
+  "widgetShowAmounts": "Hiện số tiền trên widget",
+  "widgetShowAmountsNote": "Ai cầm máy cũng nhìn thấy số này trên màn hình chờ. Khi đang bật khóa PIN, widget luôn ẩn số.",
+  "widgetSpentThisMonth": "Tháng này đã chi {spent}",
+  "@widgetSpentThisMonth": {"placeholders": {"spent": {"type": "String"}}},
+  "widgetSpentOfBudget": "Tháng này đã chi {spent} / {budget}",
+  "@widgetSpentOfBudget": {"placeholders": {"spent": {"type": "String"}, "budget": {"type": "String"}}},
+  "widgetLockedByPin": "Đã khóa bằng PIN",
 
   "about": "Giới thiệu",
   "version": "Phiên bản {version}",
