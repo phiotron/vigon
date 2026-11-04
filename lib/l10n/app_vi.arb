@@ -151,5 +151,12 @@
   "linkOpenFailed": "Không mở được. Bạn có thể tự gửi email tới {target}",
   "@linkOpenFailed": {"placeholders": {"target": {"type": "String"}}},
   "iconNumber": "Biểu tượng {n}",
-  "@iconNumber": {"placeholders": {"n": {"type": "int"}}}
+  "@iconNumber": {"placeholders": {"n": {"type": "int"}}},
+  "viewBy": "Xem theo",
+  "apply": "Áp dụng",
+  "deleteAllTitle": "Xóa toàn bộ dữ liệu?",
+  "cannotUndo": "Không hoàn tác được",
+  "previousMonth": "Tháng trước",
+  "nextMonth": "Tháng sau",
+  "rangeHint": "Chọn ngày đầu rồi ngày cuối"
 }

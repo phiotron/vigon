@@ -925,6 +925,48 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Icon {n}'**
   String iconNumber(int n);
+
+  /// No description provided for @viewBy.
+  ///
+  /// In en, this message translates to:
+  /// **'View by'**
+  String get viewBy;
+
+  /// No description provided for @apply.
+  ///
+  /// In en, this message translates to:
+  /// **'Apply'**
+  String get apply;
+
+  /// No description provided for @deleteAllTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete all data?'**
+  String get deleteAllTitle;
+
+  /// No description provided for @cannotUndo.
+  ///
+  /// In en, this message translates to:
+  /// **'This cannot be undone'**
+  String get cannotUndo;
+
+  /// No description provided for @previousMonth.
+  ///
+  /// In en, this message translates to:
+  /// **'Previous month'**
+  String get previousMonth;
+
+  /// No description provided for @nextMonth.
+  ///
+  /// In en, this message translates to:
+  /// **'Next month'**
+  String get nextMonth;
+
+  /// No description provided for @rangeHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Pick the first day, then the last day'**
+  String get rangeHint;
 }
 
 class _AppLocalizationsDelegate

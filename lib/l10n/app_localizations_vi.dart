@@ -459,4 +459,25 @@ class AppLocalizationsVi extends AppLocalizations {
   String iconNumber(int n) {
     return 'Biểu tượng $n';
   }
+
+  @override
+  String get viewBy => 'Xem theo';
+
+  @override
+  String get apply => 'Áp dụng';
+
+  @override
+  String get deleteAllTitle => 'Xóa toàn bộ dữ liệu?';
+
+  @override
+  String get cannotUndo => 'Không hoàn tác được';
+
+  @override
+  String get previousMonth => 'Tháng trước';
+
+  @override
+  String get nextMonth => 'Tháng sau';
+
+  @override
+  String get rangeHint => 'Chọn ngày đầu rồi ngày cuối';
 }

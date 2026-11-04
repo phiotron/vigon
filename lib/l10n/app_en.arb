@@ -162,5 +162,12 @@
   "linkOpenFailed": "Could not open it. You can write to {target} yourself",
   "@linkOpenFailed": {"placeholders": {"target": {"type": "String"}}},
   "iconNumber": "Icon {n}",
-  "@iconNumber": {"placeholders": {"n": {"type": "int"}}}
+  "@iconNumber": {"placeholders": {"n": {"type": "int"}}},
+  "viewBy": "View by",
+  "apply": "Apply",
+  "deleteAllTitle": "Delete all data?",
+  "cannotUndo": "This cannot be undone",
+  "previousMonth": "Previous month",
+  "nextMonth": "Next month",
+  "rangeHint": "Pick the first day, then the last day"
 }

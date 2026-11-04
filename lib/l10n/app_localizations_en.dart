@@ -460,4 +460,25 @@ class AppLocalizationsEn extends AppLocalizations {
   String iconNumber(int n) {
     return 'Icon $n';
   }
+
+  @override
+  String get viewBy => 'View by';
+
+  @override
+  String get apply => 'Apply';
+
+  @override
+  String get deleteAllTitle => 'Delete all data?';
+
+  @override
+  String get cannotUndo => 'This cannot be undone';
+
+  @override
+  String get previousMonth => 'Previous month';
+
+  @override
+  String get nextMonth => 'Next month';
+
+  @override
+  String get rangeHint => 'Pick the first day, then the last day';
 }
