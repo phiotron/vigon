@@ -474,7 +474,7 @@ Mọi lỗi nhập liệu hiện ngay trên màn, không dùng hộp thoại; kh
 
 ## 9. Hạn chế và điểm lệch đã biết
 
-Ghi theo code hiện tại; chi tiết và mức độ nằm ở `docs/BACKLOG.md` (mục "Phát hiện của `/spec-review` chưa xử lý").
+Ghi theo code hiện tại; chi tiết và mức độ nằm ở `APP.md` mục "Việc dở" (lịch sử đầy đủ: `notes/archive-demochung/BACKLOG.md`).
 
 - **Chưa có chức năng xóa hay ẩn tài khoản**; chưa có tìm kiếm khoản; chưa có sửa tần suất/danh mục của chuỗi định kỳ (chỉ sửa số tiền và ghi chú).
 - **PIN:** không đếm lần nhập sai, không làm chậm; giờ ra nền lấy từ đồng hồ máy nên đổi giờ máy có thể qua được hạn 1 phút. PIN chỉ chặn người cầm máy, không mã hóa dữ liệu (D-007).

@@ -1,4 +1,4 @@
-# RELEASE — Ví Gọn (APP-001)
+# RELEASE — Ví Gọn (A002-vigon)
 
 Cập nhật 2026-11-04. Chưa phát hành. Mục nào ghi "CHƯA" là việc còn lại; việc của người dùng ghi rõ.
 
@@ -36,10 +36,10 @@ Người giữ mật khẩu: người dùng. KHÔNG ghi mật khẩu vào file n
 Lưu ý: nhánh "có khóa" trong `build.gradle.kts` CHƯA được chạy thử với khóa thật (Claude không tạo khóa). Nếu bước 4 hoặc 5 lỗi, báo lại để sửa cấu hình.
 
 ## Hồ sơ store
-Nội dung nháp đầy đủ: `docs/store/listing.md`. Ảnh chụp: `docs/store/screenshots/` (6 ảnh 1080×2160, dữ liệu mẫu).
+Nội dung nháp đầy đủ: `store/listing.md`. Ảnh chụp: `store/screenshots/` (6 ảnh 1080×2160, dữ liệu mẫu).
 - Tên: **Ví Gọn**. Tên tiếng Anh: CHƯA chốt (gợi ý trong listing.md; phải tra trùng).
 - Mô tả ngắn và dài (vi/en): đã viết, chờ người dùng duyệt.
-- Ảnh chụp màn hình: đã chụp (6 ảnh). Icon 512×512: đã chốt logo và có file (`docs/store/brand/icon-512.png`, D-009). Ảnh bìa 1024×500: đã vẽ trên canvas Design, CHƯA có PNG (người dùng xuất bằng Share › Export).
+- Ảnh chụp màn hình: đã chụp (6 ảnh). Icon 512×512: đã chốt logo và có file (`store/brand/icon-512.png`, D-009). Ảnh bìa 1024×500: đã vẽ trên canvas Design, CHƯA có PNG (người dùng xuất bằng Share › Export).
 - Phân loại: Finance; độ tuổi: từ 13 tuổi, không nhắm trẻ em (chờ quyết Play Age Signals, COMPLIANCE D-12).
 - Data safety: không thu thập, không chia sẻ (khớp `docs/SECURITY.md`).
 - Đường dẫn chính sách quyền riêng tư: **CHƯA có**. Nội dung ở `docs/legal/privacy-policy.md`; người dùng đăng lên Google Sites rồi gửi đường dẫn, điền vào `lib/src/app_info.dart` (`AppInfo.privacyPolicyUrl`) và Play Console.

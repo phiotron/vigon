@@ -1,38 +1,5 @@
 {
   "$schema": "https://json.schemastore.org/claude-code-settings.json",
-  "hooks": {
-    "PreToolUse": [
-      {
-        "matcher": "Write|Edit|MultiEdit|NotebookEdit",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "bash \"${CLAUDE_PROJECT_DIR}/../../.claude/hooks/guard-edit.sh\""
-          }
-        ]
-      },
-      {
-        "matcher": "Bash",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "bash \"${CLAUDE_PROJECT_DIR}/../../.claude/hooks/guard-bash.sh\""
-          }
-        ]
-      }
-    ],
-    "Stop": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "bash \"${CLAUDE_PROJECT_DIR}/../../.claude/hooks/stop-check.sh\"",
-            "timeout": 600
-          }
-        ]
-      }
-    ]
-  },
   "permissions": {
     "allow": [
       "Bash(git status)",
@@ -43,13 +10,7 @@
       "Bash(dart format *)",
       "Bash(dart analyze*)",
       "Bash(flutter pub get)",
-      "Bash(dart run build_runner build *)",
-      "Bash(bash ../../scripts/check.sh*)",
-      "Bash(bash ../../scripts/status.sh*)",
-      "Bash(bash ../../scripts/find-app.sh *)",
-      "Bash(bash ../../scripts/inventory.sh*)",
-      "Bash(bash ../../scripts/doctor.sh)",
-      "Bash(bash ../../scripts/test-hooks.sh)"
+      "Bash(dart run build_runner build *)"
     ],
     "ask": [
       "Bash(git push *)",

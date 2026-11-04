@@ -1,4 +1,4 @@
-# Ví Gọn (APP-001) — thiết kế màn hình mobile
+# Ví Gọn (A002-vigon) — thiết kế màn hình mobile
 
 Bộ thiết kế giao diện dùng chung cho iPhone và Android, dựng từ `ui-spec.md` (bản 1.0.0+1, 2026-11-03). Nguồn gốc là design system “Ví Gọn” trên claude.ai; thư mục này là bản sao để đội code dùng offline.
 

@@ -48,3 +48,6 @@ app.*.map.json
 
 # Tệp tạm của hệ thống tệp
 .fuse_hidden*
+
+# Worktree cũ của thời DemoChung (giữ lại, không theo dõi)
+.claude/worktrees/

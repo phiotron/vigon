@@ -1,4 +1,4 @@
-# ARCHITECTURE — Ví Gọn (APP-001)
+# ARCHITECTURE — Ví Gọn (A002-vigon)
 
 Mô tả app HIỆN ĐANG như thế nào (DECISIONS.md ghi VÌ SAO chọn). Cập nhật khi cấu trúc đổi. Giữ ngắn. Cập nhật lần cuối: 2026-11-03 (sau G5).
 

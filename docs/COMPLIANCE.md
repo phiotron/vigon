@@ -1,6 +1,6 @@
-# COMPLIANCE — Ví Gọn (APP-001)
+# COMPLIANCE — Ví Gọn (A002-vigon)
 
-Hồ sơ tuân thủ theo `../../../shared/standards/tieu-chuan-ban-app-toan-cau.md` (tài liệu gốc, cập nhật 28/10/2026; ghi "L<n>" là Lớp n trong tài liệu đó).
+Hồ sơ tuân thủ theo `D:/DemoChung/shared/standards/tieu-chuan-ban-app-toan-cau.md` (ngoài xưởng) (tài liệu gốc, cập nhật 28/10/2026; ghi "L<n>" là Lớp n trong tài liệu đó).
 Không phải tư vấn pháp lý: trước khi mở bán ở nước nào cần luật sư địa phương xác nhận (tài liệu gốc, phần Tóm tắt).
 
 ## 1. Phạm vi (điền ở /spec, quyết định mục nào áp dụng)

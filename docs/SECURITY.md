@@ -1,4 +1,4 @@
-# SECURITY & PRIVACY — Ví Gọn (APP-001)
+# SECURITY & PRIVACY — Ví Gọn (A002-vigon)
 
 Điền trước khi phát hành. Là đầu vào cho chính sách quyền riêng tư (`docs/legal/privacy-policy.md`) và biểu mẫu khai báo của store. Tự kiểm MASVS: `docs/security/MASVS-SELF-CHECK.md`. Cập nhật 2026-11-03 (G6).
 

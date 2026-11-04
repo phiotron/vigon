@@ -1,4 +1,4 @@
-# Tự kiểm OWASP MASVS v2.1.0 — Ví Gọn (APP-001)
+# Tự kiểm OWASP MASVS v2.1.0 — Ví Gọn (A002-vigon)
 
 Bản 1.0.0 (1), Android, kiểm ngày 2026-11-03 bởi Claude (COMPLIANCE S-01). Tự kiểm, không phải kiểm thử xâm nhập độc lập. Mức nhắm tới: MASVS-L1 (app không có máy chủ, không tài khoản, dữ liệu chỉ trên máy).
 Kết quả: **đạt** / **đạt có lưu ý** / **không áp dụng** / **chưa**.

@@ -80,7 +80,7 @@ Ví Gọn is a fast personal income and expense tracker that shows where your mo
 - Liên hệ nhà phát triển: `phamphuongphuong@gmail.com`.
 
 ## Ảnh chụp màn hình
-Đã chụp 2026-11-03 trên Galaxy A13 (bản release, dữ liệu MẪU do `exportBackup` sinh ra, không có dữ liệu thật), nằm ở `docs/store/screenshots/`. Mỗi ảnh 1080×2160 px (đã cắt thanh trạng thái và thanh điều hướng để tỉ lệ đúng 2:1, mức tối đa Play cho phép).
+Đã chụp 2026-11-03 trên Galaxy A13 (bản release, dữ liệu MẪU do `exportBackup` sinh ra, không có dữ liệu thật), nằm ở `store/screenshots/`. Mỗi ảnh 1080×2160 px (đã cắt thanh trạng thái và thanh điều hướng để tỉ lệ đúng 2:1, mức tối đa Play cho phép).
 | Ảnh | Nội dung | Gợi ý dòng chữ phụ |
 |-----|----------|--------------------|
 | `01-man-chinh.png` | Màn chính: biểu đồ vòng, ngân sách tháng, số dư (sáng, tiếng Việt) | "Biết tiền đi đâu" |
@@ -89,4 +89,4 @@ Ví Gọn is a fast personal income and expense tracker that shows where your mo
 | `04-tai-khoan.png` | Nhiều tài khoản (tiền mặt, ngân hàng) | "Quản lý nhiều ví" |
 | `05-giao-dien-toi.png` | Màn chính giao diện tối | "Giao diện sáng và tối" |
 | `06-english-main.png` | Màn chính tiếng Anh, dùng cho trang store tiếng Anh | "Your data stays on your phone" |
-Lưu ý: ảnh 04 khá trống (chỉ hai tài khoản), có thể thay bằng màn Chuyển tiền; ảnh 02 bị cắt nhẹ phần đáy nút Lưu vì giới hạn tỉ lệ. Chưa có ảnh cho máy tính bảng (v1 chỉ nhắm điện thoại). Icon 512×512: đã chốt logo (D-009), file `docs/store/brand/icon-512.png`. Ảnh bìa 1024×500: đã vẽ trên canvas Design, CHƯA có PNG trong repo (người dùng xuất bằng Share › Export, xem `docs/store/brand/README.md`).
+Lưu ý: ảnh 04 khá trống (chỉ hai tài khoản), có thể thay bằng màn Chuyển tiền; ảnh 02 bị cắt nhẹ phần đáy nút Lưu vì giới hạn tỉ lệ. Chưa có ảnh cho máy tính bảng (v1 chỉ nhắm điện thoại). Icon 512×512: đã chốt logo (D-009), file `store/brand/icon-512.png`. Ảnh bìa 1024×500: đã vẽ trên canvas Design, CHƯA có PNG trong repo (người dùng xuất bằng Share › Export, xem `store/brand/README.md`).

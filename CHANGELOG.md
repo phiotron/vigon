@@ -1,4 +1,4 @@
-# CHANGELOG — Ví Gọn (APP-001)
+# CHANGELOG — Ví Gọn (A002-vigon)
 
 ## [Chưa phát hành]
 - Khởi tạo từ template (2026-11-03)

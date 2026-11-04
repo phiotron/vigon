@@ -1,4 +1,4 @@
-# SPEC — Ví Gọn (APP-001)
+# SPEC — Ví Gọn (A002-vigon)
 
 Đã duyệt: 2026-11-03
 <!-- Khi người dùng duyệt, đổi thành: "Đã duyệt: YYYY-MM-DD". Chưa có dòng này thì Claude không viết code. -->
