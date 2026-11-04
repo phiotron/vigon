@@ -4,6 +4,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:vigon/src/data/account_repository.dart';
 import 'package:vigon/src/data/database.dart';
 import 'package:vigon/src/data/settings_repository.dart';
+import 'package:vigon/src/features/home/range_calendar.dart';
 import 'package:vigon/src/providers.dart';
 
 import '../helpers.dart';
@@ -232,7 +233,7 @@ void main() {
     await disposeApp(tester, db);
   });
 
-  testWidgets('chọn Khoảng tùy chọn bằng hộp chọn ngày (AC-10)', (
+  testWidgets('chọn Khoảng tùy chọn bằng lịch trong bảng kéo (AC-10)', (
     tester,
   ) async {
     final db = await pumpApp(tester);
@@ -240,21 +241,14 @@ void main() {
     await settle(tester);
     await tester.tap(find.text('Khoảng tùy chọn'));
     await settle(tester);
-    // Hộp chọn khoảng ngày của Material: chạm ngày đầu rồi ngày cuối, bấm Lưu.
-    await tester.tap(find.text('5').first);
+    // Lịch riêng của app (2.5): chạm ngày đầu rồi ngày cuối, bấm Áp dụng.
+    final calendar = find.byType(RangeCalendarSheet);
+    await tester.tap(find.descendant(of: calendar, matching: find.text('5')));
     await tester.pump();
-    await tester.tap(find.text('9').first);
+    await tester.tap(find.descendant(of: calendar, matching: find.text('9')));
     await tester.pump();
-    // Tiêu đề hộp chọn khoảng ngày của Material tràn vài px ở màn 360 dp: lỗi của
-    // thư viện (không phải của app), chỉ bỏ qua đúng lỗi tràn này.
-    final overflow = tester.takeException();
-    if (overflow != null) {
-      expect(overflow.toString(), contains('overflowed'));
-    }
-    await tester.tap(find.text('Lưu'));
+    await tester.tap(find.text('Áp dụng'));
     await settle(tester);
-    final again = tester.takeException();
-    if (again != null) expect(again.toString(), contains('overflowed'));
     expect(find.textContaining('5 thg 11'), findsOneWidget);
     expect(find.textContaining('9 thg 11'), findsOneWidget);
     // Kỳ sau dịch cả khoảng đi đúng số ngày (5 ngày).

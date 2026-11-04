@@ -8,6 +8,7 @@ import 'package:material_symbols_icons/symbols.dart';
 
 import '../../../l10n/app_localizations.dart';
 import '../../data/database.dart';
+import '../../data/period.dart';
 import '../../data/summary.dart';
 import '../../l10n_names.dart';
 import '../../providers.dart';
@@ -34,21 +35,7 @@ class HomeScreen extends ConsumerWidget {
         title: Text(l.appTitle),
         actions: [
           if (accounts.length > 1)
-            PopupMenuButton<int>(
-              icon: const Icon(Symbols.account_balance_wallet_rounded),
-              tooltip: accountFilter == null
-                  ? l.account
-                  : '${l.account}: ${accountLabel(l, accounts.firstWhere((a) => a.id == accountFilter, orElse: () => accounts.first))}',
-              initialValue: accountFilter ?? -1,
-              onSelected: (id) => ref
-                  .read(accountFilterProvider.notifier)
-                  .select(id == -1 ? null : id),
-              itemBuilder: (context) => [
-                PopupMenuItem(value: -1, child: Text(l.allAccounts)),
-                for (final a in accounts)
-                  PopupMenuItem(value: a.id, child: Text(accountLabel(l, a))),
-              ],
-            ),
+            _AccountFilterMenu(accounts: accounts, selected: accountFilter),
           IconButton(
             icon: const Icon(Symbols.receipt_long_rounded),
             tooltip: l.entries,
@@ -86,7 +73,9 @@ class HomeScreen extends ConsumerWidget {
   }
 }
 
-/// Tên kỳ đang xem, nút kỳ trước, kỳ sau; chạm tên để chọn loại kỳ (AC-10, AC-11).
+/// Đầu kỳ `.vg-period` (2.1): nút kỳ trước, tên kỳ title-md kèm mũi tên xổ
+/// xuống (chạm để mở bảng "Xem theo"), nút kỳ sau. Kỳ "Tất cả" không có kỳ
+/// trước/sau nên ẩn hai nút (AC-10, AC-11).
 class _PeriodHeader extends ConsumerWidget {
   const _PeriodHeader();
 
@@ -95,38 +84,162 @@ class _PeriodHeader extends ConsumerWidget {
     final l = AppLocalizations.of(context);
     final period = ref.watch(periodProvider);
     final notifier = ref.read(periodProvider.notifier);
-    return Row(
-      children: [
-        IconButton(
-          icon: const Icon(Symbols.chevron_left_rounded),
-          tooltip: l.previousPeriod,
-          onPressed: () => notifier.shift(-1),
-        ),
-        Expanded(
-          child: Semantics(
-            button: true,
-            hint: l.choosePeriod,
-            child: InkWell(
-              onTap: () => showPeriodPicker(context, ref),
-              child: ConstrainedBox(
-                constraints: const BoxConstraints(minHeight: 48),
-                child: Center(
-                  child: Text(
-                    periodTitle(context, period),
-                    textAlign: TextAlign.center,
-                    style: Theme.of(context).textTheme.titleMedium,
+    final canShift = period.type != PeriodType.all;
+    return ConstrainedBox(
+      constraints: const BoxConstraints(minHeight: VgSize.appbar),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: VgSpace.s2),
+        child: Row(
+          mainAxisAlignment: canShift
+              ? MainAxisAlignment.spaceBetween
+              : MainAxisAlignment.center,
+          children: [
+            if (canShift)
+              IconButton(
+                icon: const Icon(Symbols.chevron_left_rounded),
+                tooltip: l.previousPeriod,
+                onPressed: () => notifier.shift(-1),
+              ),
+            Flexible(
+              child: Semantics(
+                button: true,
+                hint: l.choosePeriod,
+                child: InkWell(
+                  customBorder: const StadiumBorder(),
+                  onTap: () => showPeriodPicker(context, ref),
+                  child: ConstrainedBox(
+                    constraints: const BoxConstraints(minHeight: VgSize.tapMin),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: VgSpace.s3,
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Flexible(
+                            child: Text(
+                              periodTitle(context, period),
+                              textAlign: TextAlign.center,
+                              style: Theme.of(context).textTheme.titleMedium,
+                            ),
+                          ),
+                          const SizedBox(width: VgSpace.s1),
+                          const ExcludeSemantics(
+                            child: Icon(Symbols.arrow_drop_down_rounded),
+                          ),
+                        ],
+                      ),
+                    ),
                   ),
                 ),
               ),
             ),
+            if (canShift)
+              IconButton(
+                icon: const Icon(Symbols.chevron_right_rounded),
+                tooltip: l.nextPeriod,
+                onPressed: () => notifier.shift(1),
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+/// Menu lọc tài khoản từ icon ví (2.6): dòng "Tất cả tài khoản" rồi từng
+/// tài khoản, cao 48; dòng đang chọn nền `secondary-container` và dấu ✓.
+/// Lựa chọn chỉ sống trong phiên (AC-20).
+class _AccountFilterMenu extends ConsumerWidget {
+  const _AccountFilterMenu({required this.accounts, required this.selected});
+
+  final List<Account> accounts;
+  final int? selected;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l = AppLocalizations.of(context);
+    final current = selected == null
+        ? null
+        : accounts.where((a) => a.id == selected).firstOrNull;
+    return PopupMenuButton<int>(
+      icon: const Icon(Symbols.account_balance_wallet_rounded),
+      tooltip: current == null
+          ? l.account
+          : '${l.account}: ${accountLabel(l, current)}',
+      position: PopupMenuPosition.under,
+      constraints: const BoxConstraints(minWidth: 220),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(VgRadius.sm),
+      ),
+      onSelected: (id) =>
+          ref.read(accountFilterProvider.notifier).select(id == -1 ? null : id),
+      itemBuilder: (context) => [
+        _item(
+          context,
+          value: -1,
+          icon: Symbols.select_all_rounded,
+          label: l.allAccounts,
+          on: current == null,
+        ),
+        for (final a in accounts)
+          _item(
+            context,
+            value: a.id,
+            // Dữ liệu tài khoản không có icon riêng.
+            icon: Symbols.account_balance_wallet_rounded,
+            label: accountLabel(l, a),
+            on: current?.id == a.id,
+          ),
+      ],
+    );
+  }
+
+  PopupMenuItem<int> _item(
+    BuildContext context, {
+    required int value,
+    required IconData icon,
+    required String label,
+    required bool on,
+  }) {
+    final scheme = Theme.of(context).colorScheme;
+    final fg = on ? scheme.onSecondaryContainer : scheme.onSurfaceVariant;
+    return PopupMenuItem(
+      value: value,
+      height: VgSize.tapMin,
+      padding: EdgeInsets.zero,
+      child: Semantics(
+        selected: on,
+        child: Ink(
+          color: on ? scheme.secondaryContainer : null,
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(minHeight: VgSize.tapMin),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: VgSpace.s4),
+              child: Row(
+                children: [
+                  Icon(icon, size: 20, color: fg),
+                  const SizedBox(width: VgSpace.s3),
+                  Expanded(
+                    child: Text(
+                      label,
+                      style: VgType.bodyMd.copyWith(
+                        color: on
+                            ? scheme.onSecondaryContainer
+                            : scheme.onSurface,
+                      ),
+                    ),
+                  ),
+                  if (on) ...[
+                    const SizedBox(width: VgSpace.s3),
+                    Icon(Symbols.check_rounded, size: 20, color: fg),
+                  ],
+                ],
+              ),
+            ),
           ),
         ),
-        IconButton(
-          icon: const Icon(Symbols.chevron_right_rounded),
-          tooltip: l.nextPeriod,
-          onPressed: () => notifier.shift(1),
-        ),
-      ],
+      ),
     );
   }
 }

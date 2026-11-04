@@ -12,11 +12,24 @@ class PinPad extends StatefulWidget {
     required this.onCompleted,
     this.error,
     this.message,
+    this.leading,
+    this.titleStyle,
+    this.expand = false,
   });
 
   final String title;
   final String? message;
   final String? error;
+
+  /// Hiện phía trên tiêu đề, ví dụ icon khóa ở màn khóa (1.1).
+  final Widget? leading;
+
+  /// Kiểu chữ tiêu đề; mặc định title-md.
+  final TextStyle? titleStyle;
+
+  /// Dồn bàn phím xuống đáy khoảng được cấp (`.vg-pinpad` margin-top auto).
+  /// Khi bật, cha phải cấp chiều cao hữu hạn, ví dụ `SliverFillRemaining`.
+  final bool expand;
 
   /// Gọi khi đủ 4 số; xong thì ô nhập tự xóa để nhập lại nếu cần.
   final Future<void> Function(String pin) onCompleted;
@@ -90,14 +103,22 @@ class _PinPadState extends State<PinPad> {
       ),
     );
     return Column(
-      mainAxisSize: MainAxisSize.min,
+      mainAxisSize: widget.expand ? MainAxisSize.max : MainAxisSize.min,
       children: [
+        if (widget.leading != null) ...[
+          widget.leading!,
+          const SizedBox(height: VgSpace.s3),
+        ],
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: VgSpace.s6),
-          child: Text(
-            widget.title,
-            style: Theme.of(context).textTheme.titleMedium,
-            textAlign: TextAlign.center,
+          child: Semantics(
+            header: true,
+            child: Text(
+              widget.title,
+              style:
+                  widget.titleStyle ?? Theme.of(context).textTheme.titleMedium,
+              textAlign: TextAlign.center,
+            ),
           ),
         ),
         if (widget.message != null)
@@ -157,6 +178,7 @@ class _PinPadState extends State<PinPad> {
                   ),
                 ),
         ),
+        if (widget.expand) const Spacer(),
         row(const ['1', '2', '3']),
         row(const ['4', '5', '6']),
         row(const ['7', '8', '9']),
