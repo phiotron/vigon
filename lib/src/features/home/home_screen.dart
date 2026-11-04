@@ -32,7 +32,12 @@ class HomeScreen extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(l.appTitle),
+        // Theme đặt titleSpacing 4 cho màn có nút quay lại; màn chính không có
+        // nút này nên tự lùi 12 để chữ bắt đầu ở x = 16.
+        title: Padding(
+          padding: const EdgeInsets.only(left: VgSpace.s3),
+          child: Text(l.appTitle),
+        ),
         actions: [
           if (accounts.length > 1)
             _AccountFilterMenu(accounts: accounts, selected: accountFilter),
@@ -168,7 +173,10 @@ class _AccountFilterMenu extends ConsumerWidget {
           ? l.account
           : '${l.account}: ${accountLabel(l, current)}',
       position: PopupMenuPosition.under,
-      constraints: const BoxConstraints(minWidth: 220),
+      // Menu rộng 224, mép phải thẳng với mép phải nút ví, ngay dưới thanh
+      // tiêu đề (bản vẽ 2.6).
+      constraints: const BoxConstraints.tightFor(width: 224),
+      offset: const Offset(-(224 - VgSize.tapMin) + VgSpace.s1, -VgSpace.s1),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(VgRadius.sm),
       ),

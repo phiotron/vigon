@@ -313,6 +313,9 @@ class _EntryEditorScreenState extends ConsumerState<EntryEditorScreen> {
                   Expanded(
                     child: SingleChildScrollView(
                       child: Column(
+                        // Số tiền căn phải, hàng chip căn trái, ô ghi chú rộng
+                        // hết (bản vẽ 3.1); mặc định của Column là căn giữa.
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
                           AmountDisplay(
                             expression: _expression,

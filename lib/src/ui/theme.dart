@@ -88,6 +88,8 @@ ThemeData buildTheme(Brightness brightness) {
     // Tiêu đề căn trái ở cả iPhone và Android (README thiết kế).
     appBarTheme: AppBarTheme(
       centerTitle: false,
+      // Màn có nút quay lại: chữ bắt đầu ngay sau nút (x = 60, bản vẽ 3.1).
+      titleSpacing: VgSpace.s1,
       toolbarHeight: VgSize.appbar,
       backgroundColor: p.surface,
       foregroundColor: p.ink,

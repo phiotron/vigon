@@ -7,15 +7,13 @@
 // Số bước lấy theo bản vẽ (2.1, 3.2…). Dữ liệu dựng theo số liệu trong bản vẽ.
 import 'dart:io';
 
-import 'package:drift/drift.dart' show Value;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:vigon/src/data/account_repository.dart';
 import 'package:vigon/src/data/database.dart';
 import 'package:vigon/src/data/settings_repository.dart';
 import 'package:vigon/src/data/pin_service.dart';
-import 'package:vigon/src/providers.dart';
 
 import '../../test/helpers.dart';
 
@@ -91,15 +89,9 @@ Future<void> _seed(WidgetTester tester, AppDatabase db) async {
     note: 'Lương tháng 11',
     date: '2026-11-01',
   );
-  await tester.runAsync(() async {
-    await SettingsRepository(db).setBudget(8000000);
-    await db
-        .into(db.accounts)
-        .insert(AccountsCompanion.insert(name: const Value('Thẻ ngân hàng')));
-    await db
-        .into(db.accounts)
-        .insert(AccountsCompanion.insert(name: const Value('Ví điện tử')));
-  });
+  await tester.runAsync(() => SettingsRepository(db).setBudget(8000000));
+  await tester.runAsync(() => AccountRepository(db).add(name: 'Thẻ ngân hàng'));
+  await tester.runAsync(() => AccountRepository(db).add(name: 'Ví điện tử'));
   await settle(tester);
 }
 
@@ -120,10 +112,7 @@ Future<void> _open(
   // pumpApp gọi usePhoneScreen (1080×2400); ép lại 720×1600 cho ảnh nhỏ gọn.
   _phone(tester);
   await settle(tester);
-  _db = db;
 }
-
-late AppDatabase _db;
 
 Future<void> _go(WidgetTester tester, String tooltip) async {
   await tester.tap(find.byTooltip(tooltip));
@@ -145,111 +134,143 @@ Future<void> _scrollTo(WidgetTester tester, String text) async {
   await settle(tester);
 }
 
-Future<void> _close(WidgetTester tester) async {
-  await tester.pageBack();
-  await settle(tester);
-}
+/// Mỗi màn một bài riêng (có giới hạn thời gian) để một màn kẹt không làm
+/// treo cả loạt. [steps] đưa app tới màn cần chụp rồi gọi `shot`.
+final _scenarios =
+    <
+      String,
+      Future<void> Function(WidgetTester t, Future<void> Function() shot)
+    >{
+      '2.1_man_chinh': (t, shot) => shot(),
+      '2.6_loc_tai_khoan': (t, shot) async {
+        await _go(t, 'Tài khoản');
+        await shot();
+      },
+      '2.4_chon_ky': (t, shot) async {
+        await _tapText(t, 'Tháng 11 năm 2026');
+        await shot();
+      },
+      '2.5_khoang_tuy_chon': (t, shot) async {
+        await _tapText(t, 'Tháng 11 năm 2026');
+        await _tapText(t, 'Khoảng tùy chọn');
+        await shot();
+      },
+      '2.3_ky_trong': (t, shot) async {
+        await _go(t, 'Kỳ sau');
+        await shot();
+      },
+      '4.1_cac_khoan': (t, shot) async {
+        await _go(t, 'Các khoản');
+        await shot();
+      },
+      '4.1b_cac_khoan_mo_nhom': (t, shot) async {
+        await _go(t, 'Các khoản');
+        await _tapText(t, 'Hóa đơn');
+        await shot();
+      },
+      '3.1_khoan_chi_moi': (t, shot) async {
+        await t.tap(find.byTooltip('Thêm khoản chi').last);
+        await settle(t);
+        await shot();
+      },
+      '3.2_go_so': (t, shot) async {
+        await t.tap(find.byTooltip('Thêm khoản chi').last);
+        await settle(t);
+        for (final k in ['3', '5', '0', '0', '0', '0', '0']) {
+          await t.tap(find.widgetWithText(TextButton, k).first);
+          await t.pump();
+        }
+        await shot();
+      },
+      '3.3_chon_danh_muc': (t, shot) async {
+        await t.tap(find.byTooltip('Thêm khoản chi').last);
+        await settle(t);
+        await _tapText(t, 'Chọn danh mục');
+        await shot();
+      },
+      '3.5_lap_lai': (t, shot) async {
+        await t.tap(find.byTooltip('Thêm khoản chi').last);
+        await settle(t);
+        await _tapText(t, 'Không lặp');
+        await shot();
+      },
+      '3.8_khoan_thu_moi': (t, shot) async {
+        await t.tap(find.byTooltip('Thêm khoản thu').last);
+        await settle(t);
+        await shot();
+      },
+      '5.1_cai_dat': (t, shot) async {
+        await _go(t, 'Cài đặt');
+        await shot();
+      },
+      '5.2_cai_dat_duoi': (t, shot) async {
+        await _go(t, 'Cài đặt');
+        await _scrollTo(t, 'Giới thiệu');
+        await shot();
+      },
+      '5.3_ngan_sach': (t, shot) async {
+        await _go(t, 'Cài đặt');
+        await _tapText(t, 'Ngân sách tháng');
+        await shot();
+      },
+      '6.1_danh_muc': (t, shot) async {
+        await _go(t, 'Cài đặt');
+        await _tapText(t, 'Danh mục');
+        await shot();
+      },
+      '6.2_sua_danh_muc': (t, shot) async {
+        await _go(t, 'Cài đặt');
+        await _tapText(t, 'Danh mục');
+        await t.tap(find.byTooltip('Thêm danh mục'));
+        await settle(t);
+        await shot();
+      },
+      '6.4_tai_khoan': (t, shot) async {
+        await _go(t, 'Cài đặt');
+        await _tapText(t, 'Tài khoản');
+        await shot();
+      },
+      '7.1_dinh_ky': (t, shot) async {
+        await _go(t, 'Cài đặt');
+        await _tapText(t, 'Khoản định kỳ');
+        await shot();
+      },
+      '9.1_gioi_thieu': (t, shot) async {
+        await _go(t, 'Cài đặt');
+        await _scrollTo(t, 'Giới thiệu');
+        await _tapText(t, 'Giới thiệu');
+        await shot();
+      },
+      '8.9_xoa_buoc_1': (t, shot) async {
+        await _go(t, 'Cài đặt');
+        await _scrollTo(t, 'Xóa toàn bộ dữ liệu');
+        await _tapText(t, 'Xóa toàn bộ dữ liệu');
+        await shot();
+      },
+      '8.1_dat_pin': (t, shot) async {
+        await _go(t, 'Cài đặt');
+        await _scrollTo(t, 'Khóa bằng mã PIN');
+        await _tapText(t, 'Khóa bằng mã PIN');
+        await shot();
+      },
+    };
 
 void main() {
   autoUpdateGoldenFiles = true;
+  // Mặc định test vẽ bóng đổ thành khối đặc (viền đen); bật bóng thật.
+  debugDisableShadows = false;
+  WidgetsApp.debugAllowBannerOverride = false;
   setUpAll(_loadFonts);
 
   for (final theme in ['light', 'dark']) {
-    testWidgets('chụp các màn · $theme', (tester) async {
-      await _open(tester, theme);
-      final s = (String n) => _shot(tester, n, theme);
+    for (final entry in _scenarios.entries) {
+      testWidgets('${entry.key} · $theme', (tester) async {
+        await _open(tester, theme);
+        await entry.value(tester, () => _shot(tester, entry.key, theme));
+      }, timeout: const Timeout(Duration(seconds: 90)));
+    }
 
-      // 2.1 Màn chính có dữ liệu; 2.6 lọc tài khoản.
-      await s('2.1_man_chinh');
-      await _go(tester, 'Tài khoản');
-      await s('2.6_loc_tai_khoan');
-      await tester.tapAt(const Offset(10, 300));
-      await settle(tester);
-
-      // 2.4 bảng chọn kỳ; 2.5 khoảng tùy chọn.
-      await _tapText(tester, 'Tháng 11 năm 2026');
-      await s('2.4_chon_ky');
-      await _tapText(tester, 'Khoảng tùy chọn');
-      await s('2.5_khoang_tuy_chon');
-      await _tapText(tester, 'Hủy');
-
-      // 2.3 kỳ trống: sang tháng sau.
-      await _go(tester, 'Kỳ sau');
-      await s('2.3_ky_trong');
-      await _go(tester, 'Kỳ trước');
-
-      // 4.1 các khoản; 4.2 vuốt xóa.
-      await _go(tester, 'Các khoản');
-      await s('4.1_cac_khoan');
-      await _tapText(tester, 'Hóa đơn');
-      await s('4.1b_cac_khoan_mo_nhom');
-      await _close(tester);
-
-      // 3.1–3.5 ghi khoản chi.
-      await tester.tap(find.byTooltip('Thêm khoản chi').last);
-      await settle(tester);
-      await s('3.1_khoan_chi_moi');
-      for (final k in ['3', '5', '0', '0', '0', '0', '0']) {
-        await tester.tap(find.widgetWithText(TextButton, k).first);
-        await tester.pump();
-      }
-      await s('3.2_go_so');
-      await _tapText(tester, 'Chọn danh mục');
-      await s('3.3_chon_danh_muc');
-      await tester.tapAt(const Offset(10, 100));
-      await settle(tester);
-      await _tapText(tester, 'Không lặp');
-      await s('3.5_lap_lai');
-      await tester.tapAt(const Offset(10, 100));
-      await settle(tester);
-      await _close(tester);
-
-      // 3.8 khoản thu mới.
-      await tester.tap(find.byTooltip('Thêm khoản thu').last);
-      await settle(tester);
-      await s('3.8_khoan_thu_moi');
-      await _close(tester);
-
-      // 5.x cài đặt.
-      await _go(tester, 'Cài đặt');
-      await s('5.1_cai_dat');
-      await _scrollTo(tester, 'Giới thiệu');
-      await s('5.2_cai_dat_duoi');
-      await tester.scrollUntilVisible(
-        find.text('Ngân sách tháng').first,
-        -200,
-        scrollable: find.byType(Scrollable).first,
-      );
-      await _tapText(tester, 'Ngân sách tháng');
-      await s('5.3_ngan_sach');
-      await _tapText(tester, 'Hủy');
-
-      // 6.1 danh mục; 6.4 tài khoản; 6.6 chuyển tiền; 7.1 định kỳ.
-      await _tapText(tester, 'Danh mục');
-      await s('6.1_danh_muc');
-      await tester.tap(find.byTooltip('Thêm danh mục'));
-      await settle(tester);
-      await s('6.2_sua_danh_muc');
-      await tester.tapAt(const Offset(10, 100));
-      await settle(tester);
-      await _close(tester);
-      await _tapText(tester, 'Tài khoản');
-      await s('6.4_tai_khoan');
-      await _close(tester);
-
-      // 9.1 giới thiệu.
-      await _scrollTo(tester, 'Giới thiệu');
-      await _tapText(tester, 'Giới thiệu');
-      await s('9.1_gioi_thieu');
-      await _close(tester);
-      await _scrollTo(tester, 'Xóa toàn bộ dữ liệu');
-      await _tapText(tester, 'Xóa toàn bộ dữ liệu');
-      await s('8.9_xoa_buoc_1');
-    });
-  }
-
-  for (final theme in ['light', 'dark']) {
-    testWidgets('chụp màn khóa · $theme', (tester) async {
+    testWidgets('1.1_khoa_pin · $theme', (tester) async {
       _phone(tester);
       final secrets = MemorySecretStore();
       final db = memoryDatabase();
