@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:material_symbols_icons/symbols.dart';
 
 import '../../../l10n/app_localizations.dart';
 import '../../data/calculator.dart';
@@ -33,7 +34,7 @@ class AccountsScreen extends ConsumerWidget {
         actions: [
           if (accounts.length > 1)
             IconButton(
-              icon: const Icon(Icons.swap_horiz),
+              icon: const Icon(Symbols.swap_horiz_rounded),
               tooltip: l.transfer,
               onPressed: () => context.push('/transfer'),
             ),
@@ -44,7 +45,7 @@ class AccountsScreen extends ConsumerWidget {
         children: [
           for (final a in accounts)
             ListTile(
-              leading: const Icon(Icons.account_balance_wallet_outlined),
+              leading: const Icon(Symbols.account_balance_wallet_rounded),
               title: Text(accountLabel(l, a)),
               subtitle: isLargeText(context) ? balance(a) : null,
               trailing: isLargeText(context) ? null : balance(a),
@@ -55,7 +56,7 @@ class AccountsScreen extends ConsumerWidget {
       floatingActionButton: FloatingActionButton(
         tooltip: l.addAccount,
         onPressed: () => showAccountEditor(context),
-        child: const Icon(Icons.add),
+        child: const Icon(Symbols.add_rounded),
       ),
     );
   }

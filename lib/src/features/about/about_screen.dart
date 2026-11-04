@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:material_symbols_icons/symbols.dart';
 
 import '../../../l10n/app_localizations.dart';
 import '../../app_info.dart';
@@ -44,7 +45,7 @@ class AboutScreen extends ConsumerWidget {
           ),
           const Divider(),
           ListTile(
-            leading: const Icon(Icons.privacy_tip_outlined),
+            leading: const Icon(Symbols.privacy_tip_rounded),
             title: Text(l.privacyPolicy),
             subtitle: AppInfo.privacyPolicyUrl.isEmpty
                 ? Text(l.privacyPolicyPending)
@@ -56,7 +57,7 @@ class AboutScreen extends ConsumerWidget {
             ),
           ),
           ListTile(
-            leading: const Icon(Icons.security_outlined),
+            leading: const Icon(Symbols.security_rounded),
             title: Text(l.reportSecurity),
             subtitle: Text(l.contactEmail(AppInfo.contactEmail)),
             onTap: () => open(
@@ -69,7 +70,7 @@ class AboutScreen extends ConsumerWidget {
             ),
           ),
           ListTile(
-            leading: const Icon(Icons.description_outlined),
+            leading: const Icon(Symbols.description_rounded),
             title: Text(l.licenses),
             onTap: () => showLicensePage(
               context: context,

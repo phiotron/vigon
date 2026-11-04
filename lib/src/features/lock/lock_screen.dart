@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:material_symbols_icons/symbols.dart';
 
 import '../../../l10n/app_localizations.dart';
 import '../settings/data_actions.dart';
@@ -75,7 +76,7 @@ class _LockBodyState extends ConsumerState<_LockBody> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Icon(
-                    Icons.lock_outline,
+                    Symbols.lock_rounded,
                     size: 48,
                     color: Theme.of(context).colorScheme.primary,
                   ),

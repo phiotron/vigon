@@ -71,18 +71,18 @@ void main() {
       categoryId: 1,
       accountId: card!,
     );
-    expect(findPlainText('Số dư: -130.000 ₫'), findsOneWidget);
+    expect(findSemanticsLabel('Số dư: -130.000 ₫'), findsOneWidget);
     await tester.tap(find.byTooltip('Tài khoản'));
     await settle(tester);
     await tester.tap(find.text('Thẻ').last);
     await settle(tester);
-    expect(findPlainText('Số dư: -30.000 ₫'), findsOneWidget);
+    expect(findSemanticsLabel('Số dư: -30.000 ₫'), findsOneWidget);
     // Nút lọc đọc tên tài khoản đang lọc.
     await tester.tap(find.byTooltip('Tài khoản: Thẻ'));
     await settle(tester);
     await tester.tap(find.text('Tất cả tài khoản'));
     await settle(tester);
-    expect(findPlainText('Số dư: -130.000 ₫'), findsOneWidget);
+    expect(findSemanticsLabel('Số dư: -130.000 ₫'), findsOneWidget);
     await disposeApp(tester, db);
   });
 

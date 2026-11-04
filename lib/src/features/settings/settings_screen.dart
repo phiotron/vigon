@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
+import 'package:material_symbols_icons/symbols.dart';
 
 import '../../../l10n/app_localizations.dart';
 import '../../data/currency.dart';
@@ -82,19 +83,19 @@ class SettingsScreen extends ConsumerWidget {
           ),
           const SizedBox(height: 8),
           ListTile(
-            leading: const Icon(Icons.category_outlined),
+            leading: const Icon(Symbols.category_rounded),
             title: Text(l.categories),
-            trailing: const Icon(Icons.chevron_right),
+            trailing: const Icon(Symbols.chevron_right_rounded),
             onTap: () => context.push('/categories'),
           ),
           ListTile(
-            leading: const Icon(Icons.account_balance_wallet_outlined),
+            leading: const Icon(Symbols.account_balance_wallet_rounded),
             title: Text(l.accounts),
-            trailing: const Icon(Icons.chevron_right),
+            trailing: const Icon(Symbols.chevron_right_rounded),
             onTap: () => context.push('/accounts'),
           ),
           ListTile(
-            leading: const Icon(Icons.savings_outlined),
+            leading: const Icon(Symbols.savings_rounded),
             title: Text(l.budget),
             subtitle: Text(
               budget == null
@@ -104,19 +105,19 @@ class SettingsScreen extends ConsumerWidget {
             onTap: () => showBudgetDialog(context, ref),
           ),
           ListTile(
-            leading: const Icon(Icons.repeat),
+            leading: const Icon(Symbols.repeat_rounded),
             title: Text(l.recurring),
-            trailing: const Icon(Icons.chevron_right),
+            trailing: const Icon(Symbols.chevron_right_rounded),
             onTap: () => context.push('/recurring'),
           ),
           ListTile(
-            leading: const Icon(Icons.payments_outlined),
+            leading: const Icon(Symbols.payments_rounded),
             title: Text(l.currency),
             subtitle: Text(_currencyLabel(currency)),
             onTap: () => _pickCurrency(context, ref, currency),
           ),
           ListTile(
-            leading: const Icon(Icons.view_week_outlined),
+            leading: const Icon(Symbols.view_week_rounded),
             title: Text(l.weekStart),
             subtitle: Text(weekStart == DateTime.sunday ? l.sunday : l.monday),
             onTap: () => repo.setWeekStart(
@@ -124,7 +125,7 @@ class SettingsScreen extends ConsumerWidget {
             ),
           ),
           ListTile(
-            leading: const Icon(Icons.calendar_month_outlined),
+            leading: const Icon(Symbols.calendar_month_rounded),
             title: Text(l.monthStartDay),
             trailing: DropdownButton<int>(
               value: monthStartDay,
@@ -138,7 +139,7 @@ class SettingsScreen extends ConsumerWidget {
           ),
           header(l.security),
           SwitchListTile(
-            secondary: const Icon(Icons.lock_outline),
+            secondary: const Icon(Symbols.lock_rounded),
             title: Text(l.pinLock),
             subtitle: Text(l.pinWarning),
             value: pinEnabled,
@@ -151,24 +152,24 @@ class SettingsScreen extends ConsumerWidget {
             child: Text(l.backupReminder),
           ),
           ListTile(
-            leading: const Icon(Icons.upload_file),
+            leading: const Icon(Symbols.upload_file_rounded),
             title: Text(l.backup),
             subtitle: Text(l.backupNote),
             onTap: () => exportBackupFile(ref),
           ),
           ListTile(
-            leading: const Icon(Icons.settings_backup_restore),
+            leading: const Icon(Symbols.settings_backup_restore_rounded),
             title: Text(l.restore),
             onTap: () => restoreFromFile(context, ref),
           ),
           ListTile(
-            leading: const Icon(Icons.table_view_outlined),
+            leading: const Icon(Symbols.table_view_rounded),
             title: Text(l.exportCsv),
             onTap: () => exportCsvFile(context, ref),
           ),
           ListTile(
             leading: Icon(
-              Icons.delete_forever_outlined,
+              Symbols.delete_forever_rounded,
               color: Theme.of(context).colorScheme.error,
             ),
             title: Text(
@@ -179,9 +180,9 @@ class SettingsScreen extends ConsumerWidget {
           ),
           const Divider(),
           ListTile(
-            leading: const Icon(Icons.info_outline),
+            leading: const Icon(Symbols.info_rounded),
             title: Text(l.about),
-            trailing: const Icon(Icons.chevron_right),
+            trailing: const Icon(Symbols.chevron_right_rounded),
             onTap: () => context.push('/about'),
           ),
         ],
@@ -215,7 +216,7 @@ class SettingsScreen extends ConsumerWidget {
               child: Row(
                 children: [
                   Expanded(child: Text(_currencyLabel(code))),
-                  if (code == current) const Icon(Icons.check),
+                  if (code == current) const Icon(Symbols.check_rounded),
                 ],
               ),
             ),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:material_symbols_icons/symbols.dart';
 
 import '../../../l10n/app_localizations.dart';
 import '../../data/period.dart';
@@ -29,7 +30,7 @@ Future<void> showPeriodPicker(BuildContext context, WidgetRef ref) async {
               title: Text(entry.value),
               selected: entry.key == current.type,
               trailing: entry.key == current.type
-                  ? const Icon(Icons.check)
+                  ? const Icon(Symbols.check_rounded)
                   : null,
               onTap: () => Navigator.pop(context, entry.key),
             ),

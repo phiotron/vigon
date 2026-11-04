@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:material_symbols_icons/symbols.dart';
 
 import 'tokens.g.dart';
 
@@ -136,6 +137,10 @@ ThemeData buildTheme(Brightness brightness) {
         borderRadius: BorderRadius.circular(VgRadius.sm),
       ),
       labelStyle: textTheme.labelLarge,
+      // Chip cao 40, vùng chạm 48 (MaterialTapTargetSize.padded mặc định).
+      padding: const EdgeInsets.fromLTRB(VgSpace.s2, 9, VgSpace.s3, 9),
+      labelPadding: const EdgeInsets.only(left: VgSpace.s1),
+      iconTheme: IconThemeData(color: p.inkMuted, size: 18),
     ),
     inputDecorationTheme: InputDecorationTheme(
       border: OutlineInputBorder(
@@ -154,16 +159,51 @@ ThemeData buildTheme(Brightness brightness) {
         borderRadius: BorderRadius.circular(VgRadius.lg),
       ),
     ),
+    // Nút hộp thoại (T1_Nut): cao 40, bo tròn, label-md; vùng chạm 48. Nút
+    // lớn (Lưu, − / +) tự đặt kiểu riêng.
     filledButtonTheme: FilledButtonThemeData(
       style: FilledButton.styleFrom(
-        minimumSize: const Size(VgSize.tapMin, VgSize.tapMin),
-        textStyle: VgType.labelLg,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(VgRadius.lg),
-        ),
+        minimumSize: const Size(VgSize.tapMin, 40),
+        textStyle: VgType.labelMd,
+        shape: const StadiumBorder(),
       ),
+    ),
+    textButtonTheme: TextButtonThemeData(
+      style: TextButton.styleFrom(
+        minimumSize: const Size(VgSize.tapMin, 40),
+        foregroundColor: p.primary,
+        textStyle: VgType.labelMd,
+        shape: const StadiumBorder(),
+      ),
+    ),
+    // Mũi tên quay lại giống nhau trên iPhone và Android; iPhone không có nút
+    // Back cứng nên màn con nào cũng có mũi tên này.
+    actionIconTheme: ActionIconThemeData(
+      backButtonIconBuilder: (context) =>
+          const Icon(Symbols.arrow_back_rounded),
     ),
     // iPhone dùng chuyển trang Cupertino (vuốt mép trái để quay lại) theo
     // mặc định của PageTransitionsTheme; không cần khai riêng.
   );
 }
+
+/// Nút xác nhận hành động xóa ở bước cuối (nền `error`, T1_Nut).
+ButtonStyle dangerButtonStyle(BuildContext context) => FilledButton.styleFrom(
+  backgroundColor: context.vg.error,
+  foregroundColor: context.vg.onError,
+);
+
+/// Nút lớn (Lưu, − / +): cao [height], bo `radius-lg`, chữ label-lg.
+ButtonStyle bigButtonStyle({
+  required Color background,
+  required Color foreground,
+  double height = VgSize.tapKey,
+}) => FilledButton.styleFrom(
+  backgroundColor: background,
+  foregroundColor: foreground,
+  minimumSize: Size.fromHeight(height),
+  textStyle: VgType.labelLg,
+  shape: RoundedRectangleBorder(
+    borderRadius: BorderRadius.circular(VgRadius.lg),
+  ),
+);

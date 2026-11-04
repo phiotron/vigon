@@ -1,13 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:material_symbols_icons/symbols.dart';
 
 import '../../../l10n/app_localizations.dart';
 import '../../data/calculator.dart';
+import '../../ui/theme.dart';
+import '../../ui/tokens.g.dart';
 
 const keyBackspace = '⌫';
 const keyEquals = '=';
 
-/// Bàn phím số riêng của app có cộng trừ nhân chia (AC-01, AC-03).
-/// Tiền không có phần lẻ (VND) thì nút "." thành "000".
+/// Bàn phím số riêng của app có cộng trừ nhân chia (AC-01, AC-03), theo
+/// T2_BanPhim: lưới 4 cột, phím 56, cách 8; phím phép tính nền
+/// `secondary-container`; nút Lưu chiếm 3 cột. Tiền không có phần lẻ (VND)
+/// thì nút "." thành "000".
 class Keypad extends StatelessWidget {
   const Keypad({
     super.key,
@@ -15,6 +20,7 @@ class Keypad extends StatelessWidget {
     required this.onKey,
     required this.saveLabel,
     required this.saveColor,
+    required this.saveForeground,
     required this.onSave,
   });
 
@@ -22,11 +28,13 @@ class Keypad extends StatelessWidget {
   final ValueChanged<String> onKey;
   final String saveLabel;
   final Color saveColor;
+  final Color saveForeground;
   final VoidCallback onSave;
 
   @override
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context);
+    final scheme = Theme.of(context).colorScheme;
     final extra = decimalDigits == 0 ? '000' : '.';
     final rows = [
       ['7', '8', '9', opDiv],
@@ -34,84 +42,84 @@ class Keypad extends StatelessWidget {
       ['1', '2', '3', opSub],
       [extra, '0', keyBackspace, opAdd],
     ];
-    String? semantic(String key) => switch (key) {
-      keyBackspace => l.keypadBackspace,
-      keyEquals => l.keypadEquals,
-      _ => null,
-    };
 
-    Widget key(String k, {Color? color}) => Expanded(
-      child: Padding(
-        padding: const EdgeInsets.all(3),
+    Widget key(String k, double width) {
+      final op = isOperator(k) || k == keyEquals;
+      return SizedBox(
+        width: width,
         child: TextButton(
           style: TextButton.styleFrom(
-            minimumSize: const Size.fromHeight(56),
-            backgroundColor:
-                color ?? Theme.of(context).colorScheme.surfaceContainerHighest,
+            minimumSize: const Size.fromHeight(VgSize.tapKey),
+            padding: EdgeInsets.zero,
+            backgroundColor: op
+                ? scheme.secondaryContainer
+                : scheme.surfaceContainerHigh,
+            foregroundColor: op
+                ? scheme.onSecondaryContainer
+                : scheme.onSurface,
+            textStyle: VgType.keyDigit,
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(VgRadius.md),
             ),
           ),
           onPressed: () => onKey(k),
-          child: Text(
-            k,
-            semanticsLabel: semantic(k),
-            style: Theme.of(context).textTheme.headlineSmall,
-          ),
+          child: switch (k) {
+            keyBackspace => Icon(
+              Symbols.backspace_rounded,
+              semanticLabel: l.keypadBackspace,
+            ),
+            keyEquals => Text(k, semanticsLabel: l.keypadEquals),
+            _ => Text(k),
+          },
         ),
-      ),
-    );
+      );
+    }
 
     return Padding(
-      padding: const EdgeInsets.fromLTRB(8, 0, 8, 8),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          for (final row in rows)
-            Row(
-              children: [
-                for (final k in row)
-                  key(
-                    k,
-                    color: isOperator(k)
-                        ? Theme.of(context).colorScheme.secondaryContainer
-                        : null,
-                  ),
-              ],
-            ),
-          Row(
+      padding: const EdgeInsets.fromLTRB(
+        VgSpace.s3,
+        VgSpace.s2,
+        VgSpace.s3,
+        VgSpace.s1,
+      ),
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          // 4 cột bằng nhau cách 8; nút Lưu rộng đúng 3 cột cộng 2 khoảng cách
+          // để thẳng hàng với các phím phía trên.
+          const gap = VgSpace.s2;
+          final w = (constraints.maxWidth - 3 * gap) / 4;
+          Widget row(List<Widget> children) => Row(
             children: [
-              key(
-                keyEquals,
-                color: Theme.of(context).colorScheme.secondaryContainer,
-              ),
-              Expanded(
-                flex: 3,
-                child: Padding(
-                  padding: const EdgeInsets.all(3),
+              for (var i = 0; i < children.length; i++) ...[
+                if (i > 0) const SizedBox(width: gap),
+                children[i],
+              ],
+            ],
+          );
+          return Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              for (final r in rows) ...[
+                row([for (final k in r) key(k, w)]),
+                const SizedBox(height: gap),
+              ],
+              row([
+                key(keyEquals, w),
+                SizedBox(
+                  width: 3 * w + 2 * gap,
                   child: FilledButton(
-                    style: FilledButton.styleFrom(
-                      minimumSize: const Size.fromHeight(56),
-                      backgroundColor: saveColor,
-                      foregroundColor:
-                          Theme.of(context).brightness == Brightness.dark
-                          ? Colors.black
-                          : Colors.white,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
+                    style: bigButtonStyle(
+                      background: saveColor,
+                      foreground: saveForeground,
                     ),
                     onPressed: onSave,
-                    child: Text(
-                      saveLabel,
-                      style: const TextStyle(fontSize: 18),
-                    ),
+                    child: Text(saveLabel),
                   ),
                 ),
-              ),
+              ]),
             ],
-          ),
-        ],
+          );
+        },
       ),
     );
   }

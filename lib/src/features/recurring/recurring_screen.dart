@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:material_symbols_icons/symbols.dart';
 
 import '../../../l10n/app_localizations.dart';
 import '../../data/calculator.dart';
@@ -45,7 +46,7 @@ class RecurringScreen extends ConsumerWidget {
                 for (final r in rules)
                   ListTile(
                     leading: categories[r.categoryId] == null
-                        ? const Icon(Icons.repeat)
+                        ? const Icon(Symbols.repeat_rounded)
                         : CategoryAvatar(
                             category: categories[r.categoryId]!,
                             size: 40,

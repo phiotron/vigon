@@ -2,6 +2,7 @@ import 'package:drift/drift.dart' show Value;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:material_symbols_icons/symbols.dart';
 
 import '../../../l10n/app_localizations.dart';
 import '../../data/calculator.dart';
@@ -10,9 +11,11 @@ import '../../data/dates.dart';
 import '../../data/money.dart';
 import '../../l10n_names.dart';
 import '../../providers.dart';
+import '../../ui/amount_display.dart';
 import '../../ui/category_avatar.dart';
 import '../../ui/format.dart';
 import '../../ui/messenger.dart';
+import '../../ui/theme.dart';
 import 'keypad.dart';
 
 /// Ghi khoản mới hoặc sửa khoản có sẵn (F-01, F-04).
@@ -210,7 +213,9 @@ class _EntryEditorScreenState extends ConsumerState<EntryEditorScreen> {
               ListTile(
                 title: Text(repeatLabel(l, f)),
                 selected: f == _repeat,
-                trailing: f == _repeat ? const Icon(Icons.check) : null,
+                trailing: f == _repeat
+                    ? const Icon(Symbols.check_rounded)
+                    : null,
                 onTap: () => Navigator.pop(context, (f,)),
               ),
           ],
@@ -298,7 +303,7 @@ class _EntryEditorScreenState extends ConsumerState<EntryEditorScreen> {
         actions: [
           if (_original != null)
             IconButton(
-              icon: const Icon(Icons.delete_outline),
+              icon: const Icon(Symbols.delete_rounded),
               tooltip: l.delete,
               onPressed: _delete,
             ),
@@ -315,43 +320,11 @@ class _EntryEditorScreenState extends ConsumerState<EntryEditorScreen> {
                     child: SingleChildScrollView(
                       child: Column(
                         children: [
-                          Padding(
-                            padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
-                            child: Semantics(
-                              liveRegion: true,
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.end,
-                                children: [
-                                  Text(
-                                    _expression.isEmpty ? ' ' : _expression,
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .bodyLarge,
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                  FittedBox(
-                                    fit: BoxFit.scaleDown,
-                                    child: Text(
-                                      money(context, currency, value ?? 0),
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .headlineLarge
-                                          ?.copyWith(color: color),
-                                    ),
-                                  ),
-                                  if (_error != null)
-                                    Text(
-                                      _error!,
-                                      style: TextStyle(
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .error,
-                                      ),
-                                    ),
-                                ],
-                              ),
-                            ),
+                          AmountDisplay(
+                            expression: _expression,
+                            amount: money(context, currency, value ?? 0),
+                            color: color,
+                            error: _error,
                           ),
                           Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 12),
@@ -374,7 +347,10 @@ class _EntryEditorScreenState extends ConsumerState<EntryEditorScreen> {
                                     },
                                   ),
                                 ActionChip(
-                                  avatar: const Icon(Icons.event, size: 18),
+                                  avatar: const Icon(
+                                    Symbols.calendar_today_rounded,
+                                    size: 18,
+                                  ),
                                   label: Text(
                                     _date == dateOnly(ref.read(clockProvider)())
                                         ? l.today
@@ -384,18 +360,27 @@ class _EntryEditorScreenState extends ConsumerState<EntryEditorScreen> {
                                 ),
                                 if (_original == null)
                                   ActionChip(
-                                    avatar: const Icon(Icons.repeat, size: 18),
+                                    avatar: const Icon(
+                                      Symbols.repeat_rounded,
+                                      size: 18,
+                                    ),
                                     label: Text(repeatLabel(l, _repeat)),
                                     onPressed: _pickRepeat,
                                   )
                                 else if (_rule != null && _rule!.active)
                                   InputChip(
-                                    avatar: const Icon(Icons.repeat, size: 18),
+                                    avatar: const Icon(
+                                      Symbols.repeat_rounded,
+                                      size: 18,
+                                    ),
                                     label: Text(
                                       repeatLabel(l, _rule!.frequency),
                                     ),
-                                    deleteIcon: const Icon(
-                                      Icons.stop_circle_outlined,
+                                    deleteIcon: Icon(
+                                      Symbols.stop_circle_rounded,
+                                      fill: 1,
+                                      size: 20,
+                                      color: context.vg.error,
                                     ),
                                     deleteButtonTooltipMessage: l.stopRepeat,
                                     onDeleted: _stopRepeat,
@@ -403,7 +388,7 @@ class _EntryEditorScreenState extends ConsumerState<EntryEditorScreen> {
                                 if (account != null && accounts.length > 1)
                                   ActionChip(
                                     avatar: const Icon(
-                                      Icons.account_balance_wallet_outlined,
+                                      Symbols.account_balance_wallet_rounded,
                                       size: 18,
                                     ),
                                     label: Text(accountLabel(l, account)),
@@ -430,6 +415,9 @@ class _EntryEditorScreenState extends ConsumerState<EntryEditorScreen> {
                     onKey: _onKey,
                     saveLabel: _categoryId == null ? l.chooseCategory : l.save,
                     saveColor: color,
+                    saveForeground: isIncome
+                        ? context.vg.onIncome
+                        : context.vg.onExpense,
                     onSave: _save,
                   ),
                 ],

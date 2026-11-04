@@ -17,4 +17,5 @@
 - Khôi phục sao lưu kiểm file trước khi hỏi xác nhận; cảnh báo đổi tiền tệ rõ hơn; nút lọc tài khoản đọc tên tài khoản; thêm test Khoảng tùy chọn và kiểm file sao lưu (118 test) (2026-11-04)
 - Chốt logo hai thẻ xếp chồng (D-009): icon launcher Android thích ứng + PNG cho máy cũ, icon Play Store 512×512; thay icon Flutter mặc định (2026-11-04)
 - PLAN-001 T1 (nhánh `feature/PLAN-001`): theme sinh từ token của bộ thiết kế mobile (màu sáng/tối, chữ, khoảng cách, bo góc), font Be Vietnam Pro đóng trong app, gói icon Material Symbols; nút −/+ dùng màu token (2026-11-04)
+- PLAN-001 T2: bộ 31 icon và 16 màu danh mục theo thiết kế (icon cũ vẫn hiện), icon Material Symbols Rounded cho toàn app, nút lớn "− Chi"/"+ Thu", bàn phím số và bàn phím PIN, vùng số tiền, vòng biểu đồ, thanh Số dư và thanh ngân sách theo bản vẽ (2026-11-04)
 - Tài liệu: ARCHITECTURE, RUNBOOK, PROMPTS điền lần đầu; D-006, D-007; RETROSPECTIVE nháp (2026-11-03)

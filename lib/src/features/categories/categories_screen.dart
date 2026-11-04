@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:material_symbols_icons/symbols.dart';
 
 import '../../../l10n/app_localizations.dart';
 import '../../data/database.dart';
 import '../../l10n_names.dart';
 import '../../providers.dart';
 import '../../ui/category_avatar.dart';
+import '../../ui/theme.dart';
 import 'category_icons.dart';
 
 /// Quản lý danh mục chi và thu: thêm, sửa, sắp xếp, xóa (F-05).
@@ -43,7 +45,7 @@ class CategoriesScreen extends StatelessWidget {
                 type: index == 0 ? CategoryType.expense : CategoryType.income,
               );
             },
-            child: const Icon(Icons.add),
+            child: const Icon(Symbols.add_rounded),
           ),
         ),
       ),
@@ -81,7 +83,7 @@ class _CategoryList extends ConsumerWidget {
               message: l.reorderHint,
               child: const Padding(
                 padding: EdgeInsets.all(12),
-                child: Icon(Icons.drag_handle),
+                child: Icon(Symbols.drag_handle_rounded),
               ),
             ),
           ),
@@ -238,9 +240,11 @@ class _CategoryEditorState extends ConsumerState<_CategoryEditor> {
                       backgroundColor: entry.key == _icon
                           ? Color(_color)
                           : null,
-                      foregroundColor: entry.key == _icon ? Colors.white : null,
+                      foregroundColor: entry.key == _icon
+                          ? context.vg.onCat
+                          : null,
                     ),
-                    icon: Icon(entry.value),
+                    icon: Icon(entry.value, fill: entry.key == _icon ? 1 : 0),
                     key: ValueKey('icon-${entry.key}'),
                     tooltip: l.iconNumber(index + 1),
                     onPressed: () => setState(() => _icon = entry.key),
@@ -278,7 +282,10 @@ class _CategoryEditorState extends ConsumerState<_CategoryEditor> {
                               : null,
                         ),
                         child: color == _color
-                            ? const Icon(Icons.check, color: Colors.white)
+                            ? Icon(
+                                Symbols.check_rounded,
+                                color: context.vg.onCat,
+                              )
                             : null,
                       ),
                     ),
@@ -291,7 +298,7 @@ class _CategoryEditorState extends ConsumerState<_CategoryEditor> {
                 if (canDelete)
                   TextButton.icon(
                     onPressed: _delete,
-                    icon: const Icon(Icons.delete_outline),
+                    icon: const Icon(Symbols.delete_rounded),
                     label: Text(l.deleteCategory),
                   ),
                 const Spacer(),

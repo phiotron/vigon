@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:material_symbols_icons/symbols.dart';
 
 import '../../../l10n/app_localizations.dart';
 import '../../data/database.dart';
@@ -94,7 +95,11 @@ class _EntriesScreenState extends ConsumerState<EntriesScreen> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   if (!large) Text(money(context, currency, t.total)),
-                  Icon(open ? Icons.expand_less : Icons.expand_more),
+                  Icon(
+                    open
+                        ? Symbols.expand_less_rounded
+                        : Symbols.expand_more_rounded,
+                  ),
                 ],
               ),
               onTap: () =>
@@ -209,7 +214,7 @@ class _EntryTile extends ConsumerWidget {
         alignment: Alignment.centerRight,
         padding: const EdgeInsets.only(right: 24),
         child: Icon(
-          Icons.delete_outline,
+          Symbols.delete_rounded,
           color: Theme.of(context).colorScheme.onErrorContainer,
         ),
       ),

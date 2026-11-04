@@ -2,6 +2,7 @@ import 'package:drift/drift.dart' show Value;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:material_symbols_icons/symbols.dart';
 
 import '../../../l10n/app_localizations.dart';
 import '../../data/calculator.dart';
@@ -10,6 +11,7 @@ import '../../data/dates.dart';
 import '../../data/money.dart';
 import '../../l10n_names.dart';
 import '../../providers.dart';
+import '../../ui/amount_display.dart';
 import '../../ui/format.dart';
 import '../../ui/messenger.dart';
 import '../entry/keypad.dart';
@@ -151,7 +153,7 @@ class _TransferScreenState extends ConsumerState<TransferScreen> {
         actions: [
           if (_original != null)
             IconButton(
-              icon: const Icon(Icons.delete_outline),
+              icon: const Icon(Symbols.delete_rounded),
               tooltip: l.delete,
               onPressed: _delete,
             ),
@@ -181,7 +183,7 @@ class _TransferScreenState extends ConsumerState<TransferScreen> {
                                 ),
                                 const Padding(
                                   padding: EdgeInsets.symmetric(horizontal: 8),
-                                  child: Icon(Icons.arrow_forward),
+                                  child: Icon(Symbols.arrow_forward_rounded),
                                 ),
                                 Expanded(
                                   child: accountPicker(
@@ -193,20 +195,17 @@ class _TransferScreenState extends ConsumerState<TransferScreen> {
                               ],
                             ),
                           ),
-                          const SizedBox(height: 8),
-                          Text(
-                            money(context, currency, value ?? 0),
-                            style: Theme.of(context).textTheme.headlineLarge,
+                          AmountDisplay(
+                            expression: _expression,
+                            amount: money(context, currency, value ?? 0),
+                            color: Theme.of(context).colorScheme.onSurface,
+                            error: _error,
                           ),
-                          if (_error != null)
-                            Text(
-                              _error!,
-                              style: TextStyle(
-                                color: Theme.of(context).colorScheme.error,
-                              ),
-                            ),
                           ActionChip(
-                            avatar: const Icon(Icons.event, size: 18),
+                            avatar: const Icon(
+                              Symbols.calendar_today_rounded,
+                              size: 18,
+                            ),
                             label: Text(
                               _date == dateOnly(ref.read(clockProvider)())
                                   ? l.today
@@ -244,6 +243,7 @@ class _TransferScreenState extends ConsumerState<TransferScreen> {
                     onKey: _onKey,
                     saveLabel: l.save,
                     saveColor: Theme.of(context).colorScheme.primary,
+                    saveForeground: Theme.of(context).colorScheme.onPrimary,
                     onSave: () => _save(accounts),
                   ),
                 ],
