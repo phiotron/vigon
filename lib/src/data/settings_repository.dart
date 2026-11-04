@@ -15,6 +15,7 @@ class SettingsRepository {
   static const weekStartKey = 'weekStart';
   static const monthStartDayKey = 'monthStartDay';
   static const budgetKey = 'monthlyBudget';
+  static const secureWindowKey = 'secureWindow';
 
   Stream<String?> _watch(String key) {
     final query = _db.select(_db.settings)..where((s) => s.key.equals(key));
@@ -72,6 +73,16 @@ class SettingsRepository {
 
   Future<void> setMonthStartDay(int day) =>
       _write(monthStartDayKey, '${day.clamp(1, 28)}');
+
+  /// Che nội dung ở màn đa nhiệm và chặn chụp màn hình (AC-56). Mặc định tắt.
+  Stream<bool> watchSecureWindow() =>
+      _watch(secureWindowKey).map((v) => v == '1');
+
+  Future<bool> readSecureWindow() =>
+      _read(secureWindowKey).then((v) => v == '1');
+
+  Future<void> setSecureWindow(bool on) =>
+      on ? _write(secureWindowKey, '1') : _remove(secureWindowKey);
 
   /// Hạn mức chi mỗi tháng theo đơn vị nhỏ nhất; null là chưa đặt (AC-26).
   Stream<int?> watchBudget() =>

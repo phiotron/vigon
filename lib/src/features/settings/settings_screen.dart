@@ -10,6 +10,7 @@ import '../lock/app_lock.dart';
 import 'budget_dialog.dart';
 import 'currency_picker.dart';
 import 'data_actions.dart';
+import 'secure_window.dart';
 
 /// Cài đặt (AC-12, AC-21, AC-35, AC-36 và các mục G4–G6).
 class SettingsScreen extends ConsumerWidget {
@@ -144,6 +145,13 @@ class SettingsScreen extends ConsumerWidget {
             value: pinEnabled,
             onChanged: (on) =>
                 on ? setupPin(context, ref) : disablePin(context, ref),
+          ),
+          SwitchListTile(
+            secondary: const Icon(Icons.visibility_off_outlined),
+            title: Text(l.secureWindow),
+            subtitle: Text(l.secureWindowNote),
+            value: ref.watch(secureWindowEnabledProvider).value ?? false,
+            onChanged: repo.setSecureWindow,
           ),
           header(l.dataSection),
           Padding(
