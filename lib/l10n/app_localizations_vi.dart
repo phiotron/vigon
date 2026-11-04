@@ -162,6 +162,9 @@ class AppLocalizationsVi extends AppLocalizations {
   String get chooseCategory => 'Chọn danh mục';
 
   @override
+  String get otherCategories => 'Danh mục khác';
+
+  @override
   String get save => 'Lưu';
 
   @override
@@ -193,6 +196,26 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get undo => 'Hoàn tác';
+
+  @override
+  String get search => 'Tìm';
+
+  @override
+  String get searchHint => 'Ghi chú, danh mục hoặc số tiền';
+
+  @override
+  String get searchClose => 'Đóng tìm kiếm';
+
+  @override
+  String get searchAllTime => 'Tất cả thời gian';
+
+  @override
+  String get searchNoMatch => 'Không có khoản nào khớp';
+
+  @override
+  String searchTotal(int count, String total) {
+    return '$count khoản · tổng $total';
+  }
 
   @override
   String get keypadBackspace => 'Xóa lùi';
@@ -286,6 +309,29 @@ class AppLocalizationsVi extends AppLocalizations {
   String get editAccount => 'Sửa tài khoản';
 
   @override
+  String get archiveAccount => 'Ẩn tài khoản';
+
+  @override
+  String get deleteAccount => 'Xóa tài khoản';
+
+  @override
+  String deleteAccountConfirm(String name) {
+    return 'Xóa tài khoản \"$name\"?';
+  }
+
+  @override
+  String get accountInUseHint => 'Tài khoản đã có khoản, chỉ ẩn được';
+
+  @override
+  String get accountLastOneHint => 'Phải còn ít nhất một tài khoản';
+
+  @override
+  String get archivedAccounts => 'Tài khoản đã ẩn';
+
+  @override
+  String get unarchiveAccount => 'Hiện lại';
+
+  @override
   String get initialBalance => 'Số dư ban đầu';
 
   @override
@@ -294,6 +340,45 @@ class AppLocalizationsVi extends AppLocalizations {
   @override
   String get currencyNote =>
       'Đổi tiền tệ chỉ đổi ký hiệu, không quy đổi tỉ giá. Nếu hai tiền tệ có số chữ số thập phân khác nhau (ví dụ VND và USD), số tiền được nhân hoặc chia để giữ nguyên con số; đổi ngược lại có thể mất phần lẻ.';
+
+  @override
+  String get currencySearchHint => 'Tìm theo mã hoặc tên';
+
+  @override
+  String get currencyNoMatch => 'Không có tiền tệ nào khớp';
+
+  @override
+  String get csvColDate => 'Ngày';
+
+  @override
+  String get csvColType => 'Loại';
+
+  @override
+  String get csvColAmount => 'Số tiền';
+
+  @override
+  String get csvColCurrency => 'Tiền tệ';
+
+  @override
+  String get csvColCategory => 'Danh mục';
+
+  @override
+  String get csvColAccount => 'Tài khoản';
+
+  @override
+  String get csvColToAccount => 'Đến tài khoản';
+
+  @override
+  String get csvColNote => 'Ghi chú';
+
+  @override
+  String get csvTypeExpense => 'Chi';
+
+  @override
+  String get csvTypeIncome => 'Thu';
+
+  @override
+  String get csvTypeTransfer => 'Chuyển tiền';
 
   @override
   String get weekStart => 'Ngày đầu tuần';
@@ -325,6 +410,12 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get budgetRemove => 'Bỏ ngân sách';
+
+  @override
+  String get categoryBudget => 'Ngân sách tháng của danh mục';
+
+  @override
+  String get categoryBudgetHint => 'Để trống nếu không đặt';
 
   @override
   String get recurring => 'Khoản định kỳ';
@@ -417,6 +508,13 @@ class AppLocalizationsVi extends AppLocalizations {
   String pinProgress(int count) {
     return 'Đã nhập $count trên 4 số';
   }
+
+  @override
+  String get secureWindow => 'Che nội dung khi chuyển app';
+
+  @override
+  String get secureWindowNote =>
+      'Chặn chụp màn hình và ẩn nội dung trong danh sách app gần đây';
 
   @override
   String get about => 'Giới thiệu';

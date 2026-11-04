@@ -386,6 +386,12 @@ abstract class AppLocalizations {
   /// **'Choose category'**
   String get chooseCategory;
 
+  /// No description provided for @otherCategories.
+  ///
+  /// In en, this message translates to:
+  /// **'More categories'**
+  String get otherCategories;
+
   /// No description provided for @save.
   ///
   /// In en, this message translates to:
@@ -451,6 +457,42 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Undo'**
   String get undo;
+
+  /// No description provided for @search.
+  ///
+  /// In en, this message translates to:
+  /// **'Search'**
+  String get search;
+
+  /// No description provided for @searchHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Note, category or amount'**
+  String get searchHint;
+
+  /// No description provided for @searchClose.
+  ///
+  /// In en, this message translates to:
+  /// **'Close search'**
+  String get searchClose;
+
+  /// No description provided for @searchAllTime.
+  ///
+  /// In en, this message translates to:
+  /// **'All time'**
+  String get searchAllTime;
+
+  /// No description provided for @searchNoMatch.
+  ///
+  /// In en, this message translates to:
+  /// **'No matching records'**
+  String get searchNoMatch;
+
+  /// No description provided for @searchTotal.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, one{1 record} other{{count} records}} · total {total}'**
+  String searchTotal(int count, String total);
 
   /// No description provided for @keypadBackspace.
   ///
@@ -626,6 +668,48 @@ abstract class AppLocalizations {
   /// **'Edit account'**
   String get editAccount;
 
+  /// No description provided for @archiveAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Hide account'**
+  String get archiveAccount;
+
+  /// No description provided for @deleteAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete account'**
+  String get deleteAccount;
+
+  /// No description provided for @deleteAccountConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete the account \"{name}\"?'**
+  String deleteAccountConfirm(String name);
+
+  /// No description provided for @accountInUseHint.
+  ///
+  /// In en, this message translates to:
+  /// **'This account has records, so it can only be hidden'**
+  String get accountInUseHint;
+
+  /// No description provided for @accountLastOneHint.
+  ///
+  /// In en, this message translates to:
+  /// **'At least one account must remain'**
+  String get accountLastOneHint;
+
+  /// No description provided for @archivedAccounts.
+  ///
+  /// In en, this message translates to:
+  /// **'Hidden accounts'**
+  String get archivedAccounts;
+
+  /// No description provided for @unarchiveAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Show again'**
+  String get unarchiveAccount;
+
   /// No description provided for @initialBalance.
   ///
   /// In en, this message translates to:
@@ -643,6 +727,84 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Changing the currency only changes the symbol; no exchange rate is applied. If the two currencies have a different number of decimals (for example VND and USD), amounts are multiplied or divided so the numbers you see stay the same; switching back may lose the fractional part.'**
   String get currencyNote;
+
+  /// No description provided for @currencySearchHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Search by code or name'**
+  String get currencySearchHint;
+
+  /// No description provided for @currencyNoMatch.
+  ///
+  /// In en, this message translates to:
+  /// **'No matching currency'**
+  String get currencyNoMatch;
+
+  /// No description provided for @csvColDate.
+  ///
+  /// In en, this message translates to:
+  /// **'date'**
+  String get csvColDate;
+
+  /// No description provided for @csvColType.
+  ///
+  /// In en, this message translates to:
+  /// **'type'**
+  String get csvColType;
+
+  /// No description provided for @csvColAmount.
+  ///
+  /// In en, this message translates to:
+  /// **'amount'**
+  String get csvColAmount;
+
+  /// No description provided for @csvColCurrency.
+  ///
+  /// In en, this message translates to:
+  /// **'currency'**
+  String get csvColCurrency;
+
+  /// No description provided for @csvColCategory.
+  ///
+  /// In en, this message translates to:
+  /// **'category'**
+  String get csvColCategory;
+
+  /// No description provided for @csvColAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'account'**
+  String get csvColAccount;
+
+  /// No description provided for @csvColToAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'to_account'**
+  String get csvColToAccount;
+
+  /// No description provided for @csvColNote.
+  ///
+  /// In en, this message translates to:
+  /// **'note'**
+  String get csvColNote;
+
+  /// No description provided for @csvTypeExpense.
+  ///
+  /// In en, this message translates to:
+  /// **'expense'**
+  String get csvTypeExpense;
+
+  /// No description provided for @csvTypeIncome.
+  ///
+  /// In en, this message translates to:
+  /// **'income'**
+  String get csvTypeIncome;
+
+  /// No description provided for @csvTypeTransfer.
+  ///
+  /// In en, this message translates to:
+  /// **'transfer'**
+  String get csvTypeTransfer;
 
   /// No description provided for @weekStart.
   ///
@@ -697,6 +859,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Remove budget'**
   String get budgetRemove;
+
+  /// No description provided for @categoryBudget.
+  ///
+  /// In en, this message translates to:
+  /// **'Category monthly budget'**
+  String get categoryBudget;
+
+  /// No description provided for @categoryBudgetHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Leave empty for none'**
+  String get categoryBudgetHint;
 
   /// No description provided for @recurring.
   ///
@@ -859,6 +1033,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'{count} of 4 digits entered'**
   String pinProgress(int count);
+
+  /// No description provided for @secureWindow.
+  ///
+  /// In en, this message translates to:
+  /// **'Hide content when switching apps'**
+  String get secureWindow;
+
+  /// No description provided for @secureWindowNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Blocks screenshots and hides content in the recent apps list'**
+  String get secureWindowNote;
 
   /// No description provided for @about.
   ///

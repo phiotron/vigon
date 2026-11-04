@@ -162,6 +162,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get chooseCategory => 'Choose category';
 
   @override
+  String get otherCategories => 'More categories';
+
+  @override
   String get save => 'Save';
 
   @override
@@ -193,6 +196,32 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get undo => 'Undo';
+
+  @override
+  String get search => 'Search';
+
+  @override
+  String get searchHint => 'Note, category or amount';
+
+  @override
+  String get searchClose => 'Close search';
+
+  @override
+  String get searchAllTime => 'All time';
+
+  @override
+  String get searchNoMatch => 'No matching records';
+
+  @override
+  String searchTotal(int count, String total) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count records',
+      one: '1 record',
+    );
+    return '$_temp0 · total $total';
+  }
 
   @override
   String get keypadBackspace => 'Backspace';
@@ -286,6 +315,30 @@ class AppLocalizationsEn extends AppLocalizations {
   String get editAccount => 'Edit account';
 
   @override
+  String get archiveAccount => 'Hide account';
+
+  @override
+  String get deleteAccount => 'Delete account';
+
+  @override
+  String deleteAccountConfirm(String name) {
+    return 'Delete the account \"$name\"?';
+  }
+
+  @override
+  String get accountInUseHint =>
+      'This account has records, so it can only be hidden';
+
+  @override
+  String get accountLastOneHint => 'At least one account must remain';
+
+  @override
+  String get archivedAccounts => 'Hidden accounts';
+
+  @override
+  String get unarchiveAccount => 'Show again';
+
+  @override
   String get initialBalance => 'Starting balance';
 
   @override
@@ -294,6 +347,45 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get currencyNote =>
       'Changing the currency only changes the symbol; no exchange rate is applied. If the two currencies have a different number of decimals (for example VND and USD), amounts are multiplied or divided so the numbers you see stay the same; switching back may lose the fractional part.';
+
+  @override
+  String get currencySearchHint => 'Search by code or name';
+
+  @override
+  String get currencyNoMatch => 'No matching currency';
+
+  @override
+  String get csvColDate => 'date';
+
+  @override
+  String get csvColType => 'type';
+
+  @override
+  String get csvColAmount => 'amount';
+
+  @override
+  String get csvColCurrency => 'currency';
+
+  @override
+  String get csvColCategory => 'category';
+
+  @override
+  String get csvColAccount => 'account';
+
+  @override
+  String get csvColToAccount => 'to_account';
+
+  @override
+  String get csvColNote => 'note';
+
+  @override
+  String get csvTypeExpense => 'expense';
+
+  @override
+  String get csvTypeIncome => 'income';
+
+  @override
+  String get csvTypeTransfer => 'transfer';
 
   @override
   String get weekStart => 'First day of week';
@@ -325,6 +417,12 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get budgetRemove => 'Remove budget';
+
+  @override
+  String get categoryBudget => 'Category monthly budget';
+
+  @override
+  String get categoryBudgetHint => 'Leave empty for none';
 
   @override
   String get recurring => 'Repeating records';
@@ -418,6 +516,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String pinProgress(int count) {
     return '$count of 4 digits entered';
   }
+
+  @override
+  String get secureWindow => 'Hide content when switching apps';
+
+  @override
+  String get secureWindowNote =>
+      'Blocks screenshots and hides content in the recent apps list';
 
   @override
   String get about => 'About';
