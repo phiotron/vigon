@@ -162,7 +162,7 @@ class SettingsScreen extends ConsumerWidget {
             leading: const Icon(Icons.upload_file),
             title: Text(l.backup),
             subtitle: Text(l.backupNote),
-            onTap: () => exportBackupFile(ref),
+            onTap: () => exportBackupFile(context, ref),
           ),
           ListTile(
             leading: const Icon(Icons.settings_backup_restore),
