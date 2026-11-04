@@ -83,7 +83,7 @@ void main() {
       100,
       scrollable: find.byType(Scrollable).first,
     );
-    await tester.drag(find.byType(ListView), const Offset(0, -200));
+    await tester.ensureVisible(toggle);
     await settle(tester);
     expect(tester.widget<SwitchListTile>(toggle).value, isFalse);
 

@@ -17,6 +17,8 @@ import 'features/lock/lock_screen.dart';
 import 'features/recurring/recurring_screen.dart';
 import 'features/settings/secure_window.dart';
 import 'features/settings/settings_screen.dart';
+import 'features/widget/deep_link.dart';
+import 'features/widget/widget_sync.dart';
 import 'providers.dart';
 import 'ui/messenger.dart';
 
@@ -97,22 +99,27 @@ class VigonApp extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     ref.watch(startupProvider);
     ref.watch(secureWindowSyncProvider);
+    ref.watch(widgetSyncProvider);
     final themeMode = ref.watch(themeModeProvider).value ?? ThemeMode.system;
     final localeCode = ref.watch(localeCodeProvider).value;
     final lock = ref.watch(lockProvider);
+    final appRouter = router ?? _router;
     return MaterialApp.router(
       // Màn khóa phủ lên toàn app; phần bên dưới ẩn khỏi trình đọc màn hình (AC-32).
-      builder: (context, child) => AppLifecycleWatcher(
-        child: Stack(
-          children: [
-            Offstage(offstage: lock != AppLockState.unlocked, child: child),
-            if (lock != AppLockState.unlocked)
-              LockScreen(checking: lock == AppLockState.checking),
-          ],
+      builder: (context, child) => DeepLinkBinder(
+        router: appRouter,
+        child: AppLifecycleWatcher(
+          child: Stack(
+            children: [
+              Offstage(offstage: lock != AppLockState.unlocked, child: child),
+              if (lock != AppLockState.unlocked)
+                LockScreen(checking: lock == AppLockState.checking),
+            ],
+          ),
         ),
       ),
       onGenerateTitle: (context) => AppLocalizations.of(context).appTitle,
-      routerConfig: router ?? _router,
+      routerConfig: appRouter,
       scaffoldMessengerKey: rootMessengerKey,
       themeMode: themeMode,
       theme: ThemeData(

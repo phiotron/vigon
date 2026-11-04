@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="widget_label">Ví Gọn</string>
+    <string name="widget_description">Thêm nhanh khoản chi hoặc thu</string>
+    <string name="widget_expense">Chi</string>
+    <string name="widget_income">Thu</string>
+    <string name="widget_expense_desc">Thêm khoản chi</string>
+    <string name="widget_income_desc">Thêm khoản thu</string>
+</resources>

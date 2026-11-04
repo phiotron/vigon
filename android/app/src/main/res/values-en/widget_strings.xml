@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="widget_label">Ví Gọn</string>
+    <string name="widget_description">Quickly add an expense or income</string>
+    <string name="widget_expense">Expense</string>
+    <string name="widget_income">Income</string>
+    <string name="widget_expense_desc">Add expense</string>
+    <string name="widget_income_desc">Add income</string>
+</resources>

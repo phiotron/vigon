@@ -192,6 +192,13 @@
   "@pinProgress": {"placeholders": {"count": {"type": "int"}}},
   "secureWindow": "Hide content when switching apps",
   "secureWindowNote": "Blocks screenshots and hides content in the recent apps list",
+  "widgetShowAmounts": "Show amounts on widget",
+  "widgetShowAmountsNote": "Anyone holding the phone can see this number on the home screen. While PIN lock is on, the widget always hides amounts.",
+  "widgetSpentThisMonth": "Spent this month: {spent}",
+  "@widgetSpentThisMonth": {"placeholders": {"spent": {"type": "String"}}},
+  "widgetSpentOfBudget": "Spent this month: {spent} / {budget}",
+  "@widgetSpentOfBudget": {"placeholders": {"spent": {"type": "String"}, "budget": {"type": "String"}}},
+  "widgetLockedByPin": "Locked with PIN",
 
   "about": "About",
   "version": "Version {version}",
