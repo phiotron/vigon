@@ -17,9 +17,9 @@ on:
   workflow_dispatch:
     inputs:
       integration_test:
-        description: 'Chạy thêm integration test (perf_test, 5.000 khoản) trên simulator — thêm ~6 phút macOS'
+        description: 'Chạy thêm integration test (perf_test) — HIỆN TREO ở cuối test trên iOS, tốn tới 15 phút macOS (xem notes/2026-11-04-ios-ci.md)'
         type: boolean
-        default: true
+        default: false
 
 concurrency:
   group: ios-${{ github.ref }}-${{ github.event_name }}
@@ -96,8 +96,9 @@ jobs:
           xcrun simctl spawn "$UDID" launchctl list | grep "$BUNDLE_ID"
           xcrun simctl terminate "$UDID" "$BUNDLE_ID" || true
 
-      # Chỉ khi chạy tay. Dùng `flutter drive` + driver có sẵn: `flutter test -d <iOS>` chạy hết
-      # thân test nhưng treo ở khâu kết thúc (run 41809982864, Xcode 26.6).
+      # Chỉ khi chạy tay và chọn integration_test. Cả `flutter test -d <iOS>` (run 41809982864) lẫn
+      # `flutter drive` (run 41812251598) đều chạy hết thân perf_test rồi treo ở cuối test (db.close/teardown).
+      # Sửa perf_test xong thì đổi default ở trên thành true.
       - name: Integration test trên simulator (flutter drive)
         if: github.event_name == 'workflow_dispatch' && inputs.integration_test
         timeout-minutes: 15
