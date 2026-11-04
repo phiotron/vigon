@@ -1,16 +1,12 @@
 import 'dart:math';
 
+import 'currency_table.dart';
 import 'database.dart';
 import 'money.dart';
 import 'settings_repository.dart';
 
-/// Tiền tệ chọn được trong Cài đặt (mã ISO 4217, AC-21).
-const supportedCurrencies = [
-  'VND', 'USD', 'EUR', 'GBP', 'JPY', 'KRW', 'CNY', 'TWD', 'HKD', 'SGD', //
-  'THB', 'MYR', 'IDR', 'PHP', 'INR', 'AUD', 'NZD', 'CAD', 'CHF', 'SEK', //
-  'NOK', 'DKK', 'PLN', 'CZK', 'HUF', 'TRY', 'BRL', 'MXN', 'ZAR', 'AED', //
-  'SAR',
-];
+/// Tiền tệ chọn được trong Cài đặt: toàn bộ mã ISO 4217 đang lưu hành (AC-21, AC-53).
+final supportedCurrencies = [for (final c in currencyTable) c.code];
 
 /// Đổi tiền tệ của app. Không quy đổi tỉ giá: số hiển thị giữ nguyên, chỉ đổi
 /// ký hiệu (AC-21). Khi số chữ số thập phân khác nhau (VND 0, USD 2) thì nhân

@@ -250,6 +250,181 @@ void main() {
     });
   });
 
+  group('CSV theo ngôn ngữ (AC-52)', () {
+    const vi = CsvFormat(
+      delimiter: ';',
+      decimalSeparator: ',',
+      header: [
+        'Ngày',
+        'Loại',
+        'Số tiền',
+        'Tiền tệ',
+        'Danh mục',
+        'Tài khoản',
+        'Đến tài khoản',
+        'Ghi chú',
+      ],
+      expense: 'Chi',
+      income: 'Thu',
+      transfer: 'Chuyển tiền',
+    );
+
+    Entry entry(
+      int id,
+      EntryType type,
+      int amount, {
+      String? note,
+      int? to,
+      String date = '2026-11-03',
+    }) => Entry(
+      id: id,
+      type: type,
+      amount: amount,
+      categoryId: type == EntryType.transfer ? null : 1,
+      accountId: 1,
+      toAccountId: to,
+      date: date,
+      note: note,
+      recurringRuleId: null,
+      createdAt: now,
+    );
+
+    String build(
+      List<Entry> entries,
+      CsvFormat format, {
+      String currency = 'VND',
+      int digits = 0,
+    }) => exportCsv(
+      entries: entries,
+      currency: currency,
+      decimalDigits: digits,
+      format: format,
+      categoryName: (_) => 'Ăn uống',
+      accountName: (id) => id == 1 ? 'Tiền mặt' : 'Thẻ',
+    ).substring(1).trim().split('\r\n').join('\n');
+
+    test('tiếng Việt: tiêu đề, loại và dấu ngăn cột tiếng Việt', () {
+      final csv = exportCsv(
+        entries: [
+          entry(1, EntryType.expense, 155000),
+          entry(2, EntryType.income, 5000000, date: '2026-11-04'),
+          entry(3, EntryType.transfer, 20000, to: 2, date: '2026-11-05'),
+        ],
+        currency: 'VND',
+        decimalDigits: 0,
+        format: vi,
+        categoryName: (_) => 'Ăn uống',
+        accountName: (id) => id == 1 ? 'Tiền mặt' : 'Thẻ',
+      );
+      expect(csv.startsWith('﻿'), isTrue);
+      final lines = csv.substring(1).trim().split('\r\n');
+      expect(
+        lines[0],
+        'Ngày;Loại;Số tiền;Tiền tệ;Danh mục;Tài khoản;Đến tài khoản;Ghi chú',
+      );
+      expect(lines[1], '2026-11-03;Chi;155000;VND;Ăn uống;Tiền mặt;;');
+      expect(lines[2], '2026-11-04;Thu;5000000;VND;Ăn uống;Tiền mặt;;');
+      expect(lines[3], '2026-11-05;Chuyển tiền;20000;VND;;Tiền mặt;Thẻ;');
+    });
+
+    test('tiếng Anh: tiêu đề và loại tiếng Anh, dấu phẩy và dấu chấm', () {
+      final out = build(
+        [
+          entry(1, EntryType.expense, 1250),
+          entry(2, EntryType.transfer, 5, to: 2, date: '2026-11-04'),
+        ],
+        CsvFormat.forLanguage(
+          'en',
+          header: CsvFormat.english.header,
+          expense: 'expense',
+          income: 'income',
+          transfer: 'transfer',
+        ),
+        currency: 'USD',
+        digits: 2,
+      ).split('\n');
+      expect(
+        out[0],
+        'date,type,amount,currency,category,account,to_account,note',
+      );
+      expect(out[1], '2026-11-03,expense,12.50,USD,Ăn uống,Tiền mặt,,');
+      expect(out[2], '2026-11-04,transfer,0.05,USD,,Tiền mặt,Thẻ,');
+    });
+
+    test('forLanguage chọn dấu theo ngôn ngữ', () {
+      CsvFormat f(String lang) => CsvFormat.forLanguage(
+        lang,
+        header: CsvFormat.english.header,
+        expense: 'e',
+        income: 'i',
+        transfer: 't',
+      );
+      expect((f('vi').delimiter, f('vi').decimalSeparator), (';', ','));
+      expect((f('en').delimiter, f('en').decimalSeparator), (',', '.'));
+    });
+
+    test('tiếng Việt: tiền có phần lẻ dùng dấu phẩy, VND không có phần lẻ', () {
+      final usd = build(
+        [entry(1, EntryType.expense, 1250)],
+        vi,
+        currency: 'USD',
+        digits: 2,
+      );
+      expect(usd, contains(';Chi;12,50;USD;'));
+      final kwd = build(
+        [entry(1, EntryType.expense, 12005)],
+        vi,
+        currency: 'KWD',
+        digits: 3,
+      );
+      expect(kwd, contains(';12,005;KWD;'));
+      final vnd = build([entry(1, EntryType.expense, 1250)], vi);
+      expect(vnd, contains(';Chi;1250;VND;'));
+      // Phần lẻ nhỏ hơn một đơn vị vẫn đủ số 0 đứng trước.
+      expect(
+        build([entry(1, EntryType.expense, 5)], vi, currency: 'USD', digits: 2),
+        contains(';0,05;USD;'),
+      );
+    });
+
+    test('ghi chú chứa dấu chấm phẩy và dấu phẩy được đặt trong ngoặc kép', () {
+      final viOut = build([
+        entry(1, EntryType.expense, 100, note: 'a; b, c'),
+      ], vi);
+      expect(viOut, endsWith(';"a; b, c"'));
+      final enOut = build([
+        entry(1, EntryType.expense, 100, note: 'a; b, c'),
+      ], CsvFormat.english);
+      expect(enOut, endsWith(',"a; b, c"'));
+      // Ngoặc kép bên trong được nhân đôi; xuống dòng cũng được bao ngoặc kép.
+      final quote = exportCsv(
+        entries: [entry(1, EntryType.expense, 100, note: 'dòng 1\n"x"')],
+        currency: 'VND',
+        decimalDigits: 0,
+        format: vi,
+        categoryName: (_) => 'c',
+        accountName: (_) => 'a',
+      );
+      expect(quote, contains(';"dòng 1\n""x"""'));
+    });
+
+    test('chặn chèn công thức ở cả hai ngôn ngữ', () {
+      for (final format in [vi, CsvFormat.english]) {
+        for (final bad in ['=1+1', '+1', '-1', '@SUM(A1)']) {
+          final out = build([
+            entry(1, EntryType.expense, 1, note: bad),
+          ], format);
+          expect(out, endsWith("'$bad"));
+        }
+      }
+      // Ghi chú có dấu ngăn vừa là công thức: thêm dấu ' rồi bao ngoặc kép.
+      expect(
+        build([entry(1, EntryType.expense, 1, note: '=a;b')], vi),
+        endsWith('"\'=a;b"'),
+      );
+    });
+  });
+
   test('xóa toàn bộ dữ liệu thì như mới cài (AC-42)', () async {
     await sampleData();
     await deleteAllData(db);

@@ -147,7 +147,70 @@ Future<void> deleteAllData(AppDatabase db) => db.transaction(() async {
   await seedDefaults(db);
 });
 
-/// Xuất CSV: ngày, loại, số tiền, tiền tệ, danh mục, tài khoản, ghi chú (AC-30).
+/// Cách ghi file CSV theo ngôn ngữ (AC-52). Tầng dữ liệu không biết
+/// `BuildContext`: chuỗi nằm trong `.arb`, nơi gọi truyền vào.
+class CsvFormat {
+  const CsvFormat({
+    required this.delimiter,
+    required this.decimalSeparator,
+    required this.header,
+    required this.expense,
+    required this.income,
+    required this.transfer,
+  });
+
+  /// Chọn dấu ngăn theo ngôn ngữ: tiếng Việt `;` và `,` (Excel vùng Việt đọc
+  /// đúng); ngôn ngữ khác `,` và `.`.
+  factory CsvFormat.forLanguage(
+    String languageCode, {
+    required List<String> header,
+    required String expense,
+    required String income,
+    required String transfer,
+  }) => CsvFormat(
+    delimiter: languageCode == 'vi' ? ';' : ',',
+    decimalSeparator: languageCode == 'vi' ? ',' : '.',
+    header: header,
+    expense: expense,
+    income: income,
+    transfer: transfer,
+  );
+
+  static const english = CsvFormat(
+    delimiter: ',',
+    decimalSeparator: '.',
+    header: [
+      'date',
+      'type',
+      'amount',
+      'currency',
+      'category',
+      'account',
+      'to_account',
+      'note',
+    ],
+    expense: 'expense',
+    income: 'income',
+    transfer: 'transfer',
+  );
+
+  final String delimiter;
+  final String decimalSeparator;
+
+  /// Tám tiêu đề cột: ngày, loại, số tiền, tiền tệ, danh mục, tài khoản, đến tài khoản, ghi chú.
+  final List<String> header;
+  final String expense;
+  final String income;
+  final String transfer;
+
+  String typeName(EntryType type) => switch (type) {
+    EntryType.expense => expense,
+    EntryType.income => income,
+    EntryType.transfer => transfer,
+  };
+}
+
+/// Xuất CSV: ngày, loại, số tiền, tiền tệ, danh mục, tài khoản, ghi chú (AC-30, AC-52).
 /// UTF-8 có BOM để Excel đọc đúng chữ tiếng Việt.
 String exportCsv({
   required List<Entry> entries,
@@ -155,18 +218,27 @@ String exportCsv({
   required int decimalDigits,
   required String Function(int? categoryId) categoryName,
   required String Function(int accountId) accountName,
+  CsvFormat format = CsvFormat.english,
 }) {
   String cell(String v) {
     // Chặn Excel coi ghi chú như "=..." là công thức.
     if (v.startsWith(RegExp(r'[=+\-@]'))) v = "'$v";
-    return RegExp(r'[",\r\n]').hasMatch(v) ? '"${v.replaceAll('"', '""')}"' : v;
+    // Ngoặc kép khi chứa dấu ngăn cột (cả `,` lẫn `;` cho chắc), ngoặc kép, xuống dòng.
+    return RegExp(r'[",;\r\n]').hasMatch(v)
+        ? '"${v.replaceAll('"', '""')}"'
+        : v;
   }
 
-  String amount(int minor) => decimalDigits == 0
-      ? '$minor'
-      : (minor / BigInt.from(10).pow(decimalDigits).toInt()).toStringAsFixed(
-          decimalDigits,
-        );
+  // Tính bằng số nguyên, không qua số thực: không sai số làm tròn.
+  String amount(int minor) {
+    if (decimalDigits == 0) return '$minor';
+    final unit = BigInt.from(10).pow(decimalDigits).toInt();
+    final sign = minor < 0 ? '-' : '';
+    final abs = minor.abs();
+    final frac = (abs % unit).toString().padLeft(decimalDigits, '0');
+    return '$sign${abs ~/ unit}${format.decimalSeparator}$frac';
+  }
+
   final sorted = [...entries]
     ..sort(
       (a, b) => a.date.compareTo(b.date) != 0
@@ -174,18 +246,18 @@ String exportCsv({
           : a.id.compareTo(b.id),
     );
   final lines = [
-    'date,type,amount,currency,category,account,to_account,note',
+    format.header.map(cell).join(format.delimiter),
     for (final e in sorted)
       [
         e.date,
-        e.type.name,
+        cell(format.typeName(e.type)),
         amount(e.amount),
         currency,
         cell(e.type == EntryType.transfer ? '' : categoryName(e.categoryId)),
         cell(accountName(e.accountId)),
         cell(e.toAccountId == null ? '' : accountName(e.toAccountId!)),
         cell(e.note ?? ''),
-      ].join(','),
+      ].join(format.delimiter),
   ];
   return '﻿${lines.join('\r\n')}\r\n';
 }
