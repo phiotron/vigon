@@ -911,8 +911,80 @@ abstract class AppLocalizations {
   /// No description provided for @backupNote.
   ///
   /// In en, this message translates to:
-  /// **'Backup files are not encrypted. Keep them somewhere safe.'**
+  /// **'You can protect the file with a password. Without one, the file is not encrypted.'**
   String get backupNote;
+
+  /// No description provided for @backupSetPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Protect file with a password'**
+  String get backupSetPassword;
+
+  /// No description provided for @backupPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Password'**
+  String get backupPassword;
+
+  /// No description provided for @backupPasswordConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Repeat password'**
+  String get backupPasswordConfirm;
+
+  /// No description provided for @backupPasswordWarning.
+  ///
+  /// In en, this message translates to:
+  /// **'If you forget the password, this file cannot be opened.'**
+  String get backupPasswordWarning;
+
+  /// No description provided for @backupPasswordTooShort.
+  ///
+  /// In en, this message translates to:
+  /// **'Password needs at least 6 characters'**
+  String get backupPasswordTooShort;
+
+  /// No description provided for @backupPasswordMismatch.
+  ///
+  /// In en, this message translates to:
+  /// **'Passwords do not match'**
+  String get backupPasswordMismatch;
+
+  /// No description provided for @backupExportAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Export'**
+  String get backupExportAction;
+
+  /// No description provided for @backupEnterPasswordTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Password-protected file'**
+  String get backupEnterPasswordTitle;
+
+  /// No description provided for @backupEnterPasswordBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter the password you set when exporting this file.'**
+  String get backupEnterPasswordBody;
+
+  /// No description provided for @backupOpen.
+  ///
+  /// In en, this message translates to:
+  /// **'Open'**
+  String get backupOpen;
+
+  /// No description provided for @backupWrongPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Wrong password or the file is damaged'**
+  String get backupWrongPassword;
+
+  /// No description provided for @backupWorking.
+  ///
+  /// In en, this message translates to:
+  /// **'Working'**
+  String get backupWorking;
 
   /// No description provided for @backupReminder.
   ///

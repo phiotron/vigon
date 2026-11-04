@@ -437,7 +437,45 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get backupNote =>
-      'File sao lưu không được mã hóa. Hãy cất ở nơi an toàn.';
+      'Có thể đặt mật khẩu cho file. Không đặt thì file không được mã hóa.';
+
+  @override
+  String get backupSetPassword => 'Đặt mật khẩu cho file';
+
+  @override
+  String get backupPassword => 'Mật khẩu';
+
+  @override
+  String get backupPasswordConfirm => 'Nhập lại mật khẩu';
+
+  @override
+  String get backupPasswordWarning =>
+      'Quên mật khẩu thì không mở được file này.';
+
+  @override
+  String get backupPasswordTooShort => 'Mật khẩu tối thiểu 6 ký tự';
+
+  @override
+  String get backupPasswordMismatch => 'Hai mật khẩu không khớp';
+
+  @override
+  String get backupExportAction => 'Xuất';
+
+  @override
+  String get backupEnterPasswordTitle => 'File có mật khẩu';
+
+  @override
+  String get backupEnterPasswordBody =>
+      'Nhập mật khẩu đã đặt khi xuất file này.';
+
+  @override
+  String get backupOpen => 'Mở';
+
+  @override
+  String get backupWrongPassword => 'Sai mật khẩu hoặc file bị hỏng';
+
+  @override
+  String get backupWorking => 'Đang xử lý';
 
   @override
   String get backupReminder =>

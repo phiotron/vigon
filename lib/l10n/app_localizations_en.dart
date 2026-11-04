@@ -445,7 +445,45 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get backupNote =>
-      'Backup files are not encrypted. Keep them somewhere safe.';
+      'You can protect the file with a password. Without one, the file is not encrypted.';
+
+  @override
+  String get backupSetPassword => 'Protect file with a password';
+
+  @override
+  String get backupPassword => 'Password';
+
+  @override
+  String get backupPasswordConfirm => 'Repeat password';
+
+  @override
+  String get backupPasswordWarning =>
+      'If you forget the password, this file cannot be opened.';
+
+  @override
+  String get backupPasswordTooShort => 'Password needs at least 6 characters';
+
+  @override
+  String get backupPasswordMismatch => 'Passwords do not match';
+
+  @override
+  String get backupExportAction => 'Export';
+
+  @override
+  String get backupEnterPasswordTitle => 'Password-protected file';
+
+  @override
+  String get backupEnterPasswordBody =>
+      'Enter the password you set when exporting this file.';
+
+  @override
+  String get backupOpen => 'Open';
+
+  @override
+  String get backupWrongPassword => 'Wrong password or the file is damaged';
+
+  @override
+  String get backupWorking => 'Working';
 
   @override
   String get backupReminder =>

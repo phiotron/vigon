@@ -33,7 +33,8 @@ Ví Gọn giúp bạn ghi chép thu chi hằng ngày thật nhanh và biết ti�
 **Riêng tư**
 • Mọi dữ liệu chỉ lưu trên điện thoại của bạn. Ví Gọn không có tài khoản, không quảng cáo, không theo dõi và không xin quyền Internet nên không thể gửi dữ liệu đi.
 • Khóa bằng mã PIN 4 số (lưu ý: PIN chỉ ngăn người khác mở app, không mã hóa dữ liệu).
-• Tự xuất file sao lưu và khôi phục khi đổi máy; xuất CSV để mở bằng Excel hoặc Google Sheets. File sao lưu không được mã hóa, hãy cất ở nơi an toàn. Quên mã PIN thì chỉ có cách xóa dữ liệu trong app.
+• Tự xuất file sao lưu và khôi phục khi đổi máy; xuất CSV để mở bằng Excel hoặc Google Sheets. File sao lưu có thể đặt mật khẩu (mã hóa AES-256); không đặt mật khẩu thì file không được mã hóa, hãy cất ở nơi an toàn. Quên mã PIN hoặc mật khẩu file thì không lấy lại được.
+• Tìm kiếm khoản theo ghi chú, danh mục, số tiền; ẩn tài khoản không dùng; ngân sách riêng cho từng danh mục; đủ tiền tệ theo chuẩn ISO; tùy chọn che nội dung ở màn hình ứng dụng gần đây. Quên mã PIN thì chỉ có cách xóa dữ liệu trong app.
 
 **Dễ dùng**
 • Tiếng Việt và tiếng Anh, giao diện sáng và tối.
@@ -60,7 +61,8 @@ Ví Gọn is a fast personal income and expense tracker that shows where your mo
 **Private by design**
 • All data stays on your phone. Ví Gọn has no accounts, no ads, no tracking, and no Internet permission, so it cannot send your data anywhere.
 • Optional 4-digit PIN lock (it keeps others out of the app but does not encrypt your data).
-• Export a backup file and restore it on a new phone; export CSV for Excel or Google Sheets. Backup files are not encrypted, so keep them somewhere safe. If you forget the PIN, the only way back in is to delete the app's data.
+• Export a backup file and restore it on a new phone; export CSV for Excel or Google Sheets. Backup files can be password-protected (AES-256 encryption); without a password they are not encrypted, so keep them somewhere safe.
+• Search records by note, category or amount; hide accounts you no longer use; set a budget per category; all ISO currencies; optionally hide app contents in the recent-apps screen. If you forget the PIN or a backup password, it cannot be recovered. If you forget the PIN, the only way back in is to delete the app's data.
 
 **Easy to use**
 • Vietnamese and English, light and dark themes.

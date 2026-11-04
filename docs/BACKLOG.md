@@ -103,6 +103,17 @@ Nguồn: agent `reviewer` chỉ đọc, 2026-11-03. Các lỗi đã sửa nằm 
 - [x] Đã thêm test giao diện cho AC-04, AC-10 (kỳ Tuần/Năm), AC-16, AC-17, AC-20, AC-26 (`g6_flows_test`). Đã thêm cả test "Khoảng tùy chọn". Còn thiếu: biên bản máy thật cho AC-14, AC-09, AC-37 tới AC-40 (cần người dùng cho dùng máy)
 - [ ] Ký bản release: cấu hình ký đã sẵn (`android/app/build.gradle.kts` đọc `android/key.properties`; `appbundle` bị chặn khi thiếu khóa), nhánh có khóa CHƯA chạy thử. Việc của người dùng: tạo khóa, cất và sao lưu ngoài repo theo `docs/RELEASE.md`
 
+## Bản 1.1 (SPEC-1.1, người dùng duyệt 2026-11-04): đã làm trên nhánh `integration/spec-1.1`, chưa gộp vào nhánh chính
+- [x] F-14 ẩn, hiện, xóa tài khoản · F-15 tìm kiếm khoản · F-16 sửa đầy đủ khoản định kỳ · F-17 ô "Danh mục khác" · F-18 CSV theo ngôn ngữ · F-19 đủ tiền tệ ISO 4217 · F-20 ngân sách theo danh mục (cơ sở dữ liệu schema 2) · F-21 mã hóa file sao lưu bằng mật khẩu · F-22 che nội dung ở màn đa nhiệm · F-23 icon đơn sắc. 221 test đạt.
+- [ ] Gộp nhánh `integration/spec-1.1` với nhánh `feature/PLAN-001` (chat khác: iOS, giao diện token mới); sẽ xung đột ở các màn chung (tài khoản, màn chính, các khoản, cài đặt, danh mục)
+- [ ] Thử tay trên máy: che đa nhiệm (chụp màn hình bị chặn, màn đa nhiệm trống), icon đơn sắc trên Android 13+, mở CSV tiếng Việt bằng Excel, thời gian mã hóa sao lưu 100.000 vòng trên Galaxy A13
+- Lỗi đã sửa sau kiểm chứng độc lập (test chặn trong `test/data/review_fixes_test.dart`, `test/features/review_fixes_test.dart`): hạn mức danh mục không nhân chia khi đổi tiền tệ; bật lại chuỗi định kỳ cùng ngày sinh trùng khoản; tìm kiếm thiếu tên tài khoản ẩn của khoản chuyển tiền; khoản chuyển tiền cũ mở ra màn trống khi chỉ còn một tài khoản hiện; CSV chưa chặn ô bắt đầu bằng tab/CR; file sao lưu mà mọi tài khoản đều ẩn.
+- [ ] (nhẹ) Ẩn tài khoản chưa dừng hoặc cảnh báo các chuỗi định kỳ đang trỏ tới nó
+- [ ] (nhẹ) Tìm kiếm với 10.000 khoản ở "Tất cả thời gian" chưa đo hiệu năng (lọc chạy lại mỗi lần gõ, chuỗi toàn số gọi định dạng tiền cho từng khoản)
+- [ ] (nhẹ) Ô nhập hạn mức danh mục báo "Số tiền phải lớn hơn 0" khi gõ "1.500.000" có dấu chấm ngăn nghìn (cùng cách nhập với hộp thoại ngân sách tổng)
+- [ ] (nhẹ) Mật khẩu sao lưu gõ dạng dấu rời (NFD) và dấu gộp (NFC) cho khóa khác nhau (không có thư viện chuẩn hóa Unicode); bàn phím Android thường cho NFC
+- [ ] (nhẹ) Nút "Hiện lại" ở mục tài khoản đã ẩn đọc cùng một nhãn cho mọi tài khoản (TalkBack không biết tài khoản nào); chưa có test accessibility cho bảng sửa tài khoản và mục này
+
 ## Ý tưởng ngoài SPEC (chưa được duyệt, KHÔNG tự làm)
 - Bản iOS
 - Đồng bộ/sao lưu lên Google Drive, Dropbox

@@ -16,4 +16,5 @@
 - Chuẩn bị ký bản phát hành: `build.gradle.kts` đọc `android/key.properties` (ngoài repo), build `appbundle` bị chặn khi thiếu khóa; `docs/RELEASE.md` điền đủ kèm hướng dẫn tạo khóa cho người dùng (2026-11-04)
 - Khôi phục sao lưu kiểm file trước khi hỏi xác nhận; cảnh báo đổi tiền tệ rõ hơn; nút lọc tài khoản đọc tên tài khoản; thêm test Khoảng tùy chọn và kiểm file sao lưu (118 test) (2026-11-04)
 - Chốt logo hai thẻ xếp chồng (D-009): icon launcher Android thích ứng + PNG cho máy cũ, icon Play Store 512×512; thay icon Flutter mặc định (2026-11-04)
+- Bản 1.1 (trên nhánh `integration/spec-1.1`): ẩn/hiện/xóa tài khoản, tìm kiếm khoản, sửa tần suất/danh mục/tài khoản khoản định kỳ, ô "Danh mục khác", CSV theo ngôn ngữ, đủ 156 mã tiền tệ ISO có ô tìm, ngân sách theo danh mục (schema 2), mã hóa file sao lưu bằng mật khẩu, che nội dung ở màn đa nhiệm, icon đơn sắc; 6 lỗi sửa sau kiểm chứng độc lập; 221 test (2026-11-04)
 - Tài liệu: ARCHITECTURE, RUNBOOK, PROMPTS điền lần đầu; D-006, D-007; RETROSPECTIVE nháp (2026-11-03)

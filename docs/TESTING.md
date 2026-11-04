@@ -45,6 +45,16 @@ Cập nhật khi viết test hoặc khi thử tay. Một AC chưa có dòng ở 
 | AC-41 | tự động + tay | `g6_accessibility_test` "màn Giới thiệu…"; máy thật: phiên bản, email mở Gmail có tiêu đề, trang giấy phép (biên bản G6); đường dẫn chính sách: CHƯA có | 2026-11-03 đạt (trừ đường dẫn) |
 | AC-42 | tự động + tay | `backup_test`, `g5_lock_test`; máy thật biên bản G5 | 2026-11-03 đạt |
 | AC-43 | tự động + tay | `test/manifest_test.dart` (manifest nguồn không có `uses-permission`, `allowBackup=false`, chỉ dọc; pubspec không có SDK mạng/quảng cáo); `aapt2 dump permissions` trên APK release | 2026-11-03 đạt (bản sau BUG-005..BUG-010) |
+| AC-44..AC-47 | tự động | `account_archive_test`, `f14_accounts_test` (ẩn/hiện, số dư tài khoản ẩn, xóa chỉ khi chưa có khoản và chuỗi, tài khoản hiện cuối, khôi phục giữ trạng thái ẩn); `review_fixes_test` (mở khoản chuyển tiền cũ khi chỉ còn một tài khoản hiện) | 2026-11-04 flutter test 221/221 đạt |
+| AC-48, AC-49 | tự động | `text_fold_test`, `entry_search_test` (lọc bỏ dấu, theo số tiền, chip Tất cả thời gian, trống, xóa/hoàn tác trong kết quả); `review_fixes_test` (tên tài khoản ẩn); hiệu năng 10.000 khoản CHƯA đo | 2026-11-04 đạt (trừ hiệu năng) |
+| AC-50 | tự động | `recurring_test` (đổi tần suất, danh mục, tài khoản, chuỗi dừng); `review_fixes_test` (bật lại cùng ngày không trùng); `f16_f17_test` | 2026-11-04 đạt |
+| AC-51 | tự động | `f16_f17_test` (24 danh mục và màn thấp có ô Danh mục khác, 10 danh mục mặc định không có) | 2026-11-04 đạt |
+| AC-52 | tự động + tay | `backup_test` (CSV vi/en, `;` và `,`, công thức, tab/CR); mở bằng Excel: CHƯA | 2026-11-04 đạt (trừ Excel) |
+| AC-53 | tự động | `currency_table_test` (156 mã, số chữ số khớp ISO), `currency_picker_test`, `g3_repositories_test` (đổi giữa 0, 2, 3 chữ số), `review_fixes_test` (hạn mức danh mục) | 2026-11-04 đạt |
+| AC-54 | tự động | `category_budget_test` (migration schema 1 lên 2, sao lưu cũ và mới, chi theo tháng), `f20_category_budget_test` | 2026-11-04 đạt |
+| AC-55 | tự động + tay | `backup_crypto_test`, `backup_password_test` (khứ hồi, sai mật khẩu, sửa từng byte, emoji, chạy isolate); thời gian 100.000 vòng trên Galaxy A13: CHƯA đo | 2026-11-04 đạt (trừ đo trên máy) |
+| AC-56 | tự động + tay | `secure_window_test` (lưu, công tắc, kênh); chụp màn hình bị chặn và màn đa nhiệm trống trên máy: CHƯA | 2026-11-04 đạt phần [T] |
+| AC-57 | tay | Icon đơn sắc: `aapt2 dump xmltree` thấy lớp `monochrome`; hiển thị trên Android 13+: CHƯA | 2026-11-04 chờ thử máy |
 
 ## Yêu cầu phi chức năng (SPEC mục 5b): đo bằng gì
 | Yêu cầu | Cách đo | Kết quả lần cuối |

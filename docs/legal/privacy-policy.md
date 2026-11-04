@@ -19,7 +19,7 @@ Những gì bạn nhập (khoản thu, khoản chi, danh mục, tài khoản, gh
 Nếu bạn bật khóa bằng mã PIN, app chỉ lưu một giá trị băm có muối của mã PIN trong bộ nhớ an toàn của Android, không lưu mã PIN gốc.
 
 **3. File sao lưu và CSV do bạn tự xuất**
-Khi bạn chọn "Xuất bản sao lưu" hoặc "Xuất CSV", app tạo một file và mở bảng chia sẻ của Android để bạn chọn nơi gửi hoặc lưu. Bạn quyết định file đi đâu (ví dụ Google Drive, email). File sao lưu không được mã hóa; hãy cất ở nơi an toàn. Từ lúc đó, file chịu chính sách của dịch vụ bạn chọn.
+Khi bạn chọn "Xuất bản sao lưu" hoặc "Xuất CSV", app tạo một file và mở bảng chia sẻ của Android để bạn chọn nơi gửi hoặc lưu. Bạn quyết định file đi đâu (ví dụ Google Drive, email). Bạn có thể đặt mật khẩu cho file sao lưu; khi đó file được mã hóa trên máy bạn (mật khẩu không được lưu ở đâu cả, quên mật khẩu thì không mở được file). Không đặt mật khẩu thì file không được mã hóa, hãy cất ở nơi an toàn. Từ lúc đó, file chịu chính sách của dịch vụ bạn chọn.
 
 **4. Quyền trên điện thoại**
 Ví Gọn không xin quyền nào. Chọn file khôi phục dùng trình chọn file của Android, chỉ đọc đúng file bạn chọn.
@@ -37,7 +37,7 @@ Vì dữ liệu chỉ nằm trên máy bạn, bạn tự thực hiện mọi quy
 Ví Gọn không nhắm tới trẻ em và không thu thập dữ liệu của bất kỳ ai, kể cả trẻ em.
 
 **9. Bảo mật**
-Dữ liệu được bảo vệ bằng cơ chế cách ly app của Android và khóa PIN tùy chọn. Khóa PIN giúp ngăn người khác mở app trên máy bạn, nhưng không mã hóa dữ liệu. Nếu bạn phát hiện lỗ hổng bảo mật, hãy gửi email tới địa chỉ ở mục 11.
+Dữ liệu được bảo vệ bằng cơ chế cách ly app của Android, khóa PIN tùy chọn và tùy chọn che nội dung ở màn hình ứng dụng gần đây (chặn chụp màn hình). Khóa PIN giúp ngăn người khác mở app trên máy bạn, nhưng không mã hóa dữ liệu. Nếu bạn phát hiện lỗ hổng bảo mật, hãy gửi email tới địa chỉ ở mục 11.
 
 **10. Thay đổi chính sách**
 Nếu Ví Gọn thay đổi cách xử lý dữ liệu (ví dụ thêm tính năng cần Internet), chúng tôi sẽ cập nhật chính sách này và ngày hiệu lực trước khi phát hành bản có thay đổi.
@@ -62,7 +62,7 @@ What you enter (income, expenses, categories, accounts, notes, budget, settings)
 If you turn on the PIN lock, the app stores only a salted hash of your PIN in Android's secure storage, never the PIN itself.
 
 **3. Backup and CSV files you export**
-When you choose "Export backup" or "Export CSV", the app creates a file and opens Android's share sheet so you can choose where to send or save it. You decide where the file goes (for example Google Drive or email). Backup files are not encrypted; keep them somewhere safe. From then on, the file is subject to the policy of the service you chose.
+When you choose "Export backup" or "Export CSV", the app creates a file and opens Android's share sheet so you can choose where to send or save it. You decide where the file goes (for example Google Drive or email). You can protect a backup file with a password, in which case it is encrypted on your phone (the password is stored nowhere; if you forget it the file cannot be opened). Without a password the file is not encrypted, so keep it somewhere safe. From then on, the file is subject to the policy of the service you chose.
 
 **4. Phone permissions**
 Ví Gọn does not request any permissions. Restoring a backup uses Android's file picker and reads only the file you pick.

@@ -118,7 +118,7 @@ Màn chính "/"
 - Chính giữa hiện hai dòng: tổng **thu** (màu xanh) rồi tổng **chi** (màu đỏ) của kỳ.
 - Kỳ không có khoản nào: thay vòng tròn bằng chữ "Bấm − để ghi khoản chi đầu tiên" (căn giữa).
 - Nếu có thu mà không có chi: vòng tròn đầy một màu xanh thu.
-- **Icon danh mục:** mỗi danh mục chi (theo thứ tự người dùng sắp) là một hình tròn 48 dp xếp đều quanh vòng. Số icon hiện tối đa bằng số icon xếp vừa chu vi (`floor(2π·bán kính / 56)`, tối thiểu 1); danh mục thừa không hiện. Chạm icon mở `/entry/new?type=expense&category=<id>`, danh mục đã chọn sẵn. Giữ lâu hiện tooltip tên danh mục.
+- **Icon danh mục:** mỗi danh mục chi (theo thứ tự người dùng sắp) là một hình tròn 48 dp xếp đều quanh vòng. Số icon hiện tối đa bằng số icon xếp vừa chu vi (`floor(2π·bán kính / 56)`, tối thiểu 1). Nếu còn danh mục thừa, icon cuối là ô **"Danh mục khác"** (dấu ⋯, nền trung tính) mở bảng lưới tất cả danh mục chi; chọn một danh mục thì mở màn Nhập khoản chi với danh mục đó (F-17, AC-51). Chạm icon danh mục mở `/entry/new?type=expense&category=<id>`, danh mục đã chọn sẵn. Giữ lâu hiện tooltip tên danh mục.
 - Khoản thu chỉ ghi được qua nút "+", không có icon thu quanh vòng.
 
 **Vuốt ngang:** vận tốc vuốt tối thiểu 200; vuốt sang trái → kỳ sau, sang phải → kỳ trước.
@@ -195,6 +195,10 @@ Màn chính "/"
 
 **Trạng thái mở/thu gọn** của từng danh mục chỉ giữ trong phiên màn hình này; thoát ra và vào lại thì thu gọn hết. Danh sách tuân theo kỳ và bộ lọc tài khoản đang đặt ở màn chính.
 
+**Tìm kiếm (F-15, AC-48, AC-49):** icon kính lúp "Tìm" trên thanh tiêu đề mở ô nhập (Back đóng ô tìm trước, rồi mới thoát màn). Gõ chữ thì lọc khoản có **ghi chú, tên danh mục hoặc số tiền** chứa chuỗi đó, không phân biệt hoa thường và dấu tiếng Việt; chuỗi chỉ gồm chữ số và dấu ngăn thì khớp theo chữ số của số tiền ("155" khớp 155.000 và 1.550.000). Mặc định tìm trong kỳ đang xem; chip **"Tất cả thời gian"** tìm trên toàn bộ dữ liệu. Kết quả là danh sách phẳng, mới nhất trước, kèm dòng tổng "N khoản · tổng X"; chạm sửa, vuốt xóa và Hoàn tác như thường. Khoản chuyển tiền cũng được tìm (theo ghi chú và số tiền). Không có kết quả: "Không có khoản nào khớp".
+
+**Ngân sách theo danh mục (F-20, AC-54):** dòng danh mục chi đã đặt hạn mức hiện thêm thanh tiến độ nhỏ "Đã chi X / Y" của THÁNG HIỆN TẠI (theo ngày bắt đầu tháng, mọi tài khoản, không phụ thuộc kỳ đang xem). Chi quá hạn mức thì đổi màu lỗi, đậm, thêm chữ "Vượt Z" (không chỉ dựa vào màu).
+
 ---
 
 ### 3.4 Cài đặt — `/settings` (`features/settings/settings_screen.dart`)
@@ -209,13 +213,14 @@ Danh sách cuộn dọc. Thứ tự các mục từ trên xuống:
 | **Tài khoản** ❯ | Dòng mở màn | → `/accounts` |
 | **Ngân sách tháng** | Dòng có phụ đề ("Chưa đặt" hoặc số tiền) | Mở hộp thoại ngân sách (mục 4.5) |
 | **Khoản định kỳ** ❯ | Dòng mở màn | → `/recurring` |
-| **Tiền tệ** | Dòng có phụ đề ("VND · ₫") | Mở hộp thoại chọn tiền tệ (mục 4.6) |
+| **Tiền tệ** | Dòng có phụ đề ("VND · ₫") | Mở hộp thoại chọn tiền tệ có ô tìm (mục 4.6) |
 | **Ngày đầu tuần** | Dòng có phụ đề ("Thứ Hai"/"Chủ Nhật") | **Mỗi lần chạm là đảo** giữa Thứ Hai và Chủ Nhật, không có hộp thoại |
 | **Tháng bắt đầu từ ngày** | Menu thả ở bên phải | Chọn số từ 1 đến 28 |
 | (nhóm) **Bảo mật** | | |
+| **Che nội dung khi chuyển app** | Công tắc (mặc định tắt), kèm chú thích | Bật: Android chặn chụp màn hình và hiện màn trống trong danh sách app gần đây (`FLAG_SECURE`). Lưu trong cài đặt, áp dụng ngay (F-22, AC-56) |
 | **Khóa bằng mã PIN** | Công tắc, kèm lời cảnh báo "Nếu quên mã, cách duy nhất để dùng lại là xóa toàn bộ dữ liệu trong app." | Bật → đặt mã (F-10). Tắt → nhập đúng mã hiện tại (F-11) |
 | (nhóm) **Dữ liệu** | Dòng nhắc "Dữ liệu chỉ nằm trên máy này. Nên xuất bản sao lưu thường xuyên." | |
-| **Xuất bản sao lưu** | Dòng, phụ đề "File sao lưu không được mã hóa. Hãy cất ở nơi an toàn." | F-12 |
+| **Xuất bản sao lưu** | Dòng, phụ đề "Có thể đặt mật khẩu cho file. Không đặt thì file không được mã hóa." | F-12 (hộp thoại hỏi có đặt mật khẩu không) |
 | **Khôi phục từ bản sao lưu** | Dòng | F-13 |
 | **Xuất CSV** | Dòng | F-12 |
 | **Xóa toàn bộ dữ liệu** | Dòng màu lỗi | F-14 |
@@ -239,7 +244,8 @@ Danh sách cuộn dọc. Thứ tự các mục từ trên xuống:
 - **Tiêu đề** "Tài khoản". Khi có từ 2 tài khoản: icon ⇄ "Chuyển tiền" ở góc phải → `/transfer`.
 - Mỗi tài khoản một dòng: icon ví, tên, và **số dư hiện tại** bên phải (= số dư ban đầu + thu − chi ± chuyển tiền; chữ lớn thì xuống dưới tên). Chạm → bảng sửa tài khoản (mục 4.4).
 - Nút tròn **"+" "Thêm tài khoản"** → bảng thêm tài khoản.
-- Tài khoản mặc định "Tiền mặt" có sẵn khi cài. Trong code hiện **không có chức năng xóa tài khoản**.
+- Tài khoản mặc định "Tiền mặt" có sẵn khi cài.
+- **Ẩn, hiện, xóa (F-14, AC-44 đến AC-47):** bảng sửa tài khoản có nút **"Ẩn tài khoản"** và **"Xóa tài khoản"**. Xóa chỉ hiện khi tài khoản chưa có khoản nào (kể cả chuyển tiền đến) và không chuỗi định kỳ nào trỏ tới; nếu có thì hiện dòng "Tài khoản đã có khoản, chỉ ẩn được"; xóa qua hộp thoại xác nhận. Tài khoản hiện cuối cùng không có nút nào, chỉ có dòng "Phải còn ít nhất một tài khoản". Tài khoản đã ẩn không hiện khi chọn tài khoản ghi khoản, trong menu lọc ở màn chính, ô Từ/Đến Chuyển tiền; khoản cũ của nó vẫn nằm trong danh sách khoản và vẫn tính vào tổng thu chi, số dư của nó vẫn tính. Cuối màn có mục thu gọn **"Tài khoản đã ẩn"** liệt kê tài khoản ẩn kèm số dư; chạm hoặc bấm **"Hiện lại"** để dùng lại. Đang lọc theo một tài khoản mà ẩn nó thì bộ lọc tự bỏ.
 
 ---
 
@@ -258,7 +264,7 @@ Chỉ dùng được khi có ít nhất 2 tài khoản (nếu không, màn để
 
 - **Tiêu đề** "Khoản định kỳ". Danh sách chuỗi (còn chạy xếp trước, rồi theo ngày bắt đầu).
 - Mỗi dòng: icon danh mục, tiêu đề "Danh mục · số tiền", phụ đề "Hằng tháng · <ngày tới hạn kế tiếp>" (nếu đã dừng thì "Hằng tháng · Đã dừng"), **công tắc** bên phải: tắt = dừng, bật = chạy lại.
-- Chạm dòng → hộp thoại sửa (số tiền và ghi chú, F-6). Chỉ sửa được số tiền và ghi chú, không đổi tần suất hay danh mục tại đây.
+- Chạm dòng → hộp thoại sửa (F-6, F-16, AC-50): **số tiền, ghi chú, tần suất** (ngày/tuần/tháng/năm), **danh mục** (cùng loại thu/chi) và **tài khoản** (chỉ tài khoản hiện; ô này chỉ hiện khi có từ 2 tài khoản). Khoản đã sinh không đổi. Đổi tần suất thì chuỗi bắt đầu lại từ ngày tới hạn kế tiếp theo lịch cũ (không sinh bù, không trùng).
 - Trống: "Chưa có khoản định kỳ. Bật Lặp lại khi ghi khoản." (giữa màn hình).
 - Không có nút thêm: chuỗi chỉ được tạo từ màn Nhập khoản (chip lặp lại).
 
@@ -320,6 +326,7 @@ Bảng kéo từ dưới lên (đẩy lên theo bàn phím):
 - Ô **"Tên"** tối đa 50 ký tự (tự focus khi thêm). Để trống → lỗi "Nhập tên". Danh mục mặc định có tên theo ngôn ngữ; nếu người dùng không đổi tên thì vẫn giữ tên mặc định theo ngôn ngữ (đổi ngôn ngữ thì tên đổi theo).
 - **"Biểu tượng":** lưới 31 icon (ăn uống, đi lại, nhà, hóa đơn, mua sắm, sức khỏe, giải trí, học tập, gia đình, quà, tiền, tiết kiệm, công việc, khác…). Icon đang chọn tô màu của danh mục. TalkBack đọc "Biểu tượng 1…31".
 - **"Màu":** 16 ô tròn 48 dp (đỏ, hồng, tím, chàm, xanh dương, lam, ngọc, lục, cam, nâu, xám…) toàn màu đậm để icon trắng đủ tương phản; ô đang chọn có viền và dấu ✓. TalkBack đọc "Màu 1…16".
+- Chỉ với danh mục chi: ô **"Ngân sách tháng của danh mục"** (gợi ý "Để trống nếu không đặt"; số ≤ 0 báo "Số tiền phải lớn hơn 0"), xem 3.3.
 - Hàng nút: **"Xóa danh mục"** (chỉ khi sửa và loại danh mục này còn từ 2 danh mục trở lên) ở trái, **"Lưu"** ở phải.
 - **Xóa danh mục:** hộp thoại "Xóa danh mục này?" với dòng "N khoản sẽ được chuyển sang:" và danh sách danh mục cùng loại còn lại; chạm một danh mục đích là xóa danh mục cũ, chuyển mọi khoản và mọi chuỗi định kỳ sang danh mục đích (một giao dịch). Không cho xóa danh mục cuối cùng của một loại.
 
@@ -330,7 +337,7 @@ Tiêu đề "Thêm tài khoản"/"Sửa tài khoản"; ô **"Tên"** (tối đa 
 Tiêu đề "Ngân sách tháng", ô nhập số tiền (bàn phím số, tự focus). Nút: **"Bỏ ngân sách"** (chỉ khi đang có), **"Hủy"**, **"Lưu"**. Số tiền phải lớn hơn 0, không thì lỗi "Số tiền phải lớn hơn 0". Lưu thì thanh ngân sách hiện ngay ở màn chính; bỏ thì thanh biến mất. Ngân sách tính theo **tháng hiện tại** (theo ngày bắt đầu tháng), mọi tài khoản, độc lập với kỳ đang xem.
 
 ### 4.6 Hộp thoại chọn tiền tệ (`settings_screen.dart`)
-Hộp thoại danh sách: dòng ghi chú "Đổi tiền tệ chỉ đổi ký hiệu, không quy đổi tỉ giá…" (kèm giải thích nhân/chia khi số chữ số thập phân khác nhau và có thể mất phần lẻ khi đổi ngược) và 31 mã (VND, USD, EUR, GBP, JPY, KRW, CNY, TWD, HKD, SGD, THB, MYR, IDR, PHP, INR, AUD, NZD, CAD, CHF, SEK, NOK, DKK, PLN, CZK, HUF, TRY, BRL, MXN, ZAR, AED, SAR); dòng đang dùng có ✓. Chọn mã khác → đổi ngay (xem F-9).
+Hộp thoại có **ô tìm** theo mã hoặc tên tiền tệ (không phân biệt hoa thường và dấu), danh sách dựng lười gồm đủ các mã ISO 4217 đang lưu hành (khoảng 150; JPY, KRW, VND… 0 chữ số thập phân, KWD, BHD… 3 chữ số, còn lại 2); dòng ghi chú đầu danh sách "Đổi tiền tệ chỉ đổi ký hiệu, không quy đổi tỉ giá…" (kèm giải thích nhân/chia khi số chữ số thập phân khác nhau và có thể mất phần lẻ khi đổi ngược); dòng đang dùng có ✓. Chọn mã khác → đổi ngay (xem F-9). Khi đổi, hạn mức ngân sách tổng và hạn mức từng danh mục cũng được nhân hoặc chia theo.
 
 ### 4.7 Hộp thoại sửa chuỗi định kỳ (`recurring_screen.dart`)
 Tiêu đề "Khoản định kỳ"; ô số tiền (chỉ nhận `0-9 . ,`), ô ghi chú (tối đa 200); **"Hủy"** / **"Lưu"**. Số tiền ≤ 0 hoặc sai → "Số tiền phải lớn hơn 0".
@@ -396,8 +403,8 @@ Cài đặt → gạt công tắc "Khóa bằng mã PIN" → màn "Đặt mã PI
 - Nếu bộ nhớ an toàn của máy lỗi khi mở app: coi như đang khóa; màn khóa hiện bình thường và nhập mã không mở được; lối ra duy nhất là "Quên mã".
 
 ### F-12 · Sao lưu và xuất CSV
-- **Xuất bản sao lưu:** ghi file tạm `vigon-AAAAMMDD-GGPP.vigon` (JSON, có mã kiểm tra, gồm đủ tài khoản, danh mục, khoản, chuỗi định kỳ và cài đặt; không có PIN) rồi mở **bảng chia sẻ của Android** để người dùng chọn nơi gửi/lưu. App không xin quyền bộ nhớ. File không mã hóa.
-- **Xuất CSV:** ghi `vigon-AAAAMMDD-GGPP.csv` (mã hóa UTF-8 có BOM để Excel đọc tiếng Việt; ghi chú bắt đầu bằng `= + - @` được thêm dấu `'` để Excel không chạy như công thức) rồi mở bảng chia sẻ.
+- **Xuất bản sao lưu:** hộp thoại hỏi có đặt mật khẩu không (công tắc "Đặt mật khẩu cho file", mặc định tắt; bật thì hai ô mật khẩu che ký tự, tối thiểu 6 ký tự, hai lần phải khớp, cảnh báo "Quên mật khẩu thì không mở được file này."). Không mật khẩu: ghi file tạm `vigon-AAAAMMDD-GGPP.vigon` (JSON, có mã kiểm tra, gồm đủ tài khoản, danh mục, khoản, chuỗi định kỳ và cài đặt; không có PIN), không mã hóa. Có mật khẩu (F-21, AC-55): bọc file vào phong bì mã hóa AES-256-GCM, khóa suy ra bằng PBKDF2-HMAC-SHA256 (100.000 vòng, muối ngẫu nhiên), vòng quay hiện trong lúc mã hóa. Rồi mở **bảng chia sẻ của Android** để chọn nơi gửi/lưu. App không xin quyền bộ nhớ và không lưu mật khẩu ở đâu cả.
+- **Xuất CSV (F-18, AC-52):** ghi `vigon-AAAAMMDD-GGPP.csv`, tiêu đề cột và tên loại khoản theo ngôn ngữ của app. Tiếng Việt: ngăn cột bằng `;`, số thập phân bằng `,`; tiếng Anh: `,` và `.`. UTF-8 có BOM để Excel đọc tiếng Việt; ghi chú bắt đầu bằng `= + - @`, tab hoặc xuống dòng được thêm dấu `'` để Excel không chạy như công thức. Rồi mở bảng chia sẻ.
 
 ### F-13 · Khôi phục từ bản sao lưu
 1. Cài đặt → "Khôi phục từ bản sao lưu" → trình chọn file hệ thống → chọn file `.vigon`.
@@ -476,15 +483,15 @@ Mọi lỗi nhập liệu hiện ngay trên màn, không dùng hộp thoại; kh
 
 Ghi theo code hiện tại; chi tiết và mức độ nằm ở `docs/BACKLOG.md` (mục "Phát hiện của `/spec-review` chưa xử lý").
 
-- **Chưa có chức năng xóa hay ẩn tài khoản**; chưa có tìm kiếm khoản; chưa có sửa tần suất/danh mục của chuỗi định kỳ (chỉ sửa số tiền và ghi chú).
+- **Chưa có:** đồng bộ đám mây, widget, nhắc ghi chép bằng thông báo, quy đổi tỉ giá nhiều tiền tệ, bản iOS (xem `docs/SPEC-1.1.md` mục "Ngoài phạm vi"). Ẩn tài khoản không tự dừng các chuỗi định kỳ đang trỏ tới nó (chuỗi vẫn sinh khoản vào tài khoản ẩn).
 - **PIN:** không đếm lần nhập sai, không làm chậm; giờ ra nền lấy từ đồng hồ máy nên đổi giờ máy có thể qua được hạn 1 phút. PIN chỉ chặn người cầm máy, không mã hóa dữ liệu (D-007).
 - **Kỳ mặc định** ở màn chính là tháng lúc mở app; app sống qua nửa đêm thì kỳ đang xem không tự nhảy (thanh ngân sách thì tự sang tháng mới khi quay lại từ nền).
 - **Đổi tiền tệ** USD→VND làm tròn phần lẻ, đổi lại không hoàn được (hộp chọn tiền tệ đã nói rõ điều này).
 - **Số tiền một khoản tối đa 1.000.000.000.000 đơn vị nhỏ nhất**; vượt thì chỉ báo "Phép tính không hợp lệ" (chưa có thông báo riêng "quá lớn").
-- **Danh mục chi vượt số icon xếp vừa quanh biểu đồ** thì danh mục thừa không chạm được từ biểu đồ (vẫn chọn được ở lưới chọn danh mục). Với 10 danh mục mặc định trên màn 360 dp thì đủ chỗ.
+- **Ô "Danh mục khác"** chỉ xuất hiện khi số danh mục chi nhiều hơn số icon xếp vừa quanh biểu đồ (khoảng 17 icon ở màn 360×800), nên với vài chục danh mục mới thấy.
 - **Màn Các khoản:** số tiền ở dòng khoản con căn mép phải xa hơn số tiền ở dòng danh mục (do danh mục có thêm mũi tên); chỉ là lệch thị giác.
 - **Nút lọc tài khoản** ở màn chính vẫn chỉ là icon ví (không hiện tên bằng chữ trên màn hình); tên tài khoản đang lọc chỉ có ở tooltip và trình đọc màn hình.
 - **Tài khoản ví ở màn chính** là menu lọc, không phải màn Tài khoản (màn đó vào qua Cài đặt).
-- **CSV:** tiêu đề cột và loại khoản (expense, income, transfer) luôn tiếng Anh; số lẻ dùng dấu chấm; chưa thử mở bằng Excel.
+- **CSV:** chưa thử mở bằng Excel (vi dùng `;` và dấu phẩy thập phân, cần người dùng kiểm).
 - **Chưa thử trên máy thật:** TalkBack thật và cỡ chữ lớn nhất.
 - Đường dẫn chính sách quyền riêng tư chưa có nên dòng đó ở màn Giới thiệu đang tắt.

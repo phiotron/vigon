@@ -1,10 +1,10 @@
 {
  "bomFormat": "CycloneDX",
  "specVersion": "1.5",
- "serialNumber": "urn:uuid:1b6e1039-f09f-4051-bc81-2e8027e7aaf9",
+ "serialNumber": "urn:uuid:c4fd106c-85d6-40d2-850b-d96afdafdaa0",
  "version": 1,
  "metadata": {
-  "timestamp": "2026-11-03T08:49:09Z",
+  "timestamp": "2026-11-04T04:04:21Z",
   "tools": [
    {
     "name": "tool/make_sbom.py"
@@ -168,6 +168,20 @@
     {
      "license": {
       "id": "BSD-3-Clause"
+     }
+    }
+   ]
+  },
+  {
+   "type": "library",
+   "bom-ref": "pkg:pub/cryptography@2.9.0",
+   "name": "cryptography",
+   "version": "2.9.0",
+   "purl": "pkg:pub/cryptography@2.9.0",
+   "licenses": [
+    {
+     "license": {
+      "id": "Apache-2.0"
      }
     }
    ]
@@ -1580,6 +1594,16 @@
   {
    "ref": "pkg:pub/crypto@3.0.8",
    "dependsOn": []
+  },
+  {
+   "ref": "pkg:pub/cryptography@2.9.0",
+   "dependsOn": [
+    "pkg:pub/collection@1.19.1",
+    "pkg:pub/crypto@3.0.8",
+    "pkg:pub/ffi@2.2.0",
+    "pkg:pub/meta@1.18.3",
+    "pkg:pub/typed_data@1.4.0"
+   ]
   },
   {
    "ref": "pkg:pub/cupertino_icons@1.0.9",
