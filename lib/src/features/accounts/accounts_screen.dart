@@ -11,6 +11,7 @@ import '../entry/keypad.dart' show minorUnitsToInput;
 import '../../l10n_names.dart';
 import '../../providers.dart';
 import '../../ui/format.dart';
+import 'account_manage.dart';
 
 /// Danh sách tài khoản và số dư hiện tại (F-06).
 class AccountsScreen extends ConsumerWidget {
@@ -50,6 +51,7 @@ class AccountsScreen extends ConsumerWidget {
               trailing: isLargeText(context) ? null : balance(a),
               onTap: () => showAccountEditor(context, account: a),
             ),
+          const ArchivedAccountsSection(),
         ],
       ),
       floatingActionButton: FloatingActionButton(
@@ -145,7 +147,7 @@ class _AccountEditorState extends ConsumerState<_AccountEditor> {
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context);
     return SafeArea(
-      child: Padding(
+      child: SingleChildScrollView(
         padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -184,6 +186,8 @@ class _AccountEditorState extends ConsumerState<_AccountEditor> {
               alignment: Alignment.centerRight,
               child: FilledButton(onPressed: _save, child: Text(l.save)),
             ),
+            if (widget.account != null)
+              AccountRemoveSection(account: widget.account!),
           ],
         ),
       ),

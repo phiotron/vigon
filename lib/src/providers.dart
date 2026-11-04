@@ -59,8 +59,24 @@ final categoriesProvider = StreamProvider.family<List<Category>, CategoryType>(
   (ref, type) => ref.watch(categoryRepositoryProvider).watch(type),
 );
 
+/// Tài khoản đang hiện; tài khoản đã ẩn không có ở đây (AC-44).
 final accountsProvider = StreamProvider<List<Account>>(
   (ref) => ref.watch(accountRepositoryProvider).watch(),
+);
+
+/// Mọi tài khoản kể cả đã ẩn, để gọi tên tài khoản của khoản cũ (AC-44).
+final allAccountsProvider = StreamProvider<List<Account>>(
+  (ref) => ref.watch(accountRepositoryProvider).watchAll(),
+);
+
+/// Tài khoản đã ẩn (AC-47).
+final archivedAccountsProvider = StreamProvider<List<Account>>(
+  (ref) => ref.watch(accountRepositoryProvider).watchArchived(),
+);
+
+/// Tài khoản đã có khoản hay chuỗi định kỳ trỏ tới chưa (AC-45).
+final accountInUseProvider = StreamProvider.family<bool, int>(
+  (ref, id) => ref.watch(accountRepositoryProvider).watchInUse(id),
 );
 
 /// Kỳ đang xem trên màn chính; mặc định tháng hiện tại (AC-10).
@@ -104,7 +120,18 @@ final periodProvider = NotifierProvider<PeriodNotifier, Period>(
 /// Tài khoản đang lọc trên màn chính; null là tất cả (AC-20).
 class AccountFilterNotifier extends Notifier<int?> {
   @override
-  int? build() => null;
+  int? build() {
+    // Tài khoản đang lọc bị ẩn hoặc xóa thì bỏ bộ lọc (AC-44).
+    ref.listen(accountsProvider, (_, next) {
+      final visible = next.value;
+      if (state != null &&
+          visible != null &&
+          !visible.any((a) => a.id == state)) {
+        state = null;
+      }
+    });
+    return null;
+  }
 
   void select(int? accountId) => state = accountId;
 }
