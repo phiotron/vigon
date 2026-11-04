@@ -100,7 +100,7 @@ Nguồn: agent `reviewer` chỉ đọc, 2026-11-03. Các lỗi đã sửa nằm 
 - [ ] (nhẹ) CSV: tiêu đề cột và loại luôn tiếng Anh, số lẻ dùng dấu chấm; chưa thử Excel
 - [ ] (nhẹ) Danh sách tiền tệ chỉ 31 mã, chưa phải toàn bộ ISO 4217 (AC-21)
 - [x] Đã thêm test giao diện cho AC-04, AC-10 (kỳ Tuần/Năm), AC-16, AC-17, AC-20, AC-26 (`g6_flows_test`). Còn thiếu: test chọn "Khoảng tùy chọn" bằng hộp chọn ngày, và biên bản máy thật cho AC-14, AC-09, AC-37 tới AC-40 (cần người dùng cho dùng máy)
-- [ ] Ký bản release đang bằng khóa debug (`android/app/build.gradle.kts`): phải đổi sang khóa phát hành ở `/release` (việc của người dùng: tạo và cất khóa)
+- [ ] Ký bản release: cấu hình ký đã sẵn (`android/app/build.gradle.kts` đọc `android/key.properties`; `appbundle` bị chặn khi thiếu khóa), nhánh có khóa CHƯA chạy thử. Việc của người dùng: tạo khóa, cất và sao lưu ngoài repo theo `docs/RELEASE.md`
 
 ## Ý tưởng ngoài SPEC (chưa được duyệt, KHÔNG tự làm)
 - Bản iOS

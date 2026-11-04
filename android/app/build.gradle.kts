@@ -1,7 +1,17 @@
+import java.io.FileInputStream
+import java.util.Properties
+
 plugins {
     id("com.android.application")
     // The Flutter Gradle Plugin must be applied after the Android and Kotlin Gradle plugins.
     id("dev.flutter.flutter-gradle-plugin")
+}
+
+// Khóa ký phát hành nằm NGOÀI repo; android/key.properties (đã .gitignore) chỉ trỏ tới nó.
+// Cách tạo khóa và nội dung file: docs/RELEASE.md mục "Ký ứng dụng".
+val keyPropsFile = rootProject.file("key.properties")
+val keyProps = Properties().apply {
+    if (keyPropsFile.exists()) FileInputStream(keyPropsFile).use { load(it) }
 }
 
 android {
@@ -29,11 +39,27 @@ android {
         versionName = flutter.versionName
     }
 
+    signingConfigs {
+        if (keyPropsFile.exists()) {
+            create("release") {
+                keyAlias = keyProps["keyAlias"] as String
+                keyPassword = keyProps["keyPassword"] as String
+                storeFile = file(keyProps["storeFile"] as String)
+                storePassword = keyProps["storePassword"] as String
+            }
+        }
+    }
+
     buildTypes {
         release {
-            // TODO: Add your own signing config for the release build.
-            // Signing with the debug keys for now, so `flutter run --release` works.
-            signingConfig = signingConfigs.getByName("debug")
+            // Có key.properties thì ký bằng khóa phát hành. Không có thì ký bằng khóa debug
+            // để `flutter build apk --release` thử trên máy vẫn chạy; bản phát hành Play
+            // (appbundle) bị chặn ở dưới khi thiếu khóa.
+            signingConfig = if (keyPropsFile.exists()) {
+                signingConfigs.getByName("release")
+            } else {
+                signingConfigs.getByName("debug")
+            }
         }
     }
 }
@@ -46,4 +72,14 @@ kotlin {
 
 flutter {
     source = "../.."
+}
+
+// Không cho build bản phát hành Play bằng khóa debug (Play từ chối, và lộ khóa tạm).
+gradle.taskGraph.whenReady {
+    if (!keyPropsFile.exists() && allTasks.any { it.project == project && it.name == "bundleRelease" }) {
+        throw GradleException(
+            "Thiếu android/key.properties: chưa có khóa ký phát hành. " +
+                "Xem docs/RELEASE.md, mục 'Ký ứng dụng'."
+        )
+    }
 }
