@@ -81,7 +81,12 @@ Future<bool> showConfirmDialog(
                   spacing: VgSpace.s2,
                   runSpacing: VgSpace.s2,
                   children: [
+                    // `primary` trên nền hộp thoại chỉ đạt 4,06:1 ở chủ đề sáng
+                    // (README thiết kế), nên nút Hủy dùng màu chữ chính.
                     TextButton(
+                      style: TextButton.styleFrom(
+                        foregroundColor: scheme.onSurface,
+                      ),
                       onPressed: () => Navigator.pop(context, false),
                       child: Text(l.cancel),
                     ),
