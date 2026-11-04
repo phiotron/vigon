@@ -15,9 +15,14 @@ on:
       - 'android/**'
       - 'tool/**'
   workflow_dispatch:
+    inputs:
+      integration_test:
+        description: 'Chạy thêm integration test (perf_test, 5.000 khoản) trên simulator — thêm ~6 phút macOS'
+        type: boolean
+        default: true
 
 concurrency:
-  group: ios-${{ github.ref }}
+  group: ios-${{ github.ref }}-${{ github.event_name }}
   cancel-in-progress: true
 
 env:
@@ -91,10 +96,16 @@ jobs:
           xcrun simctl spawn "$UDID" launchctl list | grep "$BUNDLE_ID"
           xcrun simctl terminate "$UDID" "$BUNDLE_ID" || true
 
-      - name: Integration test trên simulator
+      # Chỉ khi chạy tay. Dùng `flutter drive` + driver có sẵn: `flutter test -d <iOS>` chạy hết
+      # thân test nhưng treo ở khâu kết thúc (run 41809982864, Xcode 26.6).
+      - name: Integration test trên simulator (flutter drive)
+        if: github.event_name == 'workflow_dispatch' && inputs.integration_test
+        timeout-minutes: 15
         run: |
           set -o pipefail
-          flutter test integration_test/perf_test.dart -d ${{ steps.sim.outputs.udid }} --reporter expanded 2>&1 | tee ci-logs/integration-test.log
+          flutter drive --driver=test_driver/perf_driver.dart --target=integration_test/perf_test.dart \
+            -d ${{ steps.sim.outputs.udid }} 2>&1 | tee ci-logs/integration-test.log
+          cp build/perf_summary.json ci-logs/ || true
 
       - name: Log hệ thống simulator (khi lỗi)
         if: failure() && steps.sim.outputs.udid != ''
