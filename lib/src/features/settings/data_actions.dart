@@ -52,6 +52,22 @@ Future<void> exportCsvFile(BuildContext context, WidgetRef ref) async {
     entries: await db.select(db.entries).get(),
     currency: currency,
     decimalDigits: currencyDecimalDigits(currency),
+    format: CsvFormat.forLanguage(
+      l.localeName,
+      header: [
+        l.csvColDate,
+        l.csvColType,
+        l.csvColAmount,
+        l.csvColCurrency,
+        l.csvColCategory,
+        l.csvColAccount,
+        l.csvColToAccount,
+        l.csvColNote,
+      ],
+      expense: l.csvTypeExpense,
+      income: l.csvTypeIncome,
+      transfer: l.csvTypeTransfer,
+    ),
     categoryName: (id) =>
         categories[id] == null ? '' : categoryLabel(l, categories[id]!),
     accountName: (id) =>
