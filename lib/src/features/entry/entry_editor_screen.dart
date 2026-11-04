@@ -13,9 +13,11 @@ import '../../l10n_names.dart';
 import '../../providers.dart';
 import '../../ui/amount_display.dart';
 import '../../ui/category_avatar.dart';
+import '../../ui/choice_sheet.dart';
 import '../../ui/format.dart';
 import '../../ui/messenger.dart';
 import '../../ui/theme.dart';
+import '../../ui/tokens.g.dart';
 import 'keypad.dart';
 
 /// Ghi khoản mới hoặc sửa khoản có sẵn (F-01, F-04).
@@ -199,28 +201,20 @@ class _EntryEditorScreenState extends ConsumerState<EntryEditorScreen> {
     );
   }
 
+  /// Bảng "Lặp lại" (3.5), chỉ có khi ghi khoản mới.
   Future<void> _pickRepeat() async {
     final l = AppLocalizations.of(context);
-    final options = <RecurrenceFrequency?>[null, ...RecurrenceFrequency.values];
-    final picked = await showModalBottomSheet<(RecurrenceFrequency?,)>(
-      context: context,
-      showDragHandle: true,
-      builder: (context) => SafeArea(
-        child: ListView(
-          shrinkWrap: true,
-          children: [
-            for (final f in options)
-              ListTile(
-                title: Text(repeatLabel(l, f)),
-                selected: f == _repeat,
-                trailing: f == _repeat
-                    ? const Icon(Symbols.check_rounded)
-                    : null,
-                onTap: () => Navigator.pop(context, (f,)),
-              ),
-          ],
-        ),
-      ),
+    final picked = await showChoiceSheet<RecurrenceFrequency?>(
+      context,
+      title: l.repeat,
+      selected: _repeat,
+      options: [
+        for (final f in <RecurrenceFrequency?>[
+          null,
+          ...RecurrenceFrequency.values,
+        ])
+          ChoiceOption(f, repeatLabel(l, f)),
+      ],
     );
     if (picked != null) setState(() => _repeat = picked.$1);
   }
@@ -247,26 +241,24 @@ class _EntryEditorScreenState extends ConsumerState<EntryEditorScreen> {
     if (picked != null) setState(() => _date = dateOnly(picked));
   }
 
+  /// Bảng "Tài khoản" (3.6); chip chỉ hiện khi có từ 2 tài khoản.
   Future<void> _pickAccount(List<Account> accounts) async {
     final l = AppLocalizations.of(context);
-    final picked = await showModalBottomSheet<int>(
-      context: context,
-      showDragHandle: true,
-      builder: (context) => SafeArea(
-        child: ListView(
-          shrinkWrap: true,
-          children: [
-            for (final a in accounts)
-              ListTile(
-                title: Text(accountLabel(l, a)),
-                selected: a.id == (_accountId ?? accounts.first.id),
-                onTap: () => Navigator.pop(context, a.id),
-              ),
-          ],
-        ),
-      ),
+    final picked = await showChoiceSheet<int>(
+      context,
+      title: l.account,
+      selected: _accountId ?? accounts.first.id,
+      options: [
+        for (final a in accounts)
+          // Dữ liệu tài khoản không có icon riêng.
+          ChoiceOption(
+            a.id,
+            accountLabel(l, a),
+            icon: Symbols.account_balance_wallet_rounded,
+          ),
+      ],
     );
-    if (picked != null) setState(() => _accountId = picked);
+    if (picked != null) setState(() => _accountId = picked.$1);
   }
 
   @override
@@ -275,6 +267,7 @@ class _EntryEditorScreenState extends ConsumerState<EntryEditorScreen> {
     final currency = ref.watch(currencyProvider).value ?? 'VND';
     final digits = currencyDecimalDigits(currency);
     final accounts = ref.watch(accountsProvider).value ?? const <Account>[];
+    final scheme = Theme.of(context).colorScheme;
     final isIncome = _type == EntryType.income;
     final color = isIncome ? incomeColor(context) : expenseColor(context);
     final value = evaluateToMinorUnits(_expression, decimalDigits: digits);
@@ -293,7 +286,8 @@ class _EntryEditorScreenState extends ConsumerState<EntryEditorScreen> {
     final account =
         accounts.where((a) => a.id == _accountId).firstOrNull ??
         accounts.firstOrNull;
-    final title = _original != null
+    // Màn sửa giữ tiêu đề "Sửa khoản" cả lúc đang nạp (4.7).
+    final title = widget.entryId != null
         ? l.editEntry
         : (isIncome ? l.newIncome : l.newExpense);
 
@@ -326,11 +320,17 @@ class _EntryEditorScreenState extends ConsumerState<EntryEditorScreen> {
                             color: color,
                             error: _error,
                           ),
+                          // Hàng chip `.vg-chips`: lề 16, cách 8. Chip cao 40
+                          // trong vùng chạm 48 nên hàng tự cách nhau 8.
                           Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 12),
+                            padding: const EdgeInsets.fromLTRB(
+                              VgSpace.s4,
+                              0,
+                              VgSpace.s4,
+                              VgSpace.s2,
+                            ),
                             child: Wrap(
-                              spacing: 8,
-                              runSpacing: 4,
+                              spacing: VgSpace.s2,
                               children: [
                                 if (category != null)
                                   ActionChip(
@@ -397,12 +397,34 @@ class _EntryEditorScreenState extends ConsumerState<EntryEditorScreen> {
                               ],
                             ),
                           ),
+                          // Ô ghi chú `.vg-field` viền outline, cao 52, bộ
+                          // đếm label-sm "0/200" bên phải (AC-04).
                           Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 16),
+                            padding: const EdgeInsets.fromLTRB(
+                              VgSpace.s4,
+                              0,
+                              VgSpace.s4,
+                              VgSpace.s3,
+                            ),
                             child: TextField(
                               controller: _note,
                               maxLength: 200,
-                              decoration: InputDecoration(hintText: l.noteHint),
+                              style: VgType.bodyMd.copyWith(
+                                color: scheme.onSurface,
+                              ),
+                              decoration: InputDecoration(
+                                hintText: l.noteHint,
+                                hintStyle: VgType.bodyMd.copyWith(
+                                  color: scheme.onSurfaceVariant,
+                                ),
+                                contentPadding: const EdgeInsets.symmetric(
+                                  horizontal: VgSpace.s4,
+                                  vertical: 14,
+                                ),
+                                counterStyle: VgType.labelSm.copyWith(
+                                  color: scheme.onSurfaceVariant,
+                                ),
+                              ),
                               textInputAction: TextInputAction.done,
                             ),
                           ),
@@ -427,60 +449,89 @@ class _EntryEditorScreenState extends ConsumerState<EntryEditorScreen> {
   }
 }
 
+/// Bảng "Chọn danh mục" (3.3): lưới 4 cột, ô rộng tối đa 96, icon 48, tên
+/// label-sm tối đa 2 dòng. Chạm một ô là chọn và đóng, chưa lưu.
 class _CategoryGrid extends ConsumerWidget {
   const _CategoryGrid({required this.type, required this.selectedId});
 
   final CategoryType type;
   final int? selectedId;
 
+  static const _columns = 4;
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l = AppLocalizations.of(context);
     final categories =
         ref.watch(categoriesProvider(type)).value ?? const <Category>[];
+    final rows = (categories.length / _columns).ceil();
+
+    Widget cell(Category c) => Center(
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: 96),
+        child: Semantics(
+          button: true,
+          selected: c.id == selectedId,
+          label: categoryLabel(l, c),
+          excludeSemantics: true,
+          onTap: () => Navigator.pop(context, c.id),
+          child: InkWell(
+            borderRadius: BorderRadius.circular(VgRadius.md),
+            onTap: () => Navigator.pop(context, c.id),
+            child: Padding(
+              padding: const EdgeInsets.all(VgSpace.s1),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  CategoryAvatar(category: c),
+                  const SizedBox(height: 6),
+                  Text(
+                    categoryLabel(l, c),
+                    textAlign: TextAlign.center,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: VgType.labelSm.copyWith(
+                      color: Theme.of(context).colorScheme.onSurface,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+
     return SafeArea(
       child: Padding(
-        padding: const EdgeInsets.fromLTRB(8, 0, 8, 16),
+        padding: const EdgeInsets.only(bottom: VgSpace.s4),
         child: Column(
           mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Text(
-              l.chooseCategory,
-              style: Theme.of(context).textTheme.titleMedium,
-            ),
-            const SizedBox(height: 12),
+            SheetHeader(l.chooseCategory),
             Flexible(
-              child: GridView.extent(
-                shrinkWrap: true,
-                maxCrossAxisExtent: 96,
-                childAspectRatio: 0.8,
-                children: [
-                  for (final c in categories)
-                    InkWell(
-                      borderRadius: BorderRadius.circular(12),
-                      onTap: () => Navigator.pop(context, c.id),
-                      child: Semantics(
-                        button: true,
-                        selected: c.id == selectedId,
-                        label: categoryLabel(l, c),
-                        excludeSemantics: true,
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.symmetric(horizontal: VgSpace.s3),
+                child: Column(
+                  children: [
+                    for (var r = 0; r < rows; r++)
+                      Padding(
+                        padding: EdgeInsets.only(top: r == 0 ? 0 : VgSpace.s2),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            CategoryAvatar(category: c),
-                            const SizedBox(height: 4),
-                            Text(
-                              categoryLabel(l, c),
-                              textAlign: TextAlign.center,
-                              maxLines: 2,
-                              overflow: TextOverflow.ellipsis,
-                              style: Theme.of(context).textTheme.bodySmall,
-                            ),
+                            for (var i = 0; i < _columns; i++)
+                              Expanded(
+                                child: r * _columns + i < categories.length
+                                    ? cell(categories[r * _columns + i])
+                                    : const SizedBox(),
+                              ),
                           ],
                         ),
                       ),
-                    ),
-                ],
+                  ],
+                ),
               ),
             ),
           ],

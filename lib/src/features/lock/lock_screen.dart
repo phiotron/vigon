@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:material_symbols_icons/symbols.dart';
 
 import '../../../l10n/app_localizations.dart';
+import '../../ui/confirm_dialog.dart';
+import '../../ui/tokens.g.dart';
 import '../settings/data_actions.dart';
 import 'app_lock.dart';
 import 'pin_pad.dart';
@@ -37,26 +40,20 @@ class _LockBody extends ConsumerStatefulWidget {
 class _LockBodyState extends ConsumerState<_LockBody> {
   String? _error;
 
+  /// Quên mã (1.3): báo không lấy lại được mã; đồng ý thì sang hai bước xác
+  /// nhận xóa (1.4, 1.5) trong [deleteEverything]. Hủy ở bước nào cũng về
+  /// màn khóa.
   Future<void> _forgot() async {
     final l = AppLocalizations.of(context);
-    final ok = await showDialog<bool>(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text(l.forgotPin),
-        content: Text(l.forgotPinBody),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context, false),
-            child: Text(l.cancel),
-          ),
-          TextButton(
-            onPressed: () => Navigator.pop(context, true),
-            child: Text(l.deleteAll),
-          ),
-        ],
-      ),
+    final ok = await showConfirmDialog(
+      context,
+      icon: Symbols.lock_reset_rounded,
+      title: l.forgotPin,
+      body: l.forgotPinBody,
+      action: l.deleteAll,
+      style: ConfirmStyle.dangerText,
     );
-    if (ok != true || !mounted) return;
+    if (!ok || !mounted) return;
     if (await deleteEverything(context, ref)) {
       ref.read(lockProvider.notifier).unlockAfterReset();
     }
@@ -65,38 +62,57 @@ class _LockBodyState extends ConsumerState<_LockBody> {
   @override
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context);
+    // Bố cục `.vg-pin` (1.1, 1.2): icon khóa, tiêu đề, chấm, dòng lỗi ở trên;
+    // bàn phím dồn xuống đáy, "Quên mã" dưới cùng. Thiếu chỗ (cỡ chữ 200%)
+    // thì cả khối cuộn được.
     return Scaffold(
       body: SafeArea(
-        child: LayoutBuilder(
-          builder: (context, c) => SingleChildScrollView(
-            padding: const EdgeInsets.all(24),
-            child: ConstrainedBox(
-              constraints: BoxConstraints(minHeight: c.maxHeight - 48),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(
-                    Symbols.lock_rounded,
-                    size: 48,
-                    color: Theme.of(context).colorScheme.primary,
-                  ),
-                  const SizedBox(height: 16),
-                  PinPad(
-                    title: l.enterPin,
-                    error: _error,
-                    onCompleted: (pin) async {
-                      final ok = await ref
-                          .read(lockProvider.notifier)
-                          .unlock(pin);
-                      if (!ok && mounted) setState(() => _error = l.wrongPin);
-                    },
-                  ),
-                  const SizedBox(height: 8),
-                  TextButton(onPressed: _forgot, child: Text(l.forgotPin)),
-                ],
+        child: CustomScrollView(
+          slivers: [
+            SliverFillRemaining(
+              hasScrollBody: false,
+              child: Padding(
+                padding: const EdgeInsets.only(top: VgSpace.s6),
+                child: Column(
+                  children: [
+                    Expanded(
+                      child: PinPad(
+                        expand: true,
+                        leading: Icon(
+                          Symbols.lock_rounded,
+                          fill: 1,
+                          size: 40,
+                          color: Theme.of(context).colorScheme.primary,
+                        ),
+                        title: l.enterPin,
+                        titleStyle: Theme.of(context).textTheme.titleLarge,
+                        error: _error,
+                        onCompleted: (pin) async {
+                          final ok = await ref
+                              .read(lockProvider.notifier)
+                              .unlock(pin);
+                          if (ok || !mounted) return;
+                          // Sai mã: rung nhẹ trên cả hai nền tảng (1.2).
+                          HapticFeedback.lightImpact();
+                          setState(() => _error = l.wrongPin);
+                        },
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(
+                        top: VgSpace.s4,
+                        bottom: VgSpace.s2,
+                      ),
+                      child: TextButton(
+                        onPressed: _forgot,
+                        child: Text(l.forgotPin),
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
-          ),
+          ],
         ),
       ),
     );
