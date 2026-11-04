@@ -1,13 +1,18 @@
 package com.phiotron.vigon
 
+import android.content.Intent
 import android.view.WindowManager
 import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.plugin.common.MethodChannel
 
 class MainActivity : FlutterActivity() {
+    private var backupFolder: BackupFolderChannel? = null
+
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
+        // F-24: sao lưu tự động vào thư mục người dùng chọn (Storage Access Framework).
+        backupFolder = BackupFolderChannel(this, flutterEngine.dartExecutor.binaryMessenger)
         // AC-56: bật/tắt FLAG_SECURE để chặn chụp màn hình và che màn đa nhiệm.
         MethodChannel(flutterEngine.dartExecutor.binaryMessenger, "vigon/secure")
             .setMethodCallHandler { call, result ->
@@ -28,5 +33,12 @@ class MainActivity : FlutterActivity() {
                     else -> result.notImplemented()
                 }
             }
+    }
+
+    @Deprecated("Chuyển kết quả bộ chọn thư mục cho BackupFolderChannel")
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if (backupFolder?.onActivityResult(requestCode, resultCode, data) == true) return
+        @Suppress("DEPRECATION")
+        super.onActivityResult(requestCode, resultCode, data)
     }
 }

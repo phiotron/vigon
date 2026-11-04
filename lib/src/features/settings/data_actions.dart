@@ -16,6 +16,7 @@ import '../../providers.dart';
 import '../../ui/messenger.dart';
 import '../lock/app_lock.dart';
 import '../lock/pin_pad.dart';
+import 'auto_backup_providers.dart';
 import 'backup_password_dialogs.dart';
 
 String _stamp(DateTime d) =>
@@ -155,6 +156,10 @@ Future<bool> deleteEverything(BuildContext context, WidgetRef ref) async {
   await deleteAllData(ref.read(databaseProvider));
   await ref.read(pinServiceProvider).disable();
   ref.invalidate(pinEnabledProvider);
+  // Xóa hết thì cũng tắt sao lưu tự động (mật khẩu, quyền thư mục), để một
+  // bản sao lưu rỗng không đẩy dần các file tốt ra khỏi thư mục.
+  await ref.read(autoBackupServiceProvider).disable();
+  ref.invalidate(autoBackupStateProvider);
   await ref
       .read(settingsRepositoryProvider)
       .ensureCurrency(ref.read(deviceLocaleProvider));
