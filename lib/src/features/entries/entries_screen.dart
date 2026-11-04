@@ -11,6 +11,7 @@ import '../../providers.dart';
 import '../../ui/category_avatar.dart';
 import '../../ui/format.dart';
 import '../../ui/messenger.dart';
+import 'category_budget.dart';
 
 /// Danh sách khoản trong kỳ, gom theo danh mục, có tổng và phần trăm (AC-08).
 /// Dựng lười (chỉ các dòng đang nhìn thấy) để nhóm hàng nghìn khoản vẫn mượt (NFR 5b).
@@ -84,11 +85,14 @@ class _EntriesScreenState extends ConsumerState<EntriesScreen> {
             child: ListTile(
               leading: CategoryAvatar(category: t.category, size: 40),
               title: Text(categoryLabel(l, t.category)),
-              subtitle: Text(
-                large
-                    ? '${percent(context, t.percent)} · '
-                          '${money(context, currency, t.total)}'
-                    : percent(context, t.percent),
+              subtitle: _withBudget(
+                Text(
+                  large
+                      ? '${percent(context, t.percent)} · '
+                            '${money(context, currency, t.total)}'
+                      : percent(context, t.percent),
+                ),
+                prefix == 'e' ? t.category : null,
               ),
               trailing: Row(
                 mainAxisSize: MainAxisSize.min,
@@ -170,6 +174,18 @@ class _EntriesScreenState extends ConsumerState<EntriesScreen> {
     );
   }
 }
+
+/// Thêm thanh hạn mức tháng dưới phụ đề của danh mục chi có hạn mức (AC-54).
+Widget _withBudget(Widget subtitle, Category? category) =>
+    category?.budget == null
+    ? subtitle
+    : Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          subtitle,
+          CategoryBudgetBar(category: category!),
+        ],
+      );
 
 /// Dòng tổng: số tiền cuối dòng, hoặc dưới tiêu đề khi chữ lớn (AC-38).
 class _AmountTile extends StatelessWidget {

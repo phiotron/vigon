@@ -487,6 +487,16 @@ class $CategoriesTable extends Categories
     requiredDuringInsert: false,
     defaultValue: const Constant(0),
   );
+  static const VerificationMeta _budgetMeta = const VerificationMeta('budget');
+  @override
+  late final GeneratedColumn<int> budget = GeneratedColumn<int>(
+    'budget',
+    aliasedName,
+    true,
+    check: () => ComparableExpr(budget).isBiggerThanValue(0),
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
   @override
   List<GeneratedColumn> get $columns => [
     id,
@@ -496,6 +506,7 @@ class $CategoriesTable extends Categories
     icon,
     color,
     sortOrder,
+    budget,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -546,6 +557,12 @@ class $CategoriesTable extends Categories
         sortOrder.isAcceptableOrUnknown(data['sort_order']!, _sortOrderMeta),
       );
     }
+    if (data.containsKey('budget')) {
+      context.handle(
+        _budgetMeta,
+        budget.isAcceptableOrUnknown(data['budget']!, _budgetMeta),
+      );
+    }
     return context;
   }
 
@@ -585,6 +602,10 @@ class $CategoriesTable extends Categories
         DriftSqlType.int,
         data['${effectivePrefix}sort_order'],
       )!,
+      budget: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}budget'],
+      ),
     );
   }
 
@@ -605,6 +626,10 @@ class Category extends DataClass implements Insertable<Category> {
   final String icon;
   final int color;
   final int sortOrder;
+
+  /// Hạn mức chi mỗi tháng của danh mục chi, đơn vị nhỏ nhất; null là chưa đặt
+  /// (AC-54). Thêm ở schema 2.
+  final int? budget;
   const Category({
     required this.id,
     required this.type,
@@ -613,6 +638,7 @@ class Category extends DataClass implements Insertable<Category> {
     required this.icon,
     required this.color,
     required this.sortOrder,
+    this.budget,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -630,6 +656,9 @@ class Category extends DataClass implements Insertable<Category> {
     map['icon'] = Variable<String>(icon);
     map['color'] = Variable<int>(color);
     map['sort_order'] = Variable<int>(sortOrder);
+    if (!nullToAbsent || budget != null) {
+      map['budget'] = Variable<int>(budget);
+    }
     return map;
   }
 
@@ -644,6 +673,9 @@ class Category extends DataClass implements Insertable<Category> {
       icon: Value(icon),
       color: Value(color),
       sortOrder: Value(sortOrder),
+      budget: budget == null && nullToAbsent
+          ? const Value.absent()
+          : Value(budget),
     );
   }
 
@@ -662,6 +694,7 @@ class Category extends DataClass implements Insertable<Category> {
       icon: serializer.fromJson<String>(json['icon']),
       color: serializer.fromJson<int>(json['color']),
       sortOrder: serializer.fromJson<int>(json['sortOrder']),
+      budget: serializer.fromJson<int?>(json['budget']),
     );
   }
   @override
@@ -677,6 +710,7 @@ class Category extends DataClass implements Insertable<Category> {
       'icon': serializer.toJson<String>(icon),
       'color': serializer.toJson<int>(color),
       'sortOrder': serializer.toJson<int>(sortOrder),
+      'budget': serializer.toJson<int?>(budget),
     };
   }
 
@@ -688,6 +722,7 @@ class Category extends DataClass implements Insertable<Category> {
     String? icon,
     int? color,
     int? sortOrder,
+    Value<int?> budget = const Value.absent(),
   }) => Category(
     id: id ?? this.id,
     type: type ?? this.type,
@@ -696,6 +731,7 @@ class Category extends DataClass implements Insertable<Category> {
     icon: icon ?? this.icon,
     color: color ?? this.color,
     sortOrder: sortOrder ?? this.sortOrder,
+    budget: budget.present ? budget.value : this.budget,
   );
   Category copyWithCompanion(CategoriesCompanion data) {
     return Category(
@@ -706,6 +742,7 @@ class Category extends DataClass implements Insertable<Category> {
       icon: data.icon.present ? data.icon.value : this.icon,
       color: data.color.present ? data.color.value : this.color,
       sortOrder: data.sortOrder.present ? data.sortOrder.value : this.sortOrder,
+      budget: data.budget.present ? data.budget.value : this.budget,
     );
   }
 
@@ -718,14 +755,15 @@ class Category extends DataClass implements Insertable<Category> {
           ..write('name: $name, ')
           ..write('icon: $icon, ')
           ..write('color: $color, ')
-          ..write('sortOrder: $sortOrder')
+          ..write('sortOrder: $sortOrder, ')
+          ..write('budget: $budget')
           ..write(')'))
         .toString();
   }
 
   @override
   int get hashCode =>
-      Object.hash(id, type, nameKey, name, icon, color, sortOrder);
+      Object.hash(id, type, nameKey, name, icon, color, sortOrder, budget);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -736,7 +774,8 @@ class Category extends DataClass implements Insertable<Category> {
           other.name == this.name &&
           other.icon == this.icon &&
           other.color == this.color &&
-          other.sortOrder == this.sortOrder);
+          other.sortOrder == this.sortOrder &&
+          other.budget == this.budget);
 }
 
 class CategoriesCompanion extends UpdateCompanion<Category> {
@@ -747,6 +786,7 @@ class CategoriesCompanion extends UpdateCompanion<Category> {
   final Value<String> icon;
   final Value<int> color;
   final Value<int> sortOrder;
+  final Value<int?> budget;
   const CategoriesCompanion({
     this.id = const Value.absent(),
     this.type = const Value.absent(),
@@ -755,6 +795,7 @@ class CategoriesCompanion extends UpdateCompanion<Category> {
     this.icon = const Value.absent(),
     this.color = const Value.absent(),
     this.sortOrder = const Value.absent(),
+    this.budget = const Value.absent(),
   });
   CategoriesCompanion.insert({
     this.id = const Value.absent(),
@@ -764,6 +805,7 @@ class CategoriesCompanion extends UpdateCompanion<Category> {
     required String icon,
     required int color,
     this.sortOrder = const Value.absent(),
+    this.budget = const Value.absent(),
   }) : type = Value(type),
        icon = Value(icon),
        color = Value(color);
@@ -775,6 +817,7 @@ class CategoriesCompanion extends UpdateCompanion<Category> {
     Expression<String>? icon,
     Expression<int>? color,
     Expression<int>? sortOrder,
+    Expression<int>? budget,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
@@ -784,6 +827,7 @@ class CategoriesCompanion extends UpdateCompanion<Category> {
       if (icon != null) 'icon': icon,
       if (color != null) 'color': color,
       if (sortOrder != null) 'sort_order': sortOrder,
+      if (budget != null) 'budget': budget,
     });
   }
 
@@ -795,6 +839,7 @@ class CategoriesCompanion extends UpdateCompanion<Category> {
     Value<String>? icon,
     Value<int>? color,
     Value<int>? sortOrder,
+    Value<int?>? budget,
   }) {
     return CategoriesCompanion(
       id: id ?? this.id,
@@ -804,6 +849,7 @@ class CategoriesCompanion extends UpdateCompanion<Category> {
       icon: icon ?? this.icon,
       color: color ?? this.color,
       sortOrder: sortOrder ?? this.sortOrder,
+      budget: budget ?? this.budget,
     );
   }
 
@@ -833,6 +879,9 @@ class CategoriesCompanion extends UpdateCompanion<Category> {
     if (sortOrder.present) {
       map['sort_order'] = Variable<int>(sortOrder.value);
     }
+    if (budget.present) {
+      map['budget'] = Variable<int>(budget.value);
+    }
     return map;
   }
 
@@ -845,7 +894,8 @@ class CategoriesCompanion extends UpdateCompanion<Category> {
           ..write('name: $name, ')
           ..write('icon: $icon, ')
           ..write('color: $color, ')
-          ..write('sortOrder: $sortOrder')
+          ..write('sortOrder: $sortOrder, ')
+          ..write('budget: $budget')
           ..write(')'))
         .toString();
   }
@@ -3012,6 +3062,7 @@ typedef $$CategoriesTableCreateCompanionBuilder = CategoriesCompanion Function({
   required String icon,
   required int color,
   Value<int> sortOrder,
+  Value<int?> budget,
 });
 typedef $$CategoriesTableUpdateCompanionBuilder = CategoriesCompanion Function({
   Value<int> id,
@@ -3021,6 +3072,7 @@ typedef $$CategoriesTableUpdateCompanionBuilder = CategoriesCompanion Function({
   Value<String> icon,
   Value<int> color,
   Value<int> sortOrder,
+  Value<int?> budget,
 });
 
 final class $$CategoriesTableReferences
@@ -3107,6 +3159,11 @@ class $$CategoriesTableFilterComposer
 
   ColumnFilters<int> get sortOrder => $composableBuilder(
     column: $table.sortOrder,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get budget => $composableBuilder(
+    column: $table.budget,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -3204,6 +3261,11 @@ class $$CategoriesTableOrderingComposer
     column: $table.sortOrder,
     builder: (column) => ColumnOrderings(column),
   );
+
+  ColumnOrderings<int> get budget => $composableBuilder(
+    column: $table.budget,
+    builder: (column) => ColumnOrderings(column),
+  );
 }
 
 class $$CategoriesTableAnnotationComposer
@@ -3235,6 +3297,9 @@ class $$CategoriesTableAnnotationComposer
 
   GeneratedColumn<int> get sortOrder =>
       $composableBuilder(column: $table.sortOrder, builder: (column) => column);
+
+  GeneratedColumn<int> get budget =>
+      $composableBuilder(column: $table.budget, builder: (column) => column);
 
   Expression<T> recurringRulesRefs<T extends Object>(
     Expression<T> Function($$RecurringRulesTableAnnotationComposer a) f,
@@ -3322,6 +3387,7 @@ class $$CategoriesTableTableManager
                 Value<String> icon = const Value.absent(),
                 Value<int> color = const Value.absent(),
                 Value<int> sortOrder = const Value.absent(),
+                Value<int?> budget = const Value.absent(),
               }) => CategoriesCompanion(
                 id: id,
                 type: type,
@@ -3330,6 +3396,7 @@ class $$CategoriesTableTableManager
                 icon: icon,
                 color: color,
                 sortOrder: sortOrder,
+                budget: budget,
               ),
           createCompanionCallback:
               ({
@@ -3340,6 +3407,7 @@ class $$CategoriesTableTableManager
                 required String icon,
                 required int color,
                 Value<int> sortOrder = const Value.absent(),
+                Value<int?> budget = const Value.absent(),
               }) => CategoriesCompanion.insert(
                 id: id,
                 type: type,
@@ -3348,6 +3416,7 @@ class $$CategoriesTableTableManager
                 icon: icon,
                 color: color,
                 sortOrder: sortOrder,
+                budget: budget,
               ),
           withReferenceMapper: (p0) => p0
               .map(

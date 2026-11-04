@@ -77,6 +77,12 @@ _Parsed _parseBackup(String content) {
   if (version is! int || version > backupVersion) {
     throw BackupFormatException('phiên bản $version không hỗ trợ');
   }
+  // File cũ (schema 1) không có cột budget của danh mục: vẫn đọc được. File từ
+  // bản app mới hơn schema hiện tại thì từ chối.
+  final schema = root['schemaVersion'];
+  if (schema != null && (schema is! int || schema > currentSchemaVersion)) {
+    throw BackupFormatException('schema $schema không hỗ trợ');
+  }
   final tables = root['tables'];
   if (tables is! Map<String, dynamic> ||
       root['checksum'] != _checksum(tables)) {
