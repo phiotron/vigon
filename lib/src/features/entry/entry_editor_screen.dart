@@ -285,9 +285,16 @@ class _EntryEditorScreenState extends ConsumerState<EntryEditorScreen> {
                   const <Category>[])
               .where((c) => c.id == _categoryId)
               .firstOrNull;
+    // Khoản cũ của tài khoản đã ẩn vẫn hiện đúng tên tài khoản đó (AC-44).
     final account =
-        accounts.where((a) => a.id == _accountId).firstOrNull ??
+        (ref.watch(allAccountsProvider).value ?? accounts)
+            .where((a) => a.id == _accountId)
+            .firstOrNull ??
         accounts.firstOrNull;
+    final pickable = [
+      ...accounts,
+      if (account != null && !accounts.any((a) => a.id == account.id)) account,
+    ];
     final title = _original != null
         ? l.editEntry
         : (isIncome ? l.newIncome : l.newExpense);
@@ -400,14 +407,14 @@ class _EntryEditorScreenState extends ConsumerState<EntryEditorScreen> {
                                     deleteButtonTooltipMessage: l.stopRepeat,
                                     onDeleted: _stopRepeat,
                                   ),
-                                if (account != null && accounts.length > 1)
+                                if (account != null && pickable.length > 1)
                                   ActionChip(
                                     avatar: const Icon(
                                       Icons.account_balance_wallet_outlined,
                                       size: 18,
                                     ),
                                     label: Text(accountLabel(l, account)),
-                                    onPressed: () => _pickAccount(accounts),
+                                    onPressed: () => _pickAccount(pickable),
                                   ),
                               ],
                             ),
