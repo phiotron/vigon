@@ -158,5 +158,9 @@
   "cannotUndo": "Không hoàn tác được",
   "previousMonth": "Tháng trước",
   "nextMonth": "Tháng sau",
-  "rangeHint": "Chọn ngày đầu rồi ngày cuối"
+  "rangeHint": "Chọn ngày đầu rồi ngày cuối",
+  "amountLabel": "Số tiền",
+  "initialBalanceHelper": "Để trống = 0. Cho phép số âm.",
+  "recurringEditNote": "Áp dụng cho các lần sinh sau.",
+  "deleteCategoryEmptyBody": "Danh mục này chưa có khoản nào."
 }
