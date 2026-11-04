@@ -49,6 +49,10 @@ Future<void> _shot(WidgetTester tester, String name, String theme) async {
 }
 
 void _phone(WidgetTester tester) {
+  // Mặc định test vẽ bóng đổ thành khối đặc (viền đen); bật bóng thật. Bộ test
+  // đặt lại cờ này ở đầu mỗi bài nên phải đặt trong bài.
+  debugDisableShadows = false;
+  addTearDown(() => debugDisableShadows = true);
   tester.view
     ..physicalSize = const Size(720, 1600)
     ..devicePixelRatio = 2;
@@ -185,6 +189,8 @@ final _scenarios =
       '3.3_chon_danh_muc': (t, shot) async {
         await t.tap(find.byTooltip('Thêm khoản chi').last);
         await settle(t);
+        await t.tap(find.widgetWithText(TextButton, '5').first);
+        await t.pump();
         await _tapText(t, 'Chọn danh mục');
         await shot();
       },
@@ -257,8 +263,6 @@ final _scenarios =
 
 void main() {
   autoUpdateGoldenFiles = true;
-  // Mặc định test vẽ bóng đổ thành khối đặc (viền đen); bật bóng thật.
-  debugDisableShadows = false;
   WidgetsApp.debugAllowBannerOverride = false;
   setUpAll(_loadFonts);
 

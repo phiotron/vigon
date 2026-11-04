@@ -239,7 +239,7 @@ class _AccountFilterMenu extends ConsumerWidget {
                     ),
                   ),
                   if (on) ...[
-                    const SizedBox(width: VgSpace.s3),
+                    const SizedBox(width: VgSpace.s2),
                     Icon(Symbols.check_rounded, size: 20, color: fg),
                   ],
                 ],
