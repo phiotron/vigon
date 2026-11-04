@@ -66,6 +66,10 @@ def main() -> None:
         if t["value"]["light"] != t["value"]["dark"]:
             raise SystemExit(f"{t['name']} khác nhau giữa hai chủ đề; generator chờ màu danh mục chung")
     shadows = data["shadow"]["tokens"]
+    first = re.search(r'"([^"]+)"', data["type"]["families"]["sans"])
+    if not first:
+        raise SystemExit("Không đọc được họ chữ sans trong tokens.json")
+    family = first.group(1).replace(" ", "")
 
     fields = [camel(t["name"]) for t in named] + [camel(t["name"]) for t in shadows]
 
@@ -121,7 +125,11 @@ def main() -> None:
     out += consts("VgSize", "Vùng chạm tối thiểu và chiều cao thanh tiêu đề, dp/pt.", data["size"]["tokens"], "")
 
     out += [
-        "/// 12 kiểu chữ; họ chữ lấy từ theme (Be Vietnam Pro). Số tiền dùng số đều độ rộng.",
+        "/// Họ chữ của app, khai trong pubspec.yaml (file font ở assets/fonts/).",
+        f"const vgFontFamily = '{family}';",
+        "",
+        "/// 12 kiểu chữ, đều mang họ chữ riêng để không rơi về font hệ thống khi",
+        "/// dùng trực tiếp (nút, chip, hộp thoại). Số tiền dùng số đều độ rộng.",
         "abstract final class VgType {",
     ]
     for group in data["type"]["groups"]:
@@ -129,7 +137,7 @@ def main() -> None:
             size, line = float(s["fontSize"].removesuffix("px")), float(s["lineHeight"].removesuffix("px"))
             features = ", fontFeatures: [FontFeature.tabularFigures()]" if s["name"].startswith("amount-") else ""
             out.append(
-                f"  static const {camel(s['name'])} = TextStyle(fontSize: {px(s['fontSize'])}, "
+                f"  static const {camel(s['name'])} = TextStyle(fontFamily: vgFontFamily, fontSize: {px(s['fontSize'])}, "
                 f"height: {round(line / size, 4)}, fontWeight: FontWeight.w{s['fontWeight']}{features});"
             )
     out += ["}", ""]

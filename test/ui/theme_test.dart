@@ -93,6 +93,32 @@ void main() {
     expect(VgType.amountXl.fontFeatures, [const FontFeature.tabularFigures()]);
   });
 
+  test('mọi kiểu chữ dựng riêng đều mang họ chữ Be Vietnam Pro, không rơi về '
+      'font hệ thống (UI-02)', () {
+    for (final style in [
+      VgType.amountXl, VgType.amountMd, VgType.titleLg, VgType.titleMd,
+      VgType.titleSm, VgType.bodyMd, VgType.bodySm, VgType.labelLg,
+      VgType.labelMd, VgType.labelSm, VgType.keyDigit, VgType.keyGlyph, //
+    ]) {
+      expect(style.fontFamily, vgFontFamily);
+    }
+    final theme = buildTheme(Brightness.light);
+    final standalone = <String, TextStyle?>{
+      'appBar.title': theme.appBarTheme.titleTextStyle,
+      'dialog.title': theme.dialogTheme.titleTextStyle,
+      'dialog.content': theme.dialogTheme.contentTextStyle,
+      'snackBar.content': theme.snackBarTheme.contentTextStyle,
+      'chip.label': theme.chipTheme.labelStyle,
+    };
+    standalone.forEach((name, style) {
+      expect(style?.fontFamily, vgFontFamily, reason: name);
+    });
+    final filled = theme.filledButtonTheme.style!.textStyle!.resolve({});
+    final text = theme.textButtonTheme.style!.textStyle!.resolve({});
+    expect(filled?.fontFamily, vgFontFamily);
+    expect(text?.fontFamily, vgFontFamily);
+  });
+
   test('các cặp màu đang dùng đủ tương phản ở hai chủ đề (UI-05, AC-40)', () {
     for (final (theme, p) in [('sáng', vgLight), ('tối', vgDark)]) {
       // Chữ: 4,5:1.

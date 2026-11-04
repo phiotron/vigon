@@ -159,8 +159,9 @@ Future<void> disablePin(BuildContext context, WidgetRef ref) async {
 }
 
 /// Khung chung của màn PIN trong Cài đặt (`.vg-pin`): thanh tiêu đề "Khóa bằng
-/// mã PIN" có mũi tên quay lại, bàn phím dồn xuống đáy; thiếu chỗ (cỡ chữ
-/// lớn) thì cả màn cuộn được.
+/// mã PIN" có mũi tên quay lại; tiêu đề, chấm, dòng lỗi ở trên, bàn phím dồn
+/// xuống đáy; thiếu chỗ (cỡ chữ lớn) thì cả màn cuộn được. [pad] phải bật
+/// `expand`.
 class _PinScaffold extends StatelessWidget {
   const _PinScaffold({required this.pad});
 
@@ -169,40 +170,25 @@ class _PinScaffold extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context);
-    final theme = Theme.of(context);
     return Scaffold(
       appBar: AppBar(title: Text(l.pinLock)),
       body: SafeArea(
         top: false,
-        child: LayoutBuilder(
-          builder: (context, c) => SingleChildScrollView(
-            padding: const EdgeInsets.fromLTRB(
-              VgSpace.s4,
-              VgSpace.s2,
-              VgSpace.s4,
-              VgSpace.s6,
-            ),
-            child: ConstrainedBox(
-              constraints: BoxConstraints(
-                minHeight: c.maxHeight - VgSpace.s2 - VgSpace.s6,
-              ),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  // Tiêu đề bước dùng title-lg như bản vẽ 8.1 (PinPad mặc
-                  // định title-md).
-                  Theme(
-                    data: theme.copyWith(
-                      textTheme: theme.textTheme.copyWith(
-                        titleMedium: theme.textTheme.titleLarge,
-                      ),
-                    ),
-                    child: pad,
-                  ),
-                ],
+        child: CustomScrollView(
+          slivers: [
+            SliverFillRemaining(
+              hasScrollBody: false,
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(
+                  VgSpace.s4,
+                  VgSpace.s6,
+                  VgSpace.s4,
+                  VgSpace.s6,
+                ),
+                child: pad,
               ),
             ),
-          ),
+          ],
         ),
       ),
     );
@@ -226,6 +212,8 @@ class _PinSetupState extends State<_PinSetup> {
     final firstStep = _first == null;
     return _PinScaffold(
       pad: PinPad(
+        expand: true,
+        titleStyle: Theme.of(context).textTheme.titleLarge,
         title: firstStep ? l.newPin : l.confirmPin,
         // Cảnh báo quên mã chỉ ở lần nhập đầu (8.1, 8.3), không ở 8.2.
         message: firstStep ? l.pinWarning : null,
@@ -266,6 +254,8 @@ class _PinCheckState extends ConsumerState<_PinCheck> {
     final l = AppLocalizations.of(context);
     return _PinScaffold(
       pad: PinPad(
+        expand: true,
+        titleStyle: Theme.of(context).textTheme.titleLarge,
         title: l.enterPin,
         error: _error,
         onCompleted: (pin) async {

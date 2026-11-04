@@ -7,7 +7,6 @@ import '../../../l10n/app_localizations.dart';
 import '../../data/currency.dart';
 import '../../providers.dart';
 import '../../ui/format.dart';
-import '../../ui/theme.dart';
 import '../../ui/tokens.g.dart';
 import '../lock/app_lock.dart';
 import 'budget_dialog.dart';

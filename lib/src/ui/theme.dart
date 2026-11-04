@@ -3,8 +3,9 @@ import 'package:material_symbols_icons/symbols.dart';
 
 import 'tokens.g.dart';
 
-/// Họ chữ khai trong `pubspec.yaml`, file ở `assets/fonts/` (D-010).
-const vgFontFamily = 'BeVietnamPro';
+// Họ chữ do tool/gen_tokens.py sinh trong tokens.g.dart; xuất lại cho nơi chỉ
+// import theme.dart.
+export 'tokens.g.dart' show vgFontFamily;
 
 /// Màu không có chỗ trong [ColorScheme]: thu, chi, vuốt xóa, focus, bóng.
 class ViGonColors extends ThemeExtension<ViGonColors> {

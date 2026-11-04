@@ -13,7 +13,6 @@ import '../../l10n_names.dart';
 import '../../providers.dart';
 import '../../ui/choice_sheet.dart';
 import '../../ui/format.dart';
-import '../../ui/theme.dart';
 import '../../ui/tokens.g.dart';
 import '../settings/budget_dialog.dart' show currencySymbol;
 

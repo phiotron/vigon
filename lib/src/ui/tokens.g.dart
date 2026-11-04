@@ -232,66 +232,82 @@ abstract final class VgSize {
   static const double appbar = 56;
 }
 
-/// 12 kiểu chữ; họ chữ lấy từ theme (Be Vietnam Pro). Số tiền dùng số đều độ rộng.
+/// Họ chữ của app, khai trong pubspec.yaml (file font ở assets/fonts/).
+const vgFontFamily = 'BeVietnamPro';
+
+/// 12 kiểu chữ, đều mang họ chữ riêng để không rơi về font hệ thống khi
+/// dùng trực tiếp (nút, chip, hộp thoại). Số tiền dùng số đều độ rộng.
 abstract final class VgType {
   static const amountXl = TextStyle(
+    fontFamily: vgFontFamily,
     fontSize: 40,
     height: 1.2,
     fontWeight: FontWeight.w600,
     fontFeatures: [FontFeature.tabularFigures()],
   );
   static const amountMd = TextStyle(
+    fontFamily: vgFontFamily,
     fontSize: 18,
     height: 1.3333,
     fontWeight: FontWeight.w600,
     fontFeatures: [FontFeature.tabularFigures()],
   );
   static const titleLg = TextStyle(
+    fontFamily: vgFontFamily,
     fontSize: 22,
     height: 1.2727,
     fontWeight: FontWeight.w600,
   );
   static const titleMd = TextStyle(
+    fontFamily: vgFontFamily,
     fontSize: 18,
     height: 1.3333,
     fontWeight: FontWeight.w600,
   );
   static const titleSm = TextStyle(
+    fontFamily: vgFontFamily,
     fontSize: 16,
     height: 1.5,
     fontWeight: FontWeight.w600,
   );
   static const bodyMd = TextStyle(
+    fontFamily: vgFontFamily,
     fontSize: 16,
     height: 1.5,
     fontWeight: FontWeight.w400,
   );
   static const bodySm = TextStyle(
+    fontFamily: vgFontFamily,
     fontSize: 14,
     height: 1.4286,
     fontWeight: FontWeight.w400,
   );
   static const labelLg = TextStyle(
+    fontFamily: vgFontFamily,
     fontSize: 16,
     height: 1.5,
     fontWeight: FontWeight.w600,
   );
   static const labelMd = TextStyle(
+    fontFamily: vgFontFamily,
     fontSize: 14,
     height: 1.4286,
     fontWeight: FontWeight.w500,
   );
   static const labelSm = TextStyle(
+    fontFamily: vgFontFamily,
     fontSize: 12,
     height: 1.3333,
     fontWeight: FontWeight.w500,
   );
   static const keyDigit = TextStyle(
+    fontFamily: vgFontFamily,
     fontSize: 24,
     height: 1.3333,
     fontWeight: FontWeight.w500,
   );
   static const keyGlyph = TextStyle(
+    fontFamily: vgFontFamily,
     fontSize: 32,
     height: 1.25,
     fontWeight: FontWeight.w500,
