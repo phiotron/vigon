@@ -403,8 +403,9 @@ class _EntryEditorScreenState extends ConsumerState<EntryEditorScreen> {
                               ],
                             ),
                           ),
-                          // Ô ghi chú `.vg-field` viền outline, cao 52, bộ
-                          // đếm label-sm "0/200" bên phải (AC-04).
+                          // Ô ghi chú `.vg-field` v2 viền outline, cao 56
+                          // (lề trong 16 của theme), bộ đếm label-sm "0/200"
+                          // bên phải (AC-04).
                           Padding(
                             padding: const EdgeInsets.fromLTRB(
                               VgSpace.s4,
@@ -423,10 +424,6 @@ class _EntryEditorScreenState extends ConsumerState<EntryEditorScreen> {
                                 hintStyle: VgType.bodyMd.copyWith(
                                   color: scheme.onSurfaceVariant,
                                 ),
-                                contentPadding: const EdgeInsets.symmetric(
-                                  horizontal: VgSpace.s4,
-                                  vertical: 14,
-                                ),
                                 counterStyle: VgType.labelSm.copyWith(
                                   color: scheme.onSurfaceVariant,
                                 ),
@@ -438,15 +435,20 @@ class _EntryEditorScreenState extends ConsumerState<EntryEditorScreen> {
                       ),
                     ),
                   ),
-                  Keypad(
-                    decimalDigits: digits,
-                    onKey: _onKey,
-                    saveLabel: _categoryId == null ? l.chooseCategory : l.save,
-                    saveColor: color,
-                    saveForeground: isIncome
-                        ? context.vg.onIncome
-                        : context.vg.onExpense,
-                    onSave: _save,
+                  // Thanh thông báo luôn nằm trên bàn phím số + Lưu (v2).
+                  SnackBarClearance(
+                    child: Keypad(
+                      decimalDigits: digits,
+                      onKey: _onKey,
+                      saveLabel: _categoryId == null
+                          ? l.chooseCategory
+                          : l.save,
+                      saveColor: color,
+                      saveForeground: isIncome
+                          ? context.vg.onIncome
+                          : context.vg.onExpense,
+                      onSave: _save,
+                    ),
                   ),
                 ],
               ),
