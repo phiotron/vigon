@@ -13,10 +13,13 @@ import '../../providers.dart';
 import '../../ui/category_avatar.dart';
 import '../../ui/choice_sheet.dart';
 import '../../ui/confirm_dialog.dart';
+import '../../ui/dialog.dart';
 import '../../ui/theme.dart';
 import '../../ui/tokens.g.dart';
 import '../entry/keypad.dart' show minorUnitsToInput;
+import '../settings/budget_dialog.dart' show currencySymbol;
 import 'category_icons.dart';
+import 'sheet_footer.dart';
 
 /// Quản lý danh mục chi và thu: thêm, sửa, sắp xếp, xóa (F-05), theo S10
 /// (6.1–6.3): hai tab Chi / Thu, nút nổi + "Thêm danh mục".
@@ -354,34 +357,6 @@ class _CategoryEditorState extends ConsumerState<_CategoryEditor> {
                       ),
                     ),
                   ),
-                  if (widget.type == CategoryType.expense)
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(
-                        VgSpace.s6,
-                        VgSpace.s2,
-                        VgSpace.s6,
-                        0,
-                      ),
-                      child: TextField(
-                        key: const ValueKey('category-budget'),
-                        controller: _budget,
-                        keyboardType: const TextInputType.numberWithOptions(
-                          decimal: true,
-                        ),
-                        inputFormatters: [
-                          FilteringTextInputFormatter.allow(RegExp(r'[0-9.,]')),
-                        ],
-                        style: const TextStyle(
-                          fontFeatures: [FontFeature.tabularFigures()],
-                        ),
-                        decoration: InputDecoration(
-                          labelText: l.categoryBudget,
-                          helperText: l.categoryBudgetHint,
-                          helperMaxLines: 3,
-                          errorText: _budgetError,
-                        ),
-                      ),
-                    ),
                   label(l.icon),
                   // 31 biểu tượng, 7 cột; ô đang chọn nền màu danh mục, icon tô đầy.
                   _CellGrid(
@@ -425,43 +400,63 @@ class _CategoryEditorState extends ConsumerState<_CategoryEditor> {
                         ),
                     ],
                   ),
+                  // SCR-16: ô hạn mức sau Màu, chỉ danh mục chi, có ký hiệu
+                  // tiền tệ; lỗi thay chỗ dòng gợi ý (AC-54).
+                  if (widget.type == CategoryType.expense)
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(
+                        VgSpace.s4,
+                        VgSpace.s6,
+                        VgSpace.s4,
+                        VgSpace.s4,
+                      ),
+                      child: TextField(
+                        key: const ValueKey('category-budget'),
+                        controller: _budget,
+                        keyboardType: const TextInputType.numberWithOptions(
+                          decimal: true,
+                        ),
+                        inputFormatters: [
+                          FilteringTextInputFormatter.allow(RegExp(r'[0-9.,]')),
+                        ],
+                        style: const TextStyle(
+                          fontFeatures: [FontFeature.tabularFigures()],
+                        ),
+                        decoration: InputDecoration(
+                          labelText: l.categoryBudget,
+                          suffixText: currencySymbol(
+                            ref.watch(currencyProvider).value ?? 'VND',
+                          ),
+                          helperText: l.categoryBudgetHint,
+                          helperMaxLines: 3,
+                          errorText: _budgetError,
+                          errorMaxLines: 3,
+                        ),
+                      ),
+                    ),
                 ],
               ),
             ),
           ),
-          // Nút nằm ngoài vùng cuộn để "Lưu" luôn thấy dù thêm ô hạn mức (F-20).
-          Padding(
-            padding: const EdgeInsets.fromLTRB(
-              VgSpace.s4,
-              VgSpace.s3,
-              VgSpace.s4,
-              VgSpace.s4,
-            ),
-            child: Row(
-              children: [
-                if (canDelete)
-                  TextButton(
-                    style: TextButton.styleFrom(foregroundColor: scheme.error),
-                    onPressed: _delete,
-                    child: Text(l.deleteCategory),
-                  ),
-                const Spacer(),
-                FilledButton(
-                  style: FilledButton.styleFrom(
+          // Footer ghim ngoài vùng cuộn, nằm trên bàn phím (SCR-16).
+          SheetFooter(
+            children: [
+              if (canDelete)
+                TextButton.icon(
+                  style: TextButton.styleFrom(
+                    foregroundColor: scheme.error,
                     minimumSize: const Size(VgSize.tapMin, VgSize.tapMin),
-                    padding: const EdgeInsets.symmetric(horizontal: VgSpace.s6),
-                    textStyle: VgType.labelLg.copyWith(
-                      fontFamily: vgFontFamily,
-                    ),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(VgRadius.lg),
-                    ),
                   ),
-                  onPressed: _save,
-                  child: Text(l.save),
+                  icon: const Icon(Symbols.delete_rounded),
+                  label: Text(l.deleteCategory),
+                  onPressed: _delete,
                 ),
-              ],
-            ),
+              FilledButton(
+                style: sheetFilledButtonStyle(),
+                onPressed: _save,
+                child: Text(l.save),
+              ),
+            ],
           ),
         ],
       ),
@@ -526,7 +521,8 @@ class _ColorSwatch extends StatelessWidget {
   );
 }
 
-/// Chọn danh mục nhận các khoản khi xóa (6.3); chạm là xóa, có nút Hủy.
+/// Chọn danh mục nhận các khoản khi xóa (6.3): [VgDialog] thân cuộn (200%),
+/// chạm một danh mục là xóa, có nút Hủy.
 class _MoveToDialog extends StatelessWidget {
   const _MoveToDialog({required this.count, required this.categories});
 
@@ -536,50 +532,30 @@ class _MoveToDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context);
-    final scheme = Theme.of(context).colorScheme;
-    return AlertDialog(
-      title: Text(l.deleteCategoryConfirm),
-      contentPadding: const EdgeInsets.fromLTRB(
-        VgSpace.s6,
-        VgSpace.s3,
-        VgSpace.s6,
-        0,
-      ),
-      content: SizedBox(
-        width: double.maxFinite,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Text(
-              l.moveEntriesTo(count),
-              style: Theme.of(context).textTheme.bodyMedium
-                  ?.copyWith(color: scheme.onSurfaceVariant),
-            ),
-            const SizedBox(height: VgSpace.s1),
-            Flexible(
-              child: ListView(
-                shrinkWrap: true,
+    return VgDialog(
+      title: l.deleteCategoryConfirm,
+      icon: Symbols.delete_rounded,
+      body: l.moveEntriesTo(count),
+      content: [
+        for (final o in categories)
+          InkWell(
+            borderRadius: BorderRadius.circular(VgRadius.sm),
+            onTap: () => Navigator.pop(context, o.id),
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(minHeight: VgSize.tapKey),
+              child: Row(
                 children: [
-                  for (final o in categories)
-                    ListTile(
-                      contentPadding: EdgeInsets.zero,
-                      leading: CategoryAvatar(category: o, size: 40),
-                      title: Text(categoryLabel(l, o)),
-                      onTap: () => Navigator.pop(context, o.id),
-                    ),
+                  CategoryAvatar(category: o, size: 40),
+                  const SizedBox(width: VgSpace.s4),
+                  Expanded(
+                    child: Text(categoryLabel(l, o), style: VgType.bodyMd),
+                  ),
                 ],
               ),
             ),
-          ],
-        ),
-      ),
-      actions: [
-        TextButton(
-          onPressed: () => Navigator.pop(context),
-          child: Text(l.cancel),
-        ),
+          ),
       ],
+      actions: [VgDialog.cancelButton(context)],
     );
   }
 }

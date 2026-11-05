@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:vigon/src/ui/dialog.dart';
 import 'package:vigon/src/data/account_repository.dart';
 import 'package:vigon/src/data/database.dart';
 import 'package:vigon/src/data/settings_repository.dart';
@@ -129,7 +130,7 @@ void main() {
     expect(find.text('1 khoản sẽ được chuyển sang:'), findsOneWidget);
     await tester.tap(
       find.descendant(
-        of: find.byType(AlertDialog),
+        of: find.byType(VgDialog),
         matching: find.text('Đi lại'),
       ),
     );
