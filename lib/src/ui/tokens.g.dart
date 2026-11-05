@@ -1,4 +1,4 @@
-// SINH TỰ ĐỘNG bởi tool/gen_tokens.py từ design/current/screens/tokens.json.
+// SINH TỰ ĐỘNG bởi tool/gen_tokens.py từ design/hifi/tokens/tokens.json (v2).
 // Không sửa tay: sửa tokens.json rồi chạy `python tool/gen_tokens.py` (D-010).
 // ignore_for_file: public_member_api_docs
 
@@ -14,6 +14,7 @@ class VgPalette {
     required this.secondaryContainer,
     required this.onSecondaryContainer,
     required this.surface,
+    required this.surfaceContainerLow,
     required this.surfaceContainer,
     required this.surfaceContainerHigh,
     required this.ink,
@@ -26,12 +27,23 @@ class VgPalette {
     required this.onExpense,
     required this.error,
     required this.onError,
+    required this.errorContainer,
+    required this.onErrorContainer,
     required this.swipeDelete,
     required this.inverseSurface,
     required this.inverseInk,
     required this.inversePrimary,
     required this.focus,
     required this.scrim,
+    required this.brandDeep,
+    required this.brandMint,
+    required this.brandPaper,
+    required this.brandDot,
+    required this.widgetSurface,
+    required this.widgetInk,
+    required this.widgetExpense,
+    required this.widgetIncome,
+    required this.onWidgetAction,
     required this.onCat,
     required this.shadowSheet,
     required this.shadowFloat,
@@ -44,6 +56,7 @@ class VgPalette {
   final Color secondaryContainer;
   final Color onSecondaryContainer;
   final Color surface;
+  final Color surfaceContainerLow;
   final Color surfaceContainer;
   final Color surfaceContainerHigh;
   final Color ink;
@@ -56,12 +69,23 @@ class VgPalette {
   final Color onExpense;
   final Color error;
   final Color onError;
+  final Color errorContainer;
+  final Color onErrorContainer;
   final Color swipeDelete;
   final Color inverseSurface;
   final Color inverseInk;
   final Color inversePrimary;
   final Color focus;
   final Color scrim;
+  final Color brandDeep;
+  final Color brandMint;
+  final Color brandPaper;
+  final Color brandDot;
+  final Color widgetSurface;
+  final Color widgetInk;
+  final Color widgetExpense;
+  final Color widgetIncome;
+  final Color onWidgetAction;
   final Color onCat;
   final List<BoxShadow> shadowSheet;
   final List<BoxShadow> shadowFloat;
@@ -87,6 +111,11 @@ class VgPalette {
       t,
     )!,
     surface: Color.lerp(a.surface, b.surface, t)!,
+    surfaceContainerLow: Color.lerp(
+      a.surfaceContainerLow,
+      b.surfaceContainerLow,
+      t,
+    )!,
     surfaceContainer: Color.lerp(a.surfaceContainer, b.surfaceContainer, t)!,
     surfaceContainerHigh: Color.lerp(
       a.surfaceContainerHigh,
@@ -103,12 +132,23 @@ class VgPalette {
     onExpense: Color.lerp(a.onExpense, b.onExpense, t)!,
     error: Color.lerp(a.error, b.error, t)!,
     onError: Color.lerp(a.onError, b.onError, t)!,
+    errorContainer: Color.lerp(a.errorContainer, b.errorContainer, t)!,
+    onErrorContainer: Color.lerp(a.onErrorContainer, b.onErrorContainer, t)!,
     swipeDelete: Color.lerp(a.swipeDelete, b.swipeDelete, t)!,
     inverseSurface: Color.lerp(a.inverseSurface, b.inverseSurface, t)!,
     inverseInk: Color.lerp(a.inverseInk, b.inverseInk, t)!,
     inversePrimary: Color.lerp(a.inversePrimary, b.inversePrimary, t)!,
     focus: Color.lerp(a.focus, b.focus, t)!,
     scrim: Color.lerp(a.scrim, b.scrim, t)!,
+    brandDeep: Color.lerp(a.brandDeep, b.brandDeep, t)!,
+    brandMint: Color.lerp(a.brandMint, b.brandMint, t)!,
+    brandPaper: Color.lerp(a.brandPaper, b.brandPaper, t)!,
+    brandDot: Color.lerp(a.brandDot, b.brandDot, t)!,
+    widgetSurface: Color.lerp(a.widgetSurface, b.widgetSurface, t)!,
+    widgetInk: Color.lerp(a.widgetInk, b.widgetInk, t)!,
+    widgetExpense: Color.lerp(a.widgetExpense, b.widgetExpense, t)!,
+    widgetIncome: Color.lerp(a.widgetIncome, b.widgetIncome, t)!,
+    onWidgetAction: Color.lerp(a.onWidgetAction, b.onWidgetAction, t)!,
     onCat: Color.lerp(a.onCat, b.onCat, t)!,
     shadowSheet: BoxShadow.lerpList(a.shadowSheet, b.shadowSheet, t)!,
     shadowFloat: BoxShadow.lerpList(a.shadowFloat, b.shadowFloat, t)!,
@@ -123,6 +163,7 @@ const vgLight = VgPalette(
   secondaryContainer: Color(0xFFCCE8DF),
   onSecondaryContainer: Color(0xFF062019),
   surface: Color(0xFFF7FAF8),
+  surfaceContainerLow: Color(0xFFF2F6F4),
   surfaceContainer: Color(0xFFECF2EF),
   surfaceContainerHigh: Color(0xFFE3EBE7),
   ink: Color(0xFF171D1B),
@@ -135,12 +176,23 @@ const vgLight = VgPalette(
   onExpense: Color(0xFFFFFFFF),
   error: Color(0xFFBA1A1A),
   onError: Color(0xFFFFFFFF),
+  errorContainer: Color(0xFFFFDAD6),
+  onErrorContainer: Color(0xFF410002),
   swipeDelete: Color(0xFFFFDAD6),
   inverseSurface: Color(0xFF2C3230),
   inverseInk: Color(0xFFEDF2EF),
   inversePrimary: Color(0xFF8CD5BF),
   focus: Color(0xFF0E5244),
   scrim: Color(0x66000000),
+  brandDeep: Color(0xFF0E5244),
+  brandMint: Color(0xFF8CD5BF),
+  brandPaper: Color(0xFFF7FAF8),
+  brandDot: Color(0xFFE65100),
+  widgetSurface: Color(0xFF0E5244),
+  widgetInk: Color(0xFFF7FAF8),
+  widgetExpense: Color(0xFFC62828),
+  widgetIncome: Color(0xFF2E7D32),
+  onWidgetAction: Color(0xFFFFFFFF),
   onCat: Color(0xFFFFFFFF),
   shadowSheet: [
     BoxShadow(color: Color(0x1F000000), offset: Offset(0, -2), blurRadius: 12),
@@ -158,6 +210,7 @@ const vgDark = VgPalette(
   secondaryContainer: Color(0xFF334B44),
   onSecondaryContainer: Color(0xFFCCE8DF),
   surface: Color(0xFF0F1513),
+  surfaceContainerLow: Color(0xFF171D1B),
   surfaceContainer: Color(0xFF1B211F),
   surfaceContainerHigh: Color(0xFF252B29),
   ink: Color(0xFFDEE4E1),
@@ -170,12 +223,23 @@ const vgDark = VgPalette(
   onExpense: Color(0xFF2D0A0A),
   error: Color(0xFFFFB4AB),
   onError: Color(0xFF690005),
+  errorContainer: Color(0xFF93000A),
+  onErrorContainer: Color(0xFFFFDAD6),
   swipeDelete: Color(0xFF5C1714),
   inverseSurface: Color(0xFFDEE4E1),
   inverseInk: Color(0xFF2C3230),
   inversePrimary: Color(0xFF0E5244),
   focus: Color(0xFF8CD5BF),
   scrim: Color(0x99000000),
+  brandDeep: Color(0xFF0E5244),
+  brandMint: Color(0xFF8CD5BF),
+  brandPaper: Color(0xFFF7FAF8),
+  brandDot: Color(0xFFE65100),
+  widgetSurface: Color(0xFF0E5244),
+  widgetInk: Color(0xFFF7FAF8),
+  widgetExpense: Color(0xFFC62828),
+  widgetIncome: Color(0xFF2E7D32),
+  onWidgetAction: Color(0xFFFFFFFF),
   onCat: Color(0xFFFFFFFF),
   shadowSheet: [
     BoxShadow(color: Color(0x80000000), offset: Offset(0, -2), blurRadius: 12),
@@ -221,6 +285,7 @@ abstract final class VgRadius {
   static const double md = 12;
   static const double lg = 16;
   static const double xl = 28;
+  static const double widget = 20;
   static const double full = 999;
 }
 
@@ -230,6 +295,7 @@ abstract final class VgSize {
   static const double tapKey = 56;
   static const double tapMain = 64;
   static const double appbar = 56;
+  static const double rowTwoLine = 72;
 }
 
 /// Họ chữ của app, khai trong pubspec.yaml (file font ở assets/fonts/).

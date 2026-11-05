@@ -7,11 +7,24 @@ import 'tokens.g.dart';
 // import theme.dart.
 export 'tokens.g.dart' show vgFontFamily;
 
-/// Màu không có chỗ trong [ColorScheme]: thu, chi, vuốt xóa, focus, bóng.
+/// Màu không có chỗ trong [ColorScheme]: thu, chi, vuốt xóa, focus, bóng,
+/// màu logo (`brand-*`) và widget màn hình chờ (`widget-*`, token v2).
 class ViGonColors extends ThemeExtension<ViGonColors> {
   const ViGonColors(this.palette);
 
   final VgPalette palette;
+
+  /// Nền logo, vòng icon thông báo Android (token v2 `brand-deep`, D-009).
+  Color get brandDeep => palette.brandDeep;
+
+  /// Thẻ sau của logo (`brand-mint`).
+  Color get brandMint => palette.brandMint;
+
+  /// Thẻ trước của logo (`brand-paper`).
+  Color get brandPaper => palette.brandPaper;
+
+  /// Nút tròn cam trên logo (`brand-dot`).
+  Color get brandDot => palette.brandDot;
 
   @override
   ViGonColors copyWith({VgPalette? palette}) =>
@@ -43,14 +56,16 @@ ThemeData buildTheme(Brightness brightness) {
     onSecondaryContainer: p.onSecondaryContainer,
     error: p.error,
     onError: p.onError,
-    // Nền vuốt xóa và icon trên nó (4.2).
-    errorContainer: p.swipeDelete,
-    onErrorContainer: p.error,
+    // Dải lỗi sao lưu tự động, nhãn Vượt nhỏ (token v2). Nền vuốt xóa dùng
+    // `context.vg.swipeDelete` riêng (cùng giá trị ở chủ đề sáng).
+    errorContainer: p.errorContainer,
+    onErrorContainer: p.onErrorContainer,
     surface: p.surface,
     onSurface: p.ink,
     onSurfaceVariant: p.inkMuted,
     surfaceContainerLowest: p.surface,
-    surfaceContainerLow: p.surface,
+    // Thẻ nhóm trong Cài đặt (SCR-12/33, token v2).
+    surfaceContainerLow: p.surfaceContainerLow,
     surfaceContainer: p.surfaceContainer,
     surfaceContainerHigh: p.surfaceContainerHigh,
     surfaceContainerHighest: p.surfaceContainerHigh,
@@ -125,11 +140,19 @@ ThemeData buildTheme(Brightness brightness) {
         surfaceTintColor: const WidgetStatePropertyAll(Colors.transparent),
       ),
     ),
+    // Thanh thông báo (`.vg-snack`): nổi, lề 12, bo `radius-sm`. Nội dung
+    // dựng bằng [VgSnackContent] (messenger.dart).
     snackBarTheme: SnackBarThemeData(
       behavior: SnackBarBehavior.floating,
       backgroundColor: p.inverseSurface,
       contentTextStyle: ink(VgType.bodySm, p.inverseInk),
       actionTextColor: p.inversePrimary,
+      insetPadding: const EdgeInsets.fromLTRB(
+        VgSpace.s3,
+        VgSpace.s1,
+        VgSpace.s3,
+        VgSpace.s3,
+      ),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(VgRadius.sm),
       ),
@@ -145,7 +168,29 @@ ThemeData buildTheme(Brightness brightness) {
       labelPadding: const EdgeInsets.only(left: VgSpace.s1),
       iconTheme: IconThemeData(color: p.inkMuted, size: 18),
     ),
+    // Ô nhập (`.vg-field` v2): cao tối thiểu 56 (cao lên theo cỡ chữ), viền
+    // 1 `outline`; đang gõ viền 2 `primary`, lỗi viền 2 `error`.
     inputDecorationTheme: InputDecorationTheme(
+      constraints: const BoxConstraints(minHeight: VgSize.tapKey),
+      contentPadding: const EdgeInsets.symmetric(
+        horizontal: VgSpace.s4,
+        vertical: VgSpace.s4,
+      ),
+      labelStyle: VgType.bodyMd.copyWith(color: p.inkMuted),
+      floatingLabelStyle: WidgetStateTextStyle.resolveWith(
+        (states) => VgType.labelSm.copyWith(
+          fontWeight: FontWeight.w400,
+          color: states.contains(WidgetState.error)
+              ? p.error
+              : states.contains(WidgetState.focused)
+              ? p.primary
+              : p.inkMuted,
+        ),
+      ),
+      hintStyle: VgType.bodyMd.copyWith(color: p.inkMuted),
+      helperStyle: VgType.bodySm.copyWith(color: p.inkMuted),
+      errorStyle: VgType.bodySm.copyWith(color: p.error),
+      suffixIconColor: p.inkMuted,
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(VgRadius.sm),
         borderSide: BorderSide(color: p.outline),
@@ -153,6 +198,22 @@ ThemeData buildTheme(Brightness brightness) {
       enabledBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(VgRadius.sm),
         borderSide: BorderSide(color: p.outline),
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(VgRadius.sm),
+        borderSide: BorderSide(color: p.primary, width: 2),
+      ),
+      errorBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(VgRadius.sm),
+        borderSide: BorderSide(color: p.error, width: 2),
+      ),
+      focusedErrorBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(VgRadius.sm),
+        borderSide: BorderSide(color: p.error, width: 2),
+      ),
+      disabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(VgRadius.sm),
+        borderSide: BorderSide(color: p.ink.withValues(alpha: 0.12)),
       ),
     ),
     floatingActionButtonTheme: FloatingActionButtonThemeData(
@@ -167,6 +228,16 @@ ThemeData buildTheme(Brightness brightness) {
     filledButtonTheme: FilledButtonThemeData(
       style: FilledButton.styleFrom(
         minimumSize: const Size(VgSize.tapMin, 40),
+        textStyle: VgType.labelMd,
+        shape: const StadiumBorder(),
+      ),
+    ),
+    // Nút viền (`.vg-btn.outline`): viền `outline`, chữ màu chữ chính.
+    outlinedButtonTheme: OutlinedButtonThemeData(
+      style: OutlinedButton.styleFrom(
+        minimumSize: const Size(VgSize.tapMin, 40),
+        foregroundColor: p.ink,
+        side: BorderSide(color: p.outline),
         textStyle: VgType.labelMd,
         shape: const StadiumBorder(),
       ),
@@ -187,6 +258,35 @@ ThemeData buildTheme(Brightness brightness) {
     ),
     // iPhone dùng chuyển trang Cupertino (vuốt mép trái để quay lại) theo
     // mặc định của PageTransitionsTheme; không cần khai riêng.
+  );
+}
+
+/// Thời lượng chuyển động (design/hifi/tokens/motion.md): 150–250 ms.
+abstract final class VgMotion {
+  static const short = Duration(milliseconds: 150);
+  static const medium = Duration(milliseconds: 200);
+  static const long = Duration(milliseconds: 250);
+
+  /// Đường cong M3 *standard* `cubic-bezier(.2,0,0,1)`.
+  static const standard = Cubic(0.2, 0, 0, 1);
+
+  /// *Emphasized decelerate* `cubic-bezier(.05,.7,.1,1)` cho thứ đi vào.
+  static const enter = Cubic(0.05, 0.7, 0.1, 1);
+
+  /// Người dùng bật "giảm chuyển động": mọi chuyển động thành mờ dần 100 ms
+  /// hoặc đổi ngay.
+  static bool reduced(BuildContext context) =>
+      MediaQuery.maybeDisableAnimationsOf(context) ?? false;
+}
+
+/// Nút tông nhẹ (`.vg-btn.tonal`): nền `secondary-container`, chữ
+/// `on-secondary-container`. `FilledButton.tonal` đã đúng màu theo theme;
+/// hàm này cho chỗ cần [ButtonStyle] riêng.
+ButtonStyle tonalButtonStyle(BuildContext context) {
+  final scheme = Theme.of(context).colorScheme;
+  return FilledButton.styleFrom(
+    backgroundColor: scheme.secondaryContainer,
+    foregroundColor: scheme.onSecondaryContainer,
   );
 }
 

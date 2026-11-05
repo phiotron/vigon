@@ -17,7 +17,7 @@ double _contrast(Color a, Color b) {
 
 void main() {
   final tokens = jsonDecode(
-    File('design/current/screens/tokens.json').readAsStringSync(),
+    File('design/hifi/tokens/tokens.json').readAsStringSync(),
   ) as Map<String, dynamic>;
   final colorTokens = {
     for (final t in (tokens['color']['tokens'] as List))
@@ -39,6 +39,19 @@ void main() {
         'error': p.error,
         'swipe-delete': p.swipeDelete,
         'inverse-surface': p.inverseSurface,
+        // 14 token thêm ở v2 (design/hifi/tokens/CHANGELOG.md).
+        'surface-container-low': p.surfaceContainerLow,
+        'error-container': p.errorContainer,
+        'on-error-container': p.onErrorContainer,
+        'brand-deep': p.brandDeep,
+        'brand-mint': p.brandMint,
+        'brand-paper': p.brandPaper,
+        'brand-dot': p.brandDot,
+        'widget-surface': p.widgetSurface,
+        'widget-ink': p.widgetInk,
+        'widget-expense': p.widgetExpense,
+        'widget-income': p.widgetIncome,
+        'on-widget-action': p.onWidgetAction,
       };
       generated.forEach((name, color) {
         expect(color, _hex(colorTokens[name]![theme]!), reason: '$theme $name');
@@ -47,6 +60,28 @@ void main() {
     for (var i = 0; i < 16; i++) {
       final name = 'cat-${(i + 1).toString().padLeft(2, '0')}';
       expect(vgCategoryColors[i], _hex(colorTokens[name]!['light']!));
+    }
+    expect(VgRadius.widget, 20);
+    expect(VgSize.rowTwoLine, 72);
+  });
+
+  test('token v2 vào đúng chỗ của theme (CHANGELOG cột "Maps to")', () {
+    for (final (brightness, p) in [
+      (Brightness.light, vgLight),
+      (Brightness.dark, vgDark),
+    ]) {
+      final theme = buildTheme(brightness);
+      final s = theme.colorScheme;
+      expect(s.surfaceContainerLow, p.surfaceContainerLow);
+      expect(s.errorContainer, p.errorContainer);
+      expect(s.onErrorContainer, p.onErrorContainer);
+      final vg = theme.extension<ViGonColors>()!;
+      expect(vg.brandDeep, p.brandDeep);
+      expect(vg.brandMint, p.brandMint);
+      expect(vg.brandPaper, p.brandPaper);
+      expect(vg.brandDot, p.brandDot);
+      // Ô nhập cao tối thiểu 56 (v2, trước là 52).
+      expect(theme.inputDecorationTheme.constraints!.minHeight, 56);
     }
   });
 
@@ -148,6 +183,15 @@ void main() {
         'error/surface': (p.error, p.surface),
         'error/surface-container-high': (p.error, p.surfaceContainerHigh),
         'primary/surface': (p.primary, p.surface),
+        // v2: thẻ nhóm Cài đặt và dải lỗi sao lưu tự động.
+        'ink/surface-container-low': (p.ink, p.surfaceContainerLow),
+        'ink-muted/surface-container-low': (p.inkMuted, p.surfaceContainerLow),
+        'primary/surface-container-low': (p.primary, p.surfaceContainerLow),
+        'error/surface-container-low': (p.error, p.surfaceContainerLow),
+        'on-error-container': (p.onErrorContainer, p.errorContainer),
+        'widget-ink/widget-surface': (p.widgetInk, p.widgetSurface),
+        'on-widget-action/widget-expense': (p.onWidgetAction, p.widgetExpense),
+        'on-widget-action/widget-income': (p.onWidgetAction, p.widgetIncome),
       };
       text.forEach((name, pair) {
         expect(

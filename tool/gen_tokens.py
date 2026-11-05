@@ -1,8 +1,9 @@
-"""Sinh lib/src/ui/tokens.g.dart từ design/current/screens/tokens.json (D-010).
+"""Sinh lib/src/ui/tokens.g.dart từ design/hifi/tokens/tokens.json (token v2, D-010, D-023).
 
 Chạy tại thư mục app mỗi khi token đổi:
     python tool/gen_tokens.py
-Không sửa tay file sinh ra; sửa tokens.json (xuất lại từ design system "Ví Gọn") rồi chạy lại.
+Không sửa tay file sinh ra; sửa tokens.json (xuất lại từ Design System v2 "Ví Gọn", design/LINKS.md) rồi chạy lại.
+Token v1 cũ ở design/current/screens/tokens.json chỉ giữ làm lịch sử.
 """
 
 import json
@@ -15,7 +16,7 @@ from pathlib import Path
 sys.stdout.reconfigure(encoding="utf-8")
 
 APP = Path(__file__).resolve().parent.parent
-SRC = APP / "design" / "current" / "screens" / "tokens.json"
+SRC = APP / "design" / "hifi" / "tokens" / "tokens.json"
 OUT = APP / "lib" / "src" / "ui" / "tokens.g.dart"
 
 # Màu chỉ dùng cho bảng trình bày, không vào app.
@@ -74,7 +75,7 @@ def main() -> None:
     fields = [camel(t["name"]) for t in named] + [camel(t["name"]) for t in shadows]
 
     out = [
-        "// SINH TỰ ĐỘNG bởi tool/gen_tokens.py từ design/current/screens/tokens.json.",
+        "// SINH TỰ ĐỘNG bởi tool/gen_tokens.py từ design/hifi/tokens/tokens.json (v2).",
         "// Không sửa tay: sửa tokens.json rồi chạy `python tool/gen_tokens.py` (D-010).",
         "// ignore_for_file: public_member_api_docs",
         "",

@@ -12,6 +12,7 @@ import '../../providers.dart';
 import '../../ui/category_avatar.dart';
 import '../../ui/format.dart';
 import '../../ui/messenger.dart';
+import '../../ui/theme.dart';
 import '../../ui/tokens.g.dart';
 import 'category_budget.dart';
 import 'entry_search.dart';
@@ -332,13 +333,13 @@ class _EntryTile extends ConsumerWidget {
     return Dismissible(
       key: ValueKey('entry-${entry.id}'),
       direction: DismissDirection.endToStart,
-      // Nền `swipe-delete`, thùng rác màu `error` (theme đặt errorContainer
-      // và onErrorContainer theo hai token này).
+      // Nền `swipe-delete`, thùng rác màu `error`. Từ token v2 errorContainer
+      // của theme là dải lỗi (khác màu ở chủ đề tối), nên dùng token riêng.
       background: Container(
-        color: scheme.errorContainer,
+        color: context.vg.swipeDelete,
         alignment: Alignment.centerRight,
         padding: const EdgeInsets.only(right: VgSpace.s6),
-        child: Icon(Symbols.delete_rounded, color: scheme.onErrorContainer),
+        child: Icon(Symbols.delete_rounded, color: context.vg.error),
       ),
       onDismissed: (_) async {
         final repo = ref.read(entryRepositoryProvider);
