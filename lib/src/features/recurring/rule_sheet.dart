@@ -354,7 +354,8 @@ class _RuleSheetState extends State<RuleSheet> {
                         icon: Symbols.restart_alt_rounded,
                         padding: const EdgeInsets.only(top: 6),
                       ),
-                    if (widget.categories.isNotEmpty && _categoryId != null) ...[
+                    if (widget.categories.isNotEmpty &&
+                        _categoryId != null) ...[
                       const SizedBox(height: VgSpace.s6),
                       _PickerField(
                         key: const Key('rule-category'),

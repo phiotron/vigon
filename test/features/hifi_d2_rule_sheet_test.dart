@@ -71,9 +71,8 @@ Future<void> _open(
         GlobalCupertinoLocalizations.delegate,
       ],
       builder: (context, app) => MediaQuery(
-        data: MediaQuery.of(
-          context,
-        ).copyWith(textScaler: TextScaler.linear(textScale)),
+        data: MediaQuery.of(context)
+            .copyWith(textScaler: TextScaler.linear(textScale)),
         child: app!,
       ),
       home: Builder(
@@ -174,17 +173,18 @@ void main() {
     expect(got?.categoryId, 3);
   });
 
-  testWidgets('đã dừng + chỉ một tài khoản: pill "Đã dừng", không ô Tài khoản', (
-    tester,
-  ) async {
-    await _open(
-      tester,
-      rule: _rule.copyWith(active: false),
-      accounts: const [_cash],
-    );
-    expect(find.byType(StatusPill), findsOneWidget);
-    expect(find.byKey(const Key('rule-account')), findsNothing);
-  });
+  testWidgets(
+    'đã dừng + chỉ một tài khoản: pill "Đã dừng", không ô Tài khoản',
+    (tester) async {
+      await _open(
+        tester,
+        rule: _rule.copyWith(active: false),
+        accounts: const [_cash],
+      );
+      expect(find.byType(StatusPill), findsOneWidget);
+      expect(find.byKey(const Key('rule-account')), findsNothing);
+    },
+  );
 
   testWidgets('✕ đóng không trả gì', (tester) async {
     var called = false;

@@ -77,6 +77,9 @@ void main() {
       await settle(tester);
       await tester.tap(find.text('Hóa đơn').last);
       await settle(tester);
+      // Bảng toàn màn: ô Tài khoản ở cuối vùng cuộn.
+      await tester.ensureVisible(find.byKey(const Key('rule-account')));
+      await settle(tester);
       await tester.tap(find.byKey(const Key('rule-account')));
       await settle(tester);
       await tester.tap(find.text('Thẻ').last);

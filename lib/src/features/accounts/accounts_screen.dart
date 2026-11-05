@@ -216,9 +216,7 @@ class _AccountEditorState extends ConsumerState<_AccountEditor> {
                         signed: true,
                       ),
                       inputFormatters: [
-                        FilteringTextInputFormatter.allow(
-                          RegExp(r'[0-9.,\-]'),
-                        ),
+                        FilteringTextInputFormatter.allow(RegExp(r'[0-9.,\-]')),
                       ],
                       style: const TextStyle(
                         fontFeatures: [FontFeature.tabularFigures()],
