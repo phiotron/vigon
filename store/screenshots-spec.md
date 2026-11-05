@@ -26,21 +26,24 @@ Kiểm lại bảng kích thước của Google/Apple ngày chụp (đổi theo 
 
 Thứ tự ảnh: 3 ảnh đầu hiện ngay trong kết quả tìm kiếm → đặt 3 ảnh mạnh nhất (màn chính, nhập nhanh, riêng tư) lên đầu.
 
-## 2. Bộ ảnh (cùng nội dung cho hai store, mỗi ngôn ngữ một bộ)
+## 2. Bộ ảnh (mỗi ngôn ngữ một bộ; cập nhật 2026-11-05 theo bản đã gộp F-01..F-26)
+Ảnh 1–7 chung hai store (chụp riêng trên từng nền tảng). Ảnh 8 khác nhau theo nền tảng vì widget chỉ có trên Android (D-019).
 | # | Màn | Trạng thái cần dựng | Chú thích vi | Chú thích en |
 |---|---|---|---|---|
 | 1 | Màn chính, giao diện sáng | Kỳ "Tháng 11/2026", biểu đồ vòng đủ 8 danh mục, thanh ngân sách ~87% | Biết tiền đi đâu | See where your money goes |
 | 2 | Nhập khoản | Loại Chi, bàn phím đang có phép tính `45.000+30.000`, danh mục Ăn uống đang chọn, nút Lưu thấy rõ | Ghi một khoản trong 3 chạm | Log it in three taps |
-| 3 | Cài đặt, khu sao lưu/PIN | Thấy "Khóa bằng mã PIN", "Xuất bản sao lưu", "Xuất CSV" | Dữ liệu chỉ ở trên máy bạn | Your data stays on your phone |
-| 4 | Các khoản | Gom theo danh mục, có phần trăm, ≥ 6 dòng | Xem chi tiết từng khoản | Every record, by category |
+| 3 | Cài đặt, nhóm Bảo mật + Dữ liệu | Thấy "Khóa bằng mã PIN", "Nhắc ghi chép" (Android: bật, 20:00; iPhone trên simulator CI có thể để tắt vì không chạm được hộp thoại quyền), "Xuất bản sao lưu", "Xuất CSV". Android thấy thêm "Che nội dung khi chuyển app" và "Sao lưu tự động"; **iPhone không có hai mục này** (bị ẩn) — đúng | Dữ liệu chỉ ở trên máy bạn | Your data stays on your phone |
+| 4 | Các khoản | Gom theo danh mục, có phần trăm, ≥ 6 dòng; dòng Ăn uống có thanh hạn mức danh mục và chữ "Vượt 420.000" (F-20) | Ngân sách cho từng danh mục | A budget for every category |
 | 5 | Khoản định kỳ | 3 chuỗi: Tiền nhà (tháng), Internet (tháng), Học phí (tháng) | Khoản định kỳ tự ghi | Recurring bills, added for you |
 | 6 | Tài khoản + chuyển tiền | 3 tài khoản: Tiền mặt, Ngân hàng, Thẻ tín dụng; có 1 khoản chuyển | Nhiều ví, chuyển qua lại | Cash, bank and card in one place |
 | 7 | Màn chính, giao diện tối | Như ảnh 1 | Giao diện sáng và tối | Light and dark themes |
-| 8 (tuỳ chọn) | Màn chính cỡ chữ lớn | Cỡ chữ hệ thống lớn, không bị cắt chữ | Dễ đọc với chữ cỡ lớn | Built for large text |
+| 8 — **chỉ Play** | Màn hình chính của Android có widget Ví Gọn 2×2 | Nút "Chi"/"Thu"; bật "Hiện số tiền trên widget", PIN tắt → dòng "Tháng này đã chi 12.980.000 / 15.000.000". Hình nền trơn, **không có icon app khác** trên màn hình (nhãn hiệu người khác) | Ghi khoản ngay từ màn hình chính | Add a record from your home screen |
+| 8 — **chỉ App Store** | Màn chính cỡ chữ lớn | Cỡ chữ hệ thống lớn, không bị cắt chữ | Dễ đọc với chữ cỡ lớn | Built for large text |
 
-Play dùng 8 ảnh (tối đa); App Store dùng 7–8 ảnh. Nếu thêm ảnh widget hoặc Cài đặt → Sao lưu tự động (bản 1.2) thì **chỉ cho bộ Play**:
-hai tính năng này chỉ có trên Android, bộ ảnh iPhone không được có (D-019, App Review 2.3.3). Ảnh 3 chụp trên iPhone sẽ không có
-công tắc "Che nội dung khi chuyển app" (bị ẩn trên iOS) — đó là đúng.
+Tuỳ chọn thêm (chỉ khi bỏ bớt ảnh khác, Play tối đa 8): Cài đặt → Sao lưu tự động (**chỉ Play**); màn tìm kiếm khoản (cả hai).
+Không chụp thông báo nhắc trên màn khoá (simulator CI không chạm được hộp thoại quyền; Android cần adb — hỏi trước).
+Bộ ảnh iPhone **không được** có widget, Sao lưu tự động, công tắc che nội dung, hay chữ "Android"/"Google Play" (App Review 2.3.3, 2.3.10);
+bộ Play không có chữ "iPhone"/"App Store".
 Chú thích (nếu dùng) đặt trong dải màu nền thương hiệu `#0E5244`, chữ
 Be Vietnam Pro 700 trắng, phía trên ảnh màn hình; không thêm khung máy của hãng (tránh dùng hình iPhone/Android có thương hiệu),
 không thêm chữ "Số 1", "Tốt nhất", giá, hay so sánh với app khác. Ảnh phải là **UI thật của app** (App Review 2.3.3).
@@ -54,8 +57,8 @@ Ngày trên máy chụp: **2026-11-24**. Tên tài khoản dùng chữ chung, **
 |---|---|---|---|
 | Thu | Lương | 18.000.000 | 1 khoản ngày 05 |
 | Chi | Nhà cửa | 5.000.000 | Tiền nhà (định kỳ, ngày 01) |
-| Chi | Ăn uống | 3.420.000 | 15–20 khoản nhỏ 35.000–250.000; ghi chú "Cơm trưa", "Cà phê" |
-| Chi | Mua sắm | 1.250.000 | 3 khoản |
+| Chi | Ăn uống | 3.420.000 | 15–20 khoản nhỏ 35.000–250.000; ghi chú "Cơm trưa", "Cà phê"; **hạn mức danh mục 3.000.000** (vượt 420.000, cho ảnh 4) |
+| Chi | Mua sắm | 1.250.000 | 3 khoản; hạn mức danh mục 1.500.000 (~83%) |
 | Chi | Hóa đơn | 1.180.000 | Điện 620.000, Internet 220.000 (định kỳ), Nước 340.000 |
 | Chi | Đi lại | 760.000 | Xăng, gửi xe |
 | Chi | Giáo dục | 600.000 | Học phí tiếng Anh (định kỳ) |
@@ -69,7 +72,7 @@ Tài khoản: Tiền mặt 2.150.000 · Ngân hàng 14.870.000 · Thẻ tín d�
 |---|---|---|
 | Income | Salary | 4,200.00 |
 | Expense | Home | 1,450.00 (rent, recurring) |
-| Expense | Food | 612.40 |
+| Expense | Food | 612.40 (category budget 550.00 → over by 62.40, shot 4) |
 | Expense | Bills | 186.75 (internet recurring) |
 | Expense | Shopping | 158.90 |
 | Expense | Transport | 94.20 |
@@ -78,6 +81,7 @@ Tài khoản: Tiền mặt 2.150.000 · Ngân hàng 14.870.000 · Thẻ tín d�
 Total spent 2,604.75 · balance 1,595.25 · monthly budget **3,000.00** (~87%). Accounts: Cash, Bank, Credit card; one transfer.
 Nhập khoản ảnh 2 (en): `12.50+8.75`, category Food.
 
+Cài đặt cho ảnh: Nhắc ghi chép bật lúc 20:00 trên Android (trên iPhone chỉ bật nếu cấp được quyền thông báo, không thì để tắt); khoá PIN **tắt** khi chụp ảnh 8 Play (để widget hiện số), bật lại cũng được cho ảnh 3.
 Kiểm trước khi chụp: không thông báo, không tên người thật, không email, giờ trên thanh trạng thái 9:41, pin đầy, sóng đầy.
 
 ## 4. Cách chụp (vì máy làm việc là Windows, không có iPhone)

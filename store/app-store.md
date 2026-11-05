@@ -8,10 +8,14 @@ mục, che nội dung ở màn đa nhiệm và icon đơn sắc chỉ có trên 
 hay Review Notes của App Store (App Review 2.3.1, 2.3.10: không mô tả tính năng không có, không nhắc nền tảng khác trong metadata).
 Không sao chép tên, icon, mô tả hay ảnh của app khác (SPEC mục 7).
 
-Project iOS (commit `9438ddd`, đã đối chiếu 2026-11-04): **chỉ iPhone** (`TARGETED_DEVICE_FAMILY = 1`), **chỉ màn dọc**,
-tên hiển thị `Ví Gọn`, min iOS 15.0, `ITSAppUsesNonExemptEncryption = false`, `ios/Runner/PrivacyInfo.xcprivacy` (không tracking,
-không thu thập; required-reason API FileTimestamp `C617.1`, DiskSpace `E174.1`), không khoá `NS…UsageDescription`, không bật
-`UIFileSharingEnabled`. Nếu `ios/` đổi các điểm này, sửa lại mục "Ảnh chụp", "Export compliance" và "App Privacy".
+Project iOS trên `main` sau gộp (đối chiếu lại 2026-11-05, commit `a00bec8`): **chỉ iPhone** (`TARGETED_DEVICE_FAMILY = 1`),
+**chỉ màn dọc**, tên hiển thị `Ví Gọn`, min iOS 15.0, `CFBundleLocalizations` en + vi, `FlutterDeepLinkingEnabled = false`,
+`LSApplicationQueriesSchemes` chỉ `mailto`, `https`, `ITSAppUsesNonExemptEncryption = false` (**cần đổi — xem mục Export compliance**),
+`ios/Runner/PrivacyInfo.xcprivacy` (không tracking, không thu thập; required-reason API FileTimestamp `C617.1`, DiskSpace `E174.1`),
+không khoá `NS…UsageDescription`, không `UIFileSharingEnabled`; icon `AppIcon` đủ cỡ, bản 1024×1024 RGB không alpha (PLAN-001).
+Tính năng theo nền tảng (`lib/src/platform_features.dart`, D-019): iOS **có** nhắc ghi chép (thông báo cục bộ, xin quyền khi bật),
+mật khẩu file sao lưu, tìm kiếm, ẩn tài khoản, ngân sách theo danh mục, tiền tệ ISO; iOS **không có** widget, sao lưu tự động,
+che nội dung đa nhiệm, icon đơn sắc. Nếu `ios/` hoặc danh sách này đổi, sửa lại "Mô tả", "Ảnh chụp", "Export compliance", "App Privacy".
 
 ## Tra trùng tên (2026-11-04)
 - Tìm "Ví Gọn" / "Vi Gon" trên web (apps.apple.com, Google Play): **không thấy app nào trùng tên**. Các app gần tên nhất
@@ -29,7 +33,7 @@ không thu thập; required-reason API FileTimestamp `C617.1`, DiskSpace `E174.1
 | Ngôn ngữ chính | English (U.S.). Thêm bản địa hoá Vietnamese. App chưa có ngôn ngữ nào khác. |
 | Danh mục chính | **Finance** · Danh mục phụ: **Productivity** |
 | Giá | Miễn phí. Không In-App Purchase, không thuê bao, không quảng cáo. |
-| Phân phối | Mọi quốc gia/vùng trừ **Trung Quốc đại lục** (app cần số đăng ký ICP mới được bán ở đó; COMPLIANCE nhóm C chưa mở) và **Nga** (nhóm C). Nhóm D theo COMPLIANCE M-01 khi chốt. |
+| Phân phối | Mọi quốc gia/vùng trừ **Trung Quốc đại lục** (app cần số đăng ký ICP mới được bán ở đó; COMPLIANCE nhóm C chưa mở) và **Nga** (nhóm C). Nhóm D theo COMPLIANCE M-01 khi chốt. Nếu chọn phương án 1 ở mục Export compliance mà chưa nộp khai báo mã hoá cho Pháp: **bỏ cả Pháp** ở bản 1. |
 | Thiết bị | Chỉ iPhone. Không bật "iPhone and iPad Apps on Apple Silicon Macs" và "Apple Vision Pro" (chưa thử). |
 | Copyright | `© 2026 <họ tên người đăng ký Apple Developer>` |
 | Tên người bán (Seller) | Tài khoản **cá nhân** → App Store hiện **họ tên thật** của người đăng ký. Chính sách quyền riêng tư phải ghi đúng tên này (xem `docs/legal/privacy-policy.md`). |
@@ -180,24 +184,39 @@ Kiểm lại câu chữ thật của bảng hỏi trong App Store Connect khi đ
   `NSPrivacyCollectedDataTypes` rỗng (đã kiểm 2026-11-04); các plugin tự kèm manifest riêng.
 - Nếu sau này thêm SDK báo crash, analytics, đồng bộ đám mây → nhãn này SAI, phải khai lại trước khi nộp bản đó.
 
-## Export compliance (mã hoá) — ⚠ PHẢI XÁC NHẬN LẠI KHI NỘP
-- Hiện tại: `ITSAppUsesNonExemptEncryption = NO` trong `ios/Runner/Info.plist` (khi có khoá này, App Store Connect không hỏi lại mỗi build).
-- **Khác bản 1.0:** từ bản 1.1/1.2 app CÓ tự mã hoá: tuỳ chọn đặt mật khẩu cho file sao lưu `.vigon` (F-21, D-012) — AES-256-GCM,
-  khoá từ PBKDF2-HMAC-SHA256, gói Dart `cryptography` (không dùng mã hoá của iOS). Câu "app không tự mã hoá dữ liệu" ở bản nháp cũ
-  KHÔNG còn đúng. (Sao lưu tự động F-24 cũng mã hoá nhưng chỉ có trên Android.)
-- Đề xuất vẫn trả lời **NO / miễn trừ**, lý do:
-  1. Chỉ dùng thuật toán chuẩn quốc tế (AES-GCM, PBKDF2, SHA-256), không thuật toán tự chế hay không chuẩn.
-  2. Mã hoá chỉ bảo vệ dữ liệu của chính người dùng trong file họ tự xuất; chức năng chính của app là ghi chép thu chi, không phải
-     bảo mật thông tin hay truyền thông → thuộc ngoại lệ "mã hoá chỉ hỗ trợ chức năng chính" của Category 5 Part 2 (EAR/Wassenaar).
-  3. Không truyền dữ liệu qua mạng (không mã nguồn gọi mạng, không kênh bảo mật nào); không cho người dùng mã hoá dữ liệu tuỳ ý
-     ngoài file sao lưu của app.
-  4. Băm PIN SHA-256 có muối (gói `crypto`) là hàm băm để xác thực; Keychain là mã hoá của hệ điều hành.
-- **Việc khi nộp (phiên điều phối #3):** đọc lại bảng hỏi export compliance hiện hành trong App Store Connect và tài liệu Apple
-  "Complying with encryption export regulations". Nếu bảng hỏi xếp "dùng thuật toán mã hoá chuẩn thay cho hoặc ngoài mã hoá của
-  iOS" là không miễn trừ hoặc cần tài liệu, thì: đổi khoá thành `YES` (việc của phiên code), trả lời bảng hỏi đúng thực tế, làm
-  giấy tờ Apple yêu cầu (có thể là tự phân loại mass market / báo cáo năm với BIS). Ghi kết quả vào COMPLIANCE P-01..P-05.
-- **Pháp:** bản nháp cũ ghi "không phải khai báo vì không dùng mã hoá ngoài hệ điều hành" — nay app có mã hoá ngoài hệ điều hành,
-  phải kiểm lại nghĩa vụ khai báo phương tiện mã hoá với ANSSI (hoặc chọn không phân phối ở Pháp) trước khi mở bán ở Pháp.
+## Export compliance (mã hoá) — kết luận 2026-11-05: phải khai "có mã hoá chuẩn ngoài iOS"
+**Sự thật trong code (kiểm 2026-11-05):**
+- `lib/src/data/backup_crypto.dart`: file sao lưu có mật khẩu (F-21, D-012) dùng **AES-256-GCM** + khoá từ **PBKDF2-HMAC-SHA256**
+  qua gói Dart `cryptography` 2.9.0 — bản **Dart thuần** (không có `cryptography_flutter` trong `pubspec.lock`), tức **không** gọi
+  mã hoá của iOS (CryptoKit/CommonCrypto). Trên iPhone, người dùng bật được tính năng này (Cài đặt → Xuất bản sao lưu →
+  "Protect file with a password"). Sao lưu tự động (cũng AES-GCM) chỉ có trên Android.
+- Không có mã gọi mạng; không TLS do app tự làm. Băm PIN SHA-256 (gói `crypto`) chỉ để xác thực. Keychain là của iOS.
+
+**Áp vào bảng của Apple** ("Export compliance documentation for encryption", App Store Connect Help):
+| Loại mã hoá | Tài liệu Apple yêu cầu | Ví Gọn |
+|---|---|---|
+| Chỉ mã hoá có sẵn trong hệ điều hành Apple | Không cần | Không đúng nữa (AES-GCM tự cài bằng Dart) |
+| Thuật toán chuẩn quốc tế, **không** lấy từ iOS | **Khai báo mã hoá của Pháp** (chỉ khi phân phối ở Pháp); không cần CCATS của Mỹ | **Đúng trường hợp này** |
+| Thuật toán tự chế / không chuẩn | CCATS + khai báo Pháp | Không |
+
+**Kết luận:** giá trị hiện tại `ITSAppUsesNonExemptEncryption = false` **có khả năng không còn đúng** — app nay tự cài
+mã hoá chuẩn (AES) để mã hoá dữ liệu, không chỉ xác thực, nên không thuộc các ngoại lệ "chỉ xác thực / chỉ dùng mã hoá của iOS".
+Câu trả lời đúng trong bảng hỏi App Store Connect: **"Standard encryption algorithms instead of, or in addition to, using or
+accessing the encryption within Apple's operating system"**. Về luật Mỹ, phần mềm đại chúng dùng mã hoá chuẩn thường thuộc
+diện mass market (5D992.c), không cần giấy phép — người dùng/luật sư xác nhận, Claude không khẳng định thay.
+
+**Đề xuất — người dùng chọn một (CHƯA sửa `Info.plist`, ngoài phạm vi phiên này):**
+1. **Khuyên dùng — giữ tính năng, khai đúng:** phiên code đổi `ITSAppUsesNonExemptEncryption` thành `true` (và sửa test
+   `plan001_t6_ios_config_test` + bước plutil trong `ios.yml` đang kiểm giá trị `false`). Khi nộp: trả lời bảng hỏi như trên.
+   Bản 1 **tạm bỏ Pháp** khỏi Availability (khỏi phải nộp khai báo cho ANSSI); muốn bán ở Pháp thì nộp khai báo rồi tải lên
+   App Store Connect, Apple cấp mã `ITSEncryptionExportComplianceCode` để thêm vào `Info.plist`.
+2. **Đổi code để chỉ dùng mã hoá của iOS:** chuyển AES-GCM sang CryptoKit (ví dụ thêm `cryptography_flutter`, hoặc kênh Swift)
+   — phải kiểm PBKDF2 cũng chạy bằng API của Apple, file `.vigon` vẫn đọc được chéo Android ↔ iOS, và chạy lại test. Khi đó giữ
+   `false` là đúng. Tốn việc code + thử trên CI; không khuyên cho bản 1.
+3. **Ẩn mật khẩu file sao lưu trên iOS** (như các tính năng chỉ-Android): giữ `false`, nhưng mất một tính năng riêng tư — không khuyên.
+
+Câu chữ bảng hỏi và bảng tài liệu của Apple đổi theo thời gian: phiên điều phối #3 đọc lại ngày nộp, ghi kết quả vào COMPLIANCE P-03.
+Đã sửa câu cũ ở bản nháp 2026-11-04 ("không phải khai báo cho Pháp vì không dùng mã hoá ngoài hệ điều hành") — không còn đúng.
 
 ## Thông tin cho App Review (App Review Information)
 - Sign-in required: **No** (không có tài khoản).
@@ -207,7 +226,7 @@ Kiểm lại câu chữ thật của bảng hỏi trong App Store Connect khi đ
   Ví Gọn is a fully offline personal expense tracker. There is no account, no server and no network access; all data stays on the device.
   To try it: tap − or + on the home screen, type an amount, choose a category, Save.
   PIN lock: Settings > Lock with PIN (4 digits, entered twice). The PIN only hides the app UI; data is not encrypted, and the app says so.
-  Backup: Settings > Export backup opens the iOS share sheet (Save to Files); you can optionally set a password, which encrypts the file on the device. Settings > Restore from backup opens the Files picker for a .vigon file.
+  Backup: Settings > Export backup opens the iOS share sheet (Save to Files); you can optionally turn on "Protect file with a password", which encrypts the file on the device (AES-256-GCM). Settings > Restore from backup opens the Files picker for a .vigon file.
   Daily reminder (off by default): Settings > Daily reminder shows a short explanation, then the iOS notification permission prompt. The notification is scheduled locally on the device and contains no figures.
   The app is free, has no in-app purchases and no ads.
   ```
@@ -215,6 +234,7 @@ Kiểm lại câu chữ thật của bảng hỏi trong App Store Connect khi đ
 ## Ảnh chụp và icon
 - Kích thước, số lượng, kịch bản dữ liệu mẫu: `store/screenshots-spec.md`. Chụp ở phiên điều phối #3 với UI mới.
   Ảnh iPhone KHÔNG được có widget, mục Sao lưu tự động hay công tắc che nội dung (chỉ Android, D-019).
-- Icon App Store 1024×1024: `AppIcon` hiện là `icon-512.png` phóng lên 1024 (**hơi mờ**, theo phiên nền iOS). Trước khi nộp,
-  xuất bản 1024×1024 gốc từ canvas Design (logo D-009, `store/brand/README.md`) — PNG vuông, **không trong suốt, không bo góc**.
+- Icon App Store 1024×1024: **đã có** sau gộp PLAN-001 — `ios/Runner/Assets.xcassets/AppIcon.appiconset/Icon-App-1024x1024@1x.png`
+  vẽ từ vector logo D-009 (`tool/render_ios_icon.py`), 1024×1024, RGB 8-bit **không alpha** (kiểm header PNG 2026-11-05), không bo góc.
+  Xcode lấy icon này khi archive; App Store Connect không cần tải riêng.
 - App Preview (video): không làm ở bản 1.

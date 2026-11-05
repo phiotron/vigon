@@ -1,7 +1,8 @@
 # Closed testing trên Google Play — Ví Gọn (tài khoản cá nhân)
 
 Viết 2026-11-04. Mục đích: đủ điều kiện xin quyền **production** cho tài khoản Play **cá nhân** mới (COMPLIANCE P-09).
-Bắt đầu **càng sớm càng tốt với build hiện tại** (UI cũ); các build UI mới của phiên #2 đẩy tiếp vào cùng track mà không làm mất ngày đã đếm.
+Bắt đầu **càng sớm càng tốt với build hiện tại của `main`** — từ 2026-11-05 đã gộp bản 1.2 (F-01..F-26: nhắc ghi chép, widget, sao lưu tự động…) và giao diện mới PLAN-001; các build sửa lỗi/chỉnh UI sau đó đẩy tiếp vào cùng track mà không làm mất ngày đã đếm.
+Closed test cũng là dịp **thử tay các AC [M] của bản 1.2 trên nhiều máy Android thật** (mục "Nhờ tester thử") — việc này đang chặn production (`docs/RELEASE.md`).
 
 ## Luật cần đạt (kiểm lại trong Play Console Help ngày bắt đầu — luật có thể đổi)
 - Có một **closed test** đang chạy; khi bấm xin production phải có **ít nhất 12 tester đang opt-in**, và họ đã opt-in
@@ -18,10 +19,10 @@ Bắt đầu **càng sớm càng tốt với build hiện tại** (UI cũ); các
 | 1 | Tạo tài khoản Play Console **cá nhân** (phí một lần 25 USD), xác minh danh tính, xác minh có thiết bị Android | Người dùng | Xác minh danh tính có thể mất vài ngày → làm đầu tiên |
 | 2 | Đăng chính sách quyền riêng tư lên web, lấy URL | Người dùng | Play bắt khai Privacy policy + Data safety trước khi gửi duyệt bất kỳ track nào. Nội dung: `docs/legal/privacy-policy.md` |
 | 3 | Tạo upload keystore ngoài repo, `android/key.properties` | Người dùng | `docs/RELEASE.md` mục "Ký ứng dụng" |
-| 4 | Build `flutter build appbundle` (bản hiện tại `1.0.0+1`) | Người dùng hoặc phiên điều phối (sau khi có khoá) | Mỗi lần đẩy build mới tăng số sau `+` |
+| 4 | Build `flutter build appbundle` từ `main` đã gộp (bản hiện tại `1.0.0+1`); trước khi tải lên chạy `aapt2 dump permissions` trên APK/AAB: đúng `POST_NOTIFICATIONS` + `RECEIVE_BOOT_COMPLETED`, không `INTERNET` | Người dùng hoặc phiên điều phối (sau khi có khoá) | Mỗi lần đẩy build mới tăng số sau `+` |
 | 5 | Tạo app trong Play Console: tên `Ví Gọn: Ghi Thu Chi`, ngôn ngữ mặc định vi-VN (thêm en-US), App, Free | Người dùng | Nội dung: `store/listing.md` |
 | 6 | Điền đủ App content (privacy policy, ads, app access, content rating, target audience, data safety, financial features…) | Người dùng | Trả lời sẵn ở `store/listing.md` |
-| 7 | Store listing tối thiểu: mô tả ngắn/dài, icon 512, ảnh bìa 1024×500, ≥ 2 ảnh điện thoại | Người dùng | Dùng tạm 6 ảnh cũ trong `store/screenshots/` |
+| 7 | Store listing tối thiểu: mô tả ngắn/dài, icon 512, ảnh bìa 1024×500, ≥ 2 ảnh điện thoại | Người dùng | Ảnh cũ trong `store/screenshots/` là UI trước PLAN-001 — dùng tạm được cho closed test, hoặc chụp nhanh 2–4 ảnh UI mới; bộ ảnh chính thức chụp ở phiên #3 |
 | 8 | Có danh sách ≥ 15 tester đồng ý tham gia | Người dùng | Mục "Mời tester" |
 
 ## Lịch đề xuất (bắt đầu từ 2026-11-04)
@@ -32,7 +33,7 @@ Bắt đầu **càng sớm càng tốt với build hiện tại** (UI cũ); các
 | 10–12/11 | Google duyệt bản closed test (thường vài giờ tới vài ngày). Ngay khi duyệt: gửi link opt-in cho tester, nhắc cài trong ngày |
 | **Ngày 0** (≈ 12/11) | Đủ ≥ 12 người opt-in → bắt đầu đếm. Ghi ngày này vào bảng "Nhật ký" bên dưới |
 | Ngày 3, 7, 11 | Gửi tin nhắc (mẫu bên dưới). Kiểm số opt-in trong Play Console (Testing → Closed testing → Testers) |
-| Phiên #2 (giữa kỳ) | Đẩy build UI mới vào **cùng track** (tăng versionCode) — không tạo track mới, không pause track cũ |
+| Giữa kỳ (phiên #2) | Đẩy build sửa lỗi / chỉnh UI vào **cùng track** (tăng versionCode) — không tạo track mới, không pause track cũ |
 | **Ngày 14** (≈ 26/11) | Kiểm: ≥ 12 người opt-in suốt 14 ngày. Đợi thêm 1–2 ngày đệm |
 | ≈ 27–28/11 | Dashboard → "Apply for production" → điền form (câu trả lời mẫu bên dưới) |
 | ≈ 28/11–05/12 | Google xét đơn (thường tới khoảng 7 ngày). Được duyệt → phiên #3 đẩy bản production |
@@ -75,6 +76,15 @@ Nguồn tester gợi ý: người thân, đồng nghiệp, bạn bè dùng Andro
 **Khi có build mới (vi):**
 > Ví Gọn vừa có bản mới [mô tả ngắn]. Vào Google Play → Ví Gọn → Cập nhật. Bạn thử [màn/tính năng] rồi góp ý giúp mình nhé.
 
+## Nhờ tester thử (tính năng cần máy thật, `docs/SPEC.md` mục 3c, `docs/TESTING.md` M-1..M-7)
+Gửi kèm tin mời hoặc tin nhắc ngày 3. Mỗi tester chọn 1–2 mục, báo lại "được / không được + đời máy + Android mấy":
+- **Nhắc ghi chép:** Cài đặt → Nhắc ghi chép → bật, chọn giờ gần (ví dụ sau 5 phút). Hộp giải thích hiện trước hộp thoại quyền? Thông báo có tới đúng giờ (sai vài phút là bình thường)? Chạm thông báo có mở màn Nhập khoản chi? Khởi động lại máy rồi hôm sau còn nhắc không?
+- **Widget:** thêm widget Ví Gọn ra màn hình chính; chạm "Chi"/"Thu" mở đúng màn? Bật "Hiện số tiền trên widget" thì số hiện; bật khoá PIN thì số biến mất?
+- **Sao lưu tự động:** bật, chọn một thư mục trong Google Drive hoặc bộ nhớ máy, đặt mật khẩu, bấm "Sao lưu ngay" → file `vigon-auto-…` có trong thư mục? Khôi phục file đó trên máy khác bằng mật khẩu?
+- **Che nội dung khi chuyển app:** bật rồi mở danh sách app gần đây — Ví Gọn có hiện màn trống, chụp màn hình bị chặn?
+- **Sao lưu có mật khẩu:** Xuất bản sao lưu với mật khẩu, khôi phục; thử sai mật khẩu.
+Ghi kết quả vào `notes/<ngày>-closed-test-feedback.md` (không ghi tên/email tester) để phiên điều phối cập nhật `docs/TESTING.md`.
+
 ## Theo dõi trong 14 ngày
 - Mỗi lần nhắc: xem số tester opt-in; < 14 người thì mời thêm ngay.
 - Gom góp ý vào `notes/<ngày>-closed-test-feedback.md` (tóm tắt, không chép email/tên tester). Lỗi thật → mở việc sửa ở phiên #2.
@@ -104,7 +114,7 @@ Form bằng tiếng Anh; câu hỏi có thể đổi. **Thay mọi `[...]` bằn
 - **What changes did you make to your app based on what you learned during closed testing?**
   `[liệt kê thay đổi thật, ví dụ: redesigned the home screen and entry keypad (build [k]); fixed [lỗi] reported by testers; clarified the PIN warning text].`
 - **How did you decide that your app is ready for production?**
-  `All planned features passed [118+] automated tests and manual checks on real devices; no crashes or ANRs in Android vitals during the test; tester issues were fixed and verified in build [k].`
+  `All planned features passed [352+] automated tests and manual checks on real devices (including reminders, widget and automatic backup on testers' phones); no crashes or ANRs in Android vitals during the test; tester issues were fixed and verified in build [k].`
 
 ## iOS (để so sánh)
 App Store **không** có luật 12 tester/14 ngày. TestFlight: tester nội bộ (tối đa 100, thành viên App Store Connect) không cần duyệt;

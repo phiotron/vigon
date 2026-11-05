@@ -17,6 +17,12 @@
 >   sao lưu tự động vào thư mục chọn (SAF, **chỉ Android**), widget (**chỉ Android**), mật khẩu file sao lưu (cả hai), che nội dung đa nhiệm
 >   (`FLAG_SECURE`, **chỉ Android** — mục 9 ghi rõ). Trên iOS các mục cài đặt chỉ-Android bị ẩn. Các tính năng này CHƯA kiểm chứng trên máy
 >   thật; nếu ngày đăng khác ngày hiệu lực thì sửa cho khớp.
+> - Rà lại 2026-11-05 (phiên store v2, `main` `a00bec8`): đối chiếu `AndroidManifest.xml` + manifest đã gộp bản release (đúng 2 quyền
+>   `POST_NOTIFICATIONS`, `RECEIVE_BOOT_COMPLETED`; `RECEIVE_BOOT_COMPLETED` là quyền thường, Android tự cấp khi cài → sửa mục 4, bỏ chữ
+>   "tùy chọn" cho quyền này); `lib/src/platform_features.dart` (iOS ẩn sao lưu tự động, widget, che nội dung); `reminder_scheduler.dart`
+>   (iOS không xin quyền lúc khởi tạo, chỉ khi bật công tắc; nội dung thông báo cố định trong `.arb`); `backup_crypto.dart` (AES-256-GCM +
+>   PBKDF2, Dart thuần); `pin_service.dart` `clearIfReinstalled` được gọi ở `app_lock.dart`; DB iOS vẫn trong Documents, chưa loại khỏi
+>   sao lưu iCloud → mục 2 giữ nguyên. Ngày hiệu lực để trống tới khi đăng; bỏ "Lịch sử thay đổi" vì đây là bản đăng đầu tiên.
 > - Không phải tư vấn pháp lý; luật sư nên đọc lại trước khi mở bán (COMPLIANCE D-07, D-09).
 > - Thay `[Tên nhà phát triển]` bằng **đúng tên hiển thị trên Google Play và App Store** (tài khoản cá nhân → họ tên thật), điền ngày hiệu lực.
 > - **Nơi đăng (gợi ý, người dùng tự đăng):**
@@ -34,7 +40,7 @@
 ## Tiếng Việt
 
 **Chính sách quyền riêng tư của Ví Gọn**
-Ngày hiệu lực: 2026-11-04
+Ngày hiệu lực: [điền ngày đăng]
 
 Ví Gọn là app ghi chép thu chi cá nhân cho điện thoại Android và iPhone. Chính sách này giải thích dữ liệu nào app lưu, lưu ở đâu và bạn kiểm soát nó ra sao.
 
@@ -51,13 +57,13 @@ Nếu bạn bật khóa bằng mã PIN, app chỉ lưu một giá trị băm có
 **Widget màn hình chính (chỉ Android).** Nếu bạn thêm widget, widget luôn có hai nút "Chi" và "Thu" để mở nhanh màn nhập khoản. Mặc định widget không hiện số tiền nào. Chỉ khi bạn tự bật "Hiện số tiền trên widget" VÀ không dùng khóa PIN thì widget mới hiện số đã chi trong tháng (và hạn mức nếu bạn đã đặt ngân sách tháng). Khi khóa PIN đang bật, widget luôn ẩn số tiền. Số liệu này chỉ nằm trong bộ nhớ riêng của app và trên màn hình chờ của bạn; không gửi đi đâu, và bị xóa khi bạn tắt công tắc hoặc bật PIN. Khi công tắc đang bật, ai cầm máy của bạn cũng có thể thấy số trên màn hình chờ.
 
 **3. File sao lưu và CSV do bạn tự xuất**
-Khi bạn chọn "Xuất bản sao lưu" hoặc "Xuất CSV", app tạo file trong thư mục tạm của app rồi mở bảng chia sẻ của hệ điều hành (bảng chia sẻ của Android hoặc iOS) để bạn chọn nơi gửi hoặc lưu, ví dụ app Tệp (Files), Google Drive hay email. Bạn quyết định file đi đâu. Bạn có thể đặt mật khẩu cho file sao lưu; khi đó file được mã hóa trên máy bạn (mật khẩu không được lưu ở đâu cả, quên mật khẩu thì không mở được file). Không đặt mật khẩu thì file không được mã hóa, hãy cất ở nơi an toàn. Từ lúc đó, file chịu chính sách của dịch vụ bạn chọn. Hệ điều hành tự dọn thư mục tạm của app.
+Khi bạn chọn "Xuất bản sao lưu" hoặc "Xuất CSV", app tạo file trong thư mục tạm của app rồi mở bảng chia sẻ của hệ điều hành (bảng chia sẻ của Android hoặc iOS) để bạn chọn nơi gửi hoặc lưu, ví dụ app Tệp (Files), Google Drive hay email. Bạn quyết định file đi đâu. Bạn có thể đặt mật khẩu cho file sao lưu; khi đó file được mã hóa trên máy bạn bằng AES-256-GCM (mật khẩu không được lưu ở đâu cả, quên mật khẩu thì không mở được file). Không đặt mật khẩu thì file không được mã hóa, hãy cất ở nơi an toàn. Từ lúc đó, file chịu chính sách của dịch vụ bạn chọn. Hệ điều hành tự dọn thư mục tạm của app.
 Trên Android, bạn có thể bật thêm "Sao lưu tự động" (mặc định tắt). Khi bật, bạn tự chọn một thư mục bằng bộ chọn thư mục của hệ thống Android và đặt mật khẩu sao lưu. App tự ghi file sao lưu vào thư mục đó tối đa một lần mỗi ngày (khi dữ liệu có thay đổi) và giữ 7 file tự động gần nhất. Mọi file tự động luôn được mã hóa (AES-256-GCM), không bao giờ ghi bản rõ. Mật khẩu chỉ được lưu trong kho khóa an toàn (Keystore) của điện thoại bạn, không ghi vào file, nhật ký hay cơ sở dữ liệu và không gửi đi đâu. Quên mật khẩu thì không mở được các file sao lưu và nhà phát triển không thể khôi phục giúp bạn. Quyền ghi vào thư mục do hệ thống Android quản lý và chỉ áp dụng cho đúng thư mục bạn chọn. Nếu thư mục bạn chọn thuộc một dịch vụ như Google Drive hay OneDrive thì việc tải lên đám mây do app của dịch vụ đó thực hiện theo chính sách của họ; Ví Gọn không kết nối mạng. Khi tắt "Sao lưu tự động", app xóa mật khẩu khỏi kho khóa và bỏ quyền thư mục nhưng không xóa các file đã ghi; bạn tự xóa chúng nếu muốn. (Bản iPhone hiện chưa có sao lưu tự động.)
 
 **4. Quyền trên điện thoại**
-Ví Gọn không có quyền truy cập Internet và chỉ có một nhóm quyền tùy chọn, dùng cho "Nhắc ghi chép hằng ngày" (mặc định tắt):
-• Thông báo: app giải thích trước rồi mới xin quyền này (Android 13 trở lên; trên iPhone là hộp thoại cho phép thông báo của iOS). Thông báo nhắc được tạo và nằm trên máy bạn, nội dung chung chung ("Hôm nay bạn đã ghi chi tiêu chưa?"), không chứa số liệu và không đi qua máy chủ nào. Từ chối thì app vẫn dùng bình thường.
-• Nhận tín hiệu khởi động lại máy (chỉ Android): để đặt lại lịch nhắc sau khi bạn khởi động lại điện thoại. Quyền này không cho app đọc dữ liệu nào.
+Ví Gọn không có quyền truy cập Internet. App chỉ có hai quyền, cả hai chỉ phục vụ "Nhắc ghi chép hằng ngày" (tính năng mặc định tắt):
+• Thông báo: app chỉ xin khi bạn bật Nhắc ghi chép, sau một lời giải thích (Android 13 trở lên; trên iPhone là hộp thoại cho phép thông báo của iOS). Thông báo nhắc được tạo và nằm trên máy bạn, nội dung chung chung ("Hôm nay bạn đã ghi chi tiêu chưa?"), không chứa số liệu và không đi qua máy chủ nào. Từ chối thì app vẫn dùng bình thường.
+• Nhận tín hiệu khởi động lại máy (chỉ Android): Android cấp sẵn quyền này khi cài app, không hỏi bạn. App chỉ dùng nó để đặt lại lịch nhắc sau khi bạn khởi động lại điện thoại (nếu bạn đã bật nhắc); quyền này không cho app đọc dữ liệu nào.
 App không xin quyền vị trí, danh bạ, ảnh, camera hay micro. Chọn file khôi phục và chọn thư mục sao lưu dùng bộ chọn của hệ điều hành, chỉ truy cập đúng file hoặc thư mục bạn chọn.
 
 **5. Liên kết ra ngoài**
@@ -77,7 +83,7 @@ Dữ liệu được bảo vệ bằng cơ chế cách ly app của Android và 
 
 **10. Thay đổi chính sách**
 Nếu Ví Gọn thay đổi cách xử lý dữ liệu (ví dụ thêm tính năng cần Internet), chúng tôi sẽ cập nhật chính sách này và ngày hiệu lực trước khi phát hành bản có thay đổi.
-Lịch sử thay đổi: 2026-11-04 (bản 1.2) thay mục "không xin quyền nào" bằng quyền tùy chọn cho nhắc ghi chép (thông báo; trên Android thêm nhận tín hiệu khởi động lại), thêm sao lưu tự động vào thư mục bạn chọn và widget màn hình chính (hai mục này chỉ có trên Android). Các cam kết khác không đổi: không tài khoản, không quảng cáo, không phân tích, không quyền Internet.
+Đây là bản đầu tiên của chính sách.
 
 **11. Liên hệ**
 [Tên nhà phát triển], nhà phát triển Ví Gọn — email: phamphuongphuong@gmail.com
@@ -87,7 +93,7 @@ Lịch sử thay đổi: 2026-11-04 (bản 1.2) thay mục "không xin quyền n
 ## English
 
 **Ví Gọn Privacy Policy**
-Effective date: 2026-11-04
+Effective date: [fill in on publishing]
 
 Ví Gọn is a personal income and expense tracker for Android phones and iPhone. This policy explains what data the app stores, where it is stored, and how you control it.
 
@@ -104,13 +110,13 @@ If you turn on the PIN lock, the app stores only a salted hash of your PIN, neve
 **Home screen widget (Android only).** If you add the widget, it always offers two buttons for quick entry of an expense or an income. By default the widget shows no amounts. Only if you turn on "Show amounts on widget" AND do not use the PIN lock does the widget show how much you spent this month (and your limit, if you set a monthly budget). While the PIN lock is on, the widget always hides amounts. These figures live only in the app's private storage and on your home screen; they are not sent anywhere and are erased when you turn the switch off or turn the PIN on. While the switch is on, anyone holding your phone can see the figures on the home screen.
 
 **3. Backup and CSV files you export**
-When you choose "Export backup" or "Export CSV", the app creates the file in its temporary folder and opens your phone's share sheet (Android or iOS) so you can choose where to send or save it, for example the Files app, Google Drive or email. You decide where the file goes. You can protect a backup file with a password, in which case it is encrypted on your phone (the password is stored nowhere; if you forget it the file cannot be opened). Without a password the file is not encrypted, so keep it somewhere safe. From then on, the file is subject to the policy of the service you chose. The operating system clears the app's temporary folder on its own.
+When you choose "Export backup" or "Export CSV", the app creates the file in its temporary folder and opens your phone's share sheet (Android or iOS) so you can choose where to send or save it, for example the Files app, Google Drive or email. You decide where the file goes. You can protect a backup file with a password, in which case it is encrypted on your phone with AES-256-GCM (the password is stored nowhere; if you forget it the file cannot be opened). Without a password the file is not encrypted, so keep it somewhere safe. From then on, the file is subject to the policy of the service you chose. The operating system clears the app's temporary folder on its own.
 On Android you can also turn on "Automatic backup" (off by default). When on, you choose a folder with Android's system folder picker and set a backup password. The app then writes a backup file to that folder at most once a day (when the data has changed) and keeps the 7 most recent automatic files. Automatic files are always encrypted (AES-256-GCM), never written in plain form. The password is kept only in your phone's secure key store (Keystore); it is not written to any file, log or database and is not sent anywhere. If you forget the password, the backup files cannot be opened and the developer cannot recover them for you. Write access to the folder is managed by the Android system and covers only the folder you chose. If the folder you choose belongs to a service such as Google Drive or OneDrive, that service's own app uploads the files under its own policy; Ví Gọn does not connect to the network. When you turn "Automatic backup" off, the app deletes the password from the key store and releases the folder permission, but does not delete files already written; delete them yourself if you wish. (The iPhone version does not have automatic backup yet.)
 
 **4. Phone permissions**
-Ví Gọn has no Internet permission and only one optional group of permissions, used for the "Daily reminder" (off by default):
-• Notifications: the app explains first, then asks for this permission (Android 13 and later; on iPhone, iOS's own notification prompt). The reminder is created and stays on your phone, its text is generic ("Have you recorded your spending today?"), it contains no figures and does not pass through any server. If you decline, the app works normally.
-• Receive restart signal (Android only): so the reminder schedule can be restored after you restart your phone. This permission does not let the app read any data.
+Ví Gọn has no Internet permission. The app has only two permissions, both used only for the "Daily reminder" (a feature that is off by default):
+• Notifications: the app asks only when you turn on the reminder, after a short explanation (Android 13 and later; on iPhone, iOS's own notification prompt). The reminder is created and stays on your phone, its text is generic ("Have you recorded your spending today?"), it contains no figures and does not pass through any server. If you decline, the app works normally.
+• Receive restart signal (Android only): Android grants this permission when the app is installed, without asking you. The app uses it only to restore the reminder schedule after you restart your phone (if you turned the reminder on); it does not let the app read any data.
 The app does not ask for location, contacts, photos, camera or microphone. Restoring a backup and choosing the backup folder use the system pickers and access only the file or folder you pick.
 
 **5. Links to other apps**
@@ -130,7 +136,7 @@ Your data is protected by the Android and iOS app sandbox, the optional PIN lock
 
 **10. Changes to this policy**
 If Ví Gọn changes how it handles data (for example by adding a feature that needs the Internet), we will update this policy and its effective date before releasing that version.
-Change history: 2026-11-04 (version 1.2) replaced "does not request any permissions" with optional permissions for the daily reminder (notifications; on Android also receive restart signal), and added automatic backup to a folder you choose and the home screen widget (both Android only). Other commitments are unchanged: no accounts, no ads, no analytics, no Internet permission.
+This is the first version of this policy.
 
 **11. Contact**
 [Developer name], developer of Ví Gọn — email: phamphuongphuong@gmail.com

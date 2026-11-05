@@ -12,7 +12,7 @@ Checklist xưởng dùng kèm: `D:\Mobile App\playbook\checklists\release-androi
 - Android: minSdk 24 (Android 7.0), targetSdk 36 (kiểm bằng `aapt2 dump badging`, 2026-11-03). Quyền (bản 1.2): chỉ `POST_NOTIFICATIONS`
   và `RECEIVE_BOOT_COMPLETED` cho nhắc ghi chép (D-015); bản release không có INTERNET (`test/manifest_test.dart` và `aapt2 dump permissions`).
 - iOS: min iOS 15.0, **chỉ iPhone**, chỉ dọc, tên hiển thị `Ví Gọn`, không khoá `NS…UsageDescription`,
-  `ITSAppUsesNonExemptEncryption = false` (lý do và việc xác nhận lại: `store/app-store.md` mục Export compliance), `ios/Runner/PrivacyInfo.xcprivacy` (commit `9438ddd`).
+  `ITSAppUsesNonExemptEncryption = false` (**đề xuất đổi thành `true`** vì F-21 dùng AES-256-GCM Dart thuần trên iOS — `store/app-store.md` mục Export compliance, COMPLIANCE P-03), `ios/Runner/PrivacyInfo.xcprivacy` (commit `9438ddd`).
   Widget, sao lưu tự động, che nội dung, icon đơn sắc chỉ có trên Android; nhắc ghi chép có cả iOS (D-019).
 - Tài khoản nhà phát triển: **cá nhân** trên cả hai store (2026-11-04) → tên người bán hiện công khai là họ tên thật; Play bắt closed test.
 
@@ -73,7 +73,7 @@ Không có iPhone → không thử được TestFlight trên máy thật; App Re
 | Closed test Play | `store/closed-test-plan.md` (12+ tester × 14 ngày, lịch, mẫu tin nhắn, form production) | Chờ người dùng mở tài khoản Play |
 | Ảnh chụp | `store/screenshots-spec.md` (Play 1080×2160, iPhone 6.9" 1320×2868, kịch bản dữ liệu mẫu) | Chụp ở phiên #3 với UI mới; ảnh cũ `store/screenshots/` chỉ tham khảo |
 - Tên: `Ví Gọn: Ghi Thu Chi` (vi) / `Ví Gọn: Expense Tracker` (en); tên dưới icon `Ví Gọn`. Tra trùng web 2026-11-04: chưa thấy trùng.
-- Icon: Play 512×512 có (`store/brand/icon-512.png`). App Store 1024×1024: icon iOS tạm phóng từ 512 (mờ) → CHƯA có bản gốc 1024.
+- Icon: Play 512×512 có (`store/brand/icon-512.png`). App Store 1024×1024: **có** (`AppIcon` vẽ từ vector logo bằng `tool/render_ios_icon.py`, RGB không alpha, gộp từ PLAN-001).
   Ảnh bìa Play 1024×500: CHƯA có PNG (xuất từ canvas Design, `store/brand/README.md`).
 - Phân loại: Finance (phụ: Productivity trên App Store); Play target audience 13+; App Store age rating dự kiến 4+.
 - Data safety / App Privacy: "không thu thập, không chia sẻ" / "Data Not Collected" (khớp `docs/SECURITY.md`, SBOM, `PrivacyInfo.xcprivacy`).
@@ -94,11 +94,13 @@ Chung:
 Android:
 - [ ] Khóa ký phát hành (mục trên); xuất PNG ảnh bìa 1024×500
 - [ ] Closed test ≥ 12 người trong 14 ngày liên tục (P-09) → xin production (`store/closed-test-plan.md`)
-- [ ] Điền App content + Data safety trong Play Console (P-10)
+- [ ] Điền App content + Data safety trong Play Console (P-10); ghi chú phát hành vi/en ở `store/listing.md`
+- [ ] Thử trên máy Android thật các tính năng 1.2 trước khi production (M-1..M-7 `docs/TESTING.md`): thông báo nhắc + hộp thoại quyền, widget, sao lưu tự động vào thư mục Drive — nhờ tester closed test thử cùng
 iOS:
 - [ ] Tài khoản Apple Developer cá nhân, App ID, chứng chỉ, profile, API key, 7 GitHub Secrets (mục trên)
 - [ ] Chạy "Release iOS" thành công một lần; xác nhận Xcode 26+ trong log (P-01)
-- [ ] Icon App Store 1024×1024 gốc (không phóng từ 512)
+- [x] Icon App Store 1024×1024 gốc: có sau gộp PLAN-001 (kiểm header PNG 2026-11-05)
+- [ ] Quyết export compliance (COMPLIANCE P-03): đổi `ITSAppUsesNonExemptEncryption` thành `true` + sửa `plan001_t6_ios_config_test` và bước plutil `ios.yml` (phiên code), bỏ Pháp khỏi Availability bản 1 hoặc nộp khai báo mã hoá Pháp
 - [ ] Điền App Privacy, Age Rating, Review Notes, trader status (EU) trong App Store Connect (`store/app-store.md`)
 - [ ] Quyết định code (phiên điều phối): loại DB khỏi sao lưu iCloud hay giữ (chính sách hiện mô tả "có trong sao lưu iPhone")
 - [x] Xoá PIN còn sót trong Keychain khi cài lại: đã có trong code (D-017, `PinService.clearIfReinstalled`); CHƯA kiểm chứng trên iPhone thật (COMPLIANCE mục 4)
