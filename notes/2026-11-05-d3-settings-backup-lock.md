@@ -1,69 +1,81 @@
-# [A002-vigon] D3 · Cài đặt, sao lưu, nhắc, khoá · 2026-11-05 — DỞ (hết hạn mức)
+# [A002-vigon] D3 · Cài đặt, sao lưu, nhắc, khoá · 2026-11-05
 
-**Trạng thái:** mới đọc xong (APP.md, notes D0, CHANGELOG, frame SCR-12/13/26/27/30/31/33, code `features/settings|lock`,
-test). **CHƯA sửa code, CHƯA chạy test.** Phiên sau (D3 tiếp) bắt đầu từ mục "Kế hoạch sửa" dưới đây.
+Phiên con D3 của phiên điều phối #2. Lần 1 hết hạn mức sau khi đọc frame (`3a52704`, chỉ notes); lần 2 code xong.
+**Commit:** `937a4b5` (màn + hộp thoại + test) · commit notes + test 200% hộp quên PIN (ngay sau).
 
-## Đã rút ra từ frame (thay việc đọc lại HTML)
+## Đã làm / file đã đổi (theo frame)
 
-- **SCR-12/33 Cài đặt** (thứ tự thẻ): Giao diện [thẻ: ChoiceSegments] · Ngôn ngữ [thẻ] · (cách 24, không tiêu đề A18)
-  thẻ {Danh mục ›, Tài khoản ›} · thẻ (margin-top 12) {Ngân sách tháng + giá trị ›, Khoản định kỳ ›, Tiền tệ "VND · ₫" ›,
-  Ngày đầu tuần = `SettingsSegmentRow(icon: view_week, segments: Thứ Hai/Chủ Nhật)`, Tháng bắt đầu từ ngày + ô xổ "1 ▾"}
-  · **Bảo mật** {PIN (sub `pinWarning`), Che nội dung (sub `secureWindowNote`; iOS `secureWindowNoteIos`), Hiện số tiền
-  trên widget (sub + footer `StatusPill(icon: lock, label: widgetLockedByPin)` khi PIN bật, công tắc vẫn bấm được)}
-  · **Nhắc ghi chép** {Công tắc, Giờ nhắc + giá trị "20:00" › (vẫn sửa được khi công tắc tắt)} · **Dữ liệu**: dòng ghi
-  chú `backupReminder` (lề 0/32/8, body-sm chữ phụ) · thẻ {Xuất bản sao lưu (sub `backupNote`, không ›), Khôi phục (không ›),
-  Xuất CSV (sub `csvFormatVi` nếu `l.localeName == 'vi'`, ngược lại `csvFormatEn`)} · thẻ Sao lưu tự động (icon
-  **`backup`**, không phải cloud_upload) · thẻ {Xóa toàn bộ dữ liệu `danger`} · thẻ {Giới thiệu ›}.
-  iOS SCR-33 vẽ khi chưa có D-022 (bỏ 3 hàng) → dùng cờ `supportsSecureWindow/HomeWidget/AutoBackup`, không vẽ riêng.
-- **SCR-31 khối sao lưu tự động** = `SettingsSwitchRow(footer:)`, footer lề trái 56: dòng "📁 Thư mục: X" (body-sm) →
-  `SettingsStatusLine` (idle `autoBackupNever` / ok `autoBackupLast` / error dải đỏ `autoBackupFailedAt`) →
-  `ButtonPair`: thường = `FilledButton.tonal(BusyButtonLabel(icon: backup, label: autoBackupNow, busy:))` +
-  `OutlinedButton(icon folder_open, autoBackupChooseFolder)`; **lỗi thư mục** = đảo: tonal "Chọn lại thư mục" trước,
-  outline "Sao lưu ngay". Đang chạy: nút Sao lưu ngay quay + bỏ chạm, trạng thái cũ giữ nguyên (bỏ `runWithProgress`
-  modal). Snackbar kết quả giữ như cũ. iOS: phụ đề `autoBackupNoteIos` + `VgHint(autoBackupRunsOnOpenIos)`;
-  `autoBackupLocalFolderWarningIos` cần biết thư mục có phải "Trên iPhone" — `AutoBackupState` không có cờ → **D4 thêm**
-  (tạm có thể đoán theo URI không chứa `Mobile Documents`).
-- **Hộp mật khẩu (SCR-26/27/31)** cùng khuôn `VgDialog(icon:, tone: neutral, title, body, content: [...])`: dòng cảnh
-  báo `VgHint(icon: warning)` màu error **trên** các ô (cần widget riêng vì VgHint không có màu error) → `PasswordField`×2.
-  - 26 Xuất: icon `upload_file`, title `backup`, body `backupNote`, công tắc `backupSetPassword`; nút `backupExportAction`
-    có icon `ios_share`. **Đang mã hoá nằm TRONG hộp** (A13): ô + Hủy tắt, nút = `BusyButtonLabel(busy, backupWorking)`.
-    Đề xuất API: `BackupExportDialog({Future<String> Function(String pw)? encrypt})` — có `encrypt` thì chạy rồi pop
-    nội dung đã mã hoá; không có thì pop mật khẩu như cũ (giữ test cũ); tắt mật khẩu pop `''`.
-  - 27 Mở khoá: icon `lock`, title `backupEnterPasswordTitle`, body `backupEnterPasswordBody`; sai → lỗi dưới ô và
-    **giữ nguyên chữ đã gõ** (code hiện xoá; test `backup_password_test` dòng ~148 phải đổi); đang giải mã: nút quay.
-  - 27 Xác nhận: `showConfirmDialog(icon: settings_backup_restore, iconTone: neutral, note: l.restoreSwitchesNote)` — cả iOS (chốt điều phối).
-  - 31 Mật khẩu sao lưu tự động: icon `backup`, title `autoBackupPasswordTitle`, cảnh báo `autoBackupPasswordWarning`, nút `autoBackupTurnOn`.
-- **SCR-13 Tiền tệ**: sheet toàn màn (`showModalBottomSheet(isScrollControlled, useSafeArea)`), tay nắm, thanh {✕ đóng,
-  title-md `currency`}, `VgSearchField` (nền surface-container-high), ghi chú ⓘ `currencyNote` thu 2 dòng + nút
-  `showMore/showLess` (primary 600, có Semantics expanded), nhãn `currencyCurrent` + thẻ ghim (surface-container-high,
-  bo md) dòng hiện tại có ✓ — ẩn khi đang tìm; danh sách A–Z dòng 72 "{CODE} · {sym}" + tên (A09); chữ khớp tô
-  primary-container 600; không khớp: icon `search_off` + `currencyNoMatch` ở giữa. Chọn = áp ngay, đóng.
-- **SCR-30 Nhắc**: hộp giải thích = `showConfirmDialog(icon: notifications, iconTone: neutral, title: reminderExplainTitle,
-  body: reminderExplainBody, action: reminderContinue)`; bị từ chối = `showVgSnackBar(l.reminderDenied, actionLabel:
-  l.reminderOpenSettings, onAction: scheduler.openSystemSettings, long: true)`; giờ = `showTimePicker` (A14), không snackbar.
-- **Lock 1.3–1.5** đã đi qua `showConfirmDialog` → `VgDialog` (thân cuộn ở 200%) — chỉ cần thêm test 200%.
+| Frame | Đổi gì | File |
+|---|---|---|
+| SCR-12 / SCR-33, P2 5.1–5.2 | Cài đặt dạng thẻ: `SettingsGroupTitle` (Giao diện, Ngôn ngữ, Bảo mật, Nhắc ghi chép, Dữ liệu), 2 nhóm không tiêu đề (A18) cách 24, thẻ cùng nhóm cách 12; giá trị là phụ đề (Ngân sách, Tiền tệ "VND · ₫", Giờ nhắc); **Ngày đầu tuần = `SettingsSegmentRow` + `ChoiceSegments`** (trước: chạm để đổi); Tháng bắt đầu = hàng riêng có ô xổ "1 ▾"; Xuất/Khôi phục không ›; Xuất CSV có phụ đề `csvFormatVi`/`csvFormatEn` theo `l.localeName`; dòng `backupReminder` lề 32; Xóa toàn bộ = `danger`; icon sao lưu tự động `backup` | `settings_screen.dart` |
+| SCR-12 A08 | "Hiện số tiền trên widget" có `StatusPill(lock, widgetLockedByPin)` ở footer khi PIN bật (công tắc vẫn bấm được) | `widget_section.dart` (`WidgetAmountsSwitch(pinEnabled:)`) |
+| SCR-33 / D-022 | Mục iOS hiện theo cờ `supportsSecureWindow/HomeWidget/AutoBackup`; chữ riêng iOS khi `useIosCopy` (`defaultTargetPlatform == iOS`, đọc mỗi lần): phụ đề `secureWindowNoteIos`, `autoBackupNoteIos`, `VgHint(autoBackupRunsOnOpenIos)` ở footer sao lưu tự động, `VgHint(warning, autoBackupLocalFolderWarningIos)` dưới dòng thư mục | `settings_lead.dart` (giờ chỉ còn getter `useIosCopy`; lớp `SettingsLead` đã bỏ), `auto_backup_section.dart` |
+| SCR-13, P2 5.5 | Tiền tệ là **sheet toàn màn** (`showModalBottomSheet` isScrollControlled): tay nắm, ✕ (tooltip Hủy) + tiêu đề, `VgSearchField` (nền `surface-container-high` qua `Theme` override), ghi chú ⓘ thu 2 dòng + `showMore/showLess` (Semantics expanded), nhãn `currencyCurrent` + thẻ ghim có ✓ (ẩn khi tìm, A09), dòng 72 "{MÃ} · {ký hiệu}" + tên, tô phần khớp `primary-container` 600, không khớp = icon `search_off` + `currencyNoMatch`. Lớp mới `CurrencyPickerSheet`, `CurrencyRow` (bỏ `CurrencyPickerDialog`) | `currency_picker.dart` |
+| SCR-26, P2 8.5 | Hộp xuất: `VgDialog(icon upload_file, neutral, body backupNote)`, công tắc, `PasswordWarning` **trên** 2 `PasswordField`, nút Xuất có icon `ios_share`. **Mã hóa chạy trong hộp** (`BackupExportDialog(encrypt:)`): ô + Hủy tắt, nút = `BusyButtonLabel(busy, backupWorking)` (A13). Không truyền `encrypt` thì trả mật khẩu như cũ | `backup_password_dialogs.dart`, `data_actions.dart` (`exportBackupFile` dựng JSON trước rồi mở hộp; bỏ `runWithProgress`) |
+| SCR-27, P2 8.6–8.7 | Hộp mật khẩu khôi phục: icon `lock` neutral, `PasswordField`, sai → lỗi dưới ô và **giữ chữ đã gõ**, đang giải mã → nút quay, Hủy tắt. Xác nhận: `showConfirmDialog(icon settings_backup_restore, iconTone neutral, note: restoreSwitchesNote)` — **cả iOS** (chốt điều phối, không dùng `restoreSwitchesNoteIos`) | `backup_password_dialogs.dart`, `data_actions.dart` |
+| SCR-30, P2 8.11/9.2 | Hộp giải thích = `showConfirmDialog(icon notifications, neutral)` trước khi xin quyền (S-40); bị từ chối = `showVgSnackBar(reminderDenied, actionLabel: reminderOpenSettings, long: true)` (10 s, có vạch); giờ = `showTimePicker` (A14), sửa được cả khi tắt. `ReminderSection` tự dựng tiêu đề nhóm + thẻ (bỏ tham số `header`) | `reminder_section.dart` |
+| SCR-31 | Thẻ sao lưu tự động: `SettingsSwitchRow(footer:)` — 📁 "Thư mục: X" → `SettingsStatusLine` (idle `autoBackupNever` / ok `autoBackupLast` / error dải đỏ `autoBackupFailedAt`) → `ButtonPair`: thường tonal "Sao lưu ngay" + viền "Chọn lại thư mục"; **lỗi thư mục đảo thứ tự** (tonal "Chọn lại thư mục" trước). Đang chạy: nút quay, cả hai nút tắt (`autoBackupRunningProvider`), bỏ hộp quay modal. Hộp mật khẩu sao lưu tự động: `VgDialog(icon backup)` + `PasswordWarning` + 2 ô (chuyển `AutoBackupPasswordDialog` sang `backup_password_dialogs.dart`, `auto_backup_section.dart` export lại) | `auto_backup_section.dart`, `auto_backup_providers.dart`, `backup_password_dialogs.dart` |
+| P2 5.3–5.4 | Hộp ngân sách tháng → `VgDialog` (thân cuộn, nút ghim ≥ 130%, ô 56 theo theme), Enter = Lưu | `budget_dialog.dart` |
+| P2 1.3–1.5 | Hộp quên PIN đã qua `showConfirmDialog` → `VgDialog` từ D0; chỉ thêm test 200% (thân cuộn, nút ghim) | không đổi code `lock/` |
+| Không đổi | 1.1–1.2 Lock, 8.1–8.4 đặt PIN, About 9.1 | — |
 
-## Kế hoạch sửa (chưa làm)
+`AlertDialog` không còn trong `features/settings|lock|about|reminder`.
 
-1. `settings_screen.dart` dựng lại bằng `SettingsGroupTitle/Card/NavRow/SwitchRow/SegmentRow`; `_MonthStartRow` →
-   `SettingsNavRow(trailing: MenuAnchor…)`; `widget_section.dart`, `reminder_section.dart`, `auto_backup_section.dart`
-   đổi sang `SettingsSwitchRow` (giữ `AutoBackupSection()` const không tham số — `test/data/auto_backup_review_test.dart` dùng).
-2. `budget_dialog.dart`, `backup_password_dialogs.dart`, `auto_backup_section.dart` (AutoBackupPasswordDialog),
-   `runWithProgress` → `VgDialog`; `data_actions.dart` truyền `encrypt` vào hộp xuất.
-3. `currency_picker.dart` → sheet; giữ tên lớp `CurrencyPickerDialog` hoặc sửa `currency_picker_test.dart` (đang tìm `ListTile`).
-4. Test: sửa `auto_backup_ui_test` (`SwitchListTile` → `SettingsSwitchRow`), `backup_password_test` (SwitchListTile
-   trong hộp xuất có thể giữ; ô sai mật khẩu không xoá), `currency_picker_test`, `f25_reminder_test`,
-   `plan001_t5_test` dòng 61–62 (công tắc PIN); thêm `test/features/hifi_d3_*_test.dart` (200%, sáng/tối, iOS override).
+## Kiểm tra thế nào
 
-## Điều cần D4 / D5 làm
-- Test của D4 tìm `SwitchListTile` trên màn Cài đặt sẽ vỡ khi D3 đổi component — ghi chú chi tiết đã để ở thư mục ghi
-  chú chung `…/side-session-notes/local_405e294e-…/d3-to-d4-settings-finders.md` (`secure_window_test`, `f26_widget_test`,
-  `merge_ios_gating_test`: đổi sang `SettingsSwitchRow`).
-- Thêm cờ "thư mục chỉ trên máy" vào `AutoBackupState` cho `autoBackupLocalFolderWarningIos`.
+```
+export PATH="/c/src/flutter/bin:$PATH"
+dart analyze lib/src/features/settings lib/src/features/lock lib/src/features/about lib/src/features/reminder test/features/hifi_d3_settings_test.dart   # No issues found
+flutter test test/features/hifi_d3_settings_test.dart test/features/currency_picker_test.dart test/features/f25_reminder_test.dart test/features/auto_backup_ui_test.dart test/data/auto_backup_review_test.dart   # 37 đạt
+flutter test test/features/backup_password_test.dart test/features/plan001_t5_test.dart test/features/g5_lock_test.dart test/app_test.dart test/features/g3_screens_test.dart test/features/g4_screens_test.dart test/features/g6_flows_test.dart test/features/g6_accessibility_test.dart test/features/plan001_t4_test.dart   # 49 đạt
+flutter test test/features/hifi_d3_settings_test.dart test/data/review_fixes_test.dart   # 18 đạt (sau khi thêm test quên PIN)
+```
+- Test mới `test/features/hifi_d3_settings_test.dart` (12): thẻ/tiêu đề nhóm, giá trị phụ đề, CSV vi, chọn Chủ Nhật lưu
+  DB, icon `backup`, Xóa = danger; pill A08 khi PIN bật; iOS không còn chữ Android; 200% sáng/tối không tràn; sheet tiền
+  tệ (xem thêm/thu gọn, ghim ẩn khi tìm, không khớp, ✕ đóng); hộp xuất đang mã hóa (Hủy/ô tắt, nút quay) + trả nội dung
+  mã hóa; lỗi thư mục đảo cặp nút + dải lỗi; hộp quên PIN 200%.
+- Sửa test cũ (chỉ đúng case màn D3): `f25_reminder_test` + `auto_backup_ui_test` + `plan001_t5_test` dòng 61–62
+  (`SwitchListTile`/`ListTile` → `SettingsSwitchRow`/`SettingsNavRow`); `currency_picker_test` (`CurrencyPickerSheet`,
+  `CurrencyRow`, cuộn hàng Tiền tệ vào màn trước khi chạm); `backup_password_test` (sai mật khẩu giữ chữ; nút Mở đổi
+  thành "Đang xử lý" khi bận).
+- **Chưa chạy** toàn bộ `flutter test` (theo brief, D5 chạy) và **chưa so ảnh** với PNG frame (D5).
 
-## Chữ còn thiếu / component cần sửa
-- Chưa thấy thiếu key. `VgHint` không có tông error cho dòng cảnh báo mật khẩu → dựng widget riêng trong feature (hoặc D0 thêm `tone`).
+## Điều cần D4 làm
+1. **Test của D4 sẽ đỏ** vì Cài đặt không còn `SwitchListTile`: `secure_window_test.dart` (~78–101), `f26_widget_test.dart`
+   (~364–384), `merge_ios_gating_test.dart` (`_switch()` dòng 63). Đổi cơ học `SwitchListTile` → `SettingsSwitchRow`
+   (`import 'package:vigon/src/ui/settings_rows.dart'`), `.value` giữ nguyên. Chi tiết: ghi chú chung
+   `…/side-session-notes/local_405e294e-…/d3-to-d4-settings-finders.md`. D3 không sửa (file của D4).
+2. **Cảnh báo thư mục iOS:** D3 đang đoán bằng `iosFolderMayBeLocal(uri)` (URI không chứa `Mobile Documents`) trong
+   `auto_backup_section.dart`. D4 đang thêm `AutoBackupState.folderInICloud` (chưa commit lúc D3 xong) → khi commit, thay
+   điều kiện bằng `state.folderInICloud != true` và xoá hàm đoán (1 dòng, file `features/settings/` — D4 hoặc D5 sửa).
+3. Hàng iOS chỉ hiện khi D4 bật cờ trong `platform_features.dart`; test iOS của D3 chỉ kiểm "không còn chữ Android".
+
+## Chỗ còn lệch mockup
+- SCR-13: ghi chú và thẻ ghim nằm trong danh sách cuộn (frame: cố định trên danh sách) — để chữ 200% + bàn phím không tràn.
+  Nút "Xem thêm" là dòng riêng dưới ghi chú (frame: nối cuối dòng 2).
+- SCR-26/31: dòng cảnh báo dựng riêng (`PasswordWarning`) vì `VgHint` chưa có tông `error`.
+- `SettingsNavRow` không có cách tắt mũi tên ›: Xuất/Khôi phục/CSV dùng `trailing: SizedBox.shrink()` (thừa 4 dp lề phải).
+- Tháng bắt đầu dùng hàng tự dựng (không phải `SettingsNavRow`) để giữ Semantics "Tháng bắt đầu từ ngày: N" của ô xổ.
+
+## Chữ còn thiếu
+Không thiếu key.
+
+## Component cần sửa trong `lib/src/ui/`
+- `VgHint`: thêm `tone: error` (chữ + icon `error`) cho cảnh báo mật khẩu → bỏ `PasswordWarning`.
+- `SettingsNavRow`: tham số `chevron: false` thay mẹo `trailing: SizedBox.shrink()`.
+- `VgSearchField`: tham số màu nền (trên sheet `surface-container` cần `surface-container-high`).
+- `VgDialog.cancelButton(onPressed: null)` vẫn bật (rơi về `Navigator.pop`) → cần tham số `enabled` cho A13; D3 tự dựng nút Hủy tắt.
+
+## Việc dở / rủi ro
+- Xuất sao lưu nay dựng JSON **trước** khi mở hộp (để mã hóa trong hộp): Hủy thì phí một lần đọc DB (nhanh, offline).
+- `autoBackupRunningProvider` chỉ chặn bấm lặp từ Cài đặt; lần chạy nền vẫn báo `autoBackupBusy` như cũ.
+- Đổi chạm "Ngày đầu tuần" sang nút chọn một: test/tài liệu khác mô tả "chạm để đổi" (nếu có) cần cập nhật.
 
 ## Đề xuất cải tiến xưởng
-- Phiên con nên có script trích frame (bỏ CSS/SVG, chỉ lấy khối thay đổi + ghi chú) sẵn trong playbook: đọc thô 31 frame
-  tốn phần lớn hạn mức của phiên này trước khi kịp sửa code.
+1. Script trích frame (bỏ `<style>/<svg>/<script>`, đổi `<span class="ms">x</span>` → `[x]`, chỉ lấy khối quanh
+   `vg-dialog`/`vg-sheet`/id đích + phần `.anno`) giúp đọc 40 frame trong vài lệnh; **cẩn thận** regex
+   `vg-status` ăn mất `vg-statusline`. Nên đưa vào `playbook/` cùng script rà chữ của D0.
+2. Trong Git Bash, đừng mở lệnh bằng `cat > file` không có heredoc trước một `python - <<EOF` — `cat` chờ stdin làm treo
+   lệnh tới hết thời gian (mất ~10 phút lần này). Viết script bằng công cụ Write rồi chạy.
+3. Brief phiên song song nên liệt kê **test của phiên khác sẽ vỡ vì component đổi** (ở đây D4 tìm `SwitchListTile` trên
+   màn của D3) để phiên điều phối giao trước cho một bên sửa.

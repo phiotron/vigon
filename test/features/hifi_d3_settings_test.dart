@@ -331,4 +331,39 @@ void main() {
       await disposeApp(tester, db);
     });
   });
+
+  group('P2 1.3–1.5 hộp quên PIN', () {
+    testWidgets('200%: thân cuộn, nút ghim, không tràn', (tester) async {
+      tester.platformDispatcher.textScaleFactorTestValue = 2;
+      addTearDown(tester.platformDispatcher.clearAllTestValues);
+      final secrets = MemorySecretStore();
+      await tester.runAsync(() => PinService(secrets).setPin('2468'));
+      final db = await pumpApp(tester, secrets: secrets);
+      await tester.ensureVisible(find.text('Quên mã'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Quên mã'));
+      await settle(tester);
+      expect(tester.takeException(), isNull);
+      final dialog = find.byType(VgDialog);
+      expect(dialog, findsOneWidget);
+      expect(
+        find.descendant(
+          of: dialog,
+          matching: find.byType(SingleChildScrollView),
+        ),
+        findsOneWidget,
+      );
+      // Nút xóa ghim ở đáy, luôn nhìn thấy và chạm được.
+      final action = find.widgetWithText(TextButton, 'Xóa toàn bộ dữ liệu');
+      expect(action, findsOneWidget);
+      expect(
+        tester.getRect(action).bottom,
+        lessThanOrEqualTo(tester.getRect(dialog).bottom),
+      );
+      await tester.tap(find.text('Hủy'));
+      await settle(tester);
+      expect(dialog, findsNothing);
+      await disposeApp(tester, db);
+    });
+  });
 }
