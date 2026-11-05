@@ -137,7 +137,7 @@ tài liệu khoảng **2 ngày làm việc**. Dự trù **≥ 6 tuần** trướ
 - Đường dẫn chính sách quyền riêng tư: **CHƯA có**. Nội dung ở `docs/legal/privacy-policy.md` (vi/en, Android + iOS); người dùng đăng
   (Google Sites khuyên dùng) rồi điền vào `lib/src/app_info.dart` (`AppInfo.privacyPolicyUrl`), Play Console, App Store Connect.
 - Support URL (App Store bắt buộc): **CHƯA có** — trang "support" cùng site với chính sách.
-- Email liên hệ nhà phát triển: `phamphuongphuong@gmail.com` (đã in trong app và chính sách; hiện công khai trên cả hai store).
+- Email liên hệ nhà phát triển: `phamphuongphuongnd@gmail.com` (đã in trong app và chính sách; hiện công khai trên cả hai store).
 
 ## Điều kiện chặn phát hành (còn lại, 2026-11-04; iOS cập nhật 2026-11-05 theo D-020, D-021)
 Chung:
@@ -174,6 +174,6 @@ iOS:
 ## Sau phát hành
 - Theo dõi crash: Android vitals trong Google Play Console; iOS: App Store Connect → TestFlight/App Analytics → Crashes và Xcode Organizer
   (chỉ có từ người dùng đồng ý chia sẻ dữ liệu với nhà phát triển). App không có SDK báo crash (D-002).
-- Nơi nhận phản hồi: đánh giá trên Google Play và App Store, email `phamphuongphuong@gmail.com`
+- Nơi nhận phản hồi: đánh giá trên Google Play và App Store, email `phamphuongphuongnd@gmail.com`
 - Mốc rà soát: sau 1 ngày, 1 tuần → ghi kết quả vào `notes/`; mục tiêu không crash ≥ 99,5%
 - Chứng chỉ Apple Distribution hết hạn sau 1 năm, thành viên Apple Developer phải gia hạn hằng năm (hết hạn thì app bị gỡ khỏi App Store).

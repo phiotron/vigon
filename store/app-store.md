@@ -231,7 +231,7 @@ sau không — KHÔNG tự bỏ (trái D-020).
 
 ## Thông tin cho App Review (App Review Information)
 - Sign-in required: **No** (không có tài khoản).
-- Liên hệ: họ tên + email `phamphuongphuong@gmail.com` + số điện thoại của người dùng (chỉ Apple thấy).
+- Liên hệ: họ tên + email `phamphuongphuongnd@gmail.com` + số điện thoại của người dùng (chỉ Apple thấy).
 - Notes (dán nguyên, tiếng Anh):
   ```
   Ví Gọn is a fully offline personal expense tracker. There is no account, no server and no network access; all data stays on the device.

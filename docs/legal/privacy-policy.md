@@ -100,7 +100,7 @@ Nếu Ví Gọn thay đổi cách xử lý dữ liệu (ví dụ thêm tính nă
 Đây là bản đầu tiên của chính sách.
 
 **11. Liên hệ**
-[Tên nhà phát triển], nhà phát triển Ví Gọn — email: phamphuongphuong@gmail.com
+[Tên nhà phát triển], nhà phát triển Ví Gọn — email: phamphuongphuongnd@gmail.com
 
 ---
 
@@ -155,4 +155,4 @@ If Ví Gọn changes how it handles data (for example by adding a feature that n
 This is the first version of this policy.
 
 **11. Contact**
-[Developer name], developer of Ví Gọn — email: phamphuongphuong@gmail.com
+[Developer name], developer of Ví Gọn — email: phamphuongphuongnd@gmail.com

@@ -157,7 +157,7 @@ Nhắc ghi chép, mật khẩu file sao lưu, tìm kiếm, ẩn tài khoản, ng
 ## Tài khoản nhà phát triển cá nhân — điều cần biết
 - **Tên hiển thị trên Play** = tên nhà phát triển người dùng đặt khi tạo tài khoản (đã xác minh danh tính). Chính sách quyền riêng tư
   và màn Giới thiệu nên dùng cùng tên đó (thay "nhà phát triển Ví Gọn").
-- **Email liên hệ hiện công khai** trên trang store: `phamphuongphuong@gmail.com` (đã in trong app). Tài khoản cá nhân không bán gì
+- **Email liên hệ hiện công khai** trên trang store: `phamphuongphuongnd@gmail.com` (đã in trong app). Tài khoản cá nhân không bán gì
   thì Play không hiện địa chỉ nhà; nếu sau này bán hàng/IAP thì Play có thể yêu cầu hiện địa chỉ (khai "trader" theo EU DSA).
 - **Bắt buộc closed test ≥ 12 tester trong 14 ngày liên tục** trước khi xin quyền production — kế hoạch: `store/closed-test-plan.md`.
 - **Xác minh nhà phát triển (developer verification)**: Google mở rộng dần theo nước (COMPLIANCE P-08); làm theo thông báo trong Play Console.
