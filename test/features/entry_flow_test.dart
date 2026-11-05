@@ -29,7 +29,10 @@ void main() {
       await settle(tester);
 
       expect(find.text('Khoản chi mới'), findsNothing);
-      expect(findSemanticsLabel('Số dư: -155 ₫'), findsOneWidget);
+      expect(
+        findSemanticsLabel('Số dư: -155 ₫, Tháng 11 năm 2026'),
+        findsOneWidget,
+      );
       final rows = await tester.runAsync(() => db.select(db.entries).get());
       expect(rows!.single.amount, 155);
       expect(rows.single.type, EntryType.expense);

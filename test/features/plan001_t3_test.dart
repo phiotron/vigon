@@ -21,7 +21,7 @@ ProviderContainer _container(WidgetTester tester) =>
 
 /// Mở bảng Xem theo rồi chọn "Khoảng tùy chọn" để hiện lịch (2.4 → 2.5).
 Future<void> _openCalendar(WidgetTester tester) async {
-  await tester.tap(find.text('Tháng 11 năm 2026'));
+  await tester.tap(find.text('Tháng 11 năm 2026').first);
   await settle(tester);
   await tester.tap(find.text('Khoảng tùy chọn'));
   await settle(tester);
@@ -63,7 +63,7 @@ void main() {
         period,
         Period.custom(DateTime(2026, 11, 5), DateTime(2026, 11, 9)),
       );
-      expect(findPlainText('5 thg 11 – 9 thg 11, 2026'), findsOneWidget);
+      expect(findPlainText('5 thg 11 – 9 thg 11, 2026'), findsNWidgets(2));
       await disposeApp(tester, db);
     });
 
@@ -93,7 +93,8 @@ void main() {
       await settle(tester);
       expect(find.byType(RangeCalendarSheet), findsNothing);
       expect(_container(tester).read(periodProvider), before);
-      expect(find.text('Tháng 11 năm 2026'), findsOneWidget);
+      // Đầu kỳ + dòng tên kỳ dưới "Số dư" (v2).
+      expect(find.text('Tháng 11 năm 2026'), findsNWidgets(2));
       await disposeApp(tester, db);
     });
 
@@ -158,7 +159,7 @@ void main() {
       final db = memoryDatabase();
       await tester.runAsync(() => SettingsRepository(db).setThemeMode(theme));
       await pumpApp(tester, db: db);
-      await tester.tap(find.text('Tháng 11 năm 2026'));
+      await tester.tap(find.text('Tháng 11 năm 2026').first);
       await settle(tester);
       expect(tester.takeException(), isNull);
       await expectLater(tester, meetsGuideline(labeledTapTargetGuideline));
@@ -178,7 +179,7 @@ void main() {
     final db = await pumpApp(tester);
     expect(find.byTooltip('Kỳ trước'), findsOneWidget);
     expect(find.byTooltip('Kỳ sau'), findsOneWidget);
-    await tester.tap(find.text('Tháng 11 năm 2026'));
+    await tester.tap(find.text('Tháng 11 năm 2026').first);
     await settle(tester);
     await tester.tap(find.text('Tất cả'));
     await settle(tester);
@@ -213,7 +214,7 @@ void main() {
 
   testWidgets('bảng Xem theo đánh dấu dòng đang chọn (2.4)', (tester) async {
     final db = await pumpApp(tester);
-    await tester.tap(find.text('Tháng 11 năm 2026'));
+    await tester.tap(find.text('Tháng 11 năm 2026').first);
     await settle(tester);
     expect(find.text('Xem theo'), findsOneWidget);
     final rows = tester.widgetList<ChoiceRow>(find.byType(ChoiceRow)).toList();

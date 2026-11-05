@@ -73,18 +73,27 @@ void main() {
       categoryId: 1,
       accountId: card!,
     );
-    expect(findSemanticsLabel('Số dư: -130.000 ₫'), findsOneWidget);
+    expect(
+      findSemanticsLabel('Số dư: -130.000 ₫, Tháng 11 năm 2026'),
+      findsOneWidget,
+    );
     await tester.tap(find.byTooltip('Tài khoản'));
     await settle(tester);
     await tester.tap(find.text('Thẻ').last);
     await settle(tester);
-    expect(findSemanticsLabel('Số dư: -30.000 ₫'), findsOneWidget);
+    expect(
+      findSemanticsLabel('Số dư: -30.000 ₫, Tháng 11 năm 2026'),
+      findsOneWidget,
+    );
     // Nút lọc đọc tên tài khoản đang lọc.
     await tester.tap(find.byTooltip('Tài khoản: Thẻ'));
     await settle(tester);
     await tester.tap(find.text('Tất cả tài khoản'));
     await settle(tester);
-    expect(findSemanticsLabel('Số dư: -130.000 ₫'), findsOneWidget);
+    expect(
+      findSemanticsLabel('Số dư: -130.000 ₫, Tháng 11 năm 2026'),
+      findsOneWidget,
+    );
     await disposeApp(tester, db);
   });
 
@@ -129,10 +138,7 @@ void main() {
     await settle(tester);
     expect(find.text('1 khoản sẽ được chuyển sang:'), findsOneWidget);
     await tester.tap(
-      find.descendant(
-        of: find.byType(VgDialog),
-        matching: find.text('Đi lại'),
-      ),
+      find.descendant(of: find.byType(VgDialog), matching: find.text('Đi lại')),
     );
     await settle(tester);
     final cats = await tester.runAsync(() => db.select(db.categories).get());
@@ -184,21 +190,21 @@ void main() {
 
   testWidgets('chọn kỳ Tuần và Năm từ bảng chọn kỳ (AC-10)', (tester) async {
     final db = await pumpApp(tester);
-    expect(find.text('Tháng 11 năm 2026'), findsOneWidget);
-    await tester.tap(find.text('Tháng 11 năm 2026'));
+    expect(find.text('Tháng 11 năm 2026'), findsNWidgets(2));
+    await tester.tap(find.text('Tháng 11 năm 2026').first);
     await settle(tester);
     await tester.tap(find.text('Tuần'));
     await settle(tester);
     // 3/11/2026 là Thứ Ba; tuần bắt đầu Thứ Hai 2/11.
-    expect(find.textContaining('2 thg 11'), findsOneWidget);
+    expect(find.textContaining('2 thg 11'), findsNWidgets(2));
     await tester.tap(find.byTooltip('Kỳ sau'));
     await settle(tester);
-    expect(find.textContaining('9 thg 11'), findsOneWidget);
-    await tester.tap(find.textContaining('9 thg 11'));
+    expect(find.textContaining('9 thg 11'), findsNWidgets(2));
+    await tester.tap(find.textContaining('9 thg 11').first);
     await settle(tester);
     await tester.tap(find.text('Năm'));
     await settle(tester);
-    expect(find.text('2026'), findsOneWidget);
+    expect(find.text('2026'), findsNWidgets(2));
     await disposeApp(tester, db);
   });
 
@@ -238,7 +244,7 @@ void main() {
     tester,
   ) async {
     final db = await pumpApp(tester);
-    await tester.tap(find.text('Tháng 11 năm 2026'));
+    await tester.tap(find.text('Tháng 11 năm 2026').first);
     await settle(tester);
     await tester.tap(find.text('Khoảng tùy chọn'));
     await settle(tester);
@@ -250,13 +256,13 @@ void main() {
     await tester.pump();
     await tester.tap(find.text('Áp dụng'));
     await settle(tester);
-    expect(find.textContaining('5 thg 11'), findsOneWidget);
-    expect(find.textContaining('9 thg 11'), findsOneWidget);
+    expect(find.textContaining('5 thg 11'), findsNWidgets(2));
+    expect(find.textContaining('9 thg 11'), findsNWidgets(2));
     // Kỳ sau dịch cả khoảng đi đúng số ngày (5 ngày).
     await tester.tap(find.byTooltip('Kỳ sau'));
     await settle(tester);
-    expect(find.textContaining('10 thg 11'), findsOneWidget);
-    expect(find.textContaining('14 thg 11'), findsOneWidget);
+    expect(find.textContaining('10 thg 11'), findsNWidgets(2));
+    expect(find.textContaining('14 thg 11'), findsNWidgets(2));
     await disposeApp(tester, db);
   });
 }
