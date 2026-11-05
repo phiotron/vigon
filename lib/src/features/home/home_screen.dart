@@ -1,6 +1,5 @@
 import 'dart:math';
 
-import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -9,13 +8,14 @@ import 'package:material_symbols_icons/symbols.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../data/database.dart';
 import '../../data/period.dart';
-import '../../data/summary.dart';
 import '../../l10n_names.dart';
 import '../../providers.dart';
+import '../../ui/balance_bar.dart';
 import '../../ui/category_avatar.dart';
 import '../../ui/category_grid.dart';
 import '../../ui/format.dart';
 import '../../ui/main_action_button.dart';
+import '../../ui/spending_ring.dart';
 import '../../ui/theme.dart';
 import '../../ui/tokens.g.dart';
 import '../settings/budget_dialog.dart';
@@ -385,146 +385,21 @@ class _ChartWithCategories extends ConsumerWidget {
   }
 }
 
-/// Vòng chi tiêu theo danh mục (2.1): cung màu danh mục từ lớn tới nhỏ, bắt
-/// đầu 12 giờ, cách nhau 2; giữa là tổng thu rồi tổng chi. Chỉ có thu thì
-/// vòng đầy màu thu.
-class SpendingRing extends StatelessWidget {
-  const SpendingRing({
-    super.key,
-    required this.summary,
-    required this.currency,
-    this.scale = 1,
-  });
-
-  final PeriodSummary summary;
-  final String currency;
-  final double scale;
-
-  @override
-  Widget build(BuildContext context) {
-    final inner = 77 * scale;
-    final thickness = 30 * scale;
-    final sorted = [...summary.expenseByCategory]
-      ..sort((a, b) => b.total.compareTo(a.total));
-    final sections = summary.expense > 0
-        ? [
-            for (final t in sorted)
-              PieChartSectionData(
-                value: t.total.toDouble(),
-                color: Color(t.category.color),
-                radius: thickness,
-                showTitle: false,
-              ),
-          ]
-        : [
-            PieChartSectionData(
-              value: 1,
-              color: incomeColor(context),
-              radius: thickness,
-              showTitle: false,
-            ),
-          ];
-    return Stack(
-      children: [
-        PieChart(
-          PieChartData(
-            sections: sections,
-            centerSpaceRadius: inner,
-            sectionsSpace: sections.length > 1 ? 2 : 0,
-            startDegreeOffset: -90,
-          ),
-        ),
-        Center(
-          child: SizedBox.square(
-            dimension: inner * 2 - VgSpace.s4,
-            child: Center(
-              child: FittedBox(
-                fit: BoxFit.scaleDown,
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(
-                      money(context, currency, summary.income),
-                      style: VgType.amountMd.copyWith(
-                        color: incomeColor(context),
-                      ),
-                    ),
-                    Text(
-                      money(context, currency, summary.expense),
-                      style: VgType.amountMd.copyWith(
-                        color: expenseColor(context),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-/// Thanh Số dư của kỳ (2.1): cao 56, bo `radius-md`; chạm để xem danh sách
-/// khoản (AC-07, AC-08).
+/// Thanh Số dư của kỳ (2.1): chạm để xem danh sách khoản (AC-07, AC-08).
 class _BalanceBar extends ConsumerWidget {
   const _BalanceBar();
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final l = AppLocalizations.of(context);
     final summary = ref.watch(periodSummaryProvider);
     final currency = ref.watch(currencyProvider).value ?? 'VND';
-    final muted = Theme.of(context).colorScheme.onSurfaceVariant;
-    final amount = money(context, currency, summary.balance);
     return Padding(
       padding: const EdgeInsets.fromLTRB(VgSpace.s4, 0, VgSpace.s4, VgSpace.s3),
-      child: Semantics(
-        button: true,
-        label: l.balanceLabel(amount),
-        excludeSemantics: true,
+      child: BalanceBar(
+        amount: money(context, currency, summary.balance),
+        // v2 hiện tên kỳ dưới "Số dư" (`periodTitle:`); bật ở D1 cùng lúc sửa
+        // test màn chính đang tìm tên kỳ bằng find.text (sẽ thấy 2 chỗ).
         onTap: () => context.push('/entries'),
-        child: Material(
-          color: Theme.of(context).colorScheme.surfaceContainerHigh,
-          borderRadius: BorderRadius.circular(VgRadius.md),
-          clipBehavior: Clip.antiAlias,
-          child: InkWell(
-            onTap: () => context.push('/entries'),
-            child: ConstrainedBox(
-              constraints: const BoxConstraints(minHeight: VgSize.tapKey),
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(
-                  VgSpace.s4,
-                  VgSpace.s2,
-                  VgSpace.s2,
-                  VgSpace.s2,
-                ),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: Text(
-                        l.balance,
-                        style: VgType.bodyMd.copyWith(color: muted),
-                      ),
-                    ),
-                    const SizedBox(width: VgSpace.s2),
-                    Flexible(
-                      flex: 3,
-                      child: FittedBox(
-                        fit: BoxFit.scaleDown,
-                        alignment: Alignment.centerRight,
-                        child: Text(amount, style: VgType.amountMd),
-                      ),
-                    ),
-                    const SizedBox(width: VgSpace.s2),
-                    Icon(Symbols.chevron_right_rounded, color: muted),
-                  ],
-                ),
-              ),
-            ),
-          ),
-        ),
       ),
     );
   }

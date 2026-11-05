@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:material_symbols_icons/symbols.dart';
 
-import '../../ui/format.dart';
-import '../../ui/tokens.g.dart';
+import 'format.dart';
+import 'tokens.g.dart';
 
-/// Nút chọn một ở Cài đặt (`.vg-seg`, 5.1): viền `outline`, bo tròn, cao 40
+/// Nút chọn một (`.vg-seg`, SettingsRows.html, 5.1): viền `outline`, bo tròn, cao 40
 /// (vùng chạm 48), ô đang chọn nền `secondary-container` có dấu ✓. Mỗi ô rộng
 /// theo chữ của nó rồi chia đều phần dư, nên "Theo hệ thống" không xuống dòng.
 /// Chữ lớn (≥ 130%) hoặc không đủ chỗ thì xếp dọc (D-008, AC-38).
@@ -92,7 +92,7 @@ class ChoiceSegments<T> extends StatelessWidget {
             clipBehavior: Clip.antiAlias,
             decoration: BoxDecoration(
               border: Border.fromBorderSide(border),
-              borderRadius: BorderRadius.circular(_height / 2),
+              borderRadius: BorderRadius.circular(VgRadius.lg),
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,

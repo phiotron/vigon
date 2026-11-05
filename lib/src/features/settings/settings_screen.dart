@@ -11,7 +11,7 @@ import '../../ui/tokens.g.dart';
 import '../lock/app_lock.dart';
 import 'auto_backup_section.dart';
 import 'budget_dialog.dart';
-import 'choice_segments.dart';
+import '../../ui/choice_segments.dart';
 import 'currency_picker.dart';
 import 'data_actions.dart';
 import '../../platform_features.dart';

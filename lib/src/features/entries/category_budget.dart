@@ -7,6 +7,7 @@ import '../../data/period.dart';
 import '../../data/summary.dart';
 import '../../providers.dart';
 import '../../ui/format.dart';
+import '../../ui/limit_bar.dart';
 
 /// Tổng chi của THÁNG HIỆN TẠI theo từng danh mục chi (khóa là id danh mục),
 /// mọi tài khoản, không phụ thuộc kỳ đang xem (AC-54). Cùng cách tính tháng
@@ -39,7 +40,6 @@ class CategoryBudgetBar extends ConsumerWidget {
     final spent = ref.watch(categorySpentProvider).value?[category.id] ?? 0;
     final currency = ref.watch(currencyProvider).value ?? 'VND';
     final over = spent > limit;
-    final scheme = Theme.of(context).colorScheme;
     final progress = l.budgetProgress(
       money(context, currency, spent),
       money(context, currency, limit),
@@ -47,31 +47,9 @@ class CategoryBudgetBar extends ConsumerWidget {
     final text = over
         ? '$progress · ${l.budgetOver(money(context, currency, spent - limit))}'
         : progress;
-    return Semantics(
-      label: text,
-      excludeSemantics: true,
-      child: Padding(
-        padding: const EdgeInsets.only(top: 4),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              text,
-              style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                color: over ? scheme.error : null,
-                fontWeight: over ? FontWeight.bold : null,
-              ),
-            ),
-            const SizedBox(height: 4),
-            LinearProgressIndicator(
-              value: (spent / limit).clamp(0, 1).toDouble(),
-              minHeight: 4,
-              borderRadius: BorderRadius.circular(2),
-              color: over ? scheme.error : scheme.primary,
-            ),
-          ],
-        ),
-      ),
+    return Padding(
+      padding: const EdgeInsets.only(top: 4),
+      child: LimitBar(text: text, progress: spent / limit, over: over),
     );
   }
 }

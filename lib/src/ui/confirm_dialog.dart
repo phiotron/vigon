@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 
-import '../../l10n/app_localizations.dart';
+import 'dialog.dart';
 import 'theme.dart';
-import 'tokens.g.dart';
 
 /// Kiểu nút xác nhận trong [showConfirmDialog].
 enum ConfirmStyle {
@@ -16,21 +15,23 @@ enum ConfirmStyle {
   dangerText,
 }
 
-/// Hộp thoại xác nhận theo `.vg-dialog` (1.3–1.5, 5.3, 8.6, 8.9): icon tùy
-/// chọn ở giữa màu `error`, tiêu đề title-md, nội dung chữ phụ, nút Hủy và
-/// nút hành động bên phải. Trả về true khi người dùng chọn hành động.
+/// Hộp thoại xác nhận (1.3–1.5, 5.3, 6.3, 8.6, 8.9) dựng bằng [VgDialog]: icon
+/// tùy chọn, tiêu đề, nội dung chữ phụ, [note] có icon ⓘ (SCR-27), nút Hủy và
+/// nút hành động; thân cuộn, nút ghim khi chữ lớn. [iconTone] mặc định màu
+/// `error`. Trả về true khi người dùng chọn hành động.
 Future<bool> showConfirmDialog(
   BuildContext context, {
   required String title,
   required String body,
   required String action,
   IconData? icon,
+  VgDialogTone iconTone = VgDialogTone.danger,
+  String? note,
   ConfirmStyle style = ConfirmStyle.normal,
 }) async =>
     await showDialog<bool>(
       context: context,
       builder: (context) {
-        final l = AppLocalizations.of(context);
         final scheme = Theme.of(context).colorScheme;
         final confirm = switch (style) {
           ConfirmStyle.normal => FilledButton(
@@ -48,54 +49,19 @@ Future<bool> showConfirmDialog(
             child: Text(action),
           ),
         };
-        return Dialog(
-          insetPadding: const EdgeInsets.symmetric(
-            horizontal: VgSpace.s6,
-            vertical: VgSpace.s6,
-          ),
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.all(VgSpace.s6),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                if (icon != null) ...[
-                  Icon(icon, size: 28, color: scheme.error),
-                  const SizedBox(height: VgSpace.s3),
-                ],
-                Semantics(
-                  header: true,
-                  child: Text(
-                    title,
-                    style: Theme.of(context).textTheme.titleMedium,
-                  ),
-                ),
-                const SizedBox(height: VgSpace.s3),
-                Text(
-                  body,
-                  style: VgType.bodyMd.copyWith(color: scheme.onSurfaceVariant),
-                ),
-                const SizedBox(height: VgSpace.s6),
-                Wrap(
-                  alignment: WrapAlignment.end,
-                  spacing: VgSpace.s2,
-                  runSpacing: VgSpace.s2,
-                  children: [
-                    // `primary` trên nền hộp thoại chỉ đạt 4,06:1 ở chủ đề sáng
-                    // (README thiết kế), nên nút Hủy dùng màu chữ chính.
-                    TextButton(
-                      style: TextButton.styleFrom(
-                        foregroundColor: scheme.onSurface,
-                      ),
-                      onPressed: () => Navigator.pop(context, false),
-                      child: Text(l.cancel),
-                    ),
-                    confirm,
-                  ],
-                ),
-              ],
+        return VgDialog(
+          title: title,
+          body: body,
+          icon: icon,
+          tone: iconTone,
+          note: note,
+          actions: [
+            VgDialog.cancelButton(
+              context,
+              onPressed: () => Navigator.pop(context, false),
             ),
-          ),
+            confirm,
+          ],
         );
       },
     ) ??

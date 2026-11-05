@@ -24,7 +24,9 @@ Future<int?> showCategorySheet(
 );
 
 /// Ô "Danh mục khác" (dấu ba chấm ngang) cuối vòng icon ở màn chính, mở lưới
-/// đầy đủ khi không đủ chỗ xếp mọi danh mục (AC-51).
+/// đầy đủ khi không đủ chỗ xếp mọi danh mục (AC-51). v2 (`.vg-caticon.more`):
+/// nền `surface`, viền nét đứt 2 `outline`, icon viền màu chữ phụ — không
+/// giống một danh mục (danh mục là hình tròn màu, icon tô đầy).
 class MoreCategoriesAvatar extends StatelessWidget {
   const MoreCategoriesAvatar({super.key, this.size = 48, required this.onTap});
 
@@ -42,18 +44,21 @@ class MoreCategoriesAvatar extends StatelessWidget {
         label: l.otherCategories,
         onTap: onTap,
         excludeSemantics: true,
-        child: Material(
-          color: scheme.surfaceContainerHighest,
-          shape: const CircleBorder(),
-          child: InkWell(
-            customBorder: const CircleBorder(),
-            onTap: onTap,
-            child: SizedBox.square(
-              dimension: size,
-              child: Icon(
-                Symbols.more_horiz_rounded,
-                color: scheme.onSurfaceVariant,
-                size: size * 0.5,
+        child: CustomPaint(
+          foregroundPainter: DashedCirclePainter(scheme.outline),
+          child: Material(
+            color: scheme.surface,
+            shape: const CircleBorder(),
+            child: InkWell(
+              customBorder: const CircleBorder(),
+              onTap: onTap,
+              child: SizedBox.square(
+                dimension: size,
+                child: Icon(
+                  Symbols.more_horiz_rounded,
+                  color: scheme.onSurfaceVariant,
+                  size: size * 0.5,
+                ),
               ),
             ),
           ),
@@ -64,7 +69,8 @@ class MoreCategoriesAvatar extends StatelessWidget {
 }
 
 /// Bảng "Chọn danh mục" (3.3): lưới 4 cột, ô rộng tối đa 96, icon 48, tên
-/// label-sm tối đa 2 dòng. Chạm một ô là đóng bảng và trả về id danh mục.
+/// label-sm tối đa 2 dòng; ô đang chọn có vòng chọn (v2). Chạm một ô là đóng
+/// bảng và trả về id danh mục.
 /// Dùng ở màn ghi khoản và ô "Danh mục khác" của màn chính (AC-02, AC-51).
 class CategoryGrid extends ConsumerWidget {
   const CategoryGrid({super.key, required this.type, this.selectedId});
@@ -98,7 +104,7 @@ class CategoryGrid extends ConsumerWidget {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  CategoryAvatar(category: c),
+                  CategoryAvatar(category: c, selected: c.id == selectedId),
                   const SizedBox(height: 6),
                   Text(
                     categoryLabel(l, c),
