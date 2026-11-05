@@ -152,7 +152,10 @@ void main() {
     await settle(tester);
     await openEntries(tester);
     expect(findPlainText('70.000 ₫'), findsWidgets);
-    expect(findPlainText('Đã chi 30.000 ₫ / 100.000 ₫'), findsOneWidget);
+    expect(
+      findPlainText('Tháng này: Đã chi 30.000 ₫ / 100.000 ₫'),
+      findsOneWidget,
+    );
     await disposeApp(tester, db);
   });
 }

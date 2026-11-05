@@ -14,6 +14,7 @@ import '../../ui/format.dart';
 import '../../ui/messenger.dart';
 import '../../ui/theme.dart';
 import '../../ui/tokens.g.dart';
+import '../home/home_extras.dart';
 import 'category_budget.dart';
 import 'entry_search.dart';
 
@@ -92,12 +93,15 @@ class _EntriesScreenState extends ConsumerState<EntriesScreen> {
             total: t,
             amount: money(context, currency, t.total),
             open: open,
-            // Thanh hạn mức tháng dưới phụ đề của danh mục chi có hạn mức (AC-54).
-            budgetCategory: prefix == 'e' ? t.category : null,
             onTap: () =>
                 setState(() => open ? _open.remove(key) : _open.add(key)),
           ),
         );
+        // Thanh hạn mức tháng ngay dưới dòng danh mục chi có hạn mức, thụt
+        // vào cột chữ (AC-54, SCR-10).
+        if (prefix == 'e' && t.category.budget != null) {
+          items.add(() => CategoryBudgetBar(category: t.category));
+        }
         if (open) {
           for (final r in byCategory[t.category.id] ?? const <EntryView>[]) {
             items.add(
@@ -157,39 +161,45 @@ class _EntriesScreenState extends ConsumerState<EntriesScreen> {
               tileBuilder: (r, title, amount) =>
                   _EntryTile(row: r, title: title, amount: amount),
             )
-          : rows.isEmpty
-          // Kỳ trống (4.4): không có số dư, không có danh sách.
-          ? Center(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: VgSpace.s8),
-                child: Text(
-                  l.noEntries,
-                  textAlign: TextAlign.center,
-                  style: theme.textTheme.bodyLarge?.copyWith(
-                    color: theme.colorScheme.onSurfaceVariant,
-                  ),
-                ),
-              ),
-            )
-          : ListView.builder(
-              itemCount: items.length,
-              itemBuilder: (context, i) => items[i](),
+          : Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                // Tài khoản đang lọc hiện rõ ở đầu danh sách (§10.1 #1).
+                if (ref.watch(accountFilterProvider) != null)
+                  const ActiveAccountChip(),
+                Expanded(child: _list(context, rows.isEmpty, items)),
+              ],
             ),
     );
   }
-}
 
-/// Thêm thanh hạn mức tháng dưới phụ đề của danh mục chi có hạn mức (AC-54).
-Widget _withBudget(Widget subtitle, Category? category) =>
-    category?.budget == null
-    ? subtitle
-    : Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          subtitle,
-          CategoryBudgetBar(category: category!),
-        ],
-      );
+  Widget _list(
+    BuildContext context,
+    bool empty,
+    List<Widget Function()> items,
+  ) {
+    final l = AppLocalizations.of(context);
+    final theme = Theme.of(context);
+    return empty
+        // Kỳ trống (4.4): không có số dư, không có danh sách.
+        ? Center(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: VgSpace.s8),
+              child: Text(
+                l.noEntries,
+                textAlign: TextAlign.center,
+                style: theme.textTheme.bodyLarge?.copyWith(
+                  color: theme.colorScheme.onSurfaceVariant,
+                ),
+              ),
+            ),
+          )
+        : ListView.builder(
+            itemCount: items.length,
+            itemBuilder: (context, i) => items[i](),
+          );
+  }
+}
 
 /// Tiêu đề phần Chi / Thu / Chuyển tiền (`.vg-section.plain`): title-sm màu
 /// chữ chính, tổng màu thu hoặc chi ở cuối; chữ lớn thì tổng xuống dòng.
@@ -262,16 +272,12 @@ class _CategoryTile extends StatelessWidget {
     required this.amount,
     required this.open,
     required this.onTap,
-    this.budgetCategory,
   });
 
   final CategoryTotal total;
   final String amount;
   final bool open;
   final VoidCallback onTap;
-
-  /// Danh mục chi để vẽ thanh hạn mức tháng (AC-54); null thì không vẽ.
-  final Category? budgetCategory;
 
   @override
   Widget build(BuildContext context) {
@@ -283,13 +289,10 @@ class _CategoryTile extends StatelessWidget {
       child: ListTile(
         leading: CategoryAvatar(category: total.category, size: 40),
         title: Text(categoryLabel(l, total.category)),
-        subtitle: _withBudget(
-          Text(
-            large
-                ? '${percent(context, total.percent)} · $amount'
-                : percent(context, total.percent),
-          ),
-          budgetCategory,
+        subtitle: Text(
+          large
+              ? '${percent(context, total.percent)} · $amount'
+              : percent(context, total.percent),
         ),
         trailing: Row(
           mainAxisSize: MainAxisSize.min,
@@ -362,9 +365,20 @@ class _EntryTile extends ConsumerWidget {
             : SizedBox(width: 40, child: Center(child: leading)),
         title: Text(title, maxLines: 2, overflow: TextOverflow.ellipsis),
         subtitle: Text(large ? '$date\n$amount' : date),
+        // Số tiền khoản thẳng mép phải với tổng danh mục: rãnh 24 (+4) thay
+        // chỗ mũi tên mở/thu (§10.1 #12, SCR-10).
         trailing: large
             ? null
-            : Text(amount, style: _rowAmount.copyWith(color: scheme.onSurface)),
+            : Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    amount,
+                    style: _rowAmount.copyWith(color: scheme.onSurface),
+                  ),
+                  const SizedBox(width: VgSpace.s1 + 24),
+                ],
+              ),
         onTap: () => context.push(
           isTransfer ? '/transfer/${entry.id}' : '/entry/${entry.id}',
         ),
