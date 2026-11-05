@@ -1,0 +1,3 @@
+// Lấy FLUTTER_BUILD_NAME / FLUTTER_BUILD_NUMBER (Flutter sinh khi build) để phiên bản của
+// extension luôn trùng app (App Store yêu cầu). Không include Debug/Release.xcconfig của Runner.
+#include? "../Flutter/Generated.xcconfig"

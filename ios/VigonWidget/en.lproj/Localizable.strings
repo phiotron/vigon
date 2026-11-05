@@ -1,0 +1,9 @@
+/* Copied from lib/l10n/app_en.arb (keys widget*, addExpense, addIncome, appTitle). Edit the .arb first. */
+"appTitle" = "Ví Gọn";
+"widgetPickerName" = "Quick add";
+"widgetPickerDescription" = "Quickly add an expense or income";
+"widgetExpenseButton" = "Expense";
+"widgetIncomeButton" = "Income";
+"widgetStale" = "Open the app to update";
+"addExpense" = "Add expense";
+"addIncome" = "Add income";

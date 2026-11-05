@@ -6,6 +6,8 @@
   và dart:io đọc thuộc tính file trong vùng chứa của app; SQLite kiểm dung lượng
   đĩa trước khi ghi. Các plugin (file_picker, secure storage, share_plus,
   package_info_plus, url_launcher) tự kèm manifest riêng, không khai API nào.
+  UserDefaults (D-022): CA92.1 bookmark thư mục sao lưu tự động (F-24) chỉ app đọc;
+  1C8F.1 dòng trạng thái widget ghi vào App Group group.com.phiotron.vigon (F-26).
 -->
 <plist version="1.0">
 <dict>
@@ -31,6 +33,15 @@
 			<key>NSPrivacyAccessedAPITypeReasons</key>
 			<array>
 				<string>E174.1</string>
+			</array>
+		</dict>
+		<dict>
+			<key>NSPrivacyAccessedAPIType</key>
+			<string>NSPrivacyAccessedAPICategoryUserDefaults</string>
+			<key>NSPrivacyAccessedAPITypeReasons</key>
+			<array>
+				<string>CA92.1</string>
+				<string>1C8F.1</string>
 			</array>
 		</dict>
 	</array>

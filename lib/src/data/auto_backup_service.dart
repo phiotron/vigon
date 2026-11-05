@@ -1,5 +1,6 @@
 import 'dart:convert';
-import 'dart:typed_data';
+
+import 'package:flutter/foundation.dart';
 
 import 'backup.dart';
 import 'backup_crypto.dart';
@@ -34,6 +35,7 @@ class AutoBackupState {
     this.enabled = false,
     this.folderUri,
     this.folderName,
+    this.folderInICloud,
     this.lastAt,
     this.lastResult,
   });
@@ -41,6 +43,11 @@ class AutoBackupState {
   final bool enabled;
   final String? folderUri;
   final String? folderName;
+
+  /// Chỉ iOS: thư mục nằm trong iCloud Drive ([PickedFolder.inICloud]); null
+  /// khi không biết (Android, cấu hình cũ). Cài đặt hiện cảnh báo
+  /// `autoBackupLocalFolderWarningIos` khi giá trị khác `true`.
+  final bool? folderInICloud;
 
   /// Lần thử gần nhất (thành công hay không).
   final DateTime? lastAt;
@@ -86,6 +93,7 @@ class AutoBackupService {
   static const lastAtKey = 'auto_backup_last_at';
   static const lastResultKey = 'auto_backup_last_result';
   static const lastHashKey = 'auto_backup_last_hash';
+  static const iCloudKey = 'auto_backup_icloud';
 
   /// Số file tự động giữ lại trong thư mục (AC-59).
   static const keepFiles = 7;
@@ -106,10 +114,12 @@ class AutoBackupService {
     try {
       final lastAt = DateTime.tryParse(await _secrets.read(lastAtKey) ?? '');
       final result = await _secrets.read(lastResultKey);
+      final iCloud = await _secrets.read(iCloudKey);
       return AutoBackupState(
         enabled: await _secrets.read(enabledKey) == '1',
         folderUri: await _secrets.read(uriKey),
         folderName: await _secrets.read(nameKey),
+        folderInICloud: iCloud == null ? null : iCloud == '1',
         lastAt: lastAt,
         lastResult: AutoBackupResult.values.asNameMap()[result],
       );
@@ -126,26 +136,31 @@ class AutoBackupService {
   }) async {
     await _secrets.write(passwordKey, password);
     await _secrets.write(uriKey, folder.uri);
-    if (folder.name == null) {
-      await _secrets.delete(nameKey);
-    } else {
-      await _secrets.write(nameKey, folder.name!);
-    }
+    await _saveFolderInfo(folder);
     await _secrets.delete(lastAtKey);
     await _secrets.delete(lastResultKey);
     await _secrets.delete(lastHashKey);
     await _secrets.write(enabledKey, '1');
   }
 
-  /// Đổi thư mục, giữ mật khẩu; bỏ quyền thư mục cũ.
-  Future<void> changeFolder(PickedFolder folder) async {
-    final old = await _secrets.read(uriKey);
-    await _secrets.write(uriKey, folder.uri);
+  Future<void> _saveFolderInfo(PickedFolder folder) async {
     if (folder.name == null) {
       await _secrets.delete(nameKey);
     } else {
       await _secrets.write(nameKey, folder.name!);
     }
+    if (folder.inICloud == null) {
+      await _secrets.delete(iCloudKey);
+    } else {
+      await _secrets.write(iCloudKey, folder.inICloud! ? '1' : '0');
+    }
+  }
+
+  /// Đổi thư mục, giữ mật khẩu; bỏ quyền thư mục cũ.
+  Future<void> changeFolder(PickedFolder folder) async {
+    final old = await _secrets.read(uriKey);
+    await _secrets.write(uriKey, folder.uri);
+    await _saveFolderInfo(folder);
     await _secrets.delete(lastHashKey);
     if (old != null && old != folder.uri) await _release(old);
   }
@@ -165,6 +180,7 @@ class AutoBackupService {
       lastAtKey,
       lastResultKey,
       lastHashKey,
+      iCloudKey,
     ]) {
       try {
         await _secrets.delete(key);
@@ -181,9 +197,28 @@ class AutoBackupService {
     }
   }
 
-  /// Gọi khi app ra nền: sao lưu nếu đã bật, hôm nay chưa thử lần nào và dữ
-  /// liệu đã đổi kể từ lần sao lưu thành công trước (AC-59). Không ném lỗi.
+  /// iOS không cho app chạy theo giờ và có thể treo app ngay khi ra nền, nên
+  /// trên iOS sao lưu tự động chạy khi MỞ hoặc QUAY LẠI app ([maybeRunOnOpen],
+  /// chữ `autoBackupRunsOnOpenIos`, D-022); Android chạy lúc ra nền (D-014).
+  /// Đọc mỗi lần gọi để test đổi được bằng `debugDefaultTargetPlatformOverride`.
+  static bool get runsOnOpen => defaultTargetPlatform == TargetPlatform.iOS;
+
+  /// Gọi khi app ra nền (Android): xem [_maybeRun]. Trên iOS không làm gì.
   Future<void> maybeRunDaily() async {
+    if (runsOnOpen) return;
+    await _maybeRun();
+  }
+
+  /// Gọi khi app mở hoặc quay lại (iOS): xem [_maybeRun]. Trên Android không
+  /// làm gì (đã chạy lúc ra nền).
+  Future<void> maybeRunOnOpen() async {
+    if (!runsOnOpen) return;
+    await _maybeRun();
+  }
+
+  /// Sao lưu nếu đã bật, hôm nay chưa thử lần nào và dữ liệu đã đổi kể từ lần
+  /// sao lưu thành công trước (AC-59, tối đa một lần mỗi ngày). Không ném lỗi.
+  Future<void> _maybeRun() async {
     if (_running) return;
     try {
       final s = await state();

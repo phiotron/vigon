@@ -5,6 +5,7 @@ import 'package:vigon/src/data/database.dart';
 import 'package:vigon/src/features/reminder/reminder_providers.dart';
 import 'package:vigon/src/features/reminder/reminder_scheduler.dart';
 import 'package:vigon/src/features/settings/auto_backup_providers.dart';
+import 'package:vigon/src/platform_features.dart';
 
 import '../fake_backup_folder.dart';
 import '../helpers.dart';
@@ -60,23 +61,19 @@ Future<AppDatabase> _openSettings(
   return db;
 }
 
-Finder _switch(String title) => find.widgetWithText(SwitchListTile, title);
-
 void main() {
-  /// D-019: tính năng chỉ có phần gốc Android bị ẩn trên iOS; nhắc ghi chép
-  /// (F-25) có trên cả hai nền tảng.
-  testWidgets('iOS: ẩn che nội dung, số tiền trên widget, sao lưu tự động', (
+  /// D-022 (thay phần iOS của D-019): iOS có đủ che nội dung (lớp phủ native),
+  /// số tiền trên widget (WidgetKit) và sao lưu tự động (thư mục app Tệp).
+  /// Tìm theo chữ để không phụ thuộc kiểu hàng cài đặt (D3 dựng lại giao diện).
+  testWidgets('iOS: có đủ che nội dung, widget, sao lưu tự động (D-022)', (
     tester,
   ) async {
     try {
       final db = await _openSettings(tester, TargetPlatform.iOS);
-      expect(_switch('Che nội dung khi chuyển app'), findsNothing);
-      expect(find.text('Che nội dung khi chuyển app'), findsNothing);
-      expect(_switch('Hiện số tiền trên widget'), findsNothing);
-      expect(find.text('Hiện số tiền trên widget'), findsNothing);
-      expect(find.text('Sao lưu tự động'), findsNothing);
-      // Vẫn còn: nhắc ghi chép, sao lưu/khôi phục bằng tay.
-      expect(_switch('Nhắc ghi chép hằng ngày'), findsOneWidget);
+      expect(find.text('Che nội dung khi chuyển app'), findsOneWidget);
+      expect(find.text('Hiện số tiền trên widget'), findsOneWidget);
+      expect(find.text('Sao lưu tự động'), findsWidgets);
+      expect(find.text('Nhắc ghi chép hằng ngày'), findsOneWidget);
       expect(find.text('Xuất bản sao lưu'), findsOneWidget);
       expect(find.text('Khôi phục từ bản sao lưu'), findsOneWidget);
       await disposeApp(tester, db);
@@ -85,13 +82,27 @@ void main() {
     }
   });
 
+  test('cờ nền tảng: Android và iOS bật, nền tảng khác tắt', () {
+    try {
+      for (final p in TargetPlatform.values) {
+        debugDefaultTargetPlatformOverride = p;
+        final on = p == TargetPlatform.android || p == TargetPlatform.iOS;
+        expect(supportsAutoBackup, on, reason: '$p');
+        expect(supportsHomeWidget, on, reason: '$p');
+        expect(supportsSecureWindow, on, reason: '$p');
+      }
+    } finally {
+      debugDefaultTargetPlatformOverride = null;
+    }
+  });
+
   testWidgets('Android: có đủ các mục', (tester) async {
     try {
       final db = await _openSettings(tester, TargetPlatform.android);
-      expect(_switch('Che nội dung khi chuyển app'), findsOneWidget);
-      expect(_switch('Hiện số tiền trên widget'), findsOneWidget);
+      expect(find.text('Che nội dung khi chuyển app'), findsOneWidget);
+      expect(find.text('Hiện số tiền trên widget'), findsOneWidget);
       expect(find.text('Sao lưu tự động'), findsWidgets);
-      expect(_switch('Nhắc ghi chép hằng ngày'), findsOneWidget);
+      expect(find.text('Nhắc ghi chép hằng ngày'), findsOneWidget);
       expect(find.text('Xuất bản sao lưu'), findsOneWidget);
       await disposeApp(tester, db);
     } finally {

@@ -19,6 +19,8 @@ import UserNotifications
     if let registrar = engineBridge.pluginRegistry.registrar(forPlugin: "VigonBackupExclusion") {
       BackupExclusionChannel.register(messenger: registrar.messenger())
     }
+    // D-022: che nội dung (F-22), sao lưu tự động (F-24), widget + liên kết sâu (F-26).
+    VigonNative.register(registry: engineBridge.pluginRegistry)
   }
 }
 

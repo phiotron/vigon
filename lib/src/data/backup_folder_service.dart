@@ -8,7 +8,7 @@ enum BackupFolderError {
   /// Thư mục đã bị xóa hoặc không truy cập được.
   folderMissing,
 
-  /// Lỗi khác, hoặc máy không có phần Android (test, iOS).
+  /// Lỗi khác, hoặc nền tảng không có kênh (test).
   unavailable,
 }
 
@@ -24,17 +24,24 @@ class BackupFolderException implements Exception {
 
 /// Thư mục người dùng vừa chọn.
 class PickedFolder {
-  const PickedFolder({required this.uri, this.name});
+  const PickedFolder({required this.uri, this.name, this.inICloud});
 
-  /// URI của cây thư mục (Storage Access Framework).
+  /// Android: URI của cây thư mục (Storage Access Framework). iOS: mã
+  /// `ios-bookmark:<uuid>` trỏ tới bookmark do phía iOS giữ.
   final String uri;
 
   /// Tên thân thiện để hiện trong Cài đặt; null nếu hệ thống không cho biết.
   final String? name;
+
+  /// Chỉ iOS: thư mục nằm trong iCloud Drive (sống sót khi mất máy). `false`:
+  /// "Trên iPhone" HOẶC nhà cung cấp khác (Google Drive, Dropbox…), iOS không
+  /// cho phân biệt hai loại này. Android: null.
+  final bool? inICloud;
 }
 
 /// Ghi file vào thư mục người dùng chọn qua kênh `vigon/backup_folder` (F-24).
-/// Phần Android là `BackupFolderChannel.kt`. Mọi lỗi được đổi thành
+/// Phần Android là `BackupFolderChannel.kt`; phần iOS là `BackupFolderChannel`
+/// trong `ios/Runner/VigonNative.swift` (bộ chọn thư mục của app Tệp, bookmark). Mọi lỗi được đổi thành
 /// [BackupFolderException]; test thay lớp này bằng bản giả.
 class BackupFolderService {
   const BackupFolderService([this.channel = const MethodChannel(channelName)]);
@@ -63,7 +70,12 @@ class BackupFolderService {
     final uri = map?['uri'];
     if (uri is! String) return null;
     final name = map?['name'];
-    return PickedFolder(uri: uri, name: name is String ? name : null);
+    final inICloud = map?['inICloud'];
+    return PickedFolder(
+      uri: uri,
+      name: name is String ? name : null,
+      inICloud: inICloud is bool ? inICloud : null,
+    );
   }
 
   /// Ghi [bytes] vào file [name] trong thư mục (ghi đè nếu trùng tên).

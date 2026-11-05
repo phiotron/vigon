@@ -15,32 +15,38 @@ void main() {
       expect(colors, contains('<color name="widget_ink">#F7FAF8</color>'));
       expect(colors, contains('<color name="widget_expense">#C62828</color>'));
       expect(colors, contains('<color name="widget_income">#2E7D32</color>'));
-      expect(colors, contains('<color name="on_widget_action">#FFFFFF</color>'));
+      expect(
+        colors,
+        contains('<color name="on_widget_action">#FFFFFF</color>'),
+      );
     });
 
-    test('radius-widget 20dp, Android 12+ theo góc hệ thống, nút radius-md', () {
-      expect(
-        _res('values/widget_dimens.xml'),
-        contains('<dimen name="vigon_widget_radius">20dp</dimen>'),
-      );
-      expect(
-        _res('values/widget_dimens.xml'),
-        contains('<dimen name="vigon_widget_button_radius">12dp</dimen>'),
-      );
-      expect(
-        _res('values-v31/widget_dimens.xml'),
-        contains('system_app_widget_background_radius'),
-      );
-      expect(
-        _res('drawable/vigon_widget_bg.xml'),
-        contains('@dimen/vigon_widget_radius'),
-      );
-      for (final b in ['expense', 'income']) {
-        final d = _res('drawable/vigon_widget_btn_$b.xml');
-        expect(d, contains('@color/widget_$b'));
-        expect(d, contains('@dimen/vigon_widget_button_radius'));
-      }
-    });
+    test(
+      'radius-widget 20dp, Android 12+ theo góc hệ thống, nút radius-md',
+      () {
+        expect(
+          _res('values/widget_dimens.xml'),
+          contains('<dimen name="vigon_widget_radius">20dp</dimen>'),
+        );
+        expect(
+          _res('values/widget_dimens.xml'),
+          contains('<dimen name="vigon_widget_button_radius">12dp</dimen>'),
+        );
+        expect(
+          _res('values-v31/widget_dimens.xml'),
+          contains('system_app_widget_background_radius'),
+        );
+        expect(
+          _res('drawable/vigon_widget_bg.xml'),
+          contains('@dimen/vigon_widget_radius'),
+        );
+        for (final b in ['expense', 'income']) {
+          final d = _res('drawable/vigon_widget_btn_$b.xml');
+          expect(d, contains('@color/widget_$b'));
+          expect(d, contains('@dimen/vigon_widget_button_radius'));
+        }
+      },
+    );
   });
 
   group('EXT-01 bố cục 2×2 và 4×2', () {
@@ -51,9 +57,10 @@ void main() {
       // Khối chứa hai nút là LinearLayout có weight ngay trước nút Chi.
       final i = layout.indexOf('android:id="@+id/widget_expense"');
       final before = layout.substring(0, i);
-      return RegExp(
-        r'android:orientation="(\w+)"',
-      ).allMatches(before).last.group(1)!;
+      return RegExp(r'android:orientation="(\w+)"')
+          .allMatches(before)
+          .last
+          .group(1)!;
     }
 
     test('2×2: nút xếp dọc, dòng trạng thái tối đa 2 dòng (A15)', () {
@@ -109,7 +116,10 @@ void main() {
       expect(kt, contains('onAppWidgetOptionsChanged'));
       expect(kt, contains('R.drawable.ic_widget_lock'));
       expect(kt, contains('R.drawable.ic_widget_update'));
-      expect(_res('drawable/ic_widget_lock.xml'), contains('@color/widget_ink'));
+      expect(
+        _res('drawable/ic_widget_lock.xml'),
+        contains('@color/widget_ink'),
+      );
       expect(
         _res('drawable/ic_widget_update.xml'),
         contains('@color/widget_ink'),
@@ -120,12 +130,14 @@ void main() {
   test('EXT-02 (A16): icon thông báo chép đúng hình lớp đơn sắc, tô trắng', () {
     final mono = _res('drawable/ic_launcher_monochrome.xml');
     final stat = _res('drawable/ic_stat_vigon.xml');
-    final monoPaths = RegExp(
-      r'android:pathData="([^"]+)"',
-    ).allMatches(mono).map((m) => m.group(1)).toList();
-    final statPaths = RegExp(
-      r'android:pathData="([^"]+)"',
-    ).allMatches(stat).map((m) => m.group(1)).toList();
+    final monoPaths = RegExp(r'android:pathData="([^"]+)"')
+        .allMatches(mono)
+        .map((m) => m.group(1))
+        .toList();
+    final statPaths = RegExp(r'android:pathData="([^"]+)"')
+        .allMatches(stat)
+        .map((m) => m.group(1))
+        .toList();
     expect(statPaths, monoPaths);
     expect(stat, isNot(contains('#000000')));
     expect(stat, contains('android:fillColor="#FFFFFF"'));

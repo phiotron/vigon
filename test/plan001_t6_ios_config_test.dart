@@ -98,21 +98,27 @@ void main() {
     expect(apis, contains('<string>E174.1</string>'));
   });
 
-  test('project.pbxproj: PrivacyInfo đúng một lần trong Resources', () {
-    final project = read('ios/Runner.xcodeproj/project.pbxproj');
-    const entry = '/* PrivacyInfo.xcprivacy in Resources */';
-    final phases = RegExp(
-      r'isa = PBXResourcesBuildPhase;.*?files = \((.*?)\);',
-      dotAll: true,
-    ).allMatches(project).toList();
-    expect(phases, isNotEmpty);
-    final inPhases = phases
-        .map((m) => entry.allMatches(m.group(1)!).length)
-        .fold<int>(0, (a, b) => a + b);
-    expect(inPhases, 1);
-    // Một định nghĩa PBXBuildFile + một dòng trong Resources, không trùng ID.
-    expect(entry.allMatches(project).length, 2);
-  });
+  test(
+    'project.pbxproj: PrivacyInfo đúng một lần trong Resources mỗi target',
+    () {
+      final project = read('ios/Runner.xcodeproj/project.pbxproj');
+      const entry = '/* PrivacyInfo.xcprivacy in Resources */';
+      final phases = RegExp(
+        r'isa = PBXResourcesBuildPhase;.*?files = \((.*?)\);',
+        dotAll: true,
+      ).allMatches(project).toList();
+      expect(phases, isNotEmpty);
+      final perPhase = phases
+          .map((m) => entry.allMatches(m.group(1)!).length)
+          .where((n) => n > 0)
+          .toList();
+      // Runner và widget extension (S-21: extension có manifest riêng), mỗi
+      // target đúng một lần.
+      expect(perPhase, [1, 1]);
+      // Hai định nghĩa PBXBuildFile + hai dòng trong Resources, không trùng ID.
+      expect(entry.allMatches(project).length, 4);
+    },
+  );
 
   test('AppDelegate: đặt delegate thông báo để nhắc hiện khi app đang mở', () {
     final delegate = read('ios/Runner/AppDelegate.swift');
