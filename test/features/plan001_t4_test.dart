@@ -98,11 +98,12 @@ void main() {
       note: 'phở',
     );
     await _open(tester, '/entries');
-    // Mở nhóm Ăn uống; khoản con lấy ghi chú làm tiêu đề, phụ đề là ngày.
+    // Mở nhóm Ăn uống; khoản con lấy ghi chú làm tiêu đề, phụ đề là ngày
+    // ("Hôm nay" cho khoản của hôm nay, frame SCR-10).
     await tester.tap(find.text('Ăn uống'));
     await settle(tester);
     expect(find.text('phở'), findsOneWidget);
-    expect(find.text('3 thg 11, 2026'), findsOneWidget);
+    expect(find.text('Hôm nay'), findsOneWidget);
 
     await tester.drag(find.text('phở'), const Offset(-500, 0));
     await settle(tester);

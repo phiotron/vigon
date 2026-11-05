@@ -334,12 +334,13 @@ class _CategoryEditorState extends ConsumerState<_CategoryEditor> {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
+          // Tiêu đề cố định trên vùng cuộn như `.shead` của frame SCR-16.
+          SheetHeader(isEdit ? l.editCategory : l.addCategory),
           Flexible(
             child: SingleChildScrollView(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  SheetHeader(isEdit ? l.editCategory : l.addCategory),
                   Padding(
                     padding: const EdgeInsets.fromLTRB(
                       VgSpace.s6,
@@ -443,9 +444,12 @@ class _CategoryEditorState extends ConsumerState<_CategoryEditor> {
             children: [
               if (canDelete)
                 TextButton.icon(
+                  // Lề ngang 8 để "Xóa danh mục" / "Delete category" vừa một
+                  // dòng trong nửa footer ở máy 360 dp (SCR-16).
                   style: TextButton.styleFrom(
                     foregroundColor: scheme.error,
                     minimumSize: const Size(VgSize.tapMin, VgSize.tapMin),
+                    padding: const EdgeInsets.symmetric(horizontal: VgSpace.s2),
                   ),
                   icon: const Icon(Symbols.delete_rounded),
                   label: Text(l.deleteCategory),

@@ -99,8 +99,10 @@ class CategoryGrid extends ConsumerWidget {
           child: InkWell(
             borderRadius: BorderRadius.circular(VgRadius.md),
             onTap: () => Navigator.pop(context, c.id),
+            // Lề dọc 4, không lề ngang (`.vg-catgrid .cell`): tên dài như
+            // "Entertainment" vừa một dòng trong ô 96.
             child: Padding(
-              padding: const EdgeInsets.all(VgSpace.s1),
+              padding: const EdgeInsets.symmetric(vertical: VgSpace.s1),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [

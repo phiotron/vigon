@@ -36,7 +36,8 @@ class VgDialog extends StatelessWidget {
 
   final String title;
 
-  /// Nội dung body-md màu chữ phụ.
+  /// Nội dung màu chữ phụ: body-md ở hộp xác nhận; body-sm khi hộp có
+  /// [content] (hộp form SCR-26/27/31, `.dbody.body-sm`).
   final String? body;
   final IconData? icon;
   final VgDialogTone tone;
@@ -53,14 +54,18 @@ class VgDialog extends StatelessWidget {
 
   /// Nút Hủy chuẩn: chữ màu chữ chính (`primary` trên nền hộp thoại chỉ
   /// 4,06:1 ở chủ đề sáng).
-  static Widget cancelButton(BuildContext context, {VoidCallback? onPressed}) =>
-      TextButton(
-        style: TextButton.styleFrom(
-          foregroundColor: Theme.of(context).colorScheme.onSurface,
-        ),
-        onPressed: onPressed ?? () => Navigator.pop(context),
-        child: Text(AppLocalizations.of(context).cancel),
-      );
+  /// [enabled] false: nút tắt (đang xử lý, A13); [onPressed] null = đóng hộp.
+  static Widget cancelButton(
+    BuildContext context, {
+    VoidCallback? onPressed,
+    bool enabled = true,
+  }) => TextButton(
+    style: TextButton.styleFrom(
+      foregroundColor: Theme.of(context).colorScheme.onSurface,
+    ),
+    onPressed: !enabled ? null : onPressed ?? () => Navigator.pop(context),
+    child: Text(AppLocalizations.of(context).cancel),
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -106,9 +111,9 @@ class VgDialog extends StatelessWidget {
                         const SizedBox(height: VgSpace.s3),
                         Text(
                           body!,
-                          style: VgType.bodyMd.copyWith(
-                            color: scheme.onSurfaceVariant,
-                          ),
+                          style:
+                              (content.isEmpty ? VgType.bodyMd : VgType.bodySm)
+                                  .copyWith(color: scheme.onSurfaceVariant),
                         ),
                       ],
                       if (note != null)

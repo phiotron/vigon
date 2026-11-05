@@ -5,6 +5,7 @@ import '../../../l10n/app_localizations.dart';
 import '../../data/backup_crypto.dart';
 import '../../ui/dialog.dart';
 import '../../ui/fields.dart';
+import '../../ui/hint.dart';
 import '../../ui/settings_rows.dart';
 import '../../ui/tokens.g.dart';
 
@@ -15,43 +16,25 @@ const backupPasswordMinLength = 6;
 typedef BackupExportEncryptor = Future<String> Function(String password);
 
 /// Dòng cảnh báo của họ hộp mật khẩu (§10.1 #9, SCR-26/31): icon ⚠ và chữ
-/// body-sm màu `error`, đặt TRÊN các ô để vẫn thấy khi bàn phím mở. Chưa có
-/// tông `error` trong `VgHint` nên dựng riêng ở đây.
+/// body-sm màu `error` ([VgHint] tông `error`), đặt TRÊN các ô để vẫn thấy khi
+/// bàn phím mở.
 class PasswordWarning extends StatelessWidget {
   const PasswordWarning(this.text, {super.key});
 
   final String text;
 
   @override
-  Widget build(BuildContext context) {
-    final error = Theme.of(context).colorScheme.error;
-    return Padding(
-      padding: const EdgeInsets.only(bottom: VgSpace.s3),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Padding(
-            padding: const EdgeInsets.only(top: 1),
-            child: Icon(Symbols.warning_rounded, size: 18, color: error),
-          ),
-          const SizedBox(width: 6),
-          Expanded(
-            child: Text(text, style: VgType.bodySm.copyWith(color: error)),
-          ),
-        ],
-      ),
-    );
-  }
+  Widget build(BuildContext context) => VgHint(
+    text,
+    icon: Symbols.warning_rounded,
+    tone: VgHintTone.error,
+    padding: const EdgeInsets.only(bottom: VgSpace.s3),
+  );
 }
 
-/// Nút Hủy của hộp mật khẩu; đang xử lý thì tắt (A13). `VgDialog.cancelButton`
-/// với `onPressed: null` vẫn bật (rơi về đóng hộp) nên tự dựng.
-Widget _cancelButton(BuildContext context, {required bool busy}) => busy
-    ? TextButton(
-        onPressed: null,
-        child: Text(AppLocalizations.of(context).cancel),
-      )
-    : VgDialog.cancelButton(context);
+/// Nút Hủy của hộp mật khẩu; đang xử lý thì tắt (A13).
+Widget _cancelButton(BuildContext context, {required bool busy}) =>
+    VgDialog.cancelButton(context, enabled: !busy);
 
 /// Hai ô mật khẩu + kiểm lỗi dùng chung cho xuất sao lưu và sao lưu tự động.
 mixin _TwoPasswords<T extends StatefulWidget> on State<T> {
@@ -183,6 +166,7 @@ class _BackupExportDialogState extends State<BackupExportDialog>
         actions: [
           _cancelButton(context, busy: _busy),
           FilledButton(
+            style: BusyButtonLabel.filledStyle(context, busy: _busy),
             onPressed: _busy ? null : () => _submit(l),
             child: BusyButtonLabel(
               icon: Symbols.ios_share_rounded,
@@ -271,6 +255,7 @@ class _BackupUnlockDialogState extends State<BackupUnlockDialog> {
         actions: [
           _cancelButton(context, busy: _busy),
           FilledButton(
+            style: BusyButtonLabel.filledStyle(context, busy: _busy),
             onPressed: _busy ? null : _open,
             child: BusyButtonLabel(
               label: _busy ? l.backupWorking : l.backupOpen,

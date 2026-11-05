@@ -66,6 +66,7 @@ class _CurrencyPickerSheetState extends State<CurrencyPickerSheet> {
       child: VgSearchField(
         controller: _search,
         hintText: l.currencySearchHint,
+        searchIcon: true,
         onChanged: (q) => setState(() => _shown = searchCurrencies(q)),
       ),
     );
@@ -97,9 +98,14 @@ class _CurrencyPickerSheetState extends State<CurrencyPickerSheet> {
                 Semantics(
                   expanded: _noteOpen,
                   child: TextButton.icon(
+                    // `primary` trên nền sheet chỉ 4,34:1 (ngoại lệ CHANGELOG
+                    // token: không dùng cho chữ) → `onPrimaryContainer`, vẫn
+                    // tông xanh, đạt 4,5:1 cả sáng lẫn tối.
                     style: TextButton.styleFrom(
+                      foregroundColor: scheme.onPrimaryContainer,
                       padding: EdgeInsets.zero,
-                      visualDensity: VisualDensity.compact,
+                      // Vùng chạm 48 (S-31); `VisualDensity.compact` làm còn 40.
+                      minimumSize: const Size(VgSize.tapMin, VgSize.tapMin),
                       textStyle: VgType.labelMd.copyWith(
                         fontWeight: FontWeight.w600,
                       ),

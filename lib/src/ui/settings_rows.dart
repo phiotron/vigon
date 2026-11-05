@@ -96,6 +96,7 @@ class SettingsNavRow extends StatelessWidget {
     this.onTap,
     this.danger = false,
     this.trailing,
+    this.chevron = true,
   });
 
   final IconData? icon;
@@ -103,6 +104,10 @@ class SettingsNavRow extends StatelessWidget {
   final String? value;
   final VoidCallback? onTap;
   final bool danger;
+
+  /// false: hàng chạm được nhưng không có mũi tên › (Xuất / Khôi phục / Xuất
+  /// CSV mở hộp thoại hoặc bảng chia sẻ, SCR-12), không chừa lề phải.
+  final bool chevron;
 
   /// Thay mũi tên › mặc định (ví dụ ô xổ xuống "1 ▾").
   final Widget? trailing;
@@ -114,7 +119,7 @@ class SettingsNavRow extends StatelessWidget {
     final muted = danger ? scheme.error : scheme.onSurfaceVariant;
     final end =
         trailing ??
-        (onTap != null && !danger
+        (onTap != null && !danger && chevron
             ? Icon(
                 Symbols.chevron_right_rounded,
                 color: scheme.onSurfaceVariant,
@@ -198,10 +203,13 @@ class SettingsSwitchRow extends StatelessWidget {
       child: InkWell(
         onTap: toggle,
         child: Padding(
+          // Switch của Material rộng 60 (rãnh 52 + 4 mỗi bên cho vùng chạm):
+          // bớt 4 ở lề phải và khe trước công tắc để rãnh cách chữ và mép
+          // thẻ đúng 16 như `.vg-srow` (chữ phụ đề không xuống dòng sớm).
           padding: EdgeInsets.fromLTRB(
             VgSpace.s4,
             VgSpace.s3,
-            VgSpace.s4,
+            VgSpace.s4 - 4,
             footer == null ? VgSpace.s3 : 0,
           ),
           child: Row(
@@ -235,7 +243,7 @@ class SettingsSwitchRow extends StatelessWidget {
                   ],
                 ),
               ),
-              const SizedBox(width: VgSpace.s4),
+              const SizedBox(width: VgSpace.s4 - 4),
               Switch(value: value, onChanged: onChanged),
             ],
           ),
@@ -359,9 +367,9 @@ class SettingsStatusLine extends StatelessWidget {
     final error = status == SettingsStatus.error;
     final fg = error ? scheme.onErrorContainer : scheme.onSurfaceVariant;
     final Widget lead = switch (status) {
+      // Đồng hồ nét (không tô) như `.vg-statusline.idle` (SCR-31 never-run).
       SettingsStatus.idle => Icon(
         Symbols.schedule_rounded,
-        fill: 1,
         size: 20,
         color: scheme.onSurfaceVariant,
       ),
@@ -490,17 +498,21 @@ class StatusPill extends StatelessWidget {
 
 /// Cặp nút xuống dòng khi hẹp (`.vg-btnpair`): cách nhau 8, lề trên 12. Ví dụ
 /// `FilledButton.tonal` "Sao lưu ngay" + `OutlinedButton` "Chọn lại thư mục".
+/// Nút cao 40 nằm giữa vùng chạm 48 (thừa 4 trên/dưới), nên khoảng cách đo
+/// theo nút nhìn thấy: lề trên 12 − 4, hai hàng nút sát vùng chạm (8 nhìn thấy).
 class ButtonPair extends StatelessWidget {
   const ButtonPair({super.key, required this.children});
 
   final List<Widget> children;
 
+  static const _tapInset = (VgSize.tapMin - 40) / 2;
+
   @override
   Widget build(BuildContext context) => Padding(
-    padding: const EdgeInsets.only(top: VgSpace.s3),
+    padding: const EdgeInsets.only(top: VgSpace.s3 - _tapInset),
     child: Wrap(
       spacing: VgSpace.s2,
-      runSpacing: VgSpace.s2,
+      runSpacing: VgSpace.s2 - 2 * _tapInset,
       children: children,
     ),
   );
@@ -509,6 +521,18 @@ class ButtonPair extends StatelessWidget {
 /// Nhãn nút có trạng thái bận (Feedback.html "Button working"): khi [busy]
 /// thì vòng quay 18 thay icon. Nút vẫn phải tự tắt `onPressed` khi bận.
 class BusyButtonLabel extends StatelessWidget {
+  /// Kiểu cho `FilledButton` đang bận (A13, SCR-26 working): nút đã tắt
+  /// (`onPressed: null`) nhưng vẫn giữ màu `primary` như frame, không xám đi
+  /// như nút bị khóa — người dùng thấy việc đang chạy chứ không phải bị cấm.
+  static ButtonStyle filledStyle(BuildContext context, {required bool busy}) {
+    if (!busy) return const ButtonStyle();
+    final scheme = Theme.of(context).colorScheme;
+    return FilledButton.styleFrom(
+      disabledBackgroundColor: scheme.primary,
+      disabledForegroundColor: scheme.onPrimary,
+    );
+  }
+
   const BusyButtonLabel({
     super.key,
     required this.label,

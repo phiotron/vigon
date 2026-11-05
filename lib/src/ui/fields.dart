@@ -85,7 +85,8 @@ class _PasswordFieldState extends State<PasswordField> {
 /// Ô tìm trong thanh tiêu đề (SearchField.html, SCR-11, SCR-13): viên thuốc
 /// cao 48 (cao lên theo chữ), nền `surface-container`, gợi ý màu chữ phụ, nút
 /// ✕ "Xóa nội dung tìm" chỉ hiện khi có chữ (giữ con trỏ trong ô). [leading]
-/// là nút quay lại / đóng đặt trước ô (do màn quyết định).
+/// là nút quay lại / đóng đặt trước ô (do màn quyết định). [searchIcon]: kính
+/// lúp màu chữ phụ ở đầu ô khi ô đứng riêng, không có nút ← trước (SCR-13).
 class VgSearchField extends StatefulWidget {
   const VgSearchField({
     super.key,
@@ -96,7 +97,10 @@ class VgSearchField extends StatefulWidget {
     this.autofocus = false,
     this.focusNode,
     this.inputFormatters,
+    this.searchIcon = false,
   });
+
+  final bool searchIcon;
 
   final TextEditingController controller;
   final String hintText;
@@ -134,6 +138,10 @@ class _VgSearchFieldState extends State<VgSearchField> {
           ),
           child: Row(
             children: [
+              if (widget.searchIcon) ...[
+                Icon(Symbols.search_rounded, color: scheme.onSurfaceVariant),
+                const SizedBox(width: VgSpace.s2),
+              ],
               Expanded(
                 child: TextField(
                   controller: widget.controller,

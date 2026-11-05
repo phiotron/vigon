@@ -313,7 +313,8 @@ class _RuleSheetState extends State<RuleSheet> {
                       decoration: InputDecoration(
                         labelText: l.noteHint,
                         helperText: l.recurringEditNote,
-                        helperMaxLines: 3,
+                        // 200%: gợi ý cạnh bộ đếm cần 4–5 dòng, không cắt "…".
+                        helperMaxLines: 6,
                       ),
                     ),
                     Padding(

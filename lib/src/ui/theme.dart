@@ -177,8 +177,12 @@ ThemeData buildTheme(Brightness brightness) {
         vertical: VgSpace.s4,
       ),
       labelStyle: VgType.bodyMd.copyWith(color: p.inkMuted),
+      // Nhãn nổi nhìn thấy = label-sm 12 (`.vg-field .flabel`). Flutter thu
+      // nhãn nổi về 0,75 lần cỡ của kiểu này, nên đặt 16 (12 / 0,75); đặt
+      // label-sm thì nhãn chỉ còn 9.
       floatingLabelStyle: WidgetStateTextStyle.resolveWith(
         (states) => VgType.labelSm.copyWith(
+          fontSize: VgType.labelSm.fontSize! / 0.75,
           fontWeight: FontWeight.w400,
           color: states.contains(WidgetState.error)
               ? p.error

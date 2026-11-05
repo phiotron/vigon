@@ -14,11 +14,17 @@ class ChoiceSegments<T> extends StatelessWidget {
     required this.options,
     required this.selected,
     required this.onChanged,
+    this.compact = false,
   });
 
   final List<(T, String)> options;
   final T selected;
   final ValueChanged<T> onChanged;
+
+  /// true: ô ôm theo chữ, nhóm nằm sát lề đầu (`.vg-weekseg` inline-flex,
+  /// "Ngày đầu tuần" SCR-12) thay vì trải hết bề rộng. Không vừa / chữ lớn
+  /// thì vẫn xếp dọc cả bề rộng như thường.
+  final bool compact;
 
   static const _height = 40.0;
   static const _inset = (VgSize.tapMin - _height) / 2;
@@ -104,7 +110,8 @@ class ChoiceSegments<T> extends StatelessWidget {
                       constraints: const BoxConstraints(
                         minHeight: VgSize.tapMin,
                       ),
-                      alignment: Alignment.center,
+                      // Xếp dọc: chữ căn đầu dòng như frame 200% (SCR-12).
+                      alignment: AlignmentDirectional.centerStart,
                       padding: const EdgeInsets.symmetric(
                         horizontal: VgSpace.s4,
                         vertical: VgSpace.s2,
@@ -124,9 +131,9 @@ class ChoiceSegments<T> extends StatelessWidget {
         }
 
         // Phần dư chia đều cho các ô (giống `flex: 1 1 auto` của bản vẽ).
-        final extra = (inner - total) / options.length;
+        final extra = compact ? 0.0 : (inner - total) / options.length;
         final cells = [for (final w in widths) w + extra];
-        return Stack(
+        final row = Stack(
           children: [
             // Lớp nền: khung viền cao 40 nằm giữa vùng chạm 48.
             Padding(
@@ -178,6 +185,12 @@ class ChoiceSegments<T> extends StatelessWidget {
             ),
           ],
         );
+        return compact
+            ? Align(
+                alignment: AlignmentDirectional.centerStart,
+                child: SizedBox(width: total + 2, child: row),
+              )
+            : row;
       },
     );
   }

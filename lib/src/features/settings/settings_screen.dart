@@ -126,6 +126,7 @@ class SettingsScreen extends ConsumerWidget {
                 icon: Symbols.view_week_rounded,
                 title: l.weekStart,
                 segments: ChoiceSegments<int>(
+                  compact: true,
                   options: [
                     (DateTime.monday, l.monday),
                     (DateTime.sunday, l.sunday),
@@ -189,13 +190,13 @@ class SettingsScreen extends ConsumerWidget {
                 icon: Symbols.upload_file_rounded,
                 title: l.backup,
                 value: l.backupNote,
-                trailing: const SizedBox.shrink(),
+                chevron: false,
                 onTap: () => exportBackupFile(context, ref),
               ),
               SettingsNavRow(
                 icon: Symbols.settings_backup_restore_rounded,
                 title: l.restore,
-                trailing: const SizedBox.shrink(),
+                chevron: false,
                 onTap: () => restoreFromFile(context, ref),
               ),
               SettingsNavRow(
@@ -203,7 +204,7 @@ class SettingsScreen extends ConsumerWidget {
                 title: l.exportCsv,
                 // Định dạng CSV theo ngôn ngữ app (F-18).
                 value: l.localeName == 'vi' ? l.csvFormatVi : l.csvFormatEn,
-                trailing: const SizedBox.shrink(),
+                chevron: false,
                 onTap: () => exportCsvFile(context, ref),
               ),
             ],

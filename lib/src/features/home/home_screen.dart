@@ -675,11 +675,10 @@ class _TallAddButton extends StatelessWidget {
               foreground: foreground,
               height: 96,
             ).copyWith(
+              // Không lề ngang như `.vg-mainbtn` (SCR-01 text-200): lề 8 làm
+              // "Expenses" 200% bẻ giữa chữ ở máy 360 dp.
               padding: const WidgetStatePropertyAll(
-                EdgeInsets.symmetric(
-                  horizontal: VgSpace.s2,
-                  vertical: VgSpace.s2,
-                ),
+                EdgeInsets.symmetric(vertical: VgSpace.s2),
               ),
             ),
         onPressed: onPressed,

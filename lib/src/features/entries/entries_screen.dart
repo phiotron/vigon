@@ -345,7 +345,11 @@ class _EntryTile extends ConsumerWidget {
     final entry = row.entry;
     final isTransfer = entry.type == EntryType.transfer;
     final large = isLargeText(context);
-    final date = shortDate(context, parseDateKey(entry.date));
+    // Khoản của hôm nay ghi "Hôm nay" như frame SCR-10/11 (A05, A06).
+    final day = parseDateKey(entry.date);
+    final date = day == ref.watch(todayProvider)
+        ? l.today
+        : shortDate(context, day);
     return Dismissible(
       key: ValueKey('entry-${entry.id}'),
       direction: DismissDirection.endToStart,

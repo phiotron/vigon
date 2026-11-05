@@ -48,42 +48,47 @@ class BalanceBar extends StatelessWidget {
                 VgSpace.s2,
                 VgSpace.s2,
               ),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Text(
-                          l.balance,
-                          style: VgType.bodyMd.copyWith(color: muted),
-                        ),
-                        if (periodTitle != null)
+              // Số tiền lấy đúng bề rộng của nó (tối đa 60% hàng, quá thì co
+              // chữ); phần còn lại cho "Số dư" + tên kỳ để tên kỳ không bị bẻ
+              // giữa chữ ("Novemb/er 2026" khi chia cố định 1:3).
+              child: LayoutBuilder(
+                builder: (context, box) => Row(
+                  children: [
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
                           Text(
-                            periodTitle!,
-                            style: VgType.bodySm.copyWith(color: muted),
+                            l.balance,
+                            style: VgType.bodyMd.copyWith(color: muted),
                           ),
-                      ],
+                          if (periodTitle != null)
+                            Text(
+                              periodTitle!,
+                              style: VgType.bodySm.copyWith(color: muted),
+                            ),
+                        ],
+                      ),
                     ),
-                  ),
-                  const SizedBox(width: VgSpace.s2),
-                  Flexible(
-                    flex: 3,
-                    child: FittedBox(
-                      fit: BoxFit.scaleDown,
-                      alignment: Alignment.centerRight,
-                      child: Text(
-                        amount,
-                        style: VgType.amountMd.copyWith(
-                          color: scheme.onSurface,
+                    const SizedBox(width: VgSpace.s2),
+                    ConstrainedBox(
+                      constraints: BoxConstraints(maxWidth: box.maxWidth * 0.6),
+                      child: FittedBox(
+                        fit: BoxFit.scaleDown,
+                        alignment: Alignment.centerRight,
+                        child: Text(
+                          amount,
+                          style: VgType.amountMd.copyWith(
+                            color: scheme.onSurface,
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                  const SizedBox(width: VgSpace.s2),
-                  Icon(Symbols.chevron_right_rounded, color: muted),
-                ],
+                    const SizedBox(width: VgSpace.s2),
+                    Icon(Symbols.chevron_right_rounded, color: muted),
+                  ],
+                ),
               ),
             ),
           ),

@@ -102,7 +102,7 @@ class RecurringScreen extends ConsumerWidget {
   }
 }
 
-/// Một chuỗi (7.1): icon danh mục, "Danh mục · số tiền", "Tần suất · ngày
+/// Một chuỗi (7.1): icon danh mục, "Tên chuỗi · số tiền", "Tần suất · ngày
 /// tới hạn" hoặc "Đã dừng", công tắc; chạm dòng để sửa.
 class _RuleTile extends StatelessWidget {
   const _RuleTile({
@@ -122,7 +122,14 @@ class _RuleTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context);
-    final name = category == null ? '' : categoryLabel(l, category!);
+    // Tên chuỗi = ghi chú nếu có, không thì tên danh mục — giống đầu bảng
+    // sửa (SCR-21) và danh sách nền trong frame 21 ("Rent · ₫3,500,000").
+    final note = rule.note?.trim() ?? '';
+    final name = note.isNotEmpty
+        ? note
+        : category == null
+        ? l.transfer
+        : categoryLabel(l, category!);
     final title = '$name · $amount';
     return ListTile(
       leading: category == null

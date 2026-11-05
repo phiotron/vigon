@@ -83,9 +83,10 @@ class AccountRemoveSection extends ConsumerWidget {
           if (lastVisible)
             VgHint(l.accountLastOneHint)
           else ...[
-            Wrap(
-              spacing: VgSpace.s2,
-              runSpacing: VgSpace.s2,
+            // Xếp dọc, căn đầu dòng như `.vg-mgmt` (SCR-18): nút Xóa không
+            // nằm cạnh nút Ẩn. Vùng chạm 48 của mỗi nút đã tạo khe nhìn thấy 8.
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 if (account.archived)
                   OutlinedButton.icon(

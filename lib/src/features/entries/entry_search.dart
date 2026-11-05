@@ -349,7 +349,11 @@ class SearchResultTile extends ConsumerWidget {
       color: scheme.onPrimaryContainer,
       fontWeight: FontWeight.w600,
     );
-    final date = shortDate(context, parseDateKey(entry.date));
+    // Khoản của hôm nay ghi "Hôm nay" như frame SCR-10/11 (A05, A06).
+    final day = parseDateKey(entry.date);
+    final date = day == ref.watch(todayProvider)
+        ? l.today
+        : shortDate(context, day);
     final amountText = Text.rich(
       TextSpan(
         style: VgType.bodyMd.copyWith(
