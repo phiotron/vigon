@@ -752,4 +752,84 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get deleteCategoryEmptyBody => 'Danh mục này chưa có khoản nào.';
+
+  @override
+  String get showPassword => 'Hiện mật khẩu';
+
+  @override
+  String get hidePassword => 'Ẩn mật khẩu';
+
+  @override
+  String get searchClear => 'Xóa nội dung tìm';
+
+  @override
+  String get showMore => 'Xem thêm';
+
+  @override
+  String get showLess => 'Thu gọn';
+
+  @override
+  String get csvFormatEn =>
+      'Định dạng tiếng Anh: dấu phẩy ngăn cột, dấu chấm thập phân';
+
+  @override
+  String get csvFormatVi =>
+      'Định dạng tiếng Việt: dấu chấm phẩy ngăn cột, dấu phẩy thập phân';
+
+  @override
+  String categoryLimitThisMonth(String status) {
+    return 'Tháng này: $status';
+  }
+
+  @override
+  String get currencyCurrent => 'Tiền tệ đang dùng';
+
+  @override
+  String recurringRestartHint(String date) {
+    return 'Bắt đầu lại từ lần đến hạn kế tiếp: $date';
+  }
+
+  @override
+  String get restoreSwitchesNote =>
+      'Nhắc ghi chép hằng ngày và số tiền trên widget sẽ tắt. Bạn có thể bật lại trong Cài đặt.';
+
+  @override
+  String get restoreSwitchesNoteIos =>
+      'Nhắc ghi chép hằng ngày sẽ tắt. Bạn có thể bật lại trong Cài đặt.';
+
+  @override
+  String archivedAccountsCount(int count) {
+    return 'Tài khoản đã ẩn ($count)';
+  }
+
+  @override
+  String get autoBackupNoteIos =>
+      'Ví Gọn chỉ ghi file vào thư mục bạn chọn trong app Tệp, ví dụ trong iCloud Drive.';
+
+  @override
+  String get autoBackupRunsOnOpenIos =>
+      'iPhone không cho app chạy theo giờ, nên bản sao lưu được tạo khi bạn mở Ví Gọn, mỗi ngày tối đa một lần.';
+
+  @override
+  String get autoBackupLocalFolderWarningIos =>
+      'Thư mục này chỉ nằm trên iPhone và không có trong bản sao lưu iCloud. Mất máy là mất luôn các file này. Hãy chọn một thư mục trong iCloud Drive để giữ lại.';
+
+  @override
+  String get secureWindowNoteIos =>
+      'Ẩn nội dung trong màn chuyển app. iPhone không cho app chặn chụp màn hình.';
+
+  @override
+  String get widgetPickerName => 'Ghi nhanh';
+
+  @override
+  String get widgetPickerDescription => 'Thêm nhanh khoản chi hoặc thu';
+
+  @override
+  String get widgetExpenseButton => 'Chi';
+
+  @override
+  String get widgetIncomeButton => 'Thu';
+
+  @override
+  String get widgetStale => 'Mở app để cập nhật';
 }

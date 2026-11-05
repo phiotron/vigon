@@ -1459,6 +1459,138 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'This category has no records.'**
   String get deleteCategoryEmptyBody;
+
+  /// No description provided for @showPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Show password'**
+  String get showPassword;
+
+  /// No description provided for @hidePassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Hide password'**
+  String get hidePassword;
+
+  /// No description provided for @searchClear.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear search'**
+  String get searchClear;
+
+  /// No description provided for @showMore.
+  ///
+  /// In en, this message translates to:
+  /// **'Show more'**
+  String get showMore;
+
+  /// No description provided for @showLess.
+  ///
+  /// In en, this message translates to:
+  /// **'Show less'**
+  String get showLess;
+
+  /// No description provided for @csvFormatEn.
+  ///
+  /// In en, this message translates to:
+  /// **'English format: comma separator, dot decimals'**
+  String get csvFormatEn;
+
+  /// No description provided for @csvFormatVi.
+  ///
+  /// In en, this message translates to:
+  /// **'Vietnamese format: semicolon separator, comma decimals'**
+  String get csvFormatVi;
+
+  /// No description provided for @categoryLimitThisMonth.
+  ///
+  /// In en, this message translates to:
+  /// **'This month: {status}'**
+  String categoryLimitThisMonth(String status);
+
+  /// No description provided for @currencyCurrent.
+  ///
+  /// In en, this message translates to:
+  /// **'Current currency'**
+  String get currencyCurrent;
+
+  /// No description provided for @recurringRestartHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Restarts from the next due date: {date}'**
+  String recurringRestartHint(String date);
+
+  /// No description provided for @restoreSwitchesNote.
+  ///
+  /// In en, this message translates to:
+  /// **'The daily reminder and widget amounts will be turned off. You can turn them on again in Settings.'**
+  String get restoreSwitchesNote;
+
+  /// No description provided for @restoreSwitchesNoteIos.
+  ///
+  /// In en, this message translates to:
+  /// **'The daily reminder will be turned off. You can turn it on again in Settings.'**
+  String get restoreSwitchesNoteIos;
+
+  /// No description provided for @archivedAccountsCount.
+  ///
+  /// In en, this message translates to:
+  /// **'Hidden accounts ({count})'**
+  String archivedAccountsCount(int count);
+
+  /// No description provided for @autoBackupNoteIos.
+  ///
+  /// In en, this message translates to:
+  /// **'Ví Gọn only writes files to the folder you choose in the Files app, for example in iCloud Drive.'**
+  String get autoBackupNoteIos;
+
+  /// No description provided for @autoBackupRunsOnOpenIos.
+  ///
+  /// In en, this message translates to:
+  /// **'iPhone does not run apps on a schedule, so the backup runs when you open Ví Gọn, at most once a day.'**
+  String get autoBackupRunsOnOpenIos;
+
+  /// No description provided for @autoBackupLocalFolderWarningIos.
+  ///
+  /// In en, this message translates to:
+  /// **'This folder is on this iPhone only and is not included in iCloud backup. If you lose the phone, these files are lost too. Choose a folder in iCloud Drive to keep them.'**
+  String get autoBackupLocalFolderWarningIos;
+
+  /// No description provided for @secureWindowNoteIos.
+  ///
+  /// In en, this message translates to:
+  /// **'Hides content in the app switcher. iPhone does not let apps block screenshots.'**
+  String get secureWindowNoteIos;
+
+  /// No description provided for @widgetPickerName.
+  ///
+  /// In en, this message translates to:
+  /// **'Quick add'**
+  String get widgetPickerName;
+
+  /// No description provided for @widgetPickerDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Quickly add an expense or income'**
+  String get widgetPickerDescription;
+
+  /// No description provided for @widgetExpenseButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Expense'**
+  String get widgetExpenseButton;
+
+  /// No description provided for @widgetIncomeButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Income'**
+  String get widgetIncomeButton;
+
+  /// No description provided for @widgetStale.
+  ///
+  /// In en, this message translates to:
+  /// **'Open the app to update'**
+  String get widgetStale;
 }
 
 class _AppLocalizationsDelegate

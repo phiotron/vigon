@@ -765,4 +765,83 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get deleteCategoryEmptyBody => 'This category has no records.';
+
+  @override
+  String get showPassword => 'Show password';
+
+  @override
+  String get hidePassword => 'Hide password';
+
+  @override
+  String get searchClear => 'Clear search';
+
+  @override
+  String get showMore => 'Show more';
+
+  @override
+  String get showLess => 'Show less';
+
+  @override
+  String get csvFormatEn => 'English format: comma separator, dot decimals';
+
+  @override
+  String get csvFormatVi =>
+      'Vietnamese format: semicolon separator, comma decimals';
+
+  @override
+  String categoryLimitThisMonth(String status) {
+    return 'This month: $status';
+  }
+
+  @override
+  String get currencyCurrent => 'Current currency';
+
+  @override
+  String recurringRestartHint(String date) {
+    return 'Restarts from the next due date: $date';
+  }
+
+  @override
+  String get restoreSwitchesNote =>
+      'The daily reminder and widget amounts will be turned off. You can turn them on again in Settings.';
+
+  @override
+  String get restoreSwitchesNoteIos =>
+      'The daily reminder will be turned off. You can turn it on again in Settings.';
+
+  @override
+  String archivedAccountsCount(int count) {
+    return 'Hidden accounts ($count)';
+  }
+
+  @override
+  String get autoBackupNoteIos =>
+      'Ví Gọn only writes files to the folder you choose in the Files app, for example in iCloud Drive.';
+
+  @override
+  String get autoBackupRunsOnOpenIos =>
+      'iPhone does not run apps on a schedule, so the backup runs when you open Ví Gọn, at most once a day.';
+
+  @override
+  String get autoBackupLocalFolderWarningIos =>
+      'This folder is on this iPhone only and is not included in iCloud backup. If you lose the phone, these files are lost too. Choose a folder in iCloud Drive to keep them.';
+
+  @override
+  String get secureWindowNoteIos =>
+      'Hides content in the app switcher. iPhone does not let apps block screenshots.';
+
+  @override
+  String get widgetPickerName => 'Quick add';
+
+  @override
+  String get widgetPickerDescription => 'Quickly add an expense or income';
+
+  @override
+  String get widgetExpenseButton => 'Expense';
+
+  @override
+  String get widgetIncomeButton => 'Income';
+
+  @override
+  String get widgetStale => 'Open the app to update';
 }
