@@ -14,11 +14,14 @@ import '../../ui/balance_bar.dart';
 import '../../ui/category_avatar.dart';
 import '../../ui/category_grid.dart';
 import '../../ui/format.dart';
+import '../../ui/limit_bar.dart';
 import '../../ui/main_action_button.dart';
+import '../../ui/messenger.dart';
 import '../../ui/spending_ring.dart';
 import '../../ui/theme.dart';
 import '../../ui/tokens.g.dart';
 import '../settings/budget_dialog.dart';
+import 'home_extras.dart';
 import 'period_picker.dart';
 
 /// Màn chính: biểu đồ chi theo danh mục, tổng thu chi, số dư (F-02).
@@ -58,7 +61,7 @@ class HomeScreen extends ConsumerWidget {
         child: Column(
           children: [
             const _PeriodHeader(),
-            const BudgetBar(),
+            if (accountFilter != null) const ActiveAccountChip(),
             Expanded(
               child: GestureDetector(
                 behavior: HitTestBehavior.opaque,
@@ -67,17 +70,43 @@ class HomeScreen extends ConsumerWidget {
                   if (v.abs() < 200) return;
                   ref.read(periodProvider.notifier).shift(v < 0 ? 1 : -1);
                 },
-                child: const _ChartWithCategories(),
+                // Chữ ≥ 130% (A04, SCR-01 text-200): vòng giữ cỡ 328, tổng
+                // thu/chi ra danh sách dưới vòng, cả vùng giữa đầu kỳ và hàng
+                // − / + cuộn được.
+                child: isLargeText(context)
+                    ? const SingleChildScrollView(
+                        child: Column(
+                          children: [
+                            BudgetBar(),
+                            SizedBox(
+                              height: _ringBox,
+                              child: _ChartWithCategories(showTotals: false),
+                            ),
+                            _TotalsList(),
+                            _BalanceBar(),
+                          ],
+                        ),
+                      )
+                    : const Column(
+                        children: [
+                          BudgetBar(),
+                          Expanded(child: _ChartWithCategories()),
+                          _BalanceBar(),
+                        ],
+                      ),
               ),
             ),
-            const _BalanceBar(),
-            const _AddButtons(),
+            // Thanh thông báo (Hoàn tác…) luôn nằm trên hàng − / + (v2).
+            const SnackBarClearance(child: _AddButtons()),
           ],
         ),
       ),
     );
   }
 }
+
+/// Khung vòng ở bản vẽ SCR-01 (328 × 328 ở 360 dp).
+const _ringBox = 328.0;
 
 /// Đầu kỳ `.vg-period` (2.1): nút kỳ trước, tên kỳ title-md kèm mũi tên xổ
 /// xuống (chạm để mở bảng "Xem theo"), nút kỳ sau. Kỳ "Tất cả" không có kỳ
@@ -257,9 +286,16 @@ class _AccountFilterMenu extends ConsumerWidget {
 /// thước theo bản vẽ 2.1 trong khung 328 (lớn nhất): icon 48 trên vòng bán kính 140,
 /// vòng chi tiêu từ 77 tới 107; khung nhỏ hơn thì co theo tỉ lệ.
 class _ChartWithCategories extends ConsumerWidget {
-  const _ChartWithCategories();
+  const _ChartWithCategories({this.showTotals = true});
+
+  /// false khi tổng thu/chi nằm ở danh sách dưới vòng (A04).
+  final bool showTotals;
 
   static const _iconSize = 48.0;
+
+  /// Mỗi ô trên vòng icon chiếm 51,5 dọc theo vòng: vòng bán kính 140 (360 dp
+  /// và 393 pt) xếp đúng 17 ô — 16 danh mục + ⋯ (A01, SCR-01).
+  static const _slotArc = 51.5;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -284,8 +320,7 @@ class _ChartWithCategories extends ConsumerWidget {
           constraints.maxWidth / 2,
           constraints.maxHeight / 2,
         );
-        // Mỗi icon cần 56 trên vòng tròn (48 cộng khoảng hở 8).
-        final fit = max(1, (2 * pi * ring / (_iconSize + 8)).floor());
+        final fit = max(1, (2 * pi * ring / _slotArc).floor());
         // Không đủ chỗ: dành ô cuối cho "Danh mục khác" (AC-51).
         final overflow = categories.length > fit;
         final shown = categories.take(overflow ? fit - 1 : fit).toList();
@@ -320,20 +355,7 @@ class _ChartWithCategories extends ConsumerWidget {
             Positioned.fromRect(
               rect: Rect.fromCircle(center: center, radius: 107 * scale),
               child: summary.isEmpty
-                  ? Center(
-                      child: SizedBox(
-                        width: 180 * scale,
-                        child: Text(
-                          l.emptyPeriod,
-                          textAlign: TextAlign.center,
-                          style: VgType.bodyMd.copyWith(
-                            color: Theme.of(context)
-                                .colorScheme
-                                .onSurfaceVariant,
-                          ),
-                        ),
-                      ),
-                    )
+                  ? _EmptyRing(scale: scale, showHint: showTotals)
                   : Semantics(
                       label: l.chartSummary(
                         summary.expenseByCategory
@@ -345,6 +367,7 @@ class _ChartWithCategories extends ConsumerWidget {
                         summary: summary,
                         scale: scale,
                         currency: currency,
+                        showTotals: showTotals,
                       ),
                     ),
             ),
@@ -368,10 +391,10 @@ class _ChartWithCategories extends ConsumerWidget {
                 MoreCategoriesAvatar(
                   size: _iconSize,
                   onTap: () async {
-                    final id = await showCategorySheet(
-                      context,
-                      type: CategoryType.expense,
-                    );
+                    // SCR-07: lưới đủ mọi danh mục chi; chọn một → màn ghi
+                    // khoản chi đã chọn sẵn danh mục đó (chưa lưu vì chưa có
+                    // số tiền).
+                    final id = await showMoreCategoriesSheet(context);
                     if (id != null && context.mounted) {
                       context.push('/entry/new?type=expense&category=$id');
                     }
@@ -397,54 +420,284 @@ class _BalanceBar extends ConsumerWidget {
       padding: const EdgeInsets.fromLTRB(VgSpace.s4, 0, VgSpace.s4, VgSpace.s3),
       child: BalanceBar(
         amount: money(context, currency, summary.balance),
-        // v2 hiện tên kỳ dưới "Số dư" (`periodTitle:`); bật ở D1 cùng lúc sửa
-        // test màn chính đang tìm tên kỳ bằng find.text (sẽ thấy 2 chỗ).
+        // Tên kỳ dưới "Số dư": đây là số dư của kỳ, không phải số dư tài
+        // khoản (§10.1 #2).
+        periodTitle: periodTitle(context, ref.watch(periodProvider)),
         onTap: () => context.push('/entries'),
       ),
     );
   }
 }
 
-/// Hai nút lớn "− Chi" và "+ Thu" ở vùng ngón cái (AC-01, AC-37).
-class _AddButtons extends StatelessWidget {
-  const _AddButtons();
+/// Vòng khi kỳ chưa có khoản nào (2.3, §10.1 #16): vạch vòng nhạt cùng cỡ
+/// vòng chi tiêu để các icon danh mục quanh nó vẫn "có chỗ", giữa vòng là lời
+/// nhắc "Bấm − để ghi khoản chi đầu tiên" và mũi tên chỉ xuống hàng − / +.
+/// Chữ ≥ 130% thì lời nhắc ra danh sách dưới vòng ([showHint] = false).
+class _EmptyRing extends StatelessWidget {
+  const _EmptyRing({required this.scale, required this.showHint});
+
+  final double scale;
+  final bool showHint;
+
+  @override
+  Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+    return CustomPaint(
+      painter: _RingTrackPainter(
+        color: scheme.surfaceContainerHigh,
+        thickness: 30 * scale,
+      ),
+      child: !showHint
+          ? const SizedBox.expand()
+          : Center(
+              child: SizedBox.square(
+                dimension: 2 * 77 * scale - VgSpace.s4,
+                child: FittedBox(
+                  fit: BoxFit.scaleDown,
+                  child: SizedBox(
+                    width: 2 * 77 * scale - VgSpace.s4,
+                    child: _EmptyHint(color: scheme.onSurfaceVariant),
+                  ),
+                ),
+              ),
+            ),
+    );
+  }
+}
+
+/// Lời nhắc kỳ trống + mũi tên chỉ xuống hàng − / +.
+class _EmptyHint extends StatelessWidget {
+  const _EmptyHint({required this.color});
+
+  final Color color;
 
   @override
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context);
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Text(
+          l.emptyPeriod,
+          textAlign: TextAlign.center,
+          style: VgType.bodyMd.copyWith(color: color),
+        ),
+        const SizedBox(height: VgSpace.s1),
+        ExcludeSemantics(
+          child: Icon(Symbols.south_rounded, size: 20, color: color),
+        ),
+      ],
+    );
+  }
+}
+
+class _RingTrackPainter extends CustomPainter {
+  const _RingTrackPainter({required this.color, required this.thickness});
+
+  final Color color;
+  final double thickness;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final r = min(size.width, size.height) / 2 - thickness / 2;
+    canvas.drawCircle(
+      size.center(Offset.zero),
+      r,
+      Paint()
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = thickness
+        ..color = color,
+    );
+  }
+
+  @override
+  bool shouldRepaint(_RingTrackPainter old) =>
+      old.color != color || old.thickness != thickness;
+}
+
+/// Tổng thu / chi dưới vòng khi chữ ≥ 130% (`.vg-totals`, A04): mỗi dòng
+/// nhãn body-md chữ phụ bên trái, số tiền amount-md màu thu/chi bên phải;
+/// không vừa một dòng thì số tiền xuống dòng. Kỳ trống thì là lời nhắc.
+class _TotalsList extends ConsumerWidget {
+  const _TotalsList();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l = AppLocalizations.of(context);
+    final summary = ref.watch(periodSummaryProvider);
+    final currency = ref.watch(currencyProvider).value ?? 'VND';
+    final muted = Theme.of(context).colorScheme.onSurfaceVariant;
+    if (summary.isEmpty) {
+      return Padding(
+        padding: const EdgeInsets.fromLTRB(
+          VgSpace.s4,
+          VgSpace.s2,
+          VgSpace.s4,
+          VgSpace.s3,
+        ),
+        child: _EmptyHint(color: muted),
+      );
+    }
+    Widget row(String label, int amount, Color color) => MergeSemantics(
+      child: Wrap(
+        alignment: WrapAlignment.spaceBetween,
+        crossAxisAlignment: WrapCrossAlignment.center,
+        spacing: VgSpace.s2,
+        children: [
+          Text(label, style: VgType.bodyMd.copyWith(color: muted)),
+          Text(
+            money(context, currency, amount),
+            style: VgType.amountMd.copyWith(color: color),
+          ),
+        ],
+      ),
+    );
     return Padding(
       padding: const EdgeInsets.fromLTRB(VgSpace.s4, 0, VgSpace.s4, VgSpace.s3),
-      child: Row(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Expanded(
-            child: MainActionButton(
-              glyph: '−',
-              label: l.expense,
-              semanticLabel: l.addExpense,
-              background: context.vg.expense,
-              foreground: context.vg.onExpense,
-              onPressed: () => context.push('/entry/new?type=expense'),
-            ),
-          ),
-          const SizedBox(width: VgSpace.s3),
-          Expanded(
-            child: MainActionButton(
-              glyph: '+',
-              label: l.income,
-              semanticLabel: l.addIncome,
-              background: context.vg.income,
-              foreground: context.vg.onIncome,
-              onPressed: () => context.push('/entry/new?type=income'),
-            ),
-          ),
+          row(l.income, summary.income, incomeColor(context)),
+          const SizedBox(height: VgSpace.s1),
+          row(l.expense, summary.expense, expenseColor(context)),
         ],
       ),
     );
   }
 }
 
-/// Thanh ngân sách tháng: đã chi / hạn mức; vượt thì đổi màu và ghi rõ chữ
-/// "Vượt", không chỉ dựa vào màu (AC-27). Chạm để đặt lại hạn mức.
+/// Hai nút lớn "− Chi" và "+ Thu" ở vùng ngón cái (AC-01, AC-37). Chữ ≥ 130%
+/// (A04): dấu − / + là icon 32 (không phóng theo chữ), chữ xuống dòng dưới
+/// icon, nút cao tối thiểu 96.
+class _AddButtons extends StatelessWidget {
+  const _AddButtons();
+
+  @override
+  Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
+    final large = isLargeText(context);
+    Widget button({
+      required String glyph,
+      required IconData icon,
+      required String label,
+      required String semanticLabel,
+      required Color background,
+      required Color foreground,
+      required VoidCallback onPressed,
+    }) => large
+        ? _TallAddButton(
+            icon: icon,
+            label: label,
+            semanticLabel: semanticLabel,
+            background: background,
+            foreground: foreground,
+            onPressed: onPressed,
+          )
+        : MainActionButton(
+            glyph: glyph,
+            label: label,
+            semanticLabel: semanticLabel,
+            background: background,
+            foreground: foreground,
+            onPressed: onPressed,
+          );
+    // IntrinsicHeight + stretch: hai nút luôn cao bằng nhau khi chữ một bên
+    // xuống dòng.
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(VgSpace.s4, 0, VgSpace.s4, VgSpace.s3),
+      child: IntrinsicHeight(
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Expanded(
+              child: button(
+                glyph: '−',
+                icon: Symbols.remove_rounded,
+                label: l.expense,
+                semanticLabel: l.addExpense,
+                background: context.vg.expense,
+                foreground: context.vg.onExpense,
+                onPressed: () => context.push('/entry/new?type=expense'),
+              ),
+            ),
+            const SizedBox(width: VgSpace.s3),
+            Expanded(
+              child: button(
+                glyph: '+',
+                icon: Symbols.add_rounded,
+                label: l.income,
+                semanticLabel: l.addIncome,
+                background: context.vg.income,
+                foreground: context.vg.onIncome,
+                onPressed: () => context.push('/entry/new?type=income'),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+/// Nút − / + khi chữ lớn (A04, SCR-01 text-200). Dựng riêng vì
+/// [MainActionButton] (lib/src/ui) chỉ có bố cục một hàng — ghi notes D1 để
+/// gom về component chung.
+class _TallAddButton extends StatelessWidget {
+  const _TallAddButton({
+    required this.icon,
+    required this.label,
+    required this.semanticLabel,
+    required this.background,
+    required this.foreground,
+    required this.onPressed,
+  });
+
+  final IconData icon;
+  final String label;
+  final String semanticLabel;
+  final Color background;
+  final Color foreground;
+  final VoidCallback onPressed;
+
+  @override
+  Widget build(BuildContext context) => Tooltip(
+    message: semanticLabel,
+    excludeFromSemantics: true,
+    child: Semantics(
+      button: true,
+      label: semanticLabel,
+      excludeSemantics: true,
+      onTap: onPressed,
+      child: FilledButton(
+        style:
+            bigButtonStyle(
+              background: background,
+              foreground: foreground,
+              height: 96,
+            ).copyWith(
+              padding: const WidgetStatePropertyAll(
+                EdgeInsets.symmetric(
+                  horizontal: VgSpace.s2,
+                  vertical: VgSpace.s2,
+                ),
+              ),
+            ),
+        onPressed: onPressed,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(icon, size: 32, color: foreground),
+            Text(label, textAlign: TextAlign.center),
+          ],
+        ),
+      ),
+    ),
+  );
+}
+
+/// Thanh ngân sách tháng (`.vg-budget`, 2.1/2.2): đã chi / hạn mức; vượt thì
+/// ⚠ + chữ đỏ đậm + thanh đầy màu lỗi, không chỉ dựa vào màu (AC-27). Vẽ
+/// bằng [LimitBar] dày 8. Chạm để đặt lại hạn mức.
 class BudgetBar extends ConsumerWidget {
   const BudgetBar({super.key});
 
@@ -456,11 +709,9 @@ class BudgetBar extends ConsumerWidget {
     final spent = ref.watch(budgetSpentProvider).value ?? 0;
     final currency = ref.watch(currencyProvider).value ?? 'VND';
     final over = spent > limit;
-    final scheme = Theme.of(context).colorScheme;
     final text = over
         ? '${l.budget}: ${l.budgetOver(money(context, currency, spent - limit))}'
         : '${l.budget}: ${l.budgetProgress(money(context, currency, spent), money(context, currency, limit))}';
-    final color = over ? scheme.error : scheme.onSurfaceVariant;
     return InkWell(
       onTap: () => showBudgetDialog(context, ref),
       child: Padding(
@@ -470,48 +721,11 @@ class BudgetBar extends ConsumerWidget {
           VgSpace.s4,
           VgSpace.s3,
         ),
-        child: Semantics(
-          label: text,
-          excludeSemantics: true,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                children: [
-                  // Vượt ngân sách: thêm icon cảnh báo và chữ đậm, không chỉ
-                  // đổi màu (AC-27, AC-40).
-                  if (over) ...[
-                    Icon(
-                      Symbols.warning_rounded,
-                      fill: 1,
-                      size: 16,
-                      color: color,
-                    ),
-                    const SizedBox(width: VgSpace.s1),
-                  ],
-                  Expanded(
-                    child: Text(
-                      text,
-                      style: VgType.bodySm.copyWith(
-                        color: color,
-                        fontWeight: over ? FontWeight.w700 : null,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 6),
-              ClipRRect(
-                borderRadius: BorderRadius.circular(VgRadius.full),
-                child: LinearProgressIndicator(
-                  value: (spent / limit).clamp(0, 1).toDouble(),
-                  minHeight: 8,
-                  backgroundColor: scheme.surfaceContainerHigh,
-                  color: over ? scheme.error : scheme.primary,
-                ),
-              ),
-            ],
-          ),
+        child: LimitBar(
+          text: text,
+          progress: spent / limit,
+          over: over,
+          thickness: 8,
         ),
       ),
     );
