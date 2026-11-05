@@ -75,6 +75,37 @@ Máy thử: Galaxy A13 (Android 14). Chưa làm bước nào; ghi biên bản v�
 - **M-6 (AC-63)**: thêm widget "Ví Gọn" từ danh sách widget của launcher (cỡ tối thiểu 2×2 theo SPEC: ghi nhận cỡ nào thật sự thêm được và có cắt nút không). Xem hai nút "Chi" (đỏ) và "Thu" (xanh), chữ đọc được. Chạm "Chi": mở màn "Khoản chi mới"; chạm "Thu": "Khoản thu mới". Bật PIN rồi chạm: màn khóa trước. Bật TalkBack: đọc "Thêm khoản chi" và "Thêm khoản thu". Thử chạm khi app đang chạy nền và khi bị tắt hẳn; kéo nhỏ và to widget.
 - **M-7 (AC-64)**: mặc định widget chỉ có hai nút (không dòng số). Gạt "Hiện số tiền trên widget" (có cảnh báo): widget hiện "Tháng này đã chi X" (kèm "/ hạn mức" nếu đã đặt ngân sách), X đúng với màn chính. Ghi khoản mới: widget cập nhật. Bật khóa PIN: widget đổi thành "Đã khóa bằng PIN", không còn số. Tắt công tắc: dòng biến mất. Qua hết tháng mà chưa mở app (đổi ngày máy sang tháng sau): ghi nhận dòng số có biến mất và hiện "Mở app để cập nhật" không, nhanh hay chậm (báo thức không chính xác, hệ thống vẽ lại mỗi 30 phút); mở app thì số tháng mới trở lại. Khôi phục một file sao lưu: công tắc này và công tắc nhắc về tắt. Nếu người dùng đồng ý cho Claude dùng adb: kiểm file `shared_prefs/vigon_widget.xml` của app (qua `run-as`, bản debug) không còn dòng số khi công tắc tắt hoặc PIN bật.
 
+### Thử máy sau Hi-Fi P1 (D5, phiên điều phối #2) — Galaxy A13
+Chuẩn bị 2026-11-05; CHƯA làm. Ghi biên bản `notes/<YYYY-MM-DD>-thu-may-hifi.md` (bước · đạt/hỏng · ảnh chụp nếu lệch).
+**Luật khi Claude chạm máy bằng adb** (chỉ khi phiên điều phối cho phép): mỗi lần chạm một lệnh riêng, trước mỗi lần kiểm
+`adb shell dumpsys window | grep mCurrentFocus` là `com.phiotron.vigon`; dữ liệu Ví Gọn trên máy là dữ liệu MẪU chụp store —
+KHÔNG xóa dữ liệu, KHÔNG khôi phục đè, KHÔNG "Xóa toàn bộ dữ liệu"; bước nào cần dữ liệu trống thì bỏ qua và ghi lại.
+So giao diện với ảnh `tool/shots/out/android/<theme>/<frame>.png` (chạy `flutter test tool/shots/shots_test.dart`) và mockup
+`design/hifi/android/<theme>/<frame>.png`.
+
+| # | Bước | Kết quả mong đợi |
+|---|------|------------------|
+| H-1 | Cài `build/app/outputs/flutter-apk/app-release.apk` đè bản cũ (`adb install -r`, không gỡ) | Cài được, mở app thấy dữ liệu cũ còn nguyên; mở nguội ≤ 2 s |
+| H-2 | Màn chính (SCR-01): nhìn vòng icon, thanh Số dư, nút −/+ | Ô ⋯ nét đứt ở vị trí 17 khi có > 16 danh mục; "Số dư" và tên kỳ ("Tháng 11 năm 2026") một dòng, không bẻ giữa chữ; nhãn Thu/Chi giữa vòng |
+| H-3 | Chạm ⋯ (SCR-07) → chọn một danh mục | Lưới đủ danh mục, tên dài không bẻ giữa chữ; mở "Khoản chi mới" đã chọn sẵn danh mục, chưa lưu |
+| H-4 | Các khoản (SCR-10): mở danh mục có hạn mức | Thanh hạn mức dưới dòng danh mục; vượt thì ⚠ + "Vượt …" chữ đỏ; khoản của hôm nay ghi "Hôm nay"; số tiền khoản con thẳng mép với tổng danh mục |
+| H-5 | Tìm kiếm (SCR-11): 🔍 → gõ chữ không dấu ("pho"), gõ số ("155"), bấm chip "Tất cả thời gian", gõ chữ không có | Kết quả mới nhất trước, chữ khớp tô nền xanh nhạt + đậm (cả số tiền vắt qua dấu chấm); dòng tổng; chip chọn một; không khớp: icon + "Không có khoản nào khớp"; cuộn danh sách thì bàn phím ẩn |
+| H-6 | Hạn mức danh mục (SCR-16): Cài đặt → Danh mục → một danh mục → ô hạn mức nhập 0 rồi Lưu; nhập số đúng rồi Lưu | Tiêu đề "Sửa danh mục" đứng yên khi cuộn; "Xóa danh mục" một dòng; 0 → lỗi đỏ dưới ô, không đóng; số đúng → lưu, Các khoản hiện thanh hạn mức |
+| H-7 | Tài khoản (SCR-17/18): mở "Tài khoản đã ẩn (n)", chạm "Hiện lại" của một hàng rồi ẩn lại; mở sửa một tài khoản chưa dùng / đã dùng | Thu/mở mượt; nút Ẩn và Xóa xếp dọc (chưa dùng), đã dùng chỉ có Ẩn + gợi ý; không xóa thật tài khoản nào (dữ liệu mẫu) |
+| H-8 | Định kỳ (SCR-21): mở một chuỗi, đổi tần suất (không Lưu), xóa số tiền về 0 rồi Lưu | Tên chuỗi = ghi chú (như danh sách); gợi ý "Bắt đầu lại từ lần đến hạn kế tiếp: …"; 0 → lỗi dưới ô; Hủy để không đổi dữ liệu |
+| H-9 | Cài đặt (SCR-12): cuộn hết | Thẻ nhóm, phụ đề xuống dòng gọn, "Ngày đầu tuần" hai nút ôm chữ sát lề; Xuất/Khôi phục/CSV không có ›; Xóa toàn bộ chữ đỏ |
+| H-10 | Widget 2×2 và 4×2 (EXT-01) + khoá PIN: thêm hai cỡ từ launcher; bật "Hiện số tiền trên widget"; bật rồi tắt khóa PIN (PIN tạm, nhớ tắt) | 2×2: hai nút dọc chữ 2 dòng không cắt (máy 110 dp có thể chật — ghi lại); 4×2 nút ngang; có số "Tháng này đã chi …"; PIN bật → icon khóa, không số; chạm Chi/Thu mở đúng màn (qua màn khóa khi PIN bật) — xem thêm M-6, M-7 |
+| H-11 | Nhắc ghi chép (SCR-30, F-25): bật công tắc → hộp giải thích → Tiếp tục; đổi giờ nhắc sau hiện tại 2 phút | Hộp giải thích trước hộp quyền hệ thống; giờ chọn bằng đồng hồ 24 h (theo máy); thông báo tới không có số, chạm mở "Khoản chi mới" — xem M-4, M-5 |
+| H-12 | Sao lưu tự động chọn thư mục (SCR-31, F-24): bật → bộ chọn thư mục → chọn thư mục mới → đặt mật khẩu (thử 5 ký tự, hai ô lệch) → "Sao lưu ngay" | Lỗi mật khẩu dưới ô, cảnh báo ⚠ đỏ trên ô; "Lần cuối: …" dấu ✓; khi chạy nút có vòng quay, hai nút tắt; thu hồi quyền thư mục → dải lỗi đỏ, "Chọn lại thư mục" đứng trước — xem M-1..M-3 |
+| H-13 | Xuất sao lưu có mật khẩu (SCR-26) → Hủy ở bảng chia sẻ; Khôi phục: chỉ mở hộp mật khẩu rồi Hủy (KHÔNG xác nhận khôi phục) | Trong lúc mã hóa nút "Đang xử lý" vẫn màu xanh, Hủy và ô tắt; không đổi dữ liệu mẫu |
+| H-14 | TalkBack bật: đi qua màn chính, ô ⋯, Các khoản, tìm kiếm, Cài đặt, hộp xuất, bảng định kỳ, widget | Mọi nút có nhãn tiếng Việt; ô ⋯ đọc "Danh mục khác, nút"; Số dư đọc "Số dư: X, Tháng 11 năm 2026"; chip đọc "đã chọn"; công tắc đọc tên + trạng thái; "Xem thêm" đọc "đã thu gọn/mở rộng" |
+| H-15 | Cỡ chữ lớn nhất của máy (Cài đặt hệ thống → Cỡ và kiểu phông chữ tối đa) + thu phóng màn hình lớn nhất: đi lại H-2..H-9 | Không chữ bị cắt/che, không vạch sọc tràn; nút −/+ cao, chữ "Chi"/"Thu" một dòng; Cài đặt nút chọn xếp dọc chữ căn trái; bảng định kỳ footer xếp dọc; gợi ý ô ghi chú không bị "…" |
+| H-16 | Chủ đề tối: Cài đặt → Giao diện → Tối, đi nhanh H-2..H-9 | Khớp ảnh `tool/shots/out/android/dark/`; chữ đọc rõ |
+| H-17 | M-1..M-7 ở mục "Kiểm tay bản 1.2" phía trên | Như mô tả từng bước; riêng M-3 bước khôi phục và M-7 bước khôi phục: CHỈ làm nếu người dùng đồng ý đè dữ liệu mẫu |
+
+Tự động đã có (2026-11-05, D5): `test/features/hifi_d5_accessibility_test.dart` — 16 trạng thái Hi-Fi × sáng/tối × 100/200 %
+(`androidTapTargetGuideline`, `labeledTapTargetGuideline`, `textContrastGuideline`, không lỗi vẽ ở 200 %), 64 test đạt.
+
 ### Bản 1.1/1.2 trên iOS (D-019, gộp 2026-11-05)
 Tính năng chỉ Android không có ca thử trên iPhone; trên iOS chỉ kiểm là mục cài đặt bị ẩn. Không có iPhone thật: các bước [M] iOS dưới đây làm qua TestFlight khi có máy; trước đó chỉ có iOS Simulator của GitHub Actions (ghi rõ trong biên bản phần nào mới thử trên simulator).
 | AC | Trên iOS | Bằng chứng tự động | Thử tay iPhone |
