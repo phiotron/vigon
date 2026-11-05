@@ -3,7 +3,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:vigon/src/data/calculator.dart';
-import 'package:vigon/src/data/currency.dart';
 import 'package:vigon/src/data/money.dart';
 import 'package:vigon/src/data/settings_repository.dart';
 
@@ -148,7 +147,7 @@ void main() {
         '123450 cent', (tester) async {
       final db = memoryDatabase();
       await tester.runAsync(() async {
-        await changeCurrency(db, 'USD');
+        await SettingsRepository(db).setCurrency('USD');
         await SettingsRepository(db).setBudget(1250);
       });
       await pumpApp(tester, db: db, localeCode: 'en');

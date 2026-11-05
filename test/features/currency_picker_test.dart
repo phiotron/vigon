@@ -3,10 +3,13 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:vigon/src/data/currency_table.dart';
 import 'package:vigon/src/data/database.dart';
+import 'package:vigon/src/data/exchange_rate.dart';
 import 'package:vigon/src/data/settings_repository.dart';
+import 'package:vigon/src/features/settings/currency_conversion.dart';
 import 'package:vigon/src/features/settings/currency_picker.dart';
 
 import '../helpers.dart';
+import 'currency_conversion_flow_test.dart' show FakeRateSource, flow;
 
 Future<void> openPicker(WidgetTester tester) async {
   await tester.tap(find.byTooltip('Cài đặt'));
@@ -74,8 +77,22 @@ void main() {
     await disposeApp(tester, db);
   });
 
-  testWidgets('chọn mã tìm được thì đổi tiền tệ và giữ con số', (tester) async {
-    final db = await pumpApp(tester);
+  testWidgets('chọn mã tìm được thì mở hộp quy đổi; chưa xác nhận thì chưa '
+      'đổi gì (D-025)', (tester) async {
+    final db = await pumpApp(
+      tester,
+      overrides: [
+        exchangeRateSourceProvider.overrideWithValue(
+          FakeRateSource(
+            table: const RateTable(
+              base: 'USD',
+              date: '2026-11-05',
+              rates: {'VND': 25974, 'KWD': 0.3065},
+            ),
+          ),
+        ),
+      ],
+    );
     await insertEntry(
       tester,
       db,
@@ -92,14 +109,16 @@ void main() {
     await tester.tap(
       find.descendant(of: dialog, matching: find.textContaining('KWD')),
     );
-    await settle(tester);
+    await flow(tester);
+    expect(find.byType(CurrencyConversionDialog), findsOneWidget);
+    expect(find.text('Quy đổi sang KWD?'), findsOneWidget);
     expect(
       await tester.runAsync(() => SettingsRepository(db).watchCurrency().first),
-      'KWD',
+      'VND',
     );
     expect(
       (await tester.runAsync(() => db.select(db.entries).getSingle()))!.amount,
-      155000,
+      155,
     );
     await disposeApp(tester, db);
   });

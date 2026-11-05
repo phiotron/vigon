@@ -11,8 +11,8 @@ import '../../ui/tokens.g.dart';
 
 /// Màn Giới thiệu (AC-41, 9.1–9.2): tên, phiên bản, lời cam kết dữ liệu, chính
 /// sách quyền riêng tư, kênh báo lỗi bảo mật, giấy phép nguồn mở. Mở trang web
-/// và email bằng app khác của máy, nên Ví Gọn vẫn không cần quyền INTERNET
-/// (AC-43).
+/// và email bằng app khác của máy (AC-43); quyền INTERNET của Ví Gọn chỉ để
+/// tải tỉ giá khi đổi tiền tệ (D-025).
 class AboutScreen extends ConsumerWidget {
   const AboutScreen({super.key});
 

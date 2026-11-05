@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <!--
-  Ví Gọn: không theo dõi, không thu thập dữ liệu, không kết nối mạng (D-002).
+  Ví Gọn: không theo dõi, không thu thập dữ liệu (D-002). Kết nối mạng duy nhất là
+  GET bảng tỉ giá công khai qua HTTPS (open.er-api.com) khi người dùng đổi tiền tệ
+  (D-025): không gửi dữ liệu người dùng, không định danh, không theo dõi → không có
+  tracking domain, không có loại dữ liệu thu thập.
   Required-reason API: SQLite (sqlite3 qua native assets, không có manifest riêng)
   và dart:io đọc thuộc tính file trong vùng chứa của app; SQLite kiểm dung lượng
   đĩa trước khi ghi. Các plugin (file_picker, secure storage, share_plus,

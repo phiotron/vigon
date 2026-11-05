@@ -9,6 +9,7 @@ import 'package:vigon/src/data/backup.dart';
 import 'package:vigon/src/data/category_repository.dart';
 import 'package:vigon/src/data/currency.dart';
 import 'package:vigon/src/data/database.dart';
+import 'package:vigon/src/data/exchange_rate.dart';
 import 'package:vigon/src/data/recurring_repository.dart';
 import 'package:vigon/src/data/settings_repository.dart';
 
@@ -18,35 +19,36 @@ void main() {
   setUp(() => db = AppDatabase(NativeDatabase.memory()));
   tearDown(() => db.close());
 
-  group('đổi tiền tệ nhân chia cả hạn mức danh mục (F-20, AC-53)', () {
+  group('đổi tiền tệ quy đổi cả hạn mức danh mục (F-20, AC-53, D-025)', () {
     Future<int?> budgetOfFood() async => (await (db.select(
       db.categories,
     )..where((c) => c.id.equals(1))).getSingle()).budget;
+    ExchangeRate rate(String r) => ExchangeRate.tryParse(r)!;
 
-    test('VND sang USD rồi về VND giữ đúng con số hiển thị', () async {
+    test('VND sang USD rồi về VND theo tỉ giá ngược', () async {
       await SettingsRepository(db).ensureCurrency('vi_VN');
       await CategoryRepository(db).setBudget(1, 500000);
-      await changeCurrency(db, 'USD');
-      expect(await budgetOfFood(), 50000000); // 500.000 → 500.000,00
-      await changeCurrency(db, 'VND');
+      await convertCurrency(db, 'USD', rate('0.00004'));
+      expect(await budgetOfFood(), 2000); // 500.000 ₫ → 20,00 US$
+      await convertCurrency(db, 'VND', rate('25000'));
       expect(await budgetOfFood(), 500000);
     });
 
-    test('VND sang KWD nhân 1000 và hạn mức chưa đặt vẫn là null', () async {
+    test('hạn mức chưa đặt vẫn là null', () async {
       await SettingsRepository(db).ensureCurrency('vi_VN');
       await CategoryRepository(db).setBudget(1, 500000);
-      await changeCurrency(db, 'KWD');
-      expect(await budgetOfFood(), 500000000);
+      await convertCurrency(db, 'KWD', rate('0.0000118'));
+      expect(await budgetOfFood(), 5900);
       final other = await (db.select(
         db.categories,
       )..where((c) => c.id.equals(2))).getSingle();
       expect(other.budget, isNull);
     });
 
-    test('chia làm tròn nhưng không về 0 (ràng buộc budget > 0)', () async {
+    test('làm tròn nhưng không về 0 (ràng buộc budget > 0)', () async {
       await SettingsRepository(db).ensureCurrency('en_US');
-      await CategoryRepository(db).setBudget(1, 40); // 0,40 USD
-      await changeCurrency(db, 'VND');
+      await CategoryRepository(db).setBudget(1, 1); // 0,01 USD
+      await convertCurrency(db, 'JPY', rate('0.1')); // 0,001 ¥ → 0
       expect(await budgetOfFood(), 1);
     });
   });

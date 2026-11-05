@@ -1,6 +1,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
-    <!-- F-25 nhắc ghi chép: chỉ hai quyền này. Không INTERNET, không báo thức chính xác. -->
+    <!-- D-025: INTERNET chỉ để tải bảng tỉ giá công khai (HTTPS) khi người dùng đổi tiền tệ;
+         không gửi dữ liệu người dùng, không SDK, không analytics. -->
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <!-- F-25 nhắc ghi chép: hai quyền này. Không báo thức chính xác. -->
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
     <!-- Plugin thông báo tự thêm VIBRATE; app không rung nên gỡ để khỏi thêm quyền ngoài danh sách. -->
@@ -73,7 +76,7 @@
 
          In particular, this is used by the Flutter engine in io.flutter.plugin.text.ProcessTextPlugin. -->
     <queries>
-        <!-- Màn Giới thiệu mở trang chính sách bằng trình duyệt và soạn email báo lỗi (AC-41); không cần quyền INTERNET. -->
+        <!-- Màn Giới thiệu mở trang chính sách bằng trình duyệt và soạn email báo lỗi (AC-41) qua app khác; link ghi công nguồn tỉ giá cũng mở bằng trình duyệt. -->
         <intent>
             <action android:name="android.intent.action.VIEW"/>
             <data android:scheme="https"/>

@@ -484,8 +484,8 @@ void main() {
           .firstMatch(manifest)!
           .group(0)!;
       expect(receiver, contains('android:exported="false"'));
-      // Widget không thêm quyền nào; chỉ còn hai quyền thông báo của F-25.
-      // Bỏ qua các dòng khai báo để GỠ quyền (tools:node="remove").
+      // Widget không thêm quyền nào; chỉ còn hai quyền thông báo của F-25 và
+      // INTERNET để tải tỉ giá (D-025). Bỏ qua dòng GỠ quyền (tools:node="remove").
       final perms = RegExp(r'<uses-permission[^>]*>')
           .allMatches(manifest)
           .map((m) => m.group(0)!)
@@ -497,6 +497,7 @@ void main() {
           .toSet();
       expect(
         perms.difference({
+          'android.permission.INTERNET',
           'android.permission.POST_NOTIFICATIONS',
           'android.permission.RECEIVE_BOOT_COMPLETED',
         }),

@@ -378,7 +378,7 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get currencyNote =>
-      'Đổi tiền tệ chỉ đổi ký hiệu, không quy đổi tỉ giá. Nếu hai tiền tệ có số chữ số thập phân khác nhau (ví dụ VND và USD), số tiền được nhân hoặc chia để giữ nguyên con số; đổi ngược lại có thể mất phần lẻ.';
+      'Đổi tiền tệ sẽ quy đổi mọi số tiền theo tỉ giá tải qua mạng (hoặc tỉ giá bạn tự nhập). Số tiền được làm tròn tới đơn vị nhỏ nhất của tiền mới, nên đổi ngược lại có thể lệch một chút.';
 
   @override
   String get currencySearchHint => 'Tìm theo mã hoặc tên';
@@ -832,4 +832,101 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get widgetStale => 'Mở app để cập nhật';
+
+  @override
+  String currencyConvertTitle(String currency) {
+    return 'Quy đổi sang $currency?';
+  }
+
+  @override
+  String get exchangeRateLoading => 'Đang tải tỉ giá…';
+
+  @override
+  String exchangeRatePair(String from, String rate, String to) {
+    return '1 $from = $rate $to';
+  }
+
+  @override
+  String exchangeRateDate(String date) {
+    return 'Tỉ giá cập nhật ngày $date';
+  }
+
+  @override
+  String get exchangeRateManualSource => 'Tỉ giá bạn tự nhập';
+
+  @override
+  String currencyConvertExample(String before, String after) {
+    return 'Ví dụ: $before → $after';
+  }
+
+  @override
+  String currencyConvertWarning(String currency) {
+    return 'Mọi số tiền (khoản thu chi, chuyển tiền, khoản định kỳ, số dư ban đầu, hạn mức danh mục, ngân sách tháng) sẽ được quy đổi và làm tròn tới đơn vị nhỏ nhất của $currency. Không hoàn tác tự động được, đổi ngược lại có thể lệch một chút do làm tròn. Nên xuất bản sao lưu trước.';
+  }
+
+  @override
+  String get currencyConvertAction => 'Quy đổi';
+
+  @override
+  String get exchangeRateUseOther => 'Dùng tỉ giá khác';
+
+  @override
+  String get exchangeRateErrorTitle => 'Không tải được tỉ giá';
+
+  @override
+  String get exchangeRateOfflineBody =>
+      'Kiểm tra kết nối mạng rồi thử lại, hoặc tự nhập tỉ giá.';
+
+  @override
+  String get exchangeRateUnavailableBody =>
+      'Dịch vụ tỉ giá đang không phản hồi. Hãy thử lại sau, hoặc tự nhập tỉ giá.';
+
+  @override
+  String exchangeRateMissingPairBody(String from, String to) {
+    return 'Không có tỉ giá từ $from sang $to. Hãy tự nhập tỉ giá.';
+  }
+
+  @override
+  String get exchangeRateManualTitle => 'Nhập tỉ giá';
+
+  @override
+  String exchangeRateFieldLabel(String from, String to) {
+    return '1 $from = ? $to';
+  }
+
+  @override
+  String get exchangeRateSwap => 'Đổi chiều tỉ giá';
+
+  @override
+  String exchangeRatePrefilled(String date) {
+    return 'Đã điền tỉ giá gần nhất, ngày $date';
+  }
+
+  @override
+  String get exchangeRateInvalid => 'Nhập tỉ giá lớn hơn 0';
+
+  @override
+  String get exchangeRateRetry => 'Thử lại';
+
+  @override
+  String get exchangeRateContinue => 'Tiếp tục';
+
+  @override
+  String currencyConverted(String currency) {
+    return 'Đã quy đổi mọi số tiền sang $currency';
+  }
+
+  @override
+  String get currencyConvertTooLargeTitle => 'Số tiền quá lớn';
+
+  @override
+  String get currencyConvertTooLargeBody =>
+      'Với tỉ giá này, có số tiền sẽ vượt mức lớn nhất Ví Gọn lưu được. Chưa có gì thay đổi.';
+
+  @override
+  String get currencyConvertFailed =>
+      'Không quy đổi được. Chưa có gì thay đổi.';
+
+  @override
+  String get currencyConvertOk => 'Đã hiểu';
 }

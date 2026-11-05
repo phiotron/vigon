@@ -797,7 +797,7 @@ abstract class AppLocalizations {
   /// No description provided for @currencyNote.
   ///
   /// In en, this message translates to:
-  /// **'Changing the currency only changes the symbol; no exchange rate is applied. If the two currencies have a different number of decimals (for example VND and USD), amounts are multiplied or divided so the numbers you see stay the same; switching back may lose the fractional part.'**
+  /// **'Changing the currency converts every amount using an exchange rate downloaded from the internet (or one you enter yourself). Amounts are rounded to the new currency\'s smallest unit, so converting back may differ slightly.'**
   String get currencyNote;
 
   /// No description provided for @currencySearchHint.
@@ -1591,6 +1591,156 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Open the app to update'**
   String get widgetStale;
+
+  /// No description provided for @currencyConvertTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Convert to {currency}?'**
+  String currencyConvertTitle(String currency);
+
+  /// No description provided for @exchangeRateLoading.
+  ///
+  /// In en, this message translates to:
+  /// **'Getting the exchange rate…'**
+  String get exchangeRateLoading;
+
+  /// No description provided for @exchangeRatePair.
+  ///
+  /// In en, this message translates to:
+  /// **'1 {from} = {rate} {to}'**
+  String exchangeRatePair(String from, String rate, String to);
+
+  /// No description provided for @exchangeRateDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Rate updated {date}'**
+  String exchangeRateDate(String date);
+
+  /// No description provided for @exchangeRateManualSource.
+  ///
+  /// In en, this message translates to:
+  /// **'Rate you entered'**
+  String get exchangeRateManualSource;
+
+  /// No description provided for @currencyConvertExample.
+  ///
+  /// In en, this message translates to:
+  /// **'Example: {before} → {after}'**
+  String currencyConvertExample(String before, String after);
+
+  /// No description provided for @currencyConvertWarning.
+  ///
+  /// In en, this message translates to:
+  /// **'Every amount (entries, transfers, recurring items, opening balances, category limits, monthly budget) will be converted and rounded to the nearest {currency} unit. This can\'t be undone automatically, and converting back may differ slightly because of rounding. Consider exporting a backup first.'**
+  String currencyConvertWarning(String currency);
+
+  /// No description provided for @currencyConvertAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Convert'**
+  String get currencyConvertAction;
+
+  /// No description provided for @exchangeRateUseOther.
+  ///
+  /// In en, this message translates to:
+  /// **'Use a different rate'**
+  String get exchangeRateUseOther;
+
+  /// No description provided for @exchangeRateErrorTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t get the exchange rate'**
+  String get exchangeRateErrorTitle;
+
+  /// No description provided for @exchangeRateOfflineBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Check your internet connection and try again, or enter the rate yourself.'**
+  String get exchangeRateOfflineBody;
+
+  /// No description provided for @exchangeRateUnavailableBody.
+  ///
+  /// In en, this message translates to:
+  /// **'The exchange rate service isn\'t responding right now. Try again later, or enter the rate yourself.'**
+  String get exchangeRateUnavailableBody;
+
+  /// No description provided for @exchangeRateMissingPairBody.
+  ///
+  /// In en, this message translates to:
+  /// **'No exchange rate is available for {from} to {to}. Enter the rate yourself.'**
+  String exchangeRateMissingPairBody(String from, String to);
+
+  /// No description provided for @exchangeRateManualTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter the exchange rate'**
+  String get exchangeRateManualTitle;
+
+  /// No description provided for @exchangeRateFieldLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'1 {from} = ? {to}'**
+  String exchangeRateFieldLabel(String from, String to);
+
+  /// No description provided for @exchangeRateSwap.
+  ///
+  /// In en, this message translates to:
+  /// **'Swap direction'**
+  String get exchangeRateSwap;
+
+  /// No description provided for @exchangeRatePrefilled.
+  ///
+  /// In en, this message translates to:
+  /// **'Filled in with the last rate, from {date}'**
+  String exchangeRatePrefilled(String date);
+
+  /// No description provided for @exchangeRateInvalid.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a rate greater than 0'**
+  String get exchangeRateInvalid;
+
+  /// No description provided for @exchangeRateRetry.
+  ///
+  /// In en, this message translates to:
+  /// **'Try again'**
+  String get exchangeRateRetry;
+
+  /// No description provided for @exchangeRateContinue.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue'**
+  String get exchangeRateContinue;
+
+  /// No description provided for @currencyConverted.
+  ///
+  /// In en, this message translates to:
+  /// **'All amounts converted to {currency}'**
+  String currencyConverted(String currency);
+
+  /// No description provided for @currencyConvertTooLargeTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Amounts too large'**
+  String get currencyConvertTooLargeTitle;
+
+  /// No description provided for @currencyConvertTooLargeBody.
+  ///
+  /// In en, this message translates to:
+  /// **'With this rate, some amounts would go over the largest amount Ví Gọn can store. Nothing was changed.'**
+  String get currencyConvertTooLargeBody;
+
+  /// No description provided for @currencyConvertFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t convert. Nothing was changed.'**
+  String get currencyConvertFailed;
+
+  /// No description provided for @currencyConvertOk.
+  ///
+  /// In en, this message translates to:
+  /// **'OK'**
+  String get currencyConvertOk;
 }
 
 class _AppLocalizationsDelegate

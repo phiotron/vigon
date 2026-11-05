@@ -4,7 +4,6 @@ import 'package:go_router/go_router.dart';
 import 'package:material_symbols_icons/symbols.dart';
 
 import '../../../l10n/app_localizations.dart';
-import '../../data/currency.dart';
 import '../../platform_features.dart';
 import '../../providers.dart';
 import '../../ui/choice_segments.dart';
@@ -14,6 +13,7 @@ import '../../ui/tokens.g.dart';
 import '../lock/app_lock.dart';
 import 'auto_backup_section.dart';
 import 'budget_dialog.dart';
+import 'currency_conversion.dart';
 import 'currency_picker.dart';
 import 'data_actions.dart';
 import 'reminder_section.dart';
@@ -236,15 +236,16 @@ class SettingsScreen extends ConsumerWidget {
     );
   }
 
-  /// Chọn tiền tệ (SCR-13): sheet toàn màn, áp ngay khi chọn.
+  /// Chọn tiền tệ (SCR-13): sheet toàn màn; chọn mã khác thì tải tỉ giá, xác
+  /// nhận rồi quy đổi mọi số tiền (D-025).
   Future<void> _pickCurrency(
     BuildContext context,
     WidgetRef ref,
     String current,
   ) async {
     final picked = await showCurrencyPicker(context, current);
-    if (picked != null && picked != current) {
-      await changeCurrency(ref.read(databaseProvider), picked);
+    if (picked != null && picked != current && context.mounted) {
+      await changeCurrencyWithConversion(context, ref, current, picked);
     }
   }
 }

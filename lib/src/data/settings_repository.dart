@@ -1,7 +1,10 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 import 'database.dart';
+import 'exchange_rate.dart';
 
 /// Đọc, ghi cài đặt trong bảng khóa-giá trị (D-005).
 class SettingsRepository {
@@ -19,6 +22,12 @@ class SettingsRepository {
   static const widgetShowAmountsKey = 'widgetShowAmounts';
   static const reminderEnabledKey = 'reminderEnabled';
   static const reminderTimeKey = 'reminderTime';
+
+  /// Bảng tỉ giá tải được gần nhất (D-025), để mất mạng vẫn điền sẵn tỉ giá.
+  static const exchangeRatesKey = 'exchangeRates';
+
+  /// Tỉ giá người dùng tự nhập lần gần nhất: `{from, to, rate, date}`.
+  static const exchangeRateManualKey = 'exchangeRateManual';
 
   /// Mã ngẫu nhiên của lần cài đặt, ghi cùng mã PIN (iOS-02). Gắn với lần cài
   /// chứ không với dữ liệu: không xuất ra file sao lưu, khôi phục hay xóa toàn
@@ -66,6 +75,55 @@ class SettingsRepository {
   }
 
   Stream<String> watchCurrency() => _watch(currencyKey).map((v) => v ?? 'VND');
+
+  Future<String> readCurrency() => _read(currencyKey).then((v) => v ?? 'VND');
+
+  /// Chỉ ghi mã tiền tệ. Đổi tiền tệ trong app phải qua `convertCurrency`
+  /// (quy đổi mọi số tiền, D-025); hàm này dùng khi chưa có số tiền nào.
+  Future<void> setCurrency(String code) => _write(currencyKey, code);
+
+  /// Bảng tỉ giá đã lưu; null nếu chưa có hoặc hỏng.
+  Future<RateTable?> readRateTable() =>
+      _read(exchangeRatesKey).then(RateTable.tryFromJson);
+
+  Future<void> setRateTable(RateTable table) =>
+      _write(exchangeRatesKey, table.toJson());
+
+  /// Tỉ giá tự nhập gần nhất cho cặp [from]–[to] (cả chiều ngược): trả về
+  /// tỉ giá "1 [from] = ? [to]" và ngày nhập; null nếu chưa có.
+  Future<({ExchangeRate rate, String date})?> readManualRate(
+    String from,
+    String to,
+  ) async {
+    final text = await _read(exchangeRateManualKey);
+    if (text == null) return null;
+    try {
+      final m = jsonDecode(text) as Map<String, dynamic>;
+      final rate = ExchangeRate.tryParse(m['rate'] as String);
+      final date = m['date'] as String;
+      if (rate == null) return null;
+      if (m['from'] == from && m['to'] == to) return (rate: rate, date: date);
+      if (m['from'] == to && m['to'] == from) {
+        return (rate: rate.inverse, date: date);
+      }
+    } catch (_) {}
+    return null;
+  }
+
+  Future<void> setManualRate(
+    String from,
+    String to,
+    ExchangeRate rate,
+    String date,
+  ) => _write(
+    exchangeRateManualKey,
+    jsonEncode({
+      'from': from,
+      'to': to,
+      'rate': rate.toStorage(),
+      'date': date,
+    }),
+  );
 
   /// Ngày đầu tuần: DateTime.monday (mặc định) hoặc DateTime.sunday (AC-12).
   Stream<int> watchWeekStart() => _watch(

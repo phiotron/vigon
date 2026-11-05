@@ -387,7 +387,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get currencyNote =>
-      'Changing the currency only changes the symbol; no exchange rate is applied. If the two currencies have a different number of decimals (for example VND and USD), amounts are multiplied or divided so the numbers you see stay the same; switching back may lose the fractional part.';
+      'Changing the currency converts every amount using an exchange rate downloaded from the internet (or one you enter yourself). Amounts are rounded to the new currency\'s smallest unit, so converting back may differ slightly.';
 
   @override
   String get currencySearchHint => 'Search by code or name';
@@ -844,4 +844,100 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get widgetStale => 'Open the app to update';
+
+  @override
+  String currencyConvertTitle(String currency) {
+    return 'Convert to $currency?';
+  }
+
+  @override
+  String get exchangeRateLoading => 'Getting the exchange rate…';
+
+  @override
+  String exchangeRatePair(String from, String rate, String to) {
+    return '1 $from = $rate $to';
+  }
+
+  @override
+  String exchangeRateDate(String date) {
+    return 'Rate updated $date';
+  }
+
+  @override
+  String get exchangeRateManualSource => 'Rate you entered';
+
+  @override
+  String currencyConvertExample(String before, String after) {
+    return 'Example: $before → $after';
+  }
+
+  @override
+  String currencyConvertWarning(String currency) {
+    return 'Every amount (entries, transfers, recurring items, opening balances, category limits, monthly budget) will be converted and rounded to the nearest $currency unit. This can\'t be undone automatically, and converting back may differ slightly because of rounding. Consider exporting a backup first.';
+  }
+
+  @override
+  String get currencyConvertAction => 'Convert';
+
+  @override
+  String get exchangeRateUseOther => 'Use a different rate';
+
+  @override
+  String get exchangeRateErrorTitle => 'Couldn\'t get the exchange rate';
+
+  @override
+  String get exchangeRateOfflineBody =>
+      'Check your internet connection and try again, or enter the rate yourself.';
+
+  @override
+  String get exchangeRateUnavailableBody =>
+      'The exchange rate service isn\'t responding right now. Try again later, or enter the rate yourself.';
+
+  @override
+  String exchangeRateMissingPairBody(String from, String to) {
+    return 'No exchange rate is available for $from to $to. Enter the rate yourself.';
+  }
+
+  @override
+  String get exchangeRateManualTitle => 'Enter the exchange rate';
+
+  @override
+  String exchangeRateFieldLabel(String from, String to) {
+    return '1 $from = ? $to';
+  }
+
+  @override
+  String get exchangeRateSwap => 'Swap direction';
+
+  @override
+  String exchangeRatePrefilled(String date) {
+    return 'Filled in with the last rate, from $date';
+  }
+
+  @override
+  String get exchangeRateInvalid => 'Enter a rate greater than 0';
+
+  @override
+  String get exchangeRateRetry => 'Try again';
+
+  @override
+  String get exchangeRateContinue => 'Continue';
+
+  @override
+  String currencyConverted(String currency) {
+    return 'All amounts converted to $currency';
+  }
+
+  @override
+  String get currencyConvertTooLargeTitle => 'Amounts too large';
+
+  @override
+  String get currencyConvertTooLargeBody =>
+      'With this rate, some amounts would go over the largest amount Ví Gọn can store. Nothing was changed.';
+
+  @override
+  String get currencyConvertFailed => 'Couldn\'t convert. Nothing was changed.';
+
+  @override
+  String get currencyConvertOk => 'OK';
 }

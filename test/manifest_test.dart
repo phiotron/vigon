@@ -2,15 +2,17 @@ import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
 
-/// Quyền duy nhất được phép khai báo (F-25, AC-62).
+/// Quyền duy nhất được phép khai báo (F-25, AC-62; INTERNET chỉ để tải tỉ giá
+/// khi đổi tiền tệ, D-025).
 const allowedPermissions = {
+  'android.permission.INTERNET',
   'android.permission.POST_NOTIFICATIONS',
   'android.permission.RECEIVE_BOOT_COMPLETED',
 };
 
-/// Quyền tuyệt đối không có: mạng và báo thức chính xác.
+/// Quyền tuyệt đối không có: trạng thái mạng, báo thức chính xác.
 const forbiddenPermissions = [
-  'android.permission.INTERNET',
+  'android.permission.ACCESS_NETWORK_STATE',
   'android.permission.SCHEDULE_EXACT_ALARM',
   'android.permission.USE_EXACT_ALARM',
 ];
@@ -34,8 +36,8 @@ Set<String> declaredPermissions(String xml) {
 
 void main() {
   test(
-    'manifest nguồn chỉ xin quyền thông báo và khởi động, tắt sao lưu tự động '
-    '(AC-43, AC-62, SPEC 5)',
+    'manifest nguồn chỉ xin quyền mạng (tỉ giá), thông báo và khởi động, tắt '
+    'sao lưu tự động (AC-43, AC-62, D-025, SPEC 5)',
     () {
       final xml = File('android/app/src/main/AndroidManifest.xml')
           .readAsStringSync();
@@ -45,8 +47,40 @@ void main() {
       }
       expect(xml.contains('android:allowBackup="false"'), isTrue);
       expect(xml.contains('android:screenOrientation="portrait"'), isTrue);
+      // Chỉ HTTPS (S-60): không cho HTTP thường.
+      expect(xml.contains('usesCleartextTraffic="true"'), isFalse);
+      expect(xml.contains('networkSecurityConfig'), isFalse);
     },
   );
+
+  test('iOS không thêm ngoại lệ ATS: chỉ HTTPS (D-025, S-60)', () {
+    final plist = File('ios/Runner/Info.plist').readAsStringSync();
+    expect(plist.contains('NSAppTransportSecurity'), isFalse);
+    expect(plist.contains('NSAllowsArbitraryLoads'), isFalse);
+    final privacy = File('ios/Runner/PrivacyInfo.xcprivacy').readAsStringSync();
+    expect(
+      RegExp(r'<key>NSPrivacyTracking</key>\s*<false/>').hasMatch(privacy),
+      isTrue,
+    );
+    expect(
+      RegExp(r'<key>NSPrivacyTrackingDomains</key>\s*<array/>')
+          .hasMatch(privacy),
+      isTrue,
+    );
+  });
+
+  test('chỉ một nơi gọi mạng: nguồn tỉ giá, qua HTTPS (D-025)', () {
+    final callers = [
+      for (final f in Directory('lib').listSync(recursive: true))
+        if (f is File &&
+            f.path.endsWith('.dart') &&
+            f.readAsStringSync().contains('HttpClient('))
+          f.path.replaceAll(r'\', '/'),
+    ];
+    expect(callers, ['lib/src/data/exchange_rate.dart']);
+    final src = File('lib/src/data/exchange_rate.dart').readAsStringSync();
+    expect(src.contains('http://'), isFalse);
+  });
 
   test('manifest hợp nhất bản release (nếu đã build) không có quyền ngoài danh '
       'sách cho phép (AC-43, AC-62)', () {
