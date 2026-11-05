@@ -3,7 +3,6 @@ import 'package:flutter/services.dart';
 import 'package:material_symbols_icons/symbols.dart';
 
 import '../../../l10n/app_localizations.dart';
-import '../../data/calculator.dart';
 import '../../data/database.dart';
 import '../../data/recurring_repository.dart';
 import '../../l10n_names.dart';
@@ -17,7 +16,6 @@ import '../../ui/tokens.g.dart';
 import '../accounts/accounts_screen.dart' show accountIcon;
 import '../categories/sheet_footer.dart';
 import '../entry/entry_editor_screen.dart' show repeatLabel;
-import '../entry/keypad.dart' show minorUnitsToInput;
 
 /// Kết quả bảng sửa chuỗi định kỳ (AC-25, AC-50).
 class RuleEdit {
@@ -92,7 +90,7 @@ class RuleSheet extends StatefulWidget {
 
 class _RuleSheetState extends State<RuleSheet> {
   late final _amount = TextEditingController(
-    text: minorUnitsToInput(widget.rule.amount, widget.digits),
+    text: amountInput(context, widget.rule.amount, widget.digits),
   );
   late final _note = TextEditingController(text: widget.rule.note ?? '');
   late RecurrenceFrequency _frequency = widget.rule.frequency;
@@ -109,10 +107,7 @@ class _RuleSheetState extends State<RuleSheet> {
 
   void _save() {
     final l = AppLocalizations.of(context);
-    final v = evaluateToMinorUnits(
-      _amount.text.trim().replaceAll(',', '.'),
-      decimalDigits: widget.digits,
-    );
+    final v = parseAmountField(context, _amount.text.trim(), widget.digits);
     if (v == null || v <= 0) {
       setState(() => _error = l.amountMustBePositive);
       return;

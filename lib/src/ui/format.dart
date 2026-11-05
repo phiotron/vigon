@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 import '../../l10n/app_localizations.dart';
+import '../data/calculator.dart';
 import '../data/money.dart';
 import '../data/period.dart';
 import 'theme.dart';
@@ -12,6 +13,22 @@ String _locale(BuildContext context) =>
 /// Số tiền hiển thị theo ngôn ngữ đang dùng (AC-22).
 String money(BuildContext context, String currency, int minorUnits) =>
     formatMoney(minorUnits, currencyCode: currency, locale: _locale(context));
+
+/// Chữ đặt sẵn trong ô số tiền khi mở sửa, theo ngôn ngữ ("3.000.000" / "3,000,000").
+String amountInput(BuildContext context, int minorUnits, int decimalDigits) =>
+    formatAmountInput(
+      minorUnits,
+      decimalDigits: decimalDigits,
+      locale: _locale(context),
+    );
+
+/// Đọc ô số tiền (có dấu ngăn nghìn theo ngôn ngữ) ra đơn vị nhỏ nhất; null nếu sai.
+int? parseAmountField(BuildContext context, String text, int decimalDigits) {
+  final normalized = normalizeAmountInput(text, locale: _locale(context));
+  return normalized == null
+      ? null
+      : evaluateToMinorUnits(normalized, decimalDigits: decimalDigits);
+}
 
 /// Phần trăm một chữ số thập phân, ví dụ `42,5%` (AC-08).
 String percent(BuildContext context, double value) =>

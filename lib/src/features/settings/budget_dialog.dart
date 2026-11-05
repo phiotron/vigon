@@ -4,11 +4,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 
 import '../../../l10n/app_localizations.dart';
-import '../../data/calculator.dart';
 import '../../data/money.dart';
 import '../../providers.dart';
+import '../../ui/format.dart';
 import '../../ui/dialog.dart';
-import '../entry/keypad.dart' show minorUnitsToInput;
 
 /// Ký hiệu tiền tệ, ví dụ "₫"; không có ký hiệu riêng thì là chính mã.
 String currencySymbol(String code) =>
@@ -52,7 +51,7 @@ class _BudgetDialogState extends State<_BudgetDialog> {
   late final _controller = TextEditingController(
     text: widget.current == null
         ? ''
-        : minorUnitsToInput(widget.current!, widget.digits),
+        : amountInput(context, widget.current!, widget.digits),
   );
   String? _error;
 
@@ -64,10 +63,7 @@ class _BudgetDialogState extends State<_BudgetDialog> {
 
   void _save() {
     final l = AppLocalizations.of(context);
-    final v = evaluateToMinorUnits(
-      _controller.text.trim().replaceAll(',', '.'),
-      decimalDigits: widget.digits,
-    );
+    final v = parseAmountField(context, _controller.text.trim(), widget.digits);
     if (v == null || v <= 0) {
       setState(() => _error = l.amountMustBePositive);
       return;

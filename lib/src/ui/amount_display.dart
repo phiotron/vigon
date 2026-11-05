@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../data/money.dart';
 import 'tokens.g.dart';
 
 /// Vùng số tiền khi ghi khoản hoặc chuyển tiền (3.2, 3.7, 6.6): biểu thức
@@ -36,8 +37,15 @@ class AmountDisplay extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
+            // Hiện theo ngôn ngữ ("3.500.000", "12,5" ở vi); biểu thức gốc
+            // vẫn dùng "." thập phân để tính.
             Text(
-              expression.isEmpty ? ' ' : expression,
+              expression.isEmpty
+                  ? ' '
+                  : formatExpressionForDisplay(
+                      expression,
+                      locale: Localizations.localeOf(context).languageCode,
+                    ),
               style: VgType.bodyMd.copyWith(color: scheme.onSurfaceVariant),
               maxLines: 1,
               overflow: TextOverflow.ellipsis,

@@ -5,10 +5,8 @@ import 'package:go_router/go_router.dart';
 import 'package:material_symbols_icons/symbols.dart';
 
 import '../../../l10n/app_localizations.dart';
-import '../../data/calculator.dart';
 import '../../data/database.dart';
 import '../../data/money.dart';
-import '../entry/keypad.dart' show minorUnitsToInput;
 import '../../l10n_names.dart';
 import '../../providers.dart';
 import '../../ui/choice_sheet.dart';
@@ -127,7 +125,7 @@ class _AccountEditorState extends ConsumerState<_AccountEditor> {
       final digits = currencyDecimalDigits(
         ref.read(currencyProvider).value ?? 'VND',
       );
-      final abs = minorUnitsToInput(a.initialBalance.abs(), digits);
+      final abs = amountInput(context, a.initialBalance.abs(), digits);
       _balance.text = a.initialBalance < 0 ? '-$abs' : abs;
     }
   }
@@ -142,16 +140,17 @@ class _AccountEditorState extends ConsumerState<_AccountEditor> {
   Future<void> _save() async {
     final l = AppLocalizations.of(context);
     final name = _name.text.trim();
-    final text = _balance.text.trim().replaceAll(',', '.');
+    final text = _balance.text.trim();
     final negative = text.startsWith('-');
     final digits = currencyDecimalDigits(
       ref.read(currencyProvider).value ?? 'VND',
     );
     final abs = text.isEmpty
         ? 0
-        : evaluateToMinorUnits(
+        : parseAmountField(
+            context,
             negative ? text.substring(1) : text,
-            decimalDigits: digits,
+            digits,
           );
     setState(() {
       _nameError = name.isEmpty ? l.nameRequired : null;

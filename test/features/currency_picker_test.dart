@@ -48,11 +48,16 @@ void main() {
     expect(
       find.descendant(
         of: dialog,
-        matching: find.textContaining(currencyTable.last.nameEn),
+        matching: find.textContaining(currenciesByCode.last.nameEn),
       ),
       findsNothing,
     );
     expect(rows.evaluate().length, lessThan(currencyTable.length ~/ 2));
+    // Danh sách theo mã A→Z như mockup SCR-13 (sau thẻ tiền tệ đang dùng).
+    expect(
+      find.descendant(of: dialog, matching: find.textContaining('AED')),
+      findsOneWidget,
+    );
     final field = find.descendant(of: dialog, matching: find.byType(TextField));
     // Tìm không phân biệt dấu và hoa thường.
     await tester.enterText(field, 'YEN nhat');

@@ -96,6 +96,17 @@ void main() {
       expect(searchCurrencies('  '), hasLength(currencyTable.length));
     });
 
+    test('bảng chọn xếp theo mã A→Z (SCR-13), đủ mã của bảng gốc', () {
+      final codes = searchCurrencies('').map((c) => c.code).toList();
+      expect(codes, [...codes]..sort());
+      expect(codes.first, 'AED');
+      expect(codes.toSet(), currencyTable.map((c) => c.code).toSet());
+      expect(
+        searchCurrencies('dollar').map((c) => c.code).toList(),
+        [...searchCurrencies('dollar').map((c) => c.code)]..sort(),
+      );
+    });
+
     test('tìm theo mã, không phân biệt hoa thường', () {
       expect(searchCurrencies('jpy').map((c) => c.code), contains('JPY'));
       expect(searchCurrencies('KWD').single.code, 'KWD');

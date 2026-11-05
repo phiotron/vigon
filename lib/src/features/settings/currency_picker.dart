@@ -34,7 +34,7 @@ class CurrencyPickerSheet extends StatefulWidget {
 
 class _CurrencyPickerSheetState extends State<CurrencyPickerSheet> {
   final _search = TextEditingController();
-  List<CurrencyInfo> _shown = currencyTable;
+  List<CurrencyInfo> _shown = currenciesByCode;
   bool _noteOpen = false;
 
   @override

@@ -219,13 +219,19 @@ String foldForSearch(String input) {
   return out.toString();
 }
 
+/// Bảng xếp theo mã A→Z cho bảng chọn tiền tệ (SCR-13 theo mockup: AED, AFN, ALL…;
+/// tiền tệ đang dùng ghim riêng ở đầu, A09). [currencyTable] giữ thứ tự cũ.
+final List<CurrencyInfo> currenciesByCode = List.unmodifiable(
+  [...currencyTable]..sort((a, b) => a.code.compareTo(b.code)),
+);
+
 /// Lọc bảng theo [query]: khớp một phần của mã hoặc tên (vi hoặc en), không
-/// phân biệt hoa thường và dấu. Chuỗi rỗng trả về toàn bộ bảng.
+/// phân biệt hoa thường và dấu. Kết quả theo mã A→Z; chuỗi rỗng trả về cả bảng.
 List<CurrencyInfo> searchCurrencies(String query) {
   final q = foldForSearch(query.trim());
-  if (q.isEmpty) return currencyTable;
+  if (q.isEmpty) return currenciesByCode;
   return [
-    for (final c in currencyTable)
+    for (final c in currenciesByCode)
       if (foldForSearch(c.code).contains(q) ||
           foldForSearch(c.nameVi).contains(q) ||
           foldForSearch(c.nameEn).contains(q))

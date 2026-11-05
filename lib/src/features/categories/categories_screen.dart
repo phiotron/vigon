@@ -5,18 +5,17 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:material_symbols_icons/symbols.dart';
 
 import '../../../l10n/app_localizations.dart';
-import '../../data/calculator.dart';
 import '../../data/database.dart';
 import '../../data/money.dart';
 import '../../l10n_names.dart';
 import '../../providers.dart';
+import '../../ui/format.dart';
 import '../../ui/category_avatar.dart';
 import '../../ui/choice_sheet.dart';
 import '../../ui/confirm_dialog.dart';
 import '../../ui/dialog.dart';
 import '../../ui/theme.dart';
 import '../../ui/tokens.g.dart';
-import '../entry/keypad.dart' show minorUnitsToInput;
 import '../settings/budget_dialog.dart' show currencySymbol;
 import 'category_icons.dart';
 import 'sheet_footer.dart';
@@ -199,7 +198,7 @@ class _CategoryEditorState extends ConsumerState<_CategoryEditor> {
   late final _budget = TextEditingController(
     text: widget.category?.budget == null
         ? ''
-        : minorUnitsToInput(widget.category!.budget!, _digits),
+        : amountInput(context, widget.category!.budget!, _digits),
   );
   String? _error;
   String? _budgetError;
@@ -231,10 +230,7 @@ class _CategoryEditorState extends ConsumerState<_CategoryEditor> {
     int? budget;
     final budgetText = _budget.text.trim();
     if (widget.type == CategoryType.expense && budgetText.isNotEmpty) {
-      budget = evaluateToMinorUnits(
-        budgetText.replaceAll(',', '.'),
-        decimalDigits: _digits,
-      );
+      budget = parseAmountField(context, budgetText, _digits);
       if (budget == null || budget <= 0) {
         setState(() {
           _error = null;

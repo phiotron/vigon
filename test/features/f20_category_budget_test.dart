@@ -45,7 +45,8 @@ void main() {
     await settle(tester);
     expect(await budgetOf(tester, db, 1), 500000);
 
-    // Mở lại: ô hiện hạn mức đang có; xóa trống rồi lưu là bỏ hạn mức.
+    // Mở lại: ô hiện hạn mức đang có, có dấu ngăn nghìn theo ngôn ngữ (D5);
+    // xóa trống rồi lưu là bỏ hạn mức.
     await tester.tap(find.text('Ăn uống'));
     await settle(tester);
     expect(
@@ -53,7 +54,7 @@ void main() {
           .widget<TextField>(find.byKey(const ValueKey('category-budget')))
           .controller!
           .text,
-      '500000',
+      '500.000',
     );
     await tester.enterText(find.byKey(const ValueKey('category-budget')), '');
     await tester.tap(find.text('Lưu'));
