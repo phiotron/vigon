@@ -60,13 +60,13 @@ Nguồn tester gợi ý: người thân, đồng nghiệp, bạn bè dùng Andro
 > phải có ít nhất 12 người thử trong 14 ngày liền mới được phát hành. Bạn giúp mình nhé:
 > 1) Vào link [link nhóm] bấm tham gia; 2) mở [link opt-in] bằng đúng Gmail trên điện thoại Android, bấm "Become a tester";
 > 3) cài app từ Google Play. Bạn chỉ cần **giữ tham gia và giữ app trên máy ít nhất 16 ngày (tới [ngày])**, mở app ghi vài khoản
-> mỗi tuần. App không gửi dữ liệu nào đi. Góp ý gửi mình qua [email/Zalo] hoặc nút "Gửi phản hồi" trên trang Play. Cảm ơn bạn!
+> mỗi tuần. App không gửi dữ liệu thu chi của bạn đi đâu (chỉ dùng mạng để tải tỉ giá khi bạn đổi tiền tệ). Góp ý gửi mình qua [email/Zalo] hoặc nút "Gửi phản hồi" trên trang Play. Cảm ơn bạn!
 
 **Invite (en):**
 > Hi! I'm building "Ví Gọn", a free, ad-free expense tracker that works offline. Google requires new apps to be tested by at least
 > 12 people for 14 days in a row before release. Could you help? 1) Join [group link]; 2) open [opt-in link] with the Google
 > account on your Android phone and tap "Become a tester"; 3) install from Google Play. Please **stay in the test and keep the
-> app installed for at least 16 days (until [date])** and log a few records each week. The app sends no data anywhere.
+> app installed for at least 16 days (until [date])** and log a few records each week. The app never sends your records anywhere (it only goes online to download exchange rates when you change currency).
 > Feedback: [email] or "Send feedback" on the Play page. Thank you!
 
 **Nhắc ngày 3 / 7 / 11 (vi):**
@@ -109,7 +109,7 @@ Form bằng tiếng Anh; câu hỏi có thể đổi. **Thay mọi `[...]` bằn
 - **Who is the intended audience of your app?**
   `Adults and teenagers (13+) in Vietnam and worldwide who want a quick, private way to track personal or family spending, in Vietnamese or English.`
 - **Describe how your app provides value to users.**
-  `Ví Gọn records an expense in three taps and shows spending by category with a chart, budgets and recurring records. It works offline with no account and no data collection, so financial data never leaves the phone (the only network use is downloading a public exchange rate table when the user changes currency).`
+  `Ví Gọn records an expense in three taps and shows spending by category with a chart, budgets and recurring records. It works offline with no account, no ads and no analytics, so financial data never leaves the phone (the only network use is downloading a public exchange rate table when the user changes currency; the rate provider sees only the device IP address).`
 - **How many installs do you expect in your first year?** → chọn mức thấp, thực tế (ví dụ "0–10K").
 - **What changes did you make to your app based on what you learned during closed testing?**
   `[liệt kê thay đổi thật, ví dụ: redesigned the home screen and entry keypad (build [k]); fixed [lỗi] reported by testers; clarified the PIN warning text].`

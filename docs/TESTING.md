@@ -102,9 +102,32 @@ So giao diện với ảnh `tool/shots/out/android/<theme>/<frame>.png` (chạy 
 | H-15 | Cỡ chữ lớn nhất của máy (Cài đặt hệ thống → Cỡ và kiểu phông chữ tối đa) + thu phóng màn hình lớn nhất: đi lại H-2..H-9 | Không chữ bị cắt/che, không vạch sọc tràn; nút −/+ cao, chữ "Chi"/"Thu" một dòng; Cài đặt nút chọn xếp dọc chữ căn trái; bảng định kỳ footer xếp dọc; gợi ý ô ghi chú không bị "…" |
 | H-16 | Chủ đề tối: Cài đặt → Giao diện → Tối, đi nhanh H-2..H-9 | Khớp ảnh `tool/shots/out/android/dark/`; chữ đọc rõ |
 | H-17 | M-1..M-7 ở mục "Kiểm tay bản 1.2" phía trên | Như mô tả từng bước; riêng M-3 bước khôi phục và M-7 bước khôi phục: CHỈ làm nếu người dùng đồng ý đè dữ liệu mẫu |
+| H-18 | Đổi tiền tệ có quy đổi (D-025): Q-0..Q-7 ở mục "Thử máy: đổi tiền tệ có quy đổi tỉ giá" bên dưới | Như mô tả từng bước; xuất `.vigon` trước (Q-0), khôi phục sau (Q-7) — Q-7 CHỈ làm nếu được phép đè dữ liệu mẫu |
 
 Tự động đã có (2026-11-05, D5): `test/features/hifi_d5_accessibility_test.dart` — 16 trạng thái Hi-Fi × sáng/tối × 100/200 %
 (`androidTapTargetGuideline`, `labeledTapTargetGuideline`, `textContrastGuideline`, không lỗi vẽ ở 200 %), 64 test đạt.
+
+### Thử máy: đổi tiền tệ có quy đổi tỉ giá (D-025, AC-21, AC-70..AC-72) — thêm 2026-11-05 (D8)
+CHƯA làm. Máy: Galaxy A13 (Android); iPhone khi có TestFlight (cùng bước, cỡ chữ qua Cài đặt → Trợ năng → Cỡ chữ lớn hơn).
+Ghi biên bản chung với `notes/<YYYY-MM-DD>-thu-may-hifi.md` (bước · đạt/hỏng · ảnh chụp nếu lệch).
+**Dữ liệu Ví Gọn trên máy là dữ liệu MẪU chụp store.** Quy đổi đổi MỌI số tiền thật trong DB và không hoàn tác tự động, nên bắt buộc
+**xuất `.vigon` trước (Q-0) và khôi phục sau (Q-7)**. Q-7 là "khôi phục đè" → trái luật adb của mục D5 ở trên: chỉ làm khi phiên điều phối
+cho phép rõ; nếu Claude chạm máy bằng adb mà chưa được phép thì DỪNG sau Q-0 và để người dùng làm Q-1..Q-7.
+
+| # | Bước | Kết quả mong đợi |
+|---|------|------------------|
+| Q-0 | **Chuẩn bị.** Ghi tiền tệ đang dùng (VND). Chụp màn: màn chính (tháng này), Các khoản, Cài đặt → Ngân sách tháng, một danh mục có hạn mức, một tài khoản (số dư ban đầu), một khoản định kỳ, một khoản chuyển tiền. Ghi 6 "số mẫu" này ra biên bản. Cài đặt → Dữ liệu → **Xuất bản sao lưu** (không đặt mật khẩu cũng được) → lưu file `.vigon` vào app Tệp/Drive, ghi tên file | Có file `.vigon` mở được trong app Tệp; biên bản có 6 số mẫu + ảnh |
+| Q-1 | **VND → USD khi có mạng.** Bật Wi-Fi/4G. Cài đặt → Tiền tệ → gõ "USD" → chọn **USD** | Hộp "Quy đổi sang USD?" hiện "Đang tải tỉ giá…" (vài giây) rồi: hai dòng tỉ giá "1 VND = 0,0000… USD" và "1 USD = 2x.xxx VND" — **tỉ giá thật**: so với tỉ giá của ngày (mở `https://open.er-api.com/v6/latest/USD` trên trình duyệt hoặc tra Google), lệch < 1 %; dòng "Tỉ giá cập nhật ngày …" là hôm nay/hôm qua (theo giờ UTC); dòng nguồn **"Rates By Exchange Rate API"**; "Ví dụ: X → Y" đúng phép nhân; cảnh báo làm tròn + gợi ý xuất sao lưu trước; nút Hủy / Dùng tỉ giá khác / Quy đổi |
+| Q-2 | Bấm **Quy đổi**, rồi đi lại mọi màn ở Q-0 (+ tìm kiếm, widget nếu đang bật hiện số) | Snackbar "Đã quy đổi mọi số tiền sang USD". Mỗi số mẫu = số cũ × tỉ giá ở Q-1, làm tròn tới 0,01 US$ (số > 0 nhỏ nhất thành 0,01); tổng thu/chi/số dư, vòng biểu đồ, thanh ngân sách, hạn mức danh mục, số dư tài khoản, khoản định kỳ, khoản chuyển tiền **đều** đổi — không màn nào còn số VND cũ; ký hiệu và dấu thập phân đúng kiểu USD; widget cập nhật số mới |
+| Q-3 | **USD → VND (đổi ngược).** Cài đặt → Tiền tệ → chọn **VND** → Quy đổi | Hộp hiện tỉ giá chiều ngược, ngày, nguồn. Sau quy đổi: tiền tệ VND, số về GẦN số cũ ở Q-0 — lệch do làm tròn (vd 155.000 ₫ → 5,97 US$ → ~155.0xx ₫); ghi lệch lớn nhất vào biên bản; không có số âm/0 sai chỗ (số dư ban đầu âm vẫn âm) |
+| Q-4 | **Chế độ máy bay** (tắt cả Wi-Fi). Cài đặt → Tiền tệ → chọn USD | Hộp "Không tải được tỉ giá" + "Kiểm tra kết nối mạng rồi thử lại, hoặc tự nhập tỉ giá."; ô "1 VND = ? USD" điền sẵn tỉ giá đã tải ở Q-1/Q-3 kèm "Đã điền tỉ giá gần nhất, ngày …"; nút "Đổi chiều tỉ giá" đổi thành "1 USD = ? VND"; bàn phím số có dấu thập phân; nhập 0 → "Nhập tỉ giá lớn hơn 0"; "Thử lại" vẫn báo lỗi, không treo; "Tiếp tục" → hộp xác nhận ghi "Tỉ giá bạn tự nhập" → bấm **Hủy**: tiền tệ vẫn VND, số y nguyên. Không crash. Tắt chế độ máy bay |
+| Q-5 | **Link ghi công.** Có mạng: mở lại hộp quy đổi sang USD, chạm **"Rates By Exchange Rate API"** | Trình duyệt mở `https://www.exchangerate-api.com`; Back về app thì hộp vẫn còn, chưa đổi gì; bấm Hủy. TalkBack (nếu bật) đọc dòng này là liên kết/nút có tên |
+| Q-6 | **Chữ 200 %.** Cài đặt hệ thống → cỡ chữ lớn nhất (Android 14 tới 200 %; máy không tới thì ghi mức đạt được) + thu phóng màn hình lớn nhất. Mở hộp quy đổi khi có mạng (hộp xác nhận) và khi bật máy bay (hộp nhập tay) | Không chữ bị cắt/che, tỉ giá dài ("0,0000389084") không tràn; nội dung cuộn được tới hết nút; các nút xếp dọc khi chật, vùng chạm đủ lớn; ô nhập tỉ giá và nút "Đổi chiều tỉ giá" dùng được. Bấm Hủy, trả cỡ chữ về như cũ |
+| Q-7 | **Khôi phục.** Cài đặt → Dữ liệu → Khôi phục từ bản sao lưu → chọn file ở Q-0 → xác nhận | Tiền tệ về VND, 6 số mẫu khớp đúng ảnh Q-0 (không lệch làm tròn); ghi "đã khôi phục" vào biên bản. Chỉ làm khi đã được phép khôi phục đè (xem trên) |
+
+Tự động đã có (D7): `test/features/currency_conversion_flow_test.dart` (luồng + trợ năng 100/200 % sáng/tối), `test/data/currency_conversion_test.dart`,
+`test/data/exchange_rate_source_test.dart` (HTTP giả), `test/manifest_test.dart`. Kiểm API thật từ máy dev: `dart run tool/fx_probe.dart`.
+Máy thật kiểm thêm điều test không thấy được: gọi mạng thật qua TLS của máy, chế độ máy bay thật, mở trình duyệt, bàn phím số của máy, cỡ chữ hệ thống.
 
 ### Bản 1.1/1.2 trên iOS (D-019, gộp 2026-11-05)
 Tính năng chỉ Android không có ca thử trên iPhone; trên iOS chỉ kiểm là mục cài đặt bị ẩn. Không có iPhone thật: các bước [M] iOS dưới đây làm qua TestFlight khi có máy; trước đó chỉ có iOS Simulator của GitHub Actions (ghi rõ trong biên bản phần nào mới thử trên simulator).
