@@ -98,8 +98,8 @@ void main() {
       lessThan(tester.getTopLeft(find.text('Cà phê cũ')).dy),
     );
 
-    // Tắt chip thì quay về kỳ đang xem.
-    await tester.tap(find.text('Tất cả thời gian'));
+    // Chọn chip tên kỳ (cặp chip chọn một, A21) thì quay về kỳ đang xem.
+    await tester.tap(find.text('Tháng 11 năm 2026'));
     await settle(tester);
     expect(find.text('Cà phê cũ'), findsNothing);
 

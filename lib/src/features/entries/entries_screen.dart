@@ -18,6 +18,9 @@ import '../home/home_extras.dart';
 import 'category_budget.dart';
 import 'entry_search.dart';
 
+/// Lề ngang của dòng `.vg-row` (SCR-10): 16 hai bên.
+const _rowPadding = EdgeInsets.symmetric(horizontal: VgSpace.s4);
+
 /// Số tiền trong dòng: body-md, số đều độ rộng để cột tiền thẳng hàng.
 final _rowAmount = VgType.bodyMd.copyWith(
   fontFeatures: const [FontFeature.tabularFigures()],
@@ -157,10 +160,7 @@ class _EntriesScreenState extends ConsumerState<EntriesScreen> {
     return Scaffold(
       appBar: EntriesAppBar(title: periodTitle(context, period)),
       body: ref.watch(entrySearchProvider.select((s) => s.active))
-          ? EntrySearchResults(
-              tileBuilder: (r, title, amount) =>
-                  _EntryTile(row: r, title: title, amount: amount),
-            )
+          ? const EntrySearchResults()
           : Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
@@ -261,8 +261,18 @@ class _AmountTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => isLargeText(context)
-      ? ListTile(minTileHeight: minHeight, title: title, subtitle: amount)
-      : ListTile(minTileHeight: minHeight, title: title, trailing: amount);
+      ? ListTile(
+          minTileHeight: minHeight,
+          contentPadding: _rowPadding,
+          title: title,
+          subtitle: amount,
+        )
+      : ListTile(
+          minTileHeight: minHeight,
+          contentPadding: _rowPadding,
+          title: title,
+          trailing: amount,
+        );
 }
 
 /// Dòng danh mục: icon 40, tên, phần trăm, tổng, mũi tên mở/thu gọn (4.1).
@@ -287,6 +297,9 @@ class _CategoryTile extends StatelessWidget {
     return Semantics(
       expanded: open,
       child: ListTile(
+        // Lề phải 16 như `.vg-row` (M3 mặc định 24) để tổng danh mục thẳng
+        // cột với số tiền khoản bên dưới (rãnh 24, §10.1 #12).
+        contentPadding: _rowPadding,
         leading: CategoryAvatar(category: total.category, size: 40),
         title: Text(categoryLabel(l, total.category)),
         subtitle: Text(
