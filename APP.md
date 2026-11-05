@@ -40,7 +40,8 @@ Luồng nhanh nhất: Màn chính → chạm icon danh mục (hoặc −/+) → 
 Kế hoạch đầy đủ 3 phiên: `notes/2026-11-04-ke-hoach-3-phien.md`.
 
 **Việc dở / bước tiếp:**
-- Phiên #1: viết lại `product.md` + `CONTEXT.md` + store theo bản gộp → người dùng duyệt → gửi Claude Design, lưu mockup vào `design/hifi/`.
+- **2026-11-05: người dùng đã duyệt `product.md` v2 (e7c75a8)** → người dùng gửi Claude Design (kèm `design/current/screens/`), lưu link + export vào `design/hifi/<platform>/<theme>/` theo product.md §11.3 → mở phiên #2.
+- Đang chạy: iOS `ITSAppUsesNonExemptEncryption`=true + loại DB khỏi iCloud (code) · tài liệu D-020/D-021 + hướng dẫn khai mã hoá Pháp.
 - iOS chưa có F-22/F-24/F-26 (D-019): quyết ở #2 làm tương đương (WidgetKit, chọn thư mục, che màn) hay để bản sau. Export compliance phải xem lại vì có AES-256-GCM (COMPLIANCE P-03).
 - Mọi tính năng 1.1/1.2 CHƯA thử trên máy Android thật (`docs/TESTING.md` M-1..M-7).
 - Người dùng: đăng ký Apple Developer (cá nhân), App ID `com.phiotron.vigon`, API key App Store Connect + chứng chỉ ký → GitHub Secrets của repo `phiotron/vigon`.
