@@ -5,6 +5,7 @@ import 'package:vigon/src/app_info.dart';
 import 'package:vigon/src/data/database.dart';
 import 'package:vigon/src/data/pin_service.dart';
 import 'package:vigon/src/ui/theme.dart';
+import 'package:vigon/src/ui/settings_rows.dart';
 
 import '../helpers.dart';
 
@@ -58,8 +59,8 @@ void main() {
         await tester.runAsync(() => PinService(secrets).isEnabled()),
         isFalse,
       );
-      final toggle = tester.widget<SwitchListTile>(
-        find.widgetWithText(SwitchListTile, 'Khóa bằng mã PIN'),
+      final toggle = tester.widget<SettingsSwitchRow>(
+        find.widgetWithText(SettingsSwitchRow, 'Khóa bằng mã PIN'),
       );
       expect(toggle.value, isFalse);
       await disposeApp(tester, db);

@@ -11,15 +11,18 @@ import '../helpers.dart';
 Future<void> openPicker(WidgetTester tester) async {
   await tester.tap(find.byTooltip('Cài đặt'));
   await settle(tester);
+  // Cài đặt dạng thẻ (SCR-12) cao hơn: cuộn hàng vào màn trước khi chạm.
+  await tester.ensureVisible(find.text('Tiền tệ'));
+  await tester.pumpAndSettle();
   await tester.tap(find.text('Tiền tệ'));
   await settle(tester);
 }
 
-final dialog = find.byType(CurrencyPickerDialog);
-final rows = find.descendant(of: dialog, matching: find.byType(ListTile));
+final dialog = find.byType(CurrencyPickerSheet);
+final rows = find.descendant(of: dialog, matching: find.byType(CurrencyRow));
 
 void main() {
-  testWidgets('hộp thoại tiền tệ: ô tìm, dựng lười, dấu tick (AC-53)', (
+  testWidgets('sheet tiền tệ: ô tìm, dựng lười, dấu tick (AC-53)', (
     tester,
   ) async {
     final db = await pumpApp(tester);
@@ -36,7 +39,7 @@ void main() {
     expect(checks, findsOneWidget);
     expect(
       find.descendant(
-        of: find.ancestor(of: checks, matching: find.byType(ListTile)),
+        of: find.ancestor(of: checks, matching: find.byType(CurrencyRow)),
         matching: find.text('VND · ₫'),
       ),
       findsOneWidget,

@@ -7,6 +7,7 @@ import '../../../l10n/app_localizations.dart';
 import '../../data/calculator.dart';
 import '../../data/money.dart';
 import '../../providers.dart';
+import '../../ui/dialog.dart';
 import '../entry/keypad.dart' show minorUnitsToInput;
 
 /// Ký hiệu tiền tệ, ví dụ "₫"; không có ký hiệu riêng thì là chính mã.
@@ -77,22 +78,27 @@ class _BudgetDialogState extends State<_BudgetDialog> {
   @override
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context);
-    return AlertDialog(
-      title: Text(l.budget),
-      content: TextField(
-        controller: _controller,
-        autofocus: true,
-        keyboardType: const TextInputType.numberWithOptions(decimal: true),
-        inputFormatters: [
-          FilteringTextInputFormatter.allow(RegExp(r'[0-9.,]')),
-        ],
-        style: const TextStyle(fontFeatures: [FontFeature.tabularFigures()]),
-        decoration: InputDecoration(
-          labelText: l.amountLabel,
-          suffixText: widget.symbol,
-          errorText: _error,
+    // 5.3/5.4 (P2): thân cuộn, nút ghim khi chữ lớn; ô 56 theo theme.
+    return VgDialog(
+      title: l.budget,
+      content: [
+        TextField(
+          controller: _controller,
+          autofocus: true,
+          keyboardType: const TextInputType.numberWithOptions(decimal: true),
+          inputFormatters: [
+            FilteringTextInputFormatter.allow(RegExp(r'[0-9.,]')),
+          ],
+          style: const TextStyle(fontFeatures: [FontFeature.tabularFigures()]),
+          onSubmitted: (_) => _save(),
+          decoration: InputDecoration(
+            labelText: l.amountLabel,
+            suffixText: widget.symbol,
+            errorText: _error,
+            errorMaxLines: 3,
+          ),
         ),
-      ),
+      ],
       actions: [
         if (widget.current != null)
           TextButton(
@@ -102,10 +108,7 @@ class _BudgetDialogState extends State<_BudgetDialog> {
             onPressed: () => Navigator.pop(context, (null,)),
             child: Text(l.budgetRemove),
           ),
-        TextButton(
-          onPressed: () => Navigator.pop(context),
-          child: Text(l.cancel),
-        ),
+        VgDialog.cancelButton(context),
         FilledButton(onPressed: _save, child: Text(l.save)),
       ],
     );

@@ -6,6 +6,7 @@ import 'package:vigon/src/data/pin_service.dart';
 import 'package:vigon/src/data/settings_repository.dart';
 import 'package:vigon/src/features/reminder/reminder_providers.dart';
 import 'package:vigon/src/features/reminder/reminder_scheduler.dart';
+import 'package:vigon/src/ui/settings_rows.dart';
 
 import '../helpers.dart';
 
@@ -88,8 +89,8 @@ void main() {
       expect(find.text('Nhắc ghi chép'), findsOneWidget);
       expect(
         tester
-            .widget<SwitchListTile>(
-              find.widgetWithText(SwitchListTile, 'Nhắc ghi chép hằng ngày'),
+            .widget<SettingsSwitchRow>(
+              find.widgetWithText(SettingsSwitchRow, 'Nhắc ghi chép hằng ngày'),
             )
             .value,
         isFalse,
@@ -97,7 +98,7 @@ void main() {
       expect(find.text('8:00 CH'), findsNothing);
       expect(
         find.descendant(
-          of: find.widgetWithText(ListTile, 'Giờ nhắc'),
+          of: find.widgetWithText(SettingsNavRow, 'Giờ nhắc'),
           matching: find.byWidgetPredicate(
             (w) =>
                 w is Text &&
@@ -199,8 +200,11 @@ void main() {
         expect(fake.scheduled, isEmpty);
         expect(
           tester
-              .widget<SwitchListTile>(
-                find.widgetWithText(SwitchListTile, 'Nhắc ghi chép hằng ngày'),
+              .widget<SettingsSwitchRow>(
+                find.widgetWithText(
+                  SettingsSwitchRow,
+                  'Nhắc ghi chép hằng ngày',
+                ),
               )
               .value,
           isFalse,

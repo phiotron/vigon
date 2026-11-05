@@ -1,17 +1,7 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 
-/// Icon đầu dòng cài đặt (`.lead.plain`): ô 40, màu chữ phụ (hoặc màu riêng).
-/// Dùng chung cho màn Cài đặt và các nhóm tách riêng (nhắc, widget, sao lưu
-/// tự động) để mọi dòng thẳng cột theo S08.
-class SettingsLead extends StatelessWidget {
-  const SettingsLead(this.icon, {super.key, this.color});
-
-  final IconData icon;
-  final Color? color;
-
-  @override
-  Widget build(BuildContext context) => SizedBox(
-    width: 40,
-    child: Center(child: Icon(icon, color: color)),
-  );
-}
+/// Chữ riêng iOS (D-022: `autoBackupNoteIos`, `secureWindowNoteIos`…) hiện khi
+/// nền tảng đích là iOS. Đọc [defaultTargetPlatform] mỗi lần để test đổi được
+/// bằng `debugDefaultTargetPlatformOverride`. Việc có hiện mục hay không vẫn do
+/// cờ trong `platform_features.dart` quyết định.
+bool get useIosCopy => defaultTargetPlatform == TargetPlatform.iOS;

@@ -145,10 +145,10 @@ void main() {
       await tester.pumpAndSettle();
       expect(find.text('Sai mật khẩu hoặc file bị hỏng'), findsOneWidget);
       expect(results, isEmpty);
-      // Ô nhập đã được xóa.
+      // SCR-27: chữ đã gõ giữ nguyên để sửa lại.
       expect(
         tester.widget<TextField>(find.byType(TextField)).controller!.text,
-        '',
+        'sai-roi',
       );
 
       await tester.enterText(find.byType(TextField), 'matkhau1');
@@ -178,7 +178,9 @@ void main() {
       await tester.tap(find.text('Mở'));
       await tester.pump();
       expect(find.byType(CircularProgressIndicator), findsOneWidget);
-      await tester.tap(find.text('Mở'), warnIfMissed: false);
+      // Nút Mở đổi thành "Đang xử lý" và bị tắt (A13).
+      expect(find.text('Đang xử lý'), findsOneWidget);
+      await tester.tap(find.byType(FilledButton), warnIfMissed: false);
       await tester.tap(find.text('Hủy'), warnIfMissed: false);
       await tester.pump();
       expect(calls, 1);

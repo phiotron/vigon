@@ -8,6 +8,8 @@ import 'package:vigon/src/data/pin_service.dart';
 import 'package:vigon/src/features/settings/auto_backup_providers.dart';
 import 'package:vigon/src/providers.dart';
 
+import 'package:vigon/src/ui/settings_rows.dart';
+
 import '../fake_backup_folder.dart';
 import '../helpers.dart';
 
@@ -49,7 +51,7 @@ Future<({FakeFolder folder, MemorySecretStore secrets, dynamic db})> _open(
   return (folder: folder, secrets: secrets, db: db);
 }
 
-Finder get _switch => find.widgetWithText(SwitchListTile, 'Sao lưu tự động');
+Finder get _switch => find.widgetWithText(SettingsSwitchRow, 'Sao lưu tự động');
 
 void main() {
   testWidgets('bật: chọn thư mục, đặt mật khẩu, sao lưu ngay (AC-58, AC-60)', (
@@ -57,7 +59,7 @@ void main() {
   ) async {
     final h = await _open(tester);
     // Mặc định tắt; có chú thích về Drive/Dropbox.
-    expect(tester.widget<SwitchListTile>(_switch).value, isFalse);
+    expect(tester.widget<SettingsSwitchRow>(_switch).value, isFalse);
     expect(
       find.text(
         'Ví Gọn chỉ ghi file vào thư mục bạn chọn. '
@@ -100,7 +102,7 @@ void main() {
 
     expect(h.secrets.values[AutoBackupService.passwordKey], 'abcdef');
     expect(h.folder.files.keys, ['vigon-auto-20261103-0900.vigon']);
-    expect(tester.widget<SwitchListTile>(_switch).value, isTrue);
+    expect(tester.widget<SettingsSwitchRow>(_switch).value, isTrue);
     expect(find.text('Thư mục: Vigon'), findsOneWidget);
     expect(find.textContaining('Lần cuối: '), findsOneWidget);
     expect(find.text('Sao lưu ngay'), findsOneWidget);
@@ -117,7 +119,7 @@ void main() {
     await settle(tester);
     await tester.tap(find.text('Hủy'));
     await settle(tester);
-    expect(tester.widget<SwitchListTile>(_switch).value, isFalse);
+    expect(tester.widget<SettingsSwitchRow>(_switch).value, isFalse);
     expect(h.folder.released, [_tree]);
     expect(h.folder.files, isEmpty);
     expect(h.secrets.values, isEmpty);
@@ -159,7 +161,7 @@ void main() {
     await settle(tester);
     const error = 'Không ghi được vào thư mục. Chọn lại thư mục';
     expect(find.text(error), findsWidgets);
-    expect(tester.widget<SwitchListTile>(_switch).value, isTrue);
+    expect(tester.widget<SettingsSwitchRow>(_switch).value, isTrue);
 
     // Chọn lại thư mục: sao lưu lại và hết lỗi.
     h.folder
@@ -195,7 +197,7 @@ void main() {
 
     await tester.tap(_switch);
     await settle(tester);
-    expect(tester.widget<SwitchListTile>(_switch).value, isFalse);
+    expect(tester.widget<SettingsSwitchRow>(_switch).value, isFalse);
     expect(h.secrets.values, isEmpty);
     expect(h.folder.released, [_tree]);
     expect(h.folder.files.length, 1);

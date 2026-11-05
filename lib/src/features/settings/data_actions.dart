@@ -16,6 +16,7 @@ import '../../data/money.dart';
 import '../../l10n_names.dart';
 import '../../providers.dart';
 import '../../ui/confirm_dialog.dart';
+import '../../ui/dialog.dart';
 import '../../ui/messenger.dart';
 import '../../ui/tokens.g.dart';
 import '../lock/app_lock.dart';
@@ -37,23 +38,21 @@ Future<void> _shareFile(String name, String content, String mimeType) async {
   );
 }
 
-/// Xuất bản sao lưu `.vigon`; hỏi có đặt mật khẩu không (AC-28, AC-55).
+/// Xuất bản sao lưu `.vigon` (AC-28, AC-55, SCR-26): hộp thoại hỏi có đặt
+/// mật khẩu không; có thì mã hóa ngay trong hộp thoại ("Đang xử lý", A13),
+/// xong mới mở bảng chia sẻ.
 Future<void> exportBackupFile(BuildContext context, WidgetRef ref) async {
-  final password = await showDialog<String>(
-    context: context,
-    builder: (_) => const BackupExportDialog(),
-  );
-  if (password == null || !context.mounted) return;
   final now = ref.read(clockProvider)();
-  var content = await exportBackup(ref.read(databaseProvider), now: now);
+  final plain = await exportBackup(ref.read(databaseProvider), now: now);
   if (!context.mounted) return;
-  if (password.isNotEmpty) {
-    final plain = content;
-    content = await runWithProgress(
-      context,
-      () => encryptBackupOffThread(plain, password),
-    );
-  }
+  final result = await showDialog<String>(
+    context: context,
+    builder: (_) => BackupExportDialog(
+      encrypt: (password) => encryptBackupOffThread(plain, password),
+    ),
+  );
+  if (result == null || !context.mounted) return;
+  final content = result.isEmpty ? plain : result;
   await _shareFile('vigon-${_stamp(now)}.vigon', content, 'application/json');
 }
 
@@ -140,8 +139,12 @@ Future<void> restoreFromFile(BuildContext context, WidgetRef ref) async {
   final ok = await showConfirmDialog(
     context,
     icon: Symbols.settings_backup_restore_rounded,
+    iconTone: VgDialogTone.neutral,
     title: l.restore,
     body: l.restoreConfirm,
+    // Nhắc ghi chép và số tiền trên widget là cài đặt của máy, về tắt sau khi
+    // khôi phục. iOS cũng có widget (D-022) nên dùng chung một câu.
+    note: l.restoreSwitchesNote,
     action: l.confirm,
   );
   if (!ok) return;

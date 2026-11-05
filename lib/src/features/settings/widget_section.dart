@@ -4,22 +4,29 @@ import 'package:material_symbols_icons/symbols.dart';
 
 import '../../../l10n/app_localizations.dart';
 import '../../providers.dart';
+import '../../ui/settings_rows.dart';
 import '../widget/widget_sync.dart';
-import 'settings_lead.dart';
 
-/// Công tắc "Hiện số tiền trên widget" trong nhóm Bảo mật (AC-64).
+/// Công tắc "Hiện số tiền trên widget" trong nhóm Bảo mật (AC-64, SCR-12).
+/// Khi khóa PIN đang bật, công tắc vẫn bấm được nhưng widget luôn ẩn số, nên
+/// có nhãn "Đã khóa bằng PIN" (A08, §10.1 #11).
 class WidgetAmountsSwitch extends ConsumerWidget {
-  const WidgetAmountsSwitch({super.key});
+  const WidgetAmountsSwitch({super.key, this.pinEnabled = false});
+
+  final bool pinEnabled;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l = AppLocalizations.of(context);
-    return SwitchListTile(
-      secondary: const SettingsLead(Symbols.widgets_rounded),
-      title: Text(l.widgetShowAmounts),
-      subtitle: Text(l.widgetShowAmountsNote),
+    return SettingsSwitchRow(
+      icon: Symbols.widgets_rounded,
+      title: l.widgetShowAmounts,
+      subtitle: l.widgetShowAmountsNote,
       value: ref.watch(widgetShowAmountsProvider).value ?? false,
       onChanged: ref.read(settingsRepositoryProvider).setWidgetShowAmounts,
+      footer: pinEnabled
+          ? StatusPill(icon: Symbols.lock_rounded, label: l.widgetLockedByPin)
+          : null,
     );
   }
 }

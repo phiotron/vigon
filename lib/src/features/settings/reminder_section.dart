@@ -4,16 +4,16 @@ import 'package:material_symbols_icons/symbols.dart';
 
 import '../../../l10n/app_localizations.dart';
 import '../../providers.dart';
+import '../../ui/confirm_dialog.dart';
+import '../../ui/dialog.dart';
 import '../../ui/messenger.dart';
+import '../../ui/settings_rows.dart';
 import '../reminder/reminder_providers.dart';
-import 'settings_lead.dart';
 
-/// Nhóm "Nhắc ghi chép" trong Cài đặt: công tắc và giờ nhắc (AC-61).
+/// Nhóm "Nhắc ghi chép" trong Cài đặt (AC-61, SCR-30): tiêu đề nhóm, thẻ gồm
+/// công tắc và giờ nhắc. Giờ nhắc sửa được cả khi công tắc tắt (chỉ lưu giờ).
 class ReminderSection extends ConsumerWidget {
-  const ReminderSection({super.key, required this.header});
-
-  /// Tiêu đề nhóm, do màn Cài đặt dựng để cùng kiểu với các nhóm khác.
-  final Widget header;
+  const ReminderSection({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -23,19 +23,23 @@ class ReminderSection extends ConsumerWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        header,
-        SwitchListTile(
-          secondary: const SettingsLead(Symbols.notifications_rounded),
-          title: Text(l.reminderSwitch),
-          subtitle: Text(l.reminderSwitchNote),
-          value: enabled,
-          onChanged: (on) => _toggle(context, ref, on),
-        ),
-        ListTile(
-          leading: const SettingsLead(Symbols.schedule_rounded),
-          title: Text(l.reminderTime),
-          subtitle: time == null ? null : Text(time.format(context)),
-          onTap: time == null ? null : () => _pickTime(context, ref, time),
+        SettingsGroupTitle(l.reminderSection),
+        SettingsCard(
+          children: [
+            SettingsSwitchRow(
+              icon: Symbols.notifications_rounded,
+              title: l.reminderSwitch,
+              subtitle: l.reminderSwitchNote,
+              value: enabled,
+              onChanged: (on) => _toggle(context, ref, on),
+            ),
+            SettingsNavRow(
+              icon: Symbols.schedule_rounded,
+              title: l.reminderTime,
+              value: time?.format(context),
+              onTap: time == null ? null : () => _pickTime(context, ref, time),
+            ),
+          ],
         ),
       ],
     );
@@ -49,45 +53,33 @@ class ReminderSection extends ConsumerWidget {
     }
     final l = AppLocalizations.of(context);
     final scheduler = ref.read(reminderSchedulerProvider);
-    // Giải thích trước, chỉ khi "Tiếp tục" mới xin quyền của hệ điều hành.
-    final agreed = await showDialog<bool>(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text(l.reminderExplainTitle),
-        content: Text(l.reminderExplainBody),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context, false),
-            child: Text(l.cancel),
-          ),
-          FilledButton(
-            onPressed: () => Navigator.pop(context, true),
-            child: Text(l.reminderContinue),
-          ),
-        ],
-      ),
+    // S-40: giải thích trước, chỉ khi "Tiếp tục" mới xin quyền của hệ điều hành.
+    final agreed = await showConfirmDialog(
+      context,
+      icon: Symbols.notifications_rounded,
+      iconTone: VgDialogTone.neutral,
+      title: l.reminderExplainTitle,
+      body: l.reminderExplainBody,
+      action: l.reminderContinue,
     );
-    if (agreed != true) return;
+    if (!agreed) return;
     final granted = await scheduler.requestPermission();
     if (!granted) {
-      // Công tắc đọc từ cài đặt đã lưu nên vẫn tắt; hướng dẫn mở cài đặt hệ thống.
-      rootMessengerKey.currentState
-        ?..hideCurrentSnackBar()
-        ..showSnackBar(
-          SnackBar(
-            content: Text(l.reminderDenied),
-            duration: const Duration(seconds: 10),
-            action: SnackBarAction(
-              label: l.reminderOpenSettings,
-              onPressed: scheduler.openSystemSettings,
-            ),
-          ),
-        );
+      // Công tắc đọc từ cài đặt đã lưu nên vẫn tắt; thanh 10 s có vạch thời
+      // gian và nút mở cài đặt thông báo của hệ thống (SCR-30 denied).
+      showVgSnackBar(
+        l.reminderDenied,
+        actionLabel: l.reminderOpenSettings,
+        onAction: scheduler.openSystemSettings,
+        long: true,
+      );
       return;
     }
     await repo.setReminderEnabled(true);
   }
 
+  /// Chọn giờ (A14): `showTimePicker` Material trên cả hai nền tảng, 12/24 h
+  /// theo máy. Lưu xong giá trị hiện ngay ở hàng, không snackbar.
   Future<void> _pickTime(
     BuildContext context,
     WidgetRef ref,

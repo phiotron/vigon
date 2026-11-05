@@ -6,12 +6,19 @@ import 'package:material_symbols_icons/symbols.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../data/auto_backup_service.dart';
 import '../../data/backup_folder_service.dart';
+import '../../ui/hint.dart';
 import '../../ui/messenger.dart';
+import '../../ui/settings_rows.dart';
+import '../../ui/tokens.g.dart';
 import 'auto_backup_providers.dart';
 import 'backup_password_dialogs.dart';
 import 'settings_lead.dart';
 
-/// Nhóm "Sao lưu tự động" trong Cài đặt → Dữ liệu (F-24, AC-58..60).
+export 'backup_password_dialogs.dart' show AutoBackupPasswordDialog;
+
+/// Thẻ "Sao lưu tự động" trong Cài đặt → Dữ liệu (F-24, AC-58..60, SCR-31):
+/// công tắc + phụ đề; bật thì dưới là thư mục, dòng trạng thái (⏱ / ✓ / dải
+/// lỗi) và cặp nút. Trên iOS dùng chữ riêng (D-022).
 class AutoBackupSection extends ConsumerStatefulWidget {
   const AutoBackupSection({super.key});
 
@@ -50,62 +57,130 @@ class _AutoBackupSectionState extends ConsumerState<AutoBackupSection>
     final l = AppLocalizations.of(context);
     final state =
         ref.watch(autoBackupStateProvider).value ?? const AutoBackupState();
+    final running = ref.watch(autoBackupRunningProvider);
     final scheme = Theme.of(context).colorScheme;
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+    final folderError =
+        state.lastFailed &&
+        (state.lastResult == AutoBackupResult.permissionDenied ||
+            state.lastResult == AutoBackupResult.folderMissing);
+    final backupNow = _PairButton(
+      icon: Symbols.backup_rounded,
+      label: l.autoBackupNow,
+      busy: running,
+      onPressed: running ? null : () => backupNowFromSettings(context, ref),
+    );
+    final chooseAgain = _PairButton(
+      icon: Symbols.folder_open_rounded,
+      label: l.autoBackupChooseFolder,
+      onPressed: running ? null : () => repickFolder(context, ref),
+    );
+    final ios = useIosCopy;
+    final Widget? footer = !state.enabled && !ios
+        ? null
+        : Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              // iOS (D-022): chạy khi mở app, không theo giờ.
+              if (ios)
+                VgHint(
+                  l.autoBackupRunsOnOpenIos,
+                  padding: const EdgeInsets.only(top: VgSpace.s2),
+                ),
+              if (state.enabled) ...[
+                const SizedBox(height: VgSpace.s2),
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Icon(
+                      Symbols.folder_rounded,
+                      size: 20,
+                      color: scheme.onSurfaceVariant,
+                    ),
+                    const SizedBox(width: VgSpace.s2),
+                    Expanded(
+                      child: Text(
+                        l.autoBackupFolder(
+                          state.folderName ?? l.autoBackupFolderUnknown,
+                        ),
+                        style: VgType.bodySm.copyWith(
+                          color: scheme.onSurfaceVariant,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                if (ios && iosFolderMayBeLocal(state.folderUri))
+                  VgHint(
+                    l.autoBackupLocalFolderWarningIos,
+                    icon: Symbols.warning_rounded,
+                    padding: const EdgeInsets.only(top: VgSpace.s2),
+                  ),
+                const SizedBox(height: VgSpace.s2),
+                SettingsStatusLine(
+                  status: state.lastFailed
+                      ? SettingsStatus.error
+                      : state.lastAt == null
+                      ? SettingsStatus.idle
+                      : SettingsStatus.ok,
+                  text: _lastText(context, l, state),
+                ),
+                // Lỗi thư mục: cách sửa (Chọn lại thư mục) lên trước, tô tonal.
+                ButtonPair(
+                  children: folderError
+                      ? [chooseAgain.tonal(), backupNow.outlined()]
+                      : [backupNow.tonal(), chooseAgain.outlined()],
+                ),
+              ],
+            ],
+          );
+    return SettingsCard(
       children: [
-        SwitchListTile(
-          secondary: const SettingsLead(Symbols.cloud_upload_rounded),
-          title: Text(l.autoBackup),
-          subtitle: Text(l.autoBackupNote),
+        SettingsSwitchRow(
+          icon: Symbols.backup_rounded,
+          title: l.autoBackup,
+          subtitle: ios ? l.autoBackupNoteIos : l.autoBackupNote,
           value: state.enabled,
           onChanged: (on) =>
               on ? enableAutoBackup(context, ref) : disableAutoBackup(ref, l),
+          footer: footer,
         ),
-        if (state.enabled) ...[
-          ListTile(
-            contentPadding: const EdgeInsetsDirectional.only(
-              start: 72,
-              end: 16,
-            ),
-            title: Text(
-              l.autoBackupFolder(state.folderName ?? l.autoBackupFolderUnknown),
-            ),
-            subtitle: Text(
-              _lastText(context, l, state),
-              style: state.lastFailed ? TextStyle(color: scheme.error) : null,
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsetsDirectional.only(
-              start: 72,
-              end: 16,
-              bottom: 8,
-            ),
-            child: Wrap(
-              spacing: 8,
-              runSpacing: 8,
-              children: [
-                FilledButton.tonal(
-                  onPressed: () => backupNowFromSettings(context, ref),
-                  child: Text(l.autoBackupNow),
-                ),
-                OutlinedButton(
-                  onPressed: () => repickFolder(context, ref),
-                  child: Text(l.autoBackupChooseFolder),
-                ),
-              ],
-            ),
-          ),
-        ],
       ],
     );
   }
 }
 
+/// Một nút của cặp nút sao lưu tự động; kiểu (tonal / viền) đổi theo trạng
+/// thái lỗi (SCR-31 folder-error).
+class _PairButton {
+  const _PairButton({
+    required this.icon,
+    required this.label,
+    required this.onPressed,
+    this.busy = false,
+  });
+
+  final IconData icon;
+  final String label;
+  final VoidCallback? onPressed;
+  final bool busy;
+
+  Widget get _label => BusyButtonLabel(icon: icon, label: label, busy: busy);
+
+  Widget tonal() => FilledButton.tonal(onPressed: onPressed, child: _label);
+
+  Widget outlined() => OutlinedButton(onPressed: onPressed, child: _label);
+}
+
+/// Thư mục iOS có thể chỉ nằm "Trên iPhone" (không vào sao lưu iCloud,
+/// D-021). Dịch vụ chưa báo cờ này: tạm coi mọi thư mục không thuộc iCloud
+/// Drive (`Mobile Documents`) là trên máy. D4 thay bằng cờ thật khi có.
+bool iosFolderMayBeLocal(String? uri) =>
+    uri != null && !uri.contains('Mobile Documents');
+
 String _lastText(BuildContext context, AppLocalizations l, AutoBackupState s) {
   final at = s.lastAt;
   final locale = Localizations.localeOf(context).languageCode;
+  // A03: ngày ngắn theo ngôn ngữ app ("Nov 25, 21:04", "25 thg 11, 21:04").
   final time = at == null
       ? null
       : '${DateFormat.MMMd(locale).format(at)}, ${DateFormat.Hm(locale).format(at)}';
@@ -178,12 +253,20 @@ Future<void> disableAutoBackup(WidgetRef ref, AppLocalizations l) async {
   showMessage(l.autoBackupOffDone);
 }
 
-/// "Sao lưu ngay": chạy và báo kết quả (AC-60).
+/// "Sao lưu ngay": chạy và báo kết quả (AC-60). Trong lúc chạy nút quay và
+/// bỏ qua chạm (SCR-31 running); trạng thái cũ giữ nguyên tới khi xong.
 Future<void> backupNowFromSettings(BuildContext context, WidgetRef ref) async {
   final l = AppLocalizations.of(context);
   final service = ref.read(autoBackupServiceProvider);
-  final result = await runWithProgress(context, service.backupNow);
-  ref.invalidate(autoBackupStateProvider);
+  if (ref.read(autoBackupRunningProvider)) return;
+  final running = ref.read(autoBackupRunningProvider.notifier)..set(true);
+  final AutoBackupResult result;
+  try {
+    result = await service.backupNow();
+  } finally {
+    running.set(false);
+  }
+  if (context.mounted) ref.invalidate(autoBackupStateProvider);
   showMessage(switch (result) {
     AutoBackupResult.ok => l.autoBackupDone,
     AutoBackupResult.busy => l.autoBackupBusy,
@@ -218,94 +301,4 @@ Future<void> repickFolder(BuildContext context, WidgetRef ref) async {
   ref.invalidate(autoBackupStateProvider);
   if (!context.mounted) return;
   await backupNowFromSettings(context, ref);
-}
-
-/// Hộp thoại đặt mật khẩu cho sao lưu tự động: ít nhất 6 ký tự, nhập hai lần,
-/// có cảnh báo quên mật khẩu (AC-58). Trả về mật khẩu, null nếu hủy.
-class AutoBackupPasswordDialog extends StatefulWidget {
-  const AutoBackupPasswordDialog({super.key});
-
-  @override
-  State<AutoBackupPasswordDialog> createState() =>
-      _AutoBackupPasswordDialogState();
-}
-
-class _AutoBackupPasswordDialogState extends State<AutoBackupPasswordDialog> {
-  final _password = TextEditingController();
-  final _confirm = TextEditingController();
-  String? _passwordError;
-  String? _confirmError;
-
-  @override
-  void dispose() {
-    _password.clear();
-    _confirm.clear();
-    _password.dispose();
-    _confirm.dispose();
-    super.dispose();
-  }
-
-  void _submit(AppLocalizations l) {
-    final password = _password.text;
-    final tooShort = password.runes.length < backupPasswordMinLength;
-    final mismatch = password != _confirm.text;
-    setState(() {
-      _passwordError = tooShort ? l.backupPasswordTooShort : null;
-      _confirmError = !tooShort && mismatch ? l.backupPasswordMismatch : null;
-    });
-    if (!tooShort && !mismatch) Navigator.pop(context, password);
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final l = AppLocalizations.of(context);
-    return AlertDialog(
-      title: Text(l.autoBackupPasswordTitle),
-      content: SingleChildScrollView(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            TextField(
-              controller: _password,
-              autofocus: true,
-              obscureText: true,
-              autocorrect: false,
-              enableSuggestions: false,
-              decoration: InputDecoration(
-                labelText: l.backupPassword,
-                errorText: _passwordError,
-              ),
-            ),
-            const SizedBox(height: 8),
-            TextField(
-              controller: _confirm,
-              obscureText: true,
-              autocorrect: false,
-              enableSuggestions: false,
-              decoration: InputDecoration(
-                labelText: l.backupPasswordConfirm,
-                errorText: _confirmError,
-              ),
-            ),
-            const SizedBox(height: 12),
-            Text(
-              l.autoBackupPasswordWarning,
-              style: TextStyle(color: Theme.of(context).colorScheme.error),
-            ),
-          ],
-        ),
-      ),
-      actions: [
-        TextButton(
-          onPressed: () => Navigator.pop(context),
-          child: Text(l.cancel),
-        ),
-        FilledButton(
-          onPressed: () => _submit(l),
-          child: Text(l.autoBackupTurnOn),
-        ),
-      ],
-    );
-  }
 }

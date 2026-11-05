@@ -5,23 +5,28 @@ import 'package:material_symbols_icons/symbols.dart';
 
 import '../../../l10n/app_localizations.dart';
 import '../../data/currency.dart';
+import '../../platform_features.dart';
 import '../../providers.dart';
+import '../../ui/choice_segments.dart';
 import '../../ui/format.dart';
+import '../../ui/settings_rows.dart';
 import '../../ui/tokens.g.dart';
 import '../lock/app_lock.dart';
 import 'auto_backup_section.dart';
 import 'budget_dialog.dart';
-import '../../ui/choice_segments.dart';
 import 'currency_picker.dart';
 import 'data_actions.dart';
-import '../../platform_features.dart';
 import 'reminder_section.dart';
 import 'secure_window.dart';
+import 'settings_lead.dart';
 import 'widget_section.dart';
 
-/// Cài đặt (AC-12, AC-21, AC-35, AC-36 và các mục G4–G6), theo S08 (5.1, 5.2):
-/// Giao diện, Ngôn ngữ → các dòng mở màn/hộp thoại → Bảo mật → Dữ liệu →
-/// Giới thiệu.
+/// Cài đặt (SCR-12, iOS SCR-33; CHANGELOG P2 5.1–5.5): nhóm là thẻ
+/// `surface-container-low`, tiêu đề nhóm màu `primary`; nhóm không tiêu đề giữ
+/// không tiêu đề (A18). Thứ tự: Giao diện · Ngôn ngữ · {Danh mục, Tài khoản} ·
+/// {Ngân sách … Tháng bắt đầu} · Bảo mật · Nhắc ghi chép · Dữ liệu · Xóa ·
+/// Giới thiệu. Mục chỉ có khi nền tảng hỗ trợ (D-022) đọc cờ trong
+/// `platform_features.dart`.
 class SettingsScreen extends ConsumerWidget {
   const SettingsScreen({super.key});
 
@@ -37,177 +42,200 @@ class SettingsScreen extends ConsumerWidget {
     final budget = ref.watch(budgetProvider).value;
     final pinEnabled = ref.watch(pinEnabledProvider).value ?? false;
     final scheme = Theme.of(context).colorScheme;
-    final titleStyle = Theme.of(context).textTheme.titleSmall
-        ?.copyWith(color: scheme.primary);
 
-    // Tiêu đề nhóm (`.vg-section`): title-sm màu primary.
-    Widget header(String text) => Padding(
-      padding: const EdgeInsets.fromLTRB(
-        VgSpace.s4,
-        VgSpace.s4,
-        VgSpace.s4,
-        VgSpace.s1,
-      ),
-      child: Semantics(header: true, child: Text(text, style: titleStyle)),
-    );
-
-    // Nút chọn một (`.vg-seg`): lề 4/16/12, vùng chạm 48 đã gồm 4 trên dưới.
-    Widget segments<T>(
-      List<(T, String)> options,
-      T selected,
-      ValueChanged<T> onChanged,
-    ) => Padding(
-      padding: const EdgeInsets.fromLTRB(VgSpace.s4, 0, VgSpace.s4, VgSpace.s2),
-      child: ChoiceSegments<T>(
-        options: options,
-        selected: selected,
-        onChanged: onChanged,
-      ),
-    );
-
-    const chevron = Icon(Symbols.chevron_right_rounded);
+    const cardGap = SizedBox(height: SettingsCard.gap);
 
     return Scaffold(
       appBar: AppBar(title: Text(l.settings)),
       body: ListView(
-        padding: const EdgeInsets.only(bottom: VgSpace.s8),
+        padding: const EdgeInsets.only(bottom: VgSpace.s6),
         children: [
-          header(l.theme),
-          segments<ThemeMode>(
-            [
-              (ThemeMode.system, l.themeSystem),
-              (ThemeMode.light, l.themeLight),
-              (ThemeMode.dark, l.themeDark),
+          SettingsGroupTitle(l.theme, first: true),
+          SettingsCard(
+            children: [
+              SettingsSegmentRow(
+                segments: ChoiceSegments<ThemeMode>(
+                  options: [
+                    (ThemeMode.system, l.themeSystem),
+                    (ThemeMode.light, l.themeLight),
+                    (ThemeMode.dark, l.themeDark),
+                  ],
+                  selected: themeMode,
+                  onChanged: repo.setThemeMode,
+                ),
+              ),
             ],
-            themeMode,
-            repo.setThemeMode,
           ),
-          header(l.language),
-          segments<String>(
-            [('', l.languageSystem), ('vi', 'Tiếng Việt'), ('en', 'English')],
-            localeCode,
-            (code) => repo.setLocaleCode(code.isEmpty ? null : code),
+          SettingsGroupTitle(l.language),
+          SettingsCard(
+            children: [
+              SettingsSegmentRow(
+                segments: ChoiceSegments<String>(
+                  options: [
+                    ('', l.languageSystem),
+                    ('vi', 'Tiếng Việt'),
+                    ('en', 'English'),
+                  ],
+                  selected: localeCode,
+                  onChanged: (code) =>
+                      repo.setLocaleCode(code.isEmpty ? null : code),
+                ),
+              ),
+            ],
           ),
-          const _Divider(),
-          _Row(
-            icon: Symbols.category_rounded,
-            title: l.categories,
-            trailing: chevron,
-            onTap: () => context.push('/categories'),
+          // Nhóm không tiêu đề (A18): cách nhóm trên 24.
+          const SizedBox(height: VgSpace.s6),
+          SettingsCard(
+            children: [
+              SettingsNavRow(
+                icon: Symbols.category_rounded,
+                title: l.categories,
+                onTap: () => context.push('/categories'),
+              ),
+              SettingsNavRow(
+                icon: Symbols.account_balance_wallet_rounded,
+                title: l.accounts,
+                onTap: () => context.push('/accounts'),
+              ),
+            ],
           ),
-          _Row(
-            icon: Symbols.account_balance_wallet_rounded,
-            title: l.accounts,
-            trailing: chevron,
-            onTap: () => context.push('/accounts'),
+          cardGap,
+          SettingsCard(
+            children: [
+              SettingsNavRow(
+                icon: Symbols.savings_rounded,
+                title: l.budget,
+                value: budget == null
+                    ? l.budgetNotSet
+                    : money(context, currency, budget),
+                onTap: () => showBudgetDialog(context, ref),
+              ),
+              SettingsNavRow(
+                icon: Symbols.event_repeat_rounded,
+                title: l.recurring,
+                onTap: () => context.push('/recurring'),
+              ),
+              SettingsNavRow(
+                icon: Symbols.currency_exchange_rounded,
+                title: l.currency,
+                value: currencyCodeLabel(currency),
+                onTap: () => _pickCurrency(context, ref, currency),
+              ),
+              // Ngày đầu tuần: hai nút chọn một thay cho chạm để đổi (§10.1 #4).
+              SettingsSegmentRow(
+                icon: Symbols.view_week_rounded,
+                title: l.weekStart,
+                segments: ChoiceSegments<int>(
+                  options: [
+                    (DateTime.monday, l.monday),
+                    (DateTime.sunday, l.sunday),
+                  ],
+                  selected: weekStart == DateTime.sunday
+                      ? DateTime.sunday
+                      : DateTime.monday,
+                  onChanged: repo.setWeekStart,
+                ),
+              ),
+              _MonthStartRow(
+                value: monthStartDay,
+                onChanged: repo.setMonthStartDay,
+              ),
+            ],
           ),
-          _Row(
-            icon: Symbols.savings_rounded,
-            title: l.budget,
-            subtitle: budget == null
-                ? l.budgetNotSet
-                : money(context, currency, budget),
-            onTap: () => showBudgetDialog(context, ref),
+          SettingsGroupTitle(l.security),
+          SettingsCard(
+            children: [
+              SettingsSwitchRow(
+                icon: Symbols.lock_rounded,
+                title: l.pinLock,
+                // Cảnh báo luôn hiện đủ, không cắt.
+                subtitle: l.pinWarning,
+                value: pinEnabled,
+                onChanged: (on) =>
+                    on ? setupPin(context, ref) : disablePin(context, ref),
+              ),
+              if (supportsSecureWindow)
+                SettingsSwitchRow(
+                  icon: Symbols.visibility_off_rounded,
+                  title: l.secureWindow,
+                  // iOS không chặn được chụp màn hình (D-022).
+                  subtitle: useIosCopy
+                      ? l.secureWindowNoteIos
+                      : l.secureWindowNote,
+                  value: ref.watch(secureWindowEnabledProvider).value ?? false,
+                  onChanged: repo.setSecureWindow,
+                ),
+              if (supportsHomeWidget)
+                WidgetAmountsSwitch(pinEnabled: pinEnabled),
+            ],
           ),
-          _Row(
-            icon: Symbols.event_repeat_rounded,
-            title: l.recurring,
-            trailing: chevron,
-            onTap: () => context.push('/recurring'),
-          ),
-          _Row(
-            icon: Symbols.currency_exchange_rounded,
-            title: l.currency,
-            subtitle: _currencyLabel(currency),
-            onTap: () => _pickCurrency(context, ref, currency),
-          ),
-          _Row(
-            icon: Symbols.view_week_rounded,
-            title: l.weekStart,
-            subtitle: weekStart == DateTime.sunday ? l.sunday : l.monday,
-            onTap: () => repo.setWeekStart(
-              weekStart == DateTime.sunday ? DateTime.monday : DateTime.sunday,
-            ),
-          ),
-          _MonthStartRow(
-            value: monthStartDay,
-            onChanged: repo.setMonthStartDay,
-          ),
-          header(l.security),
-          SwitchListTile(
-            secondary: const _Lead(Symbols.lock_rounded),
-            title: Text(l.pinLock),
-            // Cảnh báo luôn hiện đủ, không cắt.
-            subtitle: Text(l.pinWarning),
-            value: pinEnabled,
-            onChanged: (on) =>
-                on ? setupPin(context, ref) : disablePin(context, ref),
-          ),
-          // Che nội dung (F-22, `FLAG_SECURE`) và widget (F-26) là phần gốc
-          // Android; iOS chưa có nên không hiện (D-019).
-          if (supportsSecureWindow)
-            SwitchListTile(
-              secondary: const _Lead(Symbols.visibility_off_rounded),
-              title: Text(l.secureWindow),
-              subtitle: Text(l.secureWindowNote),
-              value: ref.watch(secureWindowEnabledProvider).value ?? false,
-              onChanged: repo.setSecureWindow,
-            ),
-          if (supportsHomeWidget) const WidgetAmountsSwitch(),
-          ReminderSection(header: header(l.reminderSection)),
-          header(l.dataSection),
+          const ReminderSection(),
+          SettingsGroupTitle(l.dataSection),
           Padding(
             padding: const EdgeInsets.fromLTRB(
-              VgSpace.s4,
+              VgSpace.s8,
               0,
-              VgSpace.s4,
+              VgSpace.s8,
               VgSpace.s2,
             ),
             child: Text(
               l.backupReminder,
-              style: Theme.of(context).textTheme.bodyMedium
-                  ?.copyWith(color: scheme.onSurfaceVariant),
+              style: VgType.bodySm.copyWith(color: scheme.onSurfaceVariant),
             ),
           ),
-          _Row(
-            icon: Symbols.upload_file_rounded,
-            title: l.backup,
-            subtitle: l.backupNote,
-            onTap: () => exportBackupFile(context, ref),
+          SettingsCard(
+            children: [
+              SettingsNavRow(
+                icon: Symbols.upload_file_rounded,
+                title: l.backup,
+                value: l.backupNote,
+                trailing: const SizedBox.shrink(),
+                onTap: () => exportBackupFile(context, ref),
+              ),
+              SettingsNavRow(
+                icon: Symbols.settings_backup_restore_rounded,
+                title: l.restore,
+                trailing: const SizedBox.shrink(),
+                onTap: () => restoreFromFile(context, ref),
+              ),
+              SettingsNavRow(
+                icon: Symbols.table_view_rounded,
+                title: l.exportCsv,
+                // Định dạng CSV theo ngôn ngữ app (F-18).
+                value: l.localeName == 'vi' ? l.csvFormatVi : l.csvFormatEn,
+                trailing: const SizedBox.shrink(),
+                onTap: () => exportCsvFile(context, ref),
+              ),
+            ],
           ),
-          _Row(
-            icon: Symbols.settings_backup_restore_rounded,
-            title: l.restore,
-            onTap: () => restoreFromFile(context, ref),
+          if (supportsAutoBackup) ...[cardGap, const AutoBackupSection()],
+          cardGap,
+          SettingsCard(
+            children: [
+              SettingsNavRow(
+                icon: Symbols.delete_forever_rounded,
+                title: l.deleteAll,
+                danger: true,
+                onTap: () => deleteEverything(context, ref),
+              ),
+            ],
           ),
-          _Row(
-            icon: Symbols.table_view_rounded,
-            title: l.exportCsv,
-            onTap: () => exportCsvFile(context, ref),
-          ),
-          // Sao lưu tự động (F-24) dùng SAF của Android; iOS chưa có (D-019).
-          if (supportsAutoBackup) const AutoBackupSection(),
-          _Row(
-            icon: Symbols.delete_forever_rounded,
-            title: l.deleteAll,
-            color: scheme.error,
-            onTap: () => deleteEverything(context, ref),
-          ),
-          const _Divider(),
-          _Row(
-            icon: Symbols.info_rounded,
-            title: l.about,
-            trailing: chevron,
-            onTap: () => context.push('/about'),
+          cardGap,
+          SettingsCard(
+            children: [
+              SettingsNavRow(
+                icon: Symbols.info_rounded,
+                title: l.about,
+                onTap: () => context.push('/about'),
+              ),
+            ],
           ),
         ],
       ),
     );
   }
 
-  static String _currencyLabel(String code) => currencyCodeLabel(code);
-
-  /// Chọn tiền tệ (5.5): ghi chú "chỉ đổi ký hiệu", mã đang dùng có ✓.
+  /// Chọn tiền tệ (SCR-13): sheet toàn màn, áp ngay khi chọn.
   Future<void> _pickCurrency(
     BuildContext context,
     WidgetRef ref,
@@ -220,58 +248,9 @@ class SettingsScreen extends ConsumerWidget {
   }
 }
 
-/// Đường kẻ giữa các nhóm (`.vg-divider`, cách trên dưới 4).
-class _Divider extends StatelessWidget {
-  const _Divider();
-
-  @override
-  Widget build(BuildContext context) => const Divider(height: VgSpace.s2 + 1);
-}
-
-/// Icon đầu dòng (`.lead.plain`): ô 40, màu chữ phụ (hoặc màu riêng).
-class _Lead extends StatelessWidget {
-  const _Lead(this.icon, {this.color});
-
-  final IconData icon;
-  final Color? color;
-
-  @override
-  Widget build(BuildContext context) => SizedBox(
-    width: 40,
-    child: Center(child: Icon(icon, color: color)),
-  );
-}
-
-/// Một dòng cài đặt (`.vg-row`): icon, tên, phụ đề hiện đủ, phần cuối tùy chọn.
-class _Row extends StatelessWidget {
-  const _Row({
-    required this.icon,
-    required this.title,
-    required this.onTap,
-    this.subtitle,
-    this.trailing,
-    this.color,
-  });
-
-  final IconData icon;
-  final String title;
-  final String? subtitle;
-  final Widget? trailing;
-  final Color? color;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) => ListTile(
-    leading: _Lead(icon, color: color),
-    title: Text(title, style: color == null ? null : TextStyle(color: color)),
-    subtitle: subtitle == null ? null : Text(subtitle!),
-    trailing: trailing,
-    onTap: onTap,
-  );
-}
-
-/// Tháng bắt đầu từ ngày (5.6): nút thả viền `outline` mở menu 1–28, ngày đang
-/// chọn nền `secondary-container`. Chạm cả dòng cũng mở menu.
+/// Tháng bắt đầu từ ngày (5.6, `#r-month`): icon, tên, ô xổ viền `outline`
+/// "1 ▾" mở menu 1–28 (ngày đang chọn nền `secondary-container`). Chạm cả
+/// hàng cũng mở menu. Cao tối thiểu 56.
 class _MonthStartRow extends StatefulWidget {
   const _MonthStartRow({required this.value, required this.onChanged});
 
@@ -296,61 +275,91 @@ class _MonthStartRowState extends State<_MonthStartRow> {
       fontFamily: vgFontFamily,
       fontFeatures: [FontFeature.tabularFigures()],
     );
-    return ListTile(
-      leading: const _Lead(Symbols.calendar_month_rounded),
-      title: Text(l.monthStartDay),
-      onTap: _toggle,
-      trailing: MenuAnchor(
-        controller: _menu,
-        alignmentOffset: const Offset(0, VgSpace.s1),
-        // Menu nhỏ cuộn được (5.6): khoảng 7 dòng, không phủ cả màn.
-        style: const MenuStyle(
-          maximumSize: WidgetStatePropertyAll(
-            Size(double.infinity, 7 * VgSize.tapMin + 2 * VgSpace.s2),
-          ),
+    final dropdown = MenuAnchor(
+      controller: _menu,
+      alignmentOffset: const Offset(0, VgSpace.s1),
+      // Menu nhỏ cuộn được (5.6): khoảng 7 dòng, không phủ cả màn.
+      style: const MenuStyle(
+        maximumSize: WidgetStatePropertyAll(
+          Size(double.infinity, 7 * VgSize.tapMin + 2 * VgSpace.s2),
         ),
-        menuChildren: [
-          for (var d = 1; d <= 28; d++)
-            MenuItemButton(
-              style: MenuItemButton.styleFrom(
-                minimumSize: const Size(96, VgSize.tapMin),
-                backgroundColor: d == widget.value
-                    ? scheme.secondaryContainer
-                    : null,
-                foregroundColor: d == widget.value
-                    ? scheme.onSecondaryContainer
-                    : scheme.onSurface,
-                textStyle: VgType.bodyMd.merge(digits),
-              ),
-              onPressed: () => widget.onChanged(d),
-              child: Semantics(selected: d == widget.value, child: Text('$d')),
-            ),
-        ],
-        builder: (context, controller, _) => Semantics(
-          label: '${l.monthStartDay}: ${widget.value}',
-          excludeSemantics: true,
-          button: true,
-          onTap: _toggle,
-          child: OutlinedButton(
-            onPressed: _toggle,
-            style: OutlinedButton.styleFrom(
-              minimumSize: const Size(VgSize.tapMin, 40),
-              tapTargetSize: MaterialTapTargetSize.padded,
-              padding: const EdgeInsets.fromLTRB(VgSpace.s3, 0, VgSpace.s2, 0),
-              foregroundColor: scheme.onSurface,
-              side: BorderSide(color: scheme.outline),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(VgRadius.sm),
-              ),
+      ),
+      menuChildren: [
+        for (var d = 1; d <= 28; d++)
+          MenuItemButton(
+            style: MenuItemButton.styleFrom(
+              minimumSize: const Size(96, VgSize.tapMin),
+              backgroundColor: d == widget.value
+                  ? scheme.secondaryContainer
+                  : null,
+              foregroundColor: d == widget.value
+                  ? scheme.onSecondaryContainer
+                  : scheme.onSurface,
               textStyle: VgType.bodyMd.merge(digits),
             ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text('${widget.value}'),
-                const Icon(Symbols.arrow_drop_down_rounded),
-              ],
+            onPressed: () => widget.onChanged(d),
+            child: Semantics(selected: d == widget.value, child: Text('$d')),
+          ),
+      ],
+      builder: (context, controller, _) => Semantics(
+        label: '${l.monthStartDay}: ${widget.value}',
+        excludeSemantics: true,
+        button: true,
+        onTap: _toggle,
+        child: OutlinedButton(
+          onPressed: _toggle,
+          style: OutlinedButton.styleFrom(
+            minimumSize: const Size(VgSize.tapMin, 40),
+            tapTargetSize: MaterialTapTargetSize.padded,
+            padding: const EdgeInsets.fromLTRB(VgSpace.s3, 0, VgSpace.s2, 0),
+            foregroundColor: scheme.onSurface,
+            side: BorderSide(color: scheme.outline),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(VgRadius.sm),
             ),
+            textStyle: VgType.bodyMd.merge(digits),
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text('${widget.value}'),
+              const Icon(Symbols.arrow_drop_down_rounded),
+            ],
+          ),
+        ),
+      ),
+    );
+    return InkWell(
+      onTap: _toggle,
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(minHeight: VgSize.tapKey),
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(
+            VgSpace.s4,
+            VgSpace.s1,
+            VgSpace.s2,
+            VgSpace.s1,
+          ),
+          child: Row(
+            children: [
+              ExcludeSemantics(
+                child: Icon(
+                  Symbols.calendar_month_rounded,
+                  color: scheme.onSurfaceVariant,
+                ),
+              ),
+              const SizedBox(width: VgSpace.s4),
+              Expanded(
+                child: ExcludeSemantics(
+                  child: Text(
+                    l.monthStartDay,
+                    style: VgType.bodyMd.copyWith(color: scheme.onSurface),
+                  ),
+                ),
+              ),
+              const SizedBox(width: VgSpace.s2),
+              dropdown,
+            ],
           ),
         ),
       ),
