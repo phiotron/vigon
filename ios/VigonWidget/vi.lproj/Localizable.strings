@@ -1,6 +1,6 @@
 /* Chép từ lib/l10n/app_vi.arb (các key widget*, addExpense, addIncome, appTitle). Sửa .arb trước. */
 "appTitle" = "Ví Gọn";
-"widgetPickerName" = "Ghi nhanh";
+"widgetPickerName" = "Ví Gọn";
 "widgetPickerDescription" = "Thêm nhanh khoản chi hoặc thu";
 "widgetExpenseButton" = "Chi";
 "widgetIncomeButton" = "Thu";

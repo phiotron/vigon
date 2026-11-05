@@ -812,14 +812,14 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get autoBackupLocalFolderWarningIos =>
-      'Thư mục này chỉ nằm trên iPhone và không có trong bản sao lưu iCloud. Mất máy là mất luôn các file này. Hãy chọn một thư mục trong iCloud Drive để giữ lại.';
+      'Thư mục này có thể chỉ nằm trên iPhone. Nếu vậy, mất máy là mất luôn các file này. Để giữ an toàn, hãy chọn thư mục trong iCloud Drive hoặc Google Drive.';
 
   @override
   String get secureWindowNoteIos =>
       'Ẩn nội dung trong màn chuyển app. iPhone không cho app chặn chụp màn hình.';
 
   @override
-  String get widgetPickerName => 'Ghi nhanh';
+  String get widgetPickerName => 'Ví Gọn';
 
   @override
   String get widgetPickerDescription => 'Thêm nhanh khoản chi hoặc thu';

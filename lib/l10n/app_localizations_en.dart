@@ -824,14 +824,14 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get autoBackupLocalFolderWarningIos =>
-      'This folder is on this iPhone only and is not included in iCloud backup. If you lose the phone, these files are lost too. Choose a folder in iCloud Drive to keep them.';
+      'This folder may be stored only on this iPhone. If so, losing the phone means losing these files. To keep them safe, choose a folder in iCloud Drive or Google Drive.';
 
   @override
   String get secureWindowNoteIos =>
       'Hides content in the app switcher. iPhone does not let apps block screenshots.';
 
   @override
-  String get widgetPickerName => 'Quick add';
+  String get widgetPickerName => 'Ví Gọn';
 
   @override
   String get widgetPickerDescription => 'Quickly add an expense or income';

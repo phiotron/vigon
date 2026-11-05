@@ -1553,7 +1553,7 @@ abstract class AppLocalizations {
   /// No description provided for @autoBackupLocalFolderWarningIos.
   ///
   /// In en, this message translates to:
-  /// **'This folder is on this iPhone only and is not included in iCloud backup. If you lose the phone, these files are lost too. Choose a folder in iCloud Drive to keep them.'**
+  /// **'This folder may be stored only on this iPhone. If so, losing the phone means losing these files. To keep them safe, choose a folder in iCloud Drive or Google Drive.'**
   String get autoBackupLocalFolderWarningIos;
 
   /// No description provided for @secureWindowNoteIos.
@@ -1565,7 +1565,7 @@ abstract class AppLocalizations {
   /// No description provided for @widgetPickerName.
   ///
   /// In en, this message translates to:
-  /// **'Quick add'**
+  /// **'Ví Gọn'**
   String get widgetPickerName;
 
   /// No description provided for @widgetPickerDescription.
