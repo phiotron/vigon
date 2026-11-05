@@ -38,7 +38,10 @@ Thứ tự ảnh: 3 ảnh đầu hiện ngay trong kết quả tìm kiếm → �
 | 7 | Màn chính, giao diện tối | Như ảnh 1 | Giao diện sáng và tối | Light and dark themes |
 | 8 (tuỳ chọn) | Màn chính cỡ chữ lớn | Cỡ chữ hệ thống lớn, không bị cắt chữ | Dễ đọc với chữ cỡ lớn | Built for large text |
 
-Play dùng 8 ảnh (tối đa); App Store dùng 7–8 ảnh. Chú thích (nếu dùng) đặt trong dải màu nền thương hiệu `#0E5244`, chữ
+Play dùng 8 ảnh (tối đa); App Store dùng 7–8 ảnh. Nếu thêm ảnh widget hoặc Cài đặt → Sao lưu tự động (bản 1.2) thì **chỉ cho bộ Play**:
+hai tính năng này chỉ có trên Android, bộ ảnh iPhone không được có (D-019, App Review 2.3.3). Ảnh 3 chụp trên iPhone sẽ không có
+công tắc "Che nội dung khi chuyển app" (bị ẩn trên iOS) — đó là đúng.
+Chú thích (nếu dùng) đặt trong dải màu nền thương hiệu `#0E5244`, chữ
 Be Vietnam Pro 700 trắng, phía trên ảnh màn hình; không thêm khung máy của hãng (tránh dùng hình iPhone/Android có thương hiệu),
 không thêm chữ "Số 1", "Tốt nhất", giá, hay so sánh với app khác. Ảnh phải là **UI thật của app** (App Review 2.3.3).
 

@@ -1,6 +1,6 @@
 # RELEASE — Ví Gọn (A002-vigon)
 
-Cập nhật 2026-11-04 (thêm iOS / App Store). Chưa phát hành. Mục nào ghi "CHƯA" là việc còn lại; việc của người dùng ghi rõ.
+Cập nhật 2026-11-04 (thêm iOS / App Store); 2026-11-05 sau khi gộp bản 1.2 (D-019). Chưa phát hành. Mục nào ghi "CHƯA" là việc còn lại; việc của người dùng ghi rõ.
 Checklist xưởng dùng kèm: `D:\Mobile App\playbook\checklists\release-android.md`, `release-ios.md`.
 
 ## Định danh
@@ -9,10 +9,11 @@ Checklist xưởng dùng kèm: `D:\Mobile App\playbook\checklists\release-androi
   iOS: `CFBundleShortVersionString` lấy `1.0.0` từ pubspec; **build number = số lần chạy workflow** (`github.run_number`, đặt trong
   `.github/workflows/release-ios.yml`) nên tự tăng mỗi lần build ký — không trùng với versionCode Android, đó là bình thường.
 - Store: Google Play [x] · App Store [x] (iOS thêm vào bản 1 ngày 2026-11-04, D-001) · phân phối nội bộ [ ]
-- Android: minSdk 24 (Android 7.0), targetSdk 36 (kiểm bằng `aapt2 dump badging`, 2026-11-03). Quyền: không xin quyền nào; bản release
-  không có INTERNET (`test/manifest_test.dart` và `aapt2 dump permissions`).
+- Android: minSdk 24 (Android 7.0), targetSdk 36 (kiểm bằng `aapt2 dump badging`, 2026-11-03). Quyền (bản 1.2): chỉ `POST_NOTIFICATIONS`
+  và `RECEIVE_BOOT_COMPLETED` cho nhắc ghi chép (D-015); bản release không có INTERNET (`test/manifest_test.dart` và `aapt2 dump permissions`).
 - iOS: min iOS 15.0, **chỉ iPhone**, chỉ dọc, tên hiển thị `Ví Gọn`, không khoá `NS…UsageDescription`,
-  `ITSAppUsesNonExemptEncryption = false`, `ios/Runner/PrivacyInfo.xcprivacy` (commit `9438ddd`).
+  `ITSAppUsesNonExemptEncryption = false` (lý do và việc xác nhận lại: `store/app-store.md` mục Export compliance), `ios/Runner/PrivacyInfo.xcprivacy` (commit `9438ddd`).
+  Widget, sao lưu tự động, che nội dung, icon đơn sắc chỉ có trên Android; nhắc ghi chép có cả iOS (D-019).
 - Tài khoản nhà phát triển: **cá nhân** trên cả hai store (2026-11-04) → tên người bán hiện công khai là họ tên thật; Play bắt closed test.
 
 ## Ký ứng dụng — Android
@@ -99,8 +100,8 @@ iOS:
 - [ ] Chạy "Release iOS" thành công một lần; xác nhận Xcode 26+ trong log (P-01)
 - [ ] Icon App Store 1024×1024 gốc (không phóng từ 512)
 - [ ] Điền App Privacy, Age Rating, Review Notes, trader status (EU) trong App Store Connect (`store/app-store.md`)
-- [ ] Quyết định code (phiên điều phối): loại DB khỏi sao lưu iCloud hay giữ (chính sách hiện mô tả "có trong sao lưu iPhone");
-      xoá PIN còn sót trong Keychain khi cài lại (COMPLIANCE mục 4)
+- [ ] Quyết định code (phiên điều phối): loại DB khỏi sao lưu iCloud hay giữ (chính sách hiện mô tả "có trong sao lưu iPhone")
+- [x] Xoá PIN còn sót trong Keychain khi cài lại: đã có trong code (D-017, `PinService.clearIfReinstalled`); CHƯA kiểm chứng trên iPhone thật (COMPLIANCE mục 4)
 
 ## Lịch sử phát hành
 | Phiên bản | Ngày | Nội dung | Ghi chú |

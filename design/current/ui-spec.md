@@ -1,10 +1,12 @@
-# UI-SPEC — Ví Gọn (APP-001)
+# UI-SPEC — Ví Gọn (A002-vigon)
 
 Mô tả giao diện và luồng xử lý của app **đúng như code hiện tại** (bản 1.0.0+1, ngày 2026-11-03), viết từ việc đọc `lib/src/app.dart`, `lib/src/features/**`, `lib/src/ui/**`, `lib/src/providers.dart` và các hàm dữ liệu mà giao diện gọi. Khác `docs/SPEC.md`: SPEC nói app PHẢI làm gì; file này nói giao diện ĐANG làm gì, kể cả chỗ chưa như SPEC (mục 9).
 
 Nội dung chữ lấy từ `lib/l10n/app_vi.arb` (tiếng Việt, mặc định) và `app_en.arb` (tiếng Anh, cùng khóa). Chữ trong ngoặc kép là chữ tiếng Việt hiển thị.
 
 **Bản 1.2 (chưa phát hành, nhánh `integration/spec-1.1`, 2026-11-04):** thêm Sao lưu tự động (F-24), Nhắc ghi chép (F-25), Widget màn hình chính và liên kết sâu (F-26): mục 3.4, 3.13, 4.8, 4.9, 5 (luồng F-16 tới F-18), 9. Các phần này mô tả theo mã (`lib/src/features/settings/`, `reminder/`, `widget/`, `android/app/src/main/`) và test tự động; giao diện thật trên điện thoại (SAF vào Drive, thông báo, widget) CHƯA kiểm chứng trên máy, xem `docs/TESTING.md` (AC-58 tới AC-64). Lưu ý: số "F-n" ở mục 5 là số luồng của riêng file này, không phải số tính năng trong SPEC (khi cần, ghi rõ "SPEC F-24").
+
+**Sau khi gộp nhánh (2026-11-05, D-019):** giao diện theo bộ thiết kế `design/current/screens/` (PLAN-001: token, chữ Be Vietnam Pro, icon Material Symbols Rounded, thành phần dùng chung); chi tiết bố cục và màu trong file này viết theo code trước khi gộp, CHƯA rà lại theo giao diện mới — khi lệch thì bản vẽ trong `design/current/screens/` và code là đúng. App chạy cả **iOS**: trên iOS các dòng "Che nội dung khi chuyển app", "Hiện số tiền trên widget", "Sao lưu tự động" bị ẩn và không có widget (mục 3.13) hay icon đơn sắc (`lib/src/platform_features.dart`); "Nhắc ghi chép" có trên iOS (hộp xin quyền thông báo của iOS). Chỗ ghi "của Android" cho bảng chia sẻ và trình chọn file thì trên iOS là thành phần tương ứng của iOS.
 
 ## Mục lục
 1. Tổng quan kiến trúc giao diện
@@ -87,13 +89,13 @@ Màn chính "/"
        ├─ Ngày đầu tuần ──────► (đổi ngay, không hộp thoại)
        ├─ Tháng bắt đầu từ ngày ► Menu thả chọn 1–28
        ├─ Khóa bằng mã PIN ───► Màn toàn khung đặt mã / nhập mã để tắt
-       ├─ Hiện số tiền trên widget ► (công tắc, đổi ngay, không hộp thoại)
-       ├─ Nhắc ghi chép (công tắc) ► Hộp thoại giải thích ──"Tiếp tục"──► Hộp thoại quyền thông báo của Android
+       ├─ Hiện số tiền trên widget ► (công tắc, đổi ngay, không hộp thoại; chỉ Android)
+       ├─ Nhắc ghi chép (công tắc) ► Hộp thoại giải thích ──"Tiếp tục"──► Hộp thoại quyền thông báo của Android / iOS
        │     └─ Giờ nhắc ─────► Bộ chọn giờ của hệ thống
        ├─ Xuất bản sao lưu ───► Bảng chia sẻ của Android
        ├─ Khôi phục ──────────► Trình chọn file Android ──► Hộp thoại xác nhận
        ├─ Xuất CSV ───────────► Bảng chia sẻ của Android
-       ├─ Sao lưu tự động (công tắc) ► Bộ chọn thư mục của Android ──► Hộp thoại mật khẩu ──► "Sao lưu ngay" lần đầu
+       ├─ Sao lưu tự động (công tắc, chỉ Android) ► Bộ chọn thư mục của Android ──► Hộp thoại mật khẩu ──► "Sao lưu ngay" lần đầu
        │     ├─ Sao lưu ngay ─► vòng quay ──► thông báo kết quả
        │     └─ Chọn lại thư mục ► Bộ chọn thư mục ──► "Sao lưu ngay"
        ├─ Xóa toàn bộ dữ liệu ► 2 hộp thoại xác nhận
@@ -257,17 +259,17 @@ Danh sách cuộn dọc. Thứ tự các mục từ trên xuống:
 | **Ngày đầu tuần** | Dòng có phụ đề ("Thứ Hai"/"Chủ Nhật") | **Mỗi lần chạm là đảo** giữa Thứ Hai và Chủ Nhật, không có hộp thoại |
 | **Tháng bắt đầu từ ngày** | Menu thả ở bên phải | Chọn số từ 1 đến 28 |
 | (nhóm) **Bảo mật** | | |
-| **Che nội dung khi chuyển app** | Công tắc (mặc định tắt), kèm chú thích | Bật: Android chặn chụp màn hình và hiện màn trống trong danh sách app gần đây (`FLAG_SECURE`). Lưu trong cài đặt, áp dụng ngay (F-22, AC-56) |
+| **Che nội dung khi chuyển app** | Công tắc (mặc định tắt), kèm chú thích | Bật: Android chặn chụp màn hình và hiện màn trống trong danh sách app gần đây (`FLAG_SECURE`). Lưu trong cài đặt, áp dụng ngay (F-22, AC-56). Chỉ Android: trên iOS dòng này bị ẩn (D-019) |
 | **Khóa bằng mã PIN** | Công tắc, kèm lời cảnh báo "Nếu quên mã, cách duy nhất để dùng lại là xóa toàn bộ dữ liệu trong app." | Bật → đặt mã (F-10). Tắt → nhập đúng mã hiện tại (F-11) |
-| **Hiện số tiền trên widget** | Công tắc (mặc định tắt), nằm cuối nhóm Bảo mật (`WidgetAmountsSwitch`), kèm chú thích "Ai cầm máy cũng nhìn thấy số này trên màn hình chờ. Khi đang bật khóa PIN, widget luôn ẩn số." | Bật/tắt là lưu ngay, không hộp thoại; widget cập nhật theo (AC-64, mục 3.13). Khi khóa PIN đang bật, công tắc vẫn gạt được nhưng widget chỉ hiện "Đã khóa bằng PIN" |
+| **Hiện số tiền trên widget** | Công tắc (mặc định tắt), nằm cuối nhóm Bảo mật (`WidgetAmountsSwitch`), kèm chú thích "Ai cầm máy cũng nhìn thấy số này trên màn hình chờ. Khi đang bật khóa PIN, widget luôn ẩn số." | Bật/tắt là lưu ngay, không hộp thoại; widget cập nhật theo (AC-64, mục 3.13). Khi khóa PIN đang bật, công tắc vẫn gạt được nhưng widget chỉ hiện "Đã khóa bằng PIN". Chỉ Android: trên iOS dòng này bị ẩn (D-019) |
 | (nhóm) **Nhắc ghi chép** | Tiêu đề nhóm riêng (`ReminderSection`), nằm giữa nhóm Bảo mật và nhóm Dữ liệu | Xem hai dòng dưới và mục 4.9, luồng F-17 |
-| **Nhắc ghi chép hằng ngày** | Công tắc (mặc định tắt), chú thích "Mỗi ngày một thông báo vào giờ bạn chọn, không chứa số liệu" | Bật: hộp thoại giải thích rồi mới xin quyền thông báo của Android. Tắt: hủy lịch ngay, không hộp thoại (AC-61, AC-62) |
+| **Nhắc ghi chép hằng ngày** | Công tắc (mặc định tắt), chú thích "Mỗi ngày một thông báo vào giờ bạn chọn, không chứa số liệu" | Bật: hộp thoại giải thích rồi mới xin quyền thông báo của hệ điều hành (Android 13 trở lên; iOS). Tắt: hủy lịch ngay, không hộp thoại (AC-61, AC-62) |
 | **Giờ nhắc** | Dòng có phụ đề giờ đã chọn (mặc định 20:00, định dạng theo máy) | Chạm mở bộ chọn giờ của hệ thống (tiêu đề "Giờ nhắc"); chọn giờ khác thì đặt lại lịch ở giờ mới. Hoạt động cả khi công tắc đang tắt (chỉ lưu giờ, chưa đặt lịch) |
 | (nhóm) **Dữ liệu** | Dòng nhắc "Dữ liệu chỉ nằm trên máy này. Nên xuất bản sao lưu thường xuyên." | |
 | **Xuất bản sao lưu** | Dòng, phụ đề "Có thể đặt mật khẩu cho file. Không đặt thì file không được mã hóa." | F-12 (hộp thoại hỏi có đặt mật khẩu không) |
 | **Khôi phục từ bản sao lưu** | Dòng | F-13 |
 | **Xuất CSV** | Dòng | F-12 |
-| **Sao lưu tự động** | Công tắc (mặc định tắt) với biểu tượng đám mây, chú thích "Ví Gọn chỉ ghi file vào thư mục bạn chọn. Việc tải lên Google Drive hay Dropbox do app đó thực hiện." (`AutoBackupSection`) | Bật → bộ chọn thư mục của hệ thống → hộp thoại đặt mật khẩu (mục 4.8) → "Sao lưu ngay" lần đầu (luồng F-16). Tắt → xóa mật khẩu và quyền thư mục, giữ file đã ghi, hiện "Đã tắt sao lưu tự động. File đã ghi vẫn còn trong thư mục." (AC-58, AC-60) |
+| **Sao lưu tự động** | Công tắc (mặc định tắt) với biểu tượng đám mây, chú thích "Ví Gọn chỉ ghi file vào thư mục bạn chọn. Việc tải lên Google Drive hay Dropbox do app đó thực hiện." (`AutoBackupSection`) | Bật → bộ chọn thư mục của hệ thống → hộp thoại đặt mật khẩu (mục 4.8) → "Sao lưu ngay" lần đầu (luồng F-16). Tắt → xóa mật khẩu và quyền thư mục, giữ file đã ghi, hiện "Đã tắt sao lưu tự động. File đã ghi vẫn còn trong thư mục." (AC-58, AC-60). Chỉ Android: trên iOS cả mục này bị ẩn (D-019) |
 | ↳ **Thư mục: <tên>** | Chỉ hiện khi đang bật. Dòng tiêu đề lùi vào, tên thư mục lấy từ bộ chọn ("Thư mục đã chọn" nếu hệ thống không cho tên); phụ đề là trạng thái lần thử gần nhất | Phụ đề: "Chưa sao lưu lần nào" / "Lần cuối: 3 thg 11, 18:30" (ngày giờ theo ngôn ngữ app) / chữ màu lỗi khi lần gần nhất thất bại, kèm giờ lần thử: "Lần thử 3 thg 11, 18:30: Không ghi được vào thư mục. Chọn lại thư mục" (quyền bị thu hồi hoặc thư mục mất) hoặc "Lần thử …: Sao lưu không thành công. Thử lại bằng Sao lưu ngay" (lỗi khác) (AC-60). Trạng thái được đọc lại mỗi lần mở Cài đặt và mỗi lần app quay lại từ nền (lần chạy nền có thể vừa lỗi) |
 | ↳ Nút **Sao lưu ngay**, **Chọn lại thư mục** | Hai nút (tonal và viền) xếp ngang, tự xuống dòng khi hẹp hoặc chữ lớn; chỉ hiện khi đang bật | "Sao lưu ngay": vòng quay trong lúc chạy, rồi thông báo "Đã sao lưu" hoặc dòng lỗi như trên; chạy cả khi dữ liệu không đổi; nếu đang có lần sao lưu khác chạy thì báo "Đang sao lưu, thử lại sau giây lát" và không ghi đè trạng thái. "Chọn lại thư mục": chọn thư mục mới, giữ mật khẩu, bỏ quyền thư mục cũ, rồi "Sao lưu ngay" để kiểm |
 | **Xóa toàn bộ dữ liệu** | Dòng màu lỗi | F-14 |
@@ -357,11 +359,11 @@ Bảng chọn kỳ, hộp chọn khoảng ngày, bảng thêm/sửa danh mục, 
 
 ---
 
-### 3.13 Widget màn hình chính (bản 1.2, F-26; `android/app/src/main/`)
+### 3.13 Widget màn hình chính (bản 1.2, F-26, chỉ Android; `android/app/src/main/`)
 
 **Mục đích:** ghi khoản chi hoặc thu từ màn hình chờ bằng một chạm, không phải tìm app (AC-63). Đây là widget Android (`AppWidgetProvider`), không phải màn của Flutter; nó vẽ bằng `RemoteViews` từ `res/layout/vigon_widget.xml`. Giao diện thật trên launcher CHƯA kiểm chứng trên máy (docs/TESTING.md, AC-63 và AC-64).
 
-**Thêm vào màn hình chờ:** nhấn giữ màn hình chờ → Widget → "Ví Gọn" (mô tả "Thêm nhanh khoản chi hoặc thu"). Cỡ mặc định 2×2 ô (`targetCellWidth=2`, `targetCellHeight=2`), tối thiểu 110×110 dp, co giãn được cả hai chiều. **Lệch SPEC:** `docs/SPEC-1.2.md` AC-63 ghi cỡ tối thiểu 2×1; code hiện đặt 2×2 vì một hàng (40 dp) cắt mất nút khi có thêm dòng trạng thái (ghi chú trong `vigon_widget_info.xml`); cần người dùng chấp nhận hoặc sửa SPEC. App đẩy nội dung mới khi có thay đổi (xem dưới); ngoài ra Android vẽ lại widget mỗi 30 phút (`updatePeriodMillis=1800000`, mức tối thiểu cho phép) chỉ để bỏ số của kỳ đã hết khi app không chạy. Không cần quyền nào và không dùng mạng.
+**Thêm vào màn hình chờ:** nhấn giữ màn hình chờ → Widget → "Ví Gọn" (mô tả "Thêm nhanh khoản chi hoặc thu"). Cỡ mặc định 2×2 ô (`targetCellWidth=2`, `targetCellHeight=2`), tối thiểu 110×110 dp, co giãn được cả hai chiều. Khớp SPEC AC-63 (`docs/SPEC.md` mục 3c, cỡ tối thiểu 2×2; SPEC đã đổi từ 2×1 ngày 2026-11-04 vì một hàng 40 dp cắt mất nút khi có thêm dòng trạng thái, ghi chú trong `vigon_widget_info.xml`). App đẩy nội dung mới khi có thay đổi (xem dưới); ngoài ra Android vẽ lại widget mỗi 30 phút (`updatePeriodMillis=1800000`, mức tối thiểu cho phép) chỉ để bỏ số của kỳ đã hết khi app không chạy. Không cần quyền nào và không dùng mạng.
 
 **Bố cục (trên xuống dưới), nền xanh đậm `#0E5244` bo góc 20 dp, đệm 8 dp:**
 
@@ -606,7 +608,7 @@ Mọi lỗi nhập liệu hiện ngay trên màn, không dùng hộp thoại; kh
 
 Ghi theo code hiện tại; chi tiết và mức độ nằm ở `APP.md` mục "Việc dở" (lịch sử đầy đủ: `notes/archive-demochung/BACKLOG.md`).
 
-- **Chưa có:** đồng bộ hai chiều giữa nhiều máy qua đám mây (cần khóa OAuth do người dùng tạo; chỉ có sao lưu một chiều vào thư mục đã chọn, F-24), widget hiện số tiền khi PIN bật (làm lộ số liệu), quy đổi tỉ giá nhiều tiền tệ, bản iOS (xem `docs/SPEC-1.1.md` và `docs/SPEC-1.2.md` mục "Ngoài phạm vi"). Ẩn tài khoản không tự dừng các chuỗi định kỳ đang trỏ tới nó (chuỗi vẫn sinh khoản vào tài khoản ẩn).
+- **Chưa có:** đồng bộ hai chiều giữa nhiều máy qua đám mây (cần khóa OAuth do người dùng tạo; chỉ có sao lưu một chiều vào thư mục đã chọn, F-24), widget hiện số tiền khi PIN bật (làm lộ số liệu), quy đổi tỉ giá nhiều tiền tệ, bản iOS của widget, sao lưu tự động và che nội dung (D-019) (xem `docs/SPEC.md` mục 4). Ẩn tài khoản không tự dừng các chuỗi định kỳ đang trỏ tới nó (chuỗi vẫn sinh khoản vào tài khoản ẩn).
 - **PIN:** không đếm lần nhập sai, không làm chậm; giờ ra nền lấy từ đồng hồ máy nên đổi giờ máy có thể qua được hạn 1 phút. PIN chỉ chặn người cầm máy, không mã hóa dữ liệu (D-007).
 - **Kỳ mặc định** ở màn chính là tháng lúc mở app; app sống qua nửa đêm thì kỳ đang xem không tự nhảy (thanh ngân sách thì tự sang tháng mới khi quay lại từ nền).
 - **Đổi tiền tệ** USD→VND làm tròn phần lẻ, đổi lại không hoàn được (hộp chọn tiền tệ đã nói rõ điều này).
@@ -619,6 +621,6 @@ Ghi theo code hiện tại; chi tiết và mức độ nằm ở `APP.md` mục 
 - **Chưa thử trên máy thật:** TalkBack thật và cỡ chữ lớn nhất.
 - Đường dẫn chính sách quyền riêng tư chưa có nên dòng đó ở màn Giới thiệu đang tắt.
 - **Bản 1.2, chưa thử trên máy thật (CHƯA kiểm chứng):** chọn thư mục và ghi file vào Google Drive qua SAF, giờ thông báo thật và chạm thông báo, hộp xin quyền thông báo, giao diện widget trên launcher, nút Chi/Thu của widget, hiệu ứng khóa PIN khi vào từ widget. Phần logic có test tự động (xem `docs/TESTING.md`).
-- **Widget không tự tính số tháng mới** khi app chưa mở: số chỉ được đẩy lại khi app chạy; qua hết kỳ tháng thì widget bỏ số cũ và ghi "Mở app để cập nhật". Cỡ widget 2×2 (SPEC ghi 2×1) và việc tự bỏ số cũ (báo thức, cập nhật 30 phút) CHƯA thử trên launcher thật. Công tắc "Hiện số tiền trên widget" và công tắc nhắc ghi chép không đi theo file sao lưu (sau khôi phục về tắt).
+- **Widget không tự tính số tháng mới** khi app chưa mở: số chỉ được đẩy lại khi app chạy; qua hết kỳ tháng thì widget bỏ số cũ và ghi "Mở app để cập nhật". Cỡ widget 2×2 (khớp SPEC AC-63) và việc tự bỏ số cũ (báo thức, cập nhật 30 phút) CHƯA thử trên launcher thật. Công tắc "Hiện số tiền trên widget" và công tắc nhắc ghi chép không đi theo file sao lưu (sau khôi phục về tắt).
 - **Sao lưu tự động:** việc mã hóa (PBKDF2 100.000 vòng, chạy ở isolate) bắt đầu lúc app ra nền; Android có thể đóng băng app ẩn nên một lần sao lưu có thể dang dở và chỉ hoàn tất (hoặc thử lại) lần sau; thời gian mã hóa trên Galaxy A13 chưa đo. Thư mục và mật khẩu không đi theo file sao lưu nên khôi phục sang máy khác thì phải bật lại.
 - **Nhắc ghi chép:** giờ nhắc không chính xác theo phút; đổi múi giờ lúc app đang đóng thì lịch lệch tới lần mở app kế tiếp (lúc đó app đặt lại lịch theo múi giờ mới). Thông báo có thể bị tiết kiệm pin hoặc cài đặt thông báo của máy chặn.

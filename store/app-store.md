@@ -1,7 +1,11 @@
 # Hồ sơ App Store — Ví Gọn (bản nháp, chưa nộp)
 
 Bản nháp để dán vào App Store Connect ở phiên điều phối #3. Người dùng duyệt tên và nội dung trước khi nộp.
-Nội dung phải khớp với Play (`store/listing.md`) và với code; không hứa điều code không làm. Viết 2026-11-04.
+Nội dung phải khớp với Play (`store/listing.md`) và với code; không hứa điều code không làm. Viết 2026-11-04; cập nhật 2026-11-05
+sau khi gộp bản 1.2 với giao diện/iOS (D-019): thêm tính năng 1.1/1.2 **có trên iPhone** (tìm kiếm, ẩn tài khoản, ngân sách theo
+danh mục, đủ tiền tệ ISO, nhắc ghi chép hằng ngày, đặt mật khẩu cho file sao lưu). **Widget màn hình chính, sao lưu tự động vào thư
+mục, che nội dung ở màn đa nhiệm và icon đơn sắc chỉ có trên Android** (trên iOS mục cài đặt bị ẩn) → KHÔNG đưa vào mô tả, ảnh chụp
+hay Review Notes của App Store (App Review 2.3.1, 2.3.10: không mô tả tính năng không có, không nhắc nền tảng khác trong metadata).
 Không sao chép tên, icon, mô tả hay ảnh của app khác (SPEC mục 7).
 
 Project iOS (commit `9438ddd`, đã đối chiếu 2026-11-04): **chỉ iPhone** (`TARGETED_DEVICE_FAMILY = 1`), **chỉ màn dọc**,
@@ -56,6 +60,7 @@ Ví Gọn is a fast personal income and expense tracker that shows where your mo
 QUICK ENTRY
 • Tap − or +, type the amount on a keypad with built-in math (add, subtract, multiply, divide), pick a category. Three taps at most.
 • Edit or delete records; undo a delete right away.
+• Search records by note, category or amount.
 
 SEE YOUR SPENDING
 • Donut chart by category, with income, expenses and balance.
@@ -63,16 +68,20 @@ SEE YOUR SPENDING
 • Records grouped by category with percentages.
 
 STAY ORGANIZED
-• Multiple accounts (cash, bank, card) and transfers between them.
+• Multiple accounts (cash, bank, card) and transfers between them; hide accounts you no longer use.
 • Add, edit and reorder your own categories.
 • Recurring records (rent, bills, subscriptions) are added automatically when due.
-• Monthly budget with a progress bar and an over-budget warning.
+• Monthly budget with a progress bar and an over-budget warning, plus an optional budget for each category.
+• All ISO currencies, with search.
+
+DAILY REMINDER
+• Optional, off by default: one notification a day at the time you choose, created on your iPhone and containing no figures. The app asks for notification permission only when you turn it on.
 
 PRIVATE BY DESIGN
 • No sign-up, no ads, no tracking, no analytics. Ví Gọn has no server and never connects to the internet, so the developer never receives your data.
 • Your records are stored only in the app on your iPhone. If you use iPhone backup (iCloud or a computer), it includes the app's data like any other app.
 • Optional 4-digit PIN lock. It keeps others out of the app but does not encrypt your data. If you forget the PIN, the only way back in is to delete the app's data.
-• Export a backup file and restore it on a new phone; export CSV for Numbers, Excel or Google Sheets. Backup files are not encrypted, so keep them somewhere safe.
+• Export a backup file and restore it on a new phone; export CSV for Numbers, Excel or Google Sheets. You can protect a backup file with a password (AES-256 encryption); if you forget the password, the file cannot be opened. Without a password the file is not encrypted, so keep it somewhere safe.
 
 EASY TO USE
 • Vietnamese and English, light and dark themes.
@@ -83,7 +92,7 @@ Free. No in-app purchases.
 
 - **What's New in This Version**: App Store Connect **không cho nhập** ở phiên bản đầu tiên (1.0). Dùng câu dưới cho
   TestFlight "What to Test" và giữ cho bản 1.0.1:
-  `First release: quick entry, category chart, accounts and transfers, recurring records, monthly budget, backup and CSV export, PIN lock.`
+  `First release: quick entry, search, category chart, accounts and transfers, recurring records, monthly and per-category budgets, daily reminder, password-protected backup, CSV export, PIN lock.`
 
 ## Vietnamese — localization phụ
 - **Name** (≤ 30): `Ví Gọn: Ghi Thu Chi` — 19 ký tự
@@ -101,6 +110,7 @@ Ví Gọn giúp bạn ghi chép thu chi hằng ngày thật nhanh và biết ti�
 GHI NHANH
 • Chạm − hoặc +, nhập số tiền bằng bàn phím có phép tính (cộng, trừ, nhân, chia), chọn danh mục là xong, tối đa 3 lần chạm.
 • Sửa hoặc xóa khoản đã ghi; xóa nhầm thì hoàn tác ngay.
+• Tìm khoản theo ghi chú, danh mục hoặc số tiền.
 
 NHÌN RÕ CHI TIÊU
 • Biểu đồ vòng theo danh mục, tổng thu, tổng chi và số dư.
@@ -108,16 +118,20 @@ NHÌN RÕ CHI TIÊU
 • Danh sách khoản gom theo danh mục kèm phần trăm.
 
 QUẢN LÝ GỌN GÀNG
-• Nhiều tài khoản (tiền mặt, ngân hàng, thẻ) và chuyển tiền giữa các tài khoản.
+• Nhiều tài khoản (tiền mặt, ngân hàng, thẻ) và chuyển tiền giữa các tài khoản; ẩn tài khoản không còn dùng.
 • Danh mục tự thêm, sửa, sắp xếp.
 • Khoản định kỳ (tiền nhà, tiền điện, đăng ký hằng tháng) tự được ghi khi tới hạn.
-• Ngân sách tháng có thanh tiến độ và cảnh báo khi vượt.
+• Ngân sách tháng có thanh tiến độ và cảnh báo khi vượt, thêm ngân sách riêng cho từng danh mục nếu muốn.
+• Đủ các loại tiền tệ theo chuẩn ISO, có ô tìm.
+
+NHẮC GHI CHÉP
+• Tùy chọn, mặc định tắt: mỗi ngày một thông báo vào giờ bạn chọn, tạo ngay trên iPhone và không chứa số liệu. App chỉ xin quyền thông báo khi bạn bật tính năng này.
 
 RIÊNG TƯ
 • Không đăng ký, không quảng cáo, không theo dõi, không công cụ phân tích. Ví Gọn không có máy chủ và không bao giờ kết nối Internet, nên nhà phát triển không nhận dữ liệu của bạn.
 • Dữ liệu chỉ lưu trong app trên iPhone của bạn. Nếu bạn dùng sao lưu iPhone (iCloud hoặc máy tính), bản sao lưu đó chứa dữ liệu của app như mọi app khác.
 • Khóa bằng mã PIN 4 số (tùy chọn). PIN chỉ ngăn người khác mở app, không mã hóa dữ liệu. Quên mã PIN thì chỉ có cách xóa dữ liệu trong app.
-• Tự xuất file sao lưu và khôi phục khi đổi máy; xuất CSV để mở bằng Numbers, Excel hoặc Google Sheets. File sao lưu không được mã hóa, hãy cất ở nơi an toàn.
+• Tự xuất file sao lưu và khôi phục khi đổi máy; xuất CSV để mở bằng Numbers, Excel hoặc Google Sheets. Có thể đặt mật khẩu cho file sao lưu (mã hóa AES-256); quên mật khẩu thì không mở được file. Không đặt mật khẩu thì file không được mã hóa, hãy cất ở nơi an toàn.
 
 DỄ DÙNG
 • Tiếng Việt và tiếng Anh, giao diện sáng và tối.
@@ -126,10 +140,13 @@ DỄ DÙNG
 Miễn phí. Không mua trong app.
 ```
 
-- **What's New** (dùng cho TestFlight / bản sau): `Bản đầu tiên: ghi khoản nhanh, biểu đồ theo danh mục, tài khoản và chuyển tiền, khoản định kỳ, ngân sách tháng, sao lưu và xuất CSV, khóa PIN.`
+- **What's New** (dùng cho TestFlight / bản sau): `Bản đầu tiên: ghi khoản nhanh, tìm kiếm, biểu đồ theo danh mục, tài khoản và chuyển tiền, khoản định kỳ, ngân sách tháng và theo danh mục, nhắc ghi chép hằng ngày, sao lưu có mật khẩu, xuất CSV, khóa PIN.`
 
 Điểm khác bản Play có chủ đích: "VoiceOver" thay "TalkBack"; iOS không có khái niệm "quyền Internet" nên viết "không kết nối Internet";
 nêu rõ sao lưu iPhone có chứa dữ liệu (Android tắt `allowBackup`, iOS thì không — xem `docs/legal/privacy-policy.md` mục 2).
+Bản App Store KHÔNG có các mục chỉ-Android (D-019): widget, sao lưu tự động vào thư mục, che nội dung ở màn ứng dụng gần đây, icon
+đơn sắc. Mô tả ngắn của Play nhắc "widget" nên không dùng lại cho App Store. Khi có bản iOS của các tính năng này (việc riêng, SPEC
+mục 4) thì mới thêm vào đây.
 
 ## Age Rating (bảng câu hỏi mới của Apple, từ 2025: 4+, 9+, 13+, 16+, 18+)
 Trả lời đề xuất (mọi câu theo tần suất chọn **None**, mọi câu có/không chọn **No**):
@@ -153,7 +170,9 @@ Kiểm lại câu chữ thật của bảng hỏi trong App Store Connect khi đ
   thời gian phục vụ yêu cầu tức thời):
   - Không có máy chủ, không có mã gọi mạng trong `lib/` (không gói `http`, `dio`, `HttpClient`, WebView — kiểm 2026-11-04).
   - Không SDK bên thứ ba thu dữ liệu: các gói dùng (`drift`/SQLite, `flutter_secure_storage`, `share_plus`, `file_picker`,
-    `path_provider`, `package_info_plus`, `url_launcher`, `fl_chart`) chỉ chạy trên máy (SBOM `docs/sbom/vigon.cdx.json`).
+    `path_provider`, `package_info_plus`, `url_launcher`, `fl_chart`, `crypto`, `cryptography`, `flutter_local_notifications`,
+    `timezone`, `flutter_timezone`, `material_symbols_icons`) chỉ chạy trên máy (SBOM `docs/sbom/vigon.cdx.json`).
+  - Nhắc ghi chép (bản 1.2) là thông báo cục bộ do iOS lên lịch trên máy, không qua máy chủ, không push (APNs), không chứa số liệu.
   - File sao lưu/CSV chỉ rời máy khi người dùng tự chọn đích trong share sheet; nhà phát triển không nhận.
   - Sao lưu iCloud của iPhone do Apple và người dùng kiểm soát, nhà phát triển không truy cập → không tính là "thu thập".
   - Không theo dõi (tracking) → không cần App Tracking Transparency.
@@ -161,11 +180,24 @@ Kiểm lại câu chữ thật của bảng hỏi trong App Store Connect khi đ
   `NSPrivacyCollectedDataTypes` rỗng (đã kiểm 2026-11-04); các plugin tự kèm manifest riêng.
 - Nếu sau này thêm SDK báo crash, analytics, đồng bộ đám mây → nhãn này SAI, phải khai lại trước khi nộp bản đó.
 
-## Export compliance (mã hoá)
-- `ITSAppUsesNonExemptEncryption = NO` trong `Info.plist` (khi có khoá này, App Store Connect không hỏi lại mỗi build).
-- Lý do: app không tự mã hoá dữ liệu và không kết nối mạng. Băm PIN SHA-256 có muối (gói `crypto`) là hàm băm để xác thực,
-  thuộc diện miễn trừ; Keychain là mã hoá của hệ điều hành. Không cần tài liệu ERN/CCATS, không cần nộp báo cáo năm.
-- Pháp: không phải nộp khai báo mã hoá cho Pháp (không dùng mã hoá ngoài hệ điều hành).
+## Export compliance (mã hoá) — ⚠ PHẢI XÁC NHẬN LẠI KHI NỘP
+- Hiện tại: `ITSAppUsesNonExemptEncryption = NO` trong `ios/Runner/Info.plist` (khi có khoá này, App Store Connect không hỏi lại mỗi build).
+- **Khác bản 1.0:** từ bản 1.1/1.2 app CÓ tự mã hoá: tuỳ chọn đặt mật khẩu cho file sao lưu `.vigon` (F-21, D-012) — AES-256-GCM,
+  khoá từ PBKDF2-HMAC-SHA256, gói Dart `cryptography` (không dùng mã hoá của iOS). Câu "app không tự mã hoá dữ liệu" ở bản nháp cũ
+  KHÔNG còn đúng. (Sao lưu tự động F-24 cũng mã hoá nhưng chỉ có trên Android.)
+- Đề xuất vẫn trả lời **NO / miễn trừ**, lý do:
+  1. Chỉ dùng thuật toán chuẩn quốc tế (AES-GCM, PBKDF2, SHA-256), không thuật toán tự chế hay không chuẩn.
+  2. Mã hoá chỉ bảo vệ dữ liệu của chính người dùng trong file họ tự xuất; chức năng chính của app là ghi chép thu chi, không phải
+     bảo mật thông tin hay truyền thông → thuộc ngoại lệ "mã hoá chỉ hỗ trợ chức năng chính" của Category 5 Part 2 (EAR/Wassenaar).
+  3. Không truyền dữ liệu qua mạng (không mã nguồn gọi mạng, không kênh bảo mật nào); không cho người dùng mã hoá dữ liệu tuỳ ý
+     ngoài file sao lưu của app.
+  4. Băm PIN SHA-256 có muối (gói `crypto`) là hàm băm để xác thực; Keychain là mã hoá của hệ điều hành.
+- **Việc khi nộp (phiên điều phối #3):** đọc lại bảng hỏi export compliance hiện hành trong App Store Connect và tài liệu Apple
+  "Complying with encryption export regulations". Nếu bảng hỏi xếp "dùng thuật toán mã hoá chuẩn thay cho hoặc ngoài mã hoá của
+  iOS" là không miễn trừ hoặc cần tài liệu, thì: đổi khoá thành `YES` (việc của phiên code), trả lời bảng hỏi đúng thực tế, làm
+  giấy tờ Apple yêu cầu (có thể là tự phân loại mass market / báo cáo năm với BIS). Ghi kết quả vào COMPLIANCE P-01..P-05.
+- **Pháp:** bản nháp cũ ghi "không phải khai báo vì không dùng mã hoá ngoài hệ điều hành" — nay app có mã hoá ngoài hệ điều hành,
+  phải kiểm lại nghĩa vụ khai báo phương tiện mã hoá với ANSSI (hoặc chọn không phân phối ở Pháp) trước khi mở bán ở Pháp.
 
 ## Thông tin cho App Review (App Review Information)
 - Sign-in required: **No** (không có tài khoản).
@@ -175,12 +207,14 @@ Kiểm lại câu chữ thật của bảng hỏi trong App Store Connect khi đ
   Ví Gọn is a fully offline personal expense tracker. There is no account, no server and no network access; all data stays on the device.
   To try it: tap − or + on the home screen, type an amount, choose a category, Save.
   PIN lock: Settings > Lock with PIN (4 digits, entered twice). The PIN only hides the app UI; data is not encrypted, and the app says so.
-  Backup: Settings > Export backup opens the iOS share sheet (Save to Files). Settings > Restore from backup opens the Files picker for a .vigon file.
+  Backup: Settings > Export backup opens the iOS share sheet (Save to Files); you can optionally set a password, which encrypts the file on the device. Settings > Restore from backup opens the Files picker for a .vigon file.
+  Daily reminder (off by default): Settings > Daily reminder shows a short explanation, then the iOS notification permission prompt. The notification is scheduled locally on the device and contains no figures.
   The app is free, has no in-app purchases and no ads.
   ```
 
 ## Ảnh chụp và icon
 - Kích thước, số lượng, kịch bản dữ liệu mẫu: `store/screenshots-spec.md`. Chụp ở phiên điều phối #3 với UI mới.
+  Ảnh iPhone KHÔNG được có widget, mục Sao lưu tự động hay công tắc che nội dung (chỉ Android, D-019).
 - Icon App Store 1024×1024: `AppIcon` hiện là `icon-512.png` phóng lên 1024 (**hơi mờ**, theo phiên nền iOS). Trước khi nộp,
   xuất bản 1024×1024 gốc từ canvas Design (logo D-009, `store/brand/README.md`) — PNG vuông, **không trong suốt, không bo góc**.
 - App Preview (video): không làm ở bản 1.

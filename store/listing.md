@@ -2,7 +2,7 @@
 
 Bản nháp để dán vào Google Play Console ở phiên điều phối #3. Người dùng duyệt tên và nội dung trước khi nộp.
 Bản App Store tương ứng: `store/app-store.md` (giữ hai bản thống nhất: sửa một bên thì sửa bên kia).
-Không sao chép tên, icon, mô tả hay ảnh của app khác (SPEC mục 7). Rà lại 2026-11-04; gộp nội dung bản 1.2 (SPEC-1.2: sao lưu tự động, nhắc ghi chép, widget) 2026-11-04 — phiên điều phối sẽ viết lại toàn bộ sau khi gộp nhánh.
+Không sao chép tên, icon, mô tả hay ảnh của app khác (SPEC mục 7). Rà lại 2026-11-04; gộp nội dung bản 1.2 (`docs/SPEC.md` mục 3c: sao lưu tự động, nhắc ghi chép, widget) 2026-11-04; rà lại 2026-11-05 sau khi gộp nhánh (D-019): mọi tính năng mô tả ở đây đều có trên Android, nên bản Play giữ nguyên nội dung. Phiên điều phối #3 duyệt lần cuối trước khi nộp.
 
 ## Tên (≤ 30 ký tự)
 - Tiếng Việt: **Ví Gọn: Ghi Thu Chi** (19)
@@ -93,6 +93,8 @@ Free. No in-app purchases.
 
 Khác bản App Store có chủ đích: Android tắt sao lưu hệ thống (`allowBackup=false`) — app không tự sao lưu lên đám mây của Google (sao lưu tự động của app chỉ ghi vào thư mục người dùng chọn);
 iOS thì dữ liệu nằm trong sao lưu iPhone nếu người dùng bật (xem `store/app-store.md`). TalkBack ↔ VoiceOver.
+Widget, sao lưu tự động, che nội dung ở màn ứng dụng gần đây và icon đơn sắc **chỉ có trên Android** (D-019): có trong bản Play, KHÔNG có trong bản App Store.
+Nhắc ghi chép, mật khẩu file sao lưu, tìm kiếm, ẩn tài khoản, ngân sách theo danh mục, đủ tiền tệ ISO có ở cả hai. Mô tả ngắn của Play nhắc "widget" nên không dùng lại cho App Store.
 
 ## Phân loại và giá
 - Danh mục: **Finance** (Tài chính). Thẻ (tags) gợi ý khi Play hỏi: Budget, Expense tracker, Money manager (chọn từ danh sách của Play).
@@ -124,7 +126,7 @@ iOS thì dữ liệu nằm trong sao lưu iPhone nếu người dùng bật (xem
    trong app (Cài đặt → Xóa toàn bộ dữ liệu) hoặc gỡ app.
 - Quyền khai trong app (đúng `AndroidManifest.xml`, tối đa 2, đều tùy chọn): `POST_NOTIFICATIONS` (chỉ xin sau lời giải thích khi người dùng bật Nhắc ghi chép hằng ngày; thông báo cục bộ, không chứa số liệu) và `RECEIVE_BOOT_COMPLETED` (đặt lại lịch nhắc sau khi khởi động lại máy). Không `INTERNET`, không `SCHEDULE_EXACT_ALARM`, không quyền bộ nhớ (thư mục sao lưu chọn qua Storage Access Framework). Plugin thông báo tự thêm `VIBRATE`, manifest đã gỡ (`tools:node="remove"`).
 - Widget: số tiền trên widget chỉ nằm trong bộ nhớ riêng của app và màn hình chờ, mặc định không hiện, luôn ẩn khi khóa PIN bật.
-- Trạng thái kiểm chứng (2026-11-04): sao lưu tự động, thông báo thật, widget và quyền khi chạy thật **CHƯA kiểm chứng** trên máy thật (biên bản `[M]` trong `docs/SPEC.md`). Phải kiểm bản APK/AAB phát hành (danh sách quyền sau khi gộp manifest) trước khi khai Data safety và nộp.
+- Trạng thái kiểm chứng (2026-11-04): sao lưu tự động, thông báo thật, widget và quyền khi chạy thật **CHƯA kiểm chứng** trên máy thật (AC `[M]` trong `docs/SPEC.md` mục 3c; bước thử M-1..M-7 trong `docs/TESTING.md`). Phải kiểm bản APK/AAB phát hành (danh sách quyền sau khi gộp manifest) trước khi khai Data safety và nộp.
 - Đối chiếu nguồn: `docs/SECURITY.md` (bản đồ dữ liệu), SBOM `docs/sbom/vigon.cdx.json`, `aapt2 dump permissions` (không có INTERNET).
 - Hành động do người dùng chủ động (chọn đích trong bảng chia sẻ để gửi file sao lưu/CSV, chọn thư mục sao lưu tự động) không tính là app thu thập/chia sẻ.
 - Sai lệch phải sửa ngay: thêm SDK crash/analytics, đồng bộ đám mây, quyền INTERNET → khai lại trước khi phát hành bản đó.

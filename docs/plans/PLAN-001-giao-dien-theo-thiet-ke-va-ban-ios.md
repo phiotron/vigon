@@ -1,24 +1,24 @@
-# PLAN-001 · Giao diện theo thiết kế và bản iOS — APP-001
+# PLAN-001 · Giao diện theo thiết kế và bản iOS — A002-vigon (lập khi app còn là APP-001 ở DemoChung)
 
 Đã duyệt: 2026-11-04
 Ngày tạo: 2026-11-04
-Trạng thái: đang làm (T1–T4 xong, T5 và T6 xong phần code; còn so ảnh, thử máy, build iOS)
-Liên quan SPEC: mục 4 và 5 (iOS vào phạm vi, giao diện theo `design-mobile/screens/`); mọi F-01…F-13 giữ nguyên chức năng. D-010, D-011.
+Trạng thái: T1–T4 xong, T5 và T6 xong phần code; gộp vào `main` 2026-11-05 cùng bản 1.2 (D-019). Còn so ảnh, thử máy, build iOS.
+Liên quan SPEC: mục 4 và 5 (iOS vào phạm vi, giao diện theo `design/current/screens/`); mọi F-01…F-13 giữ nguyên chức năng (F-14…F-26 của bản 1.2 gộp vào sau, cùng giao diện này; trên iOS theo D-019). D-010, D-011, D-017, D-018, D-019.
 
 ## 1. Mục tiêu và lý do
-Bộ thiết kế mobile đã duyệt (`design-mobile/screens/`) dùng chung iPhone và Android. App hiện là Flutter làm xong G1–G6 nhưng theme sinh màu tự động (`fromSeed`), font và icon mặc định, và chỉ có Android. Mục tiêu: mọi màn giống bản vẽ (màu, chữ, icon, khoảng cách, sáng/tối) và chạy được trên iPhone từ cùng codebase, không đổi logic hay dữ liệu.
+Bộ thiết kế mobile đã duyệt (`design/current/screens/`) dùng chung iPhone và Android. App hiện là Flutter làm xong G1–G6 nhưng theme sinh màu tự động (`fromSeed`), font và icon mặc định, và chỉ có Android. Mục tiêu: mọi màn giống bản vẽ (màu, chữ, icon, khoảng cách, sáng/tối) và chạy được trên iPhone từ cùng codebase, không đổi logic hay dữ liệu.
 
 Người dùng chọn (2026-11-04): giữ Flutter, không viết lại bằng Ionic + Capacitor; build iOS trên cloud vì máy phát triển là Windows.
 
 ## 2. Phạm vi
 - Làm: theme từ token; font Be Vietnam Pro; icon Material Symbols Rounded; dựng lại thành phần dùng chung và 16 nhóm màn S01–S16 theo bản vẽ; lịch "Khoảng tùy chọn" trong bảng kéo (2.5); thêm nền tảng iOS, cấu hình Info.plist, privacy manifest, CI build iOS không ký.
-- KHÔNG làm: đổi chức năng, dữ liệu, định dạng file sao lưu; tab bar (README thiết kế cấm); logo (D-009 đã có); nộp App Store, ký iOS (việc của người dùng); chụp lại ảnh store (ghi BACKLOG).
+- KHÔNG làm: đổi chức năng, dữ liệu, định dạng file sao lưu; tab bar (README thiết kế cấm); logo (D-009 đã có); nộp App Store, ký iOS (việc của người dùng); chụp lại ảnh store (việc của phiên điều phối #3 Phát hành, ghi trong `APP.md`).
 
 ## 3. Tiêu chí chấp nhận
 - UI-01: Khi xem bất kỳ màn nào ở sáng và tối, màu nền, chữ, nút, viền lấy từ token trong `tokens.json` (không còn `ColorScheme.fromSeed`, không mã màu gõ tay trong widget ngoài file sinh). [T: test so màu theme với token]
 - UI-02: Chữ giao diện là Be Vietnam Pro đóng trong app, số tiền dùng số đều độ rộng; app vẫn không có quyền INTERNET. [T + aapt2]
 - UI-03: Icon chức năng và 31 icon danh mục là Material Symbols Rounded đúng danh sách trong `design-system-guide.md`; khóa icon cũ trong dữ liệu hoặc file sao lưu cũ vẫn hiện icon. [T]
-- UI-04: Mỗi khung trong `design-mobile/screens/components/S01…S16` có màn tương ứng khớp bố cục, kích thước (vùng chạm 48/56/64, bo góc, lề 16) và chữ. [M: so ảnh chụp widget test 360×800 với `xem/*.html`]
+- UI-04: Mỗi khung trong `design/current/screens/components/S01…S16` có màn tương ứng khớp bố cục, kích thước (vùng chạm 48/56/64, bo góc, lề 16) và chữ. [M: so ảnh chụp widget test 360×800 với `xem/*.html`]
 - UI-05: Mọi test cũ (116) và `g6_accessibility_test` vẫn đạt ở sáng/tối, 100%/200%; tương phản các cặp token đang dùng đạt 4,5:1 cho chữ, 3:1 cho viền và icon. [T]
 - UI-06: Chọn "Khoảng tùy chọn" mở lịch trong bảng kéo, chọn ngày đầu và cuối thì kỳ đổi đúng. [T]
 - iOS-01: `flutter build ios --release --no-codesign` đạt trên máy macOS của CI. [CI]
@@ -52,8 +52,8 @@ Mỗi giai đoạn xong: `flutter analyze` sạch, `dart format lib test`, `flut
 ## 7. Kiểm thử và thử máy thật
 - Test mới: theme khớp token, tương phản, khóa icon cũ, lịch khoảng tùy chọn, xóa PIN cũ khi DB mới.
 - Thử tay: Galaxy A13 (Android 14, 32-bit, không build `--target-platform`) sau T5; iPhone thật qua TestFlight sau T6 (người dùng, VoiceOver và cỡ chữ lớn nhất).
-- Cuối: `/check-ac APP-001` → `/spec-review APP-001 PLAN-001` → người dùng chọn gộp nhánh.
+- Cuối: kiểm từng AC → rà SPEC theo kế hoạch → người dùng chọn gộp nhánh (lúc lập kế hoạch dùng lệnh của DemoChung; ở xưởng là việc của phiên điều phối). Người dùng đã chọn gộp 2026-11-05 (D-019).
 
 ## 8. Câu hỏi còn mở
-- Dịch vụ build iOS: bước build KHÔNG ký chạy bằng GitHub Actions (job `ios` trong `.github/workflows/ci.yml`, cần đẩy lên remote); Codemagic hay GitHub Actions cho bước ký và TestFlight còn chờ người dùng.
-- (Đã quyết 2026-11-04, D-013) Chọn danh mục ở màn ghi khoản: giữ lưu ngay theo AC-02; bản vẽ 3.3 lệch ở điểm này.
+- (Đã quyết, cập nhật khi gộp 2026-11-05) Dịch vụ build iOS: GitHub Actions. Build KHÔNG ký: `.github/workflows/ios.yml` của `main` (job `ios` trong `ci.yml` của nhánh này đã bỏ vì trùng); ký + TestFlight: `.github/workflows/release-ios.yml` (chưa chạy thật). Xem D-011.
+- (Đã quyết 2026-11-04, D-018; trên nhánh `feature/PLAN-001` là D-013, đánh số lại khi gộp) Chọn danh mục ở màn ghi khoản: giữ lưu ngay theo AC-02; bản vẽ 3.3 lệch ở điểm này.

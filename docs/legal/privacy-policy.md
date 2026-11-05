@@ -7,8 +7,16 @@
 >   → **có trong sao lưu iCloud/máy tính** nếu người dùng bật; PIN qua `flutter_secure_storage` 11.2.0 mặc định
 >   (Android: khoá của Android Keystore; iOS: Keychain, `accessibility = unlocked`, `synchronizable = false`); file xuất ghi vào
 >   thư mục tạm (`getTemporaryDirectory`) rồi mở share sheet (`share_plus`); khôi phục qua `file_picker`.
->   Nếu code đổi (ví dụ loại DB khỏi sao lưu iCloud, xoá PIN khi cài lại) thì sửa mục 2 cho khớp.
-> - Bản 1.2 (gộp vào `main` 2026-11-04): thêm nhắc ghi chép (thông báo cục bộ), sao lưu tự động vào thư mục chọn (SAF, chỉ Android), widget (chỉ Android), mật khẩu file sao lưu, che nội dung đa nhiệm. Các tính năng này CHƯA kiểm chứng trên máy thật; nếu ngày đăng khác ngày hiệu lực thì sửa cho khớp.
+>   Nếu code đổi (ví dụ loại DB khỏi sao lưu iCloud) thì sửa mục 2 cho khớp.
+> - Cập nhật 2026-11-05 (gộp bản 1.2 với giao diện/iOS của PLAN-001): **app tự xoá PIN cũ khi cài lại với dữ liệu mới** (D-017:
+>   mã cài đặt `pin_install_id` trong bộ nhớ an toàn phải khớp `pinInstallId` trong bảng settings, lệch thì xoá PIN; `lib/src/data/pin_service.dart`,
+>   `clearIfReinstalled`) → đã sửa mục 2 và mục 7 (bỏ câu "app có thể hỏi PIN cũ"). PIN đặt trước bản có mã này thì giữ nguyên, nhưng bản
+>   iOS chưa phát hành nên người dùng iPhone không gặp trường hợp đó. Khôi phục iPhone từ sao lưu: DB và Keychain có thể về cùng nhau nên
+>   PIN vẫn còn — viết là "có thể" vì CHƯA kiểm chứng trên Keychain thật (D-017 "Hệ quả").
+> - Bản 1.2 (gộp vào `main` 2026-11-04, áp cho iOS theo D-019 ngày 2026-11-05): thêm nhắc ghi chép (thông báo cục bộ, **cả Android và iPhone**),
+>   sao lưu tự động vào thư mục chọn (SAF, **chỉ Android**), widget (**chỉ Android**), mật khẩu file sao lưu (cả hai), che nội dung đa nhiệm
+>   (`FLAG_SECURE`, **chỉ Android** — mục 9 ghi rõ). Trên iOS các mục cài đặt chỉ-Android bị ẩn. Các tính năng này CHƯA kiểm chứng trên máy
+>   thật; nếu ngày đăng khác ngày hiệu lực thì sửa cho khớp.
 > - Không phải tư vấn pháp lý; luật sư nên đọc lại trước khi mở bán (COMPLIANCE D-07, D-09).
 > - Thay `[Tên nhà phát triển]` bằng **đúng tên hiển thị trên Google Play và App Store** (tài khoản cá nhân → họ tên thật), điền ngày hiệu lực.
 > - **Nơi đăng (gợi ý, người dùng tự đăng):**
@@ -38,7 +46,7 @@ Những gì bạn nhập (khoản thu, khoản chi, danh mục, tài khoản, gh
 - **Android:** app tắt tính năng sao lưu tự động của chính Android (`allowBackup=false`), nên dữ liệu không tự được đưa lên đám mây.
 - **iPhone:** như mọi app khác, dữ liệu của Ví Gọn nằm trong bản sao lưu iPhone nếu bạn bật Sao lưu iCloud hoặc sao lưu iPhone bằng máy tính. Bản sao lưu đó do Apple và bạn quản lý theo chính sách của Apple; nhà phát triển không truy cập được.
 
-Nếu bạn bật khóa bằng mã PIN, app chỉ lưu một giá trị băm có muối của mã PIN, không lưu mã PIN gốc. Trên Android, giá trị này nằm trong bộ nhớ an toàn được bảo vệ bằng Android Keystore. Trên iPhone, nó nằm trong Keychain của máy, không đồng bộ qua iCloud Keychain. Lưu ý trên iPhone: iOS có thể giữ mục Keychain này cả sau khi bạn gỡ app; nếu cài lại, app có thể hỏi mã PIN cũ. Khi đó bạn dùng "Quên mã" để xóa dữ liệu trong app và mã PIN.
+Nếu bạn bật khóa bằng mã PIN, app chỉ lưu một giá trị băm có muối của mã PIN, không lưu mã PIN gốc. Trên Android, giá trị này nằm trong bộ nhớ an toàn được bảo vệ bằng Android Keystore. Trên iPhone, nó nằm trong Keychain của máy, không đồng bộ qua iCloud Keychain. iOS có thể giữ mục Keychain này cả sau khi bạn gỡ app; khi bạn cài lại và app bắt đầu với dữ liệu trống, app tự nhận ra điều đó và xóa mã PIN cũ, nên bạn không bị khóa bằng mã PIN của lần cài trước. Nếu bạn khôi phục iPhone từ bản sao lưu iCloud hoặc máy tính, dữ liệu của app và mã PIN có thể được khôi phục cùng nhau; khi đó app vẫn hỏi mã PIN bạn đã đặt.
 
 **Widget màn hình chính (chỉ Android).** Nếu bạn thêm widget, widget luôn có hai nút "Chi" và "Thu" để mở nhanh màn nhập khoản. Mặc định widget không hiện số tiền nào. Chỉ khi bạn tự bật "Hiện số tiền trên widget" VÀ không dùng khóa PIN thì widget mới hiện số đã chi trong tháng (và hạn mức nếu bạn đã đặt ngân sách tháng). Khi khóa PIN đang bật, widget luôn ẩn số tiền. Số liệu này chỉ nằm trong bộ nhớ riêng của app và trên màn hình chờ của bạn; không gửi đi đâu, và bị xóa khi bạn tắt công tắc hoặc bật PIN. Khi công tắc đang bật, ai cầm máy của bạn cũng có thể thấy số trên màn hình chờ.
 
@@ -59,13 +67,13 @@ Màn "Giới thiệu" có thể mở trình duyệt (để xem chính sách này
 Khi bạn tải app qua Google Play hoặc App Store, Google hoặc Apple có thể thu thập thông tin về việc cài đặt và sự cố app theo chính sách của họ và cài đặt trên máy bạn (ví dụ tùy chọn chia sẻ dữ liệu phân tích với nhà phát triển trên iPhone). Nhà phát triển chỉ thấy số liệu tổng hợp, ẩn danh trong Play Console và App Store Connect và không thể dùng chúng để nhận ra bạn.
 
 **7. Quyền của bạn**
-Vì dữ liệu chỉ nằm trên máy bạn, bạn tự thực hiện mọi quyền ngay trong app: xem và sửa từng khoản; xuất toàn bộ dữ liệu ra file (sao lưu hoặc CSV); xóa toàn bộ dữ liệu (cả mã PIN) trong Cài đặt → "Xóa toàn bộ dữ liệu"; hoặc gỡ app. Gỡ app sẽ xóa dữ liệu trên máy, trừ các file bạn đã tự xuất, bản sao lưu iPhone/iCloud bạn đã tạo trước đó, và mục mã PIN trong Keychain mà iOS có thể giữ lại (mục 2).
+Vì dữ liệu chỉ nằm trên máy bạn, bạn tự thực hiện mọi quyền ngay trong app: xem và sửa từng khoản; xuất toàn bộ dữ liệu ra file (sao lưu hoặc CSV); xóa toàn bộ dữ liệu (cả mã PIN) trong Cài đặt → "Xóa toàn bộ dữ liệu"; hoặc gỡ app. Gỡ app sẽ xóa dữ liệu trên máy, trừ các file bạn đã tự xuất, các file sao lưu tự động trong thư mục bạn chọn (Android) và bản sao lưu iPhone/iCloud bạn đã tạo trước đó. Trên iPhone, iOS có thể giữ lại mục mã PIN trong Keychain sau khi gỡ app; app tự xóa mục này khi được cài lại với dữ liệu mới (mục 2).
 
 **8. Trẻ em**
 Ví Gọn không nhắm tới trẻ em và không thu thập dữ liệu của bất kỳ ai, kể cả trẻ em.
 
 **9. Bảo mật**
-Dữ liệu được bảo vệ bằng cơ chế cách ly app của Android và iOS, khóa PIN tùy chọn và tùy chọn che nội dung ở màn hình ứng dụng gần đây. Khóa PIN giúp ngăn người khác mở app trên máy bạn, nhưng không mã hóa dữ liệu. Khi chưa bật tùy chọn che nội dung, ảnh xem trước của app trong màn đa nhiệm có thể hiện số liệu đang mở. Nếu bạn phát hiện lỗ hổng bảo mật, hãy gửi email tới địa chỉ ở mục 11.
+Dữ liệu được bảo vệ bằng cơ chế cách ly app của Android và iOS, khóa PIN tùy chọn và (chỉ trên Android) tùy chọn che nội dung ở màn hình ứng dụng gần đây. Khóa PIN giúp ngăn người khác mở app trên máy bạn, nhưng không mã hóa dữ liệu. Trên Android khi chưa bật tùy chọn che nội dung, và trên iPhone (bản hiện tại chưa có tùy chọn này), ảnh xem trước của app trong màn đa nhiệm có thể hiện số liệu đang mở. Nếu bạn phát hiện lỗ hổng bảo mật, hãy gửi email tới địa chỉ ở mục 11.
 
 **10. Thay đổi chính sách**
 Nếu Ví Gọn thay đổi cách xử lý dữ liệu (ví dụ thêm tính năng cần Internet), chúng tôi sẽ cập nhật chính sách này và ngày hiệu lực trước khi phát hành bản có thay đổi.
@@ -91,7 +99,7 @@ What you enter (income, expenses, categories, accounts, notes, budget, recurring
 - **Android:** the app turns off Android's own automatic backup (`allowBackup=false`), so your data is not uploaded to the cloud on its own.
 - **iPhone:** like any other app, Ví Gọn's data is included in your iPhone backup if you turn on iCloud Backup or back up your iPhone to a computer. Those backups are managed by Apple and you under Apple's policies; the developer cannot access them.
 
-If you turn on the PIN lock, the app stores only a salted hash of your PIN, never the PIN itself. On Android it is kept in secure storage protected by the Android Keystore. On iPhone it is kept in the device Keychain and is not synced through iCloud Keychain. Note for iPhone: iOS may keep this Keychain item even after you delete the app; if you reinstall, the app may ask for your old PIN. In that case, use "Forgot PIN" to delete the app's data and the PIN.
+If you turn on the PIN lock, the app stores only a salted hash of your PIN, never the PIN itself. On Android it is kept in secure storage protected by the Android Keystore. On iPhone it is kept in the device Keychain and is not synced through iCloud Keychain. iOS may keep this Keychain item even after you delete the app; when you reinstall and the app starts with empty data, it detects this and deletes the old PIN, so you are not locked out by the PIN from a previous install. If you restore your iPhone from an iCloud or computer backup, the app's data and the PIN may be restored together; in that case the app still asks for the PIN you set.
 
 **Home screen widget (Android only).** If you add the widget, it always offers two buttons for quick entry of an expense or an income. By default the widget shows no amounts. Only if you turn on "Show amounts on widget" AND do not use the PIN lock does the widget show how much you spent this month (and your limit, if you set a monthly budget). While the PIN lock is on, the widget always hides amounts. These figures live only in the app's private storage and on your home screen; they are not sent anywhere and are erased when you turn the switch off or turn the PIN on. While the switch is on, anyone holding your phone can see the figures on the home screen.
 
@@ -112,13 +120,13 @@ The "About" screen can open your browser (to show this policy) or your email app
 When you install the app from Google Play or the App Store, Google or Apple may collect information about installs and app crashes under their own policies and your device settings (for example, the option on iPhone to share analytics with app developers). The developer sees only aggregated, anonymous figures in Play Console and App Store Connect and cannot use them to identify you.
 
 **7. Your rights**
-Because your data is only on your phone, you exercise every right directly in the app: view and edit each record; export all data to a file (backup or CSV); delete all data (including the PIN) in Settings → "Delete all data"; or uninstall the app. Uninstalling removes the data on the phone, except files you have exported yourself, iPhone/iCloud backups you made earlier, and the PIN Keychain item that iOS may keep (section 2).
+Because your data is only on your phone, you exercise every right directly in the app: view and edit each record; export all data to a file (backup or CSV); delete all data (including the PIN) in Settings → "Delete all data"; or uninstall the app. Uninstalling removes the data on the phone, except files you have exported yourself, automatic backup files in the folder you chose (Android), and iPhone/iCloud backups you made earlier. On iPhone, iOS may keep the PIN Keychain item after you delete the app; the app deletes it when it is reinstalled with fresh data (section 2).
 
 **8. Children**
 Ví Gọn is not directed at children and does not collect data from anyone, including children.
 
 **9. Security**
-Your data is protected by the Android and iOS app sandbox, the optional PIN lock and the option to hide app contents in the recent-apps screen. The PIN lock stops other people from opening the app on your phone, but it does not encrypt the data. Unless that option is on, the app preview in the multitasking screen may show the figures that were open. If you find a security vulnerability, please email the address in section 11.
+Your data is protected by the Android and iOS app sandbox, the optional PIN lock and (on Android only) the option to hide app contents in the recent-apps screen. The PIN lock stops other people from opening the app on your phone, but it does not encrypt the data. On Android unless that option is on, and on iPhone (the current version does not have this option yet), the app preview in the multitasking screen may show the figures that were open. If you find a security vulnerability, please email the address in section 11.
 
 **10. Changes to this policy**
 If Ví Gọn changes how it handles data (for example by adding a feature that needs the Internet), we will update this policy and its effective date before releasing that version.
