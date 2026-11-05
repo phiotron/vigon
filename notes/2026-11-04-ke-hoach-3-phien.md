@@ -3,12 +3,12 @@
 # [A002-vigon] Chuyển Ví Gọn vào Mobile App Studio + kế hoạch 3 phiên điều phối
 
 ## Context
-Ví Gọn (APP-001 bên `D:/DemoChung`) là app Flutter ghi thu chi offline, đã xong G1–G6 ở DemoChung (118 test đạt; còn chờ người dùng: link chính sách, TalkBack, khóa ký). Người dùng muốn:
+Ví Gọn là app Flutter ghi thu chi offline, đã code trước khi vào xưởng (118 test đạt; còn chờ người dùng: link chính sách, TalkBack, khóa ký). Người dùng muốn:
 1. Chuyển hẳn app sang `D:/Mobile App/apps/` và đưa hẳn vào khung xưởng (APP.md, notes/, WORKFLOW §3/§7).
 2. Viết `product.md` (tiếng Anh) mô tả chi tiết tính năng + giao diện để gửi **Claude Design** làm mockup Hi-Fi, theo hướng **nâng cấp từ UI hiện tại**, đúng phạm vi SPEC hiện tại.
 3. Áp mockup và phát hành trên **Android + iOS**. App xong trong **≤ 3 phiên điều phối**. Phiên này là phiên điều phối #1, tách riêng khỏi chat Subnest đang chạy.
 
-Các quyết định đã chốt: mã **`A002-vigon`** (A001 là Subnest). **Di chuyển hẳn** thư mục, **không sửa gì ở DemoChung**. **Giữ** remote `phiotron/vigon`. **Giữ 16 worktree cũ** và sửa liên kết sau khi chuyển. Build iOS bằng **Codemagic**. Tài khoản Apple **chưa có**, sẽ đăng ký (cá nhân). Có iPhone thật. Google Play là **tài khoản cá nhân**, nên phải chạy closed test 12 tester trong 14 ngày. **Không** mang các bài học của DemoChung sang.
+Các quyết định đã chốt: mã **`A002-vigon`** (A001 là Subnest). **Di chuyển hẳn** thư mục, **không sửa gì ở nơi cũ**. **Giữ** remote `phiotron/vigon`. **Giữ 16 worktree cũ** và sửa liên kết sau khi chuyển. Build iOS bằng **Codemagic**. Tài khoản Apple **chưa có**, sẽ đăng ký (cá nhân). Có iPhone thật. Google Play là **tài khoản cá nhân**, nên phải chạy closed test 12 tester trong 14 ngày. **Không** mang các bài học của khung quy trình cũ sang.
 
 Làm việc theo `CLAUDE.md` + `WORKFLOW.md`: phiên điều phối + phiên con (`start_session`), **không dùng subagent**. Các phiên con của cùng một app phải có tập file không chồng nhau.
 
@@ -17,17 +17,17 @@ Làm việc theo `CLAUDE.md` + `WORKFLOW.md`: phiên điều phối + phiên con
 ## Phiên điều phối #1 — Chuyển + product.md (phiên này)
 
 ### Bước điều phối tự làm (tuần tự)
-0. **Điều kiện trước:** người dùng xác nhận không còn phiên Claude, Android Studio hay terminal nào đang mở trong `D:/DemoChung/apps/APP-001-vi-gon`. Chạy `android/gradlew --stop` để nhả khóa file.
-1. **Cấp mã:** thêm dòng `A002-vigon` vào `apps/REGISTRY.md` ngay. Nội dung: Ví Gọn, thu chi offline, `com.phiotron.vigon`, 🔨, repo `phiotron/vigon`, ghi chú "Flutter; vi/en; Android+iOS; chuyển từ DemoChung APP-001". File này đang có dòng A001 chưa commit của phiên Subnest: chỉ thêm dòng của mình, không commit đè phần của phiên kia.
-2. **Di chuyển:** `mv "D:/DemoChung/apps/APP-001-vi-gon" "D:/Mobile App/apps/A002-vigon"`. Cùng ổ D nên đây là đổi tên nguyên khối: nếu còn file bị khóa thì lệnh thất bại và không có gì bị chuyển dở.
+0. **Điều kiện trước:** người dùng xác nhận không còn phiên Claude, Android Studio hay terminal nào đang mở trong thư mục cũ ngoài xưởng. Chạy `android/gradlew --stop` để nhả khóa file.
+1. **Cấp mã:** thêm dòng `A002-vigon` vào `apps/REGISTRY.md` ngay. Nội dung: Ví Gọn, thu chi offline, `com.phiotron.vigon`, 🔨, repo `phiotron/vigon`, ghi chú "Flutter; vi/en; Android+iOS; app đã code trước khi vào xưởng". File này đang có dòng A001 chưa commit của phiên Subnest: chỉ thêm dòng của mình, không commit đè phần của phiên kia.
+2. **Di chuyển:** `mv <thư mục cũ> "D:/Mobile App/apps/A002-vigon"`. Cùng ổ D nên đây là đổi tên nguyên khối: nếu còn file bị khóa thì lệnh thất bại và không có gì bị chuyển dở.
 3. **Sửa git:**
    - `git worktree repair <16 đường dẫn mới trong .claude/worktrees/*>` → kiểm bằng `git worktree list`.
    - Đổi tên `master` → `main` (`git branch -m master main`, upstream `origin/main`; `origin/main` đang chậm 1 commit). **Chưa push**: chỉ push khi người dùng bảo (theo dặn cũ trong app).
 4. **Đưa vào khung xưởng** (theo lựa chọn "chuyển hẳn"):
    - Tạo `APP.md` từ `playbook/templates/APP.md`. Gộp vào đó: mô tả và người dùng (từ `CLAUDE.md` app), MVP và các màn (tóm tắt `docs/SPEC.md` + `ui-spec.md`), việc dở (mục `[ ]` trong `docs/BACKLOG.md`), quyết định D-001..D-009 (sửa D-001 thành **thêm iOS**), mục **Lệnh** và **Lưu ý dễ vấp** (Flutter chưa vào PATH, máy 32-bit BUG-001, không tự dùng adb khi chưa hỏi, test drift trong `runAsync`), và bảng trạng thái "#1 2026-11-04".
-   - Xoá các file quy trình DemoChung sau khi đã gộp: `CLAUDE.md` app, `docs/BACKLOG.md`, `docs/PROMPTS.md`, `docs/RUNBOOK.md`, `docs/plans/`, `.claude/commands/`, `.claude/agents/`. Kiểm `.claude/settings.json`: bỏ hook/permission trỏ tới script DemoChung. Chuyển `RETROSPECTIVE.md` vào `notes/`.
+   - Xoá các file khung quy trình cũ sau khi đã gộp: `CLAUDE.md` app, `docs/BACKLOG.md`, `docs/PROMPTS.md`, `docs/RUNBOOK.md`, `docs/plans/`, `.claude/commands/`, `.claude/agents/`. Kiểm `.claude/settings.json`: bỏ hook/permission trỏ tới script cũ ngoài xưởng. Chuyển `RETROSPECTIVE.md` vào `notes/`.
    - Sắp xếp lại: `docs/store/` → `store/`, còn `ui-spec.md` và `design-mobile/` → `design/current/`. Giữ làm tài liệu tham chiếu: `docs/SPEC.md` (AC dùng cho test), `ARCHITECTURE`, `TESTING`, `SECURITY`, `COMPLIANCE`, `RISKS`, `RELEASE`, `legal/`, `sbom/`, `security/`, `audits/`.
-   - `grep -rn "DemoChung\|\.\./\.\./"` rồi sửa hết các tham chiếu còn sót. Chạy `flutter analyze` + `flutter test` để chắc chắn việc chuyển không làm hỏng gì (vẫn phải 118 test đạt).
+   - `grep -rn "\.\./\.\./"` + tên nơi cũ rồi sửa hết các tham chiếu còn sót. Chạy `flutter analyze` + `flutter test` để chắc chắn việc chuyển không làm hỏng gì (vẫn phải 118 test đạt).
    - Commit `[A002-vigon] move into Mobile App Studio framework` (chỉ `git add` các file cụ thể).
 5. **File cấp xưởng:** thêm dòng A002 vào bảng app và việc của người dùng trong `TASKS.md` (chỉ dòng của A002). Thêm fact `memory/facts/ios-build-codemagic.md` + 1 dòng vào `MEMORY.md`.
 6. Mở 3 phiên con song song (dưới đây) bằng `start_session` (`use_worktree: false`, cwd = `apps/A002-vigon`), mỗi brief theo `playbook/templates/BRIEF-phien-con.md`.
@@ -41,7 +41,7 @@ Làm việc theo `CLAUDE.md` + `WORKFLOW.md`: phiên điều phối + phiên con
 
 ### Điều phối kiểm và đóng #1
 - Đọc kỹ `product.md` (đúng SPEC, đủ màn, đủ trạng thái). Đưa người dùng duyệt **trước khi gửi Claude Design**. Kiểm diff của B (build/test chạy thật) và C.
-- Gộp báo cáo `notes/` vào `APP.md`, `/dong-phien` (session log `memory/sessions/2026-11-04-A002-vigon.md`, METRICS ghi "nhập từ DemoChung, đã qua G1–G6").
+- Gộp báo cáo `notes/` vào `APP.md`, `/dong-phien` (session log `memory/sessions/2026-11-04-A002-vigon.md`, METRICS ghi "app đã code trước khi vào xưởng").
 
 ### Việc của người dùng giữa #1 và #2 (ghi vào TASKS)
 - Gửi `product.md` + `design/current/` sang Claude Design, lưu mockup xuất ra vào `apps/A002-vigon/design/hifi/` (ảnh/HTML theo màn).
@@ -69,6 +69,6 @@ Cổng: `flutter analyze` sạch, `flutter test` đạt (cập nhật widget tes
 ---
 
 ## Kiểm chứng
-- Sau khi chuyển: `git -C apps/A002-vigon worktree list` không còn dòng "prunable"; `git status` sạch (trừ các file đã chủ động sắp xếp); `flutter analyze` + `flutter test` (với `export PATH="/c/src/flutter/bin:$PATH"`) đạt như trước; `grep DemoChung` không còn kết quả nào ngoài ghi chú lịch sử.
-- `D:/DemoChung/apps/APP-001-vi-gon` không còn tồn tại; các file khác của DemoChung không bị đụng tới.
+- Sau khi chuyển: `git -C apps/A002-vigon worktree list` không còn dòng "prunable"; `git status` sạch (trừ các file đã chủ động sắp xếp); `flutter analyze` + `flutter test` (với `export PATH="/c/src/flutter/bin:$PATH"`) đạt như trước; grep tên nơi cũ không còn kết quả nào.
+- Thư mục cũ ngoài xưởng không còn tồn tại; các file khác ở đó không bị đụng tới.
 - Cuối #1: `product.md` đã được người dùng duyệt. B có kết quả build/test thật, hoặc đánh dấu rõ CHƯA kiểm chứng kèm lý do. APP.md, TASKS, REGISTRY phản ánh đúng trạng thái.

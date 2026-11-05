@@ -1,7 +1,7 @@
 # TESTING — Ví Gọn (A002-vigon)
 
 ## Nguyên tắc
-- Mỗi AC trong SPEC (`docs/SPEC.md` mục 3, 3b, 3c; AC-01..AC-64) phải được kiểm chứng bằng ĐÚNG MỘT trong hai cách: test tự động, hoặc kiểm tra tay có ghi biên bản trong `notes/` (biên bản trước khi chuyển xưởng: `notes/archive-demochung/BACKLOG.md`). Ghi rõ ở nhãn [T]/[M] của SPEC.
+- Mỗi AC trong SPEC (`docs/SPEC.md` mục 3, 3b, 3c; AC-01..AC-64) phải được kiểm chứng bằng ĐÚNG MỘT trong hai cách: test tự động, hoặc kiểm tra tay có ghi biên bản trong `notes/` (AC [M] đã kiểm tay trước khi vào xưởng coi là đạt; kiểm lại ở bước D4 thử máy, phiên #2). Ghi rõ ở nhãn [T]/[M] của SPEC.
 - Logic nghiệp vụ, xử lý dữ liệu, định dạng, tính toán: BẮT BUỘC có test tự động.
 - Lỗi đã sửa: nếu khả thi, thêm test chặn lỗi quay lại trước khi coi là xong.
 - Không báo "test đạt" khi chưa chạy lệnh test trong phiên và đọc kết quả.

@@ -1,4 +1,4 @@
-# PLAN-001 · Giao diện theo thiết kế và bản iOS — A002-vigon (lập khi app còn là APP-001 ở DemoChung)
+# PLAN-001 · Giao diện theo thiết kế và bản iOS — A002-vigon (lập trước khi app vào xưởng)
 
 Đã duyệt: 2026-11-04
 Ngày tạo: 2026-11-04
@@ -6,7 +6,7 @@ Trạng thái: T1–T4 xong, T5 và T6 xong phần code; gộp vào `main` 2026-
 Liên quan SPEC: mục 4 và 5 (iOS vào phạm vi, giao diện theo `design/current/screens/`); mọi F-01…F-13 giữ nguyên chức năng (F-14…F-26 của bản 1.2 gộp vào sau, cùng giao diện này; trên iOS theo D-019). D-010, D-011, D-017, D-018, D-019.
 
 ## 1. Mục tiêu và lý do
-Bộ thiết kế mobile đã duyệt (`design/current/screens/`) dùng chung iPhone và Android. App hiện là Flutter làm xong G1–G6 nhưng theme sinh màu tự động (`fromSeed`), font và icon mặc định, và chỉ có Android. Mục tiêu: mọi màn giống bản vẽ (màu, chữ, icon, khoảng cách, sáng/tối) và chạy được trên iPhone từ cùng codebase, không đổi logic hay dữ liệu.
+Bộ thiết kế mobile đã duyệt (`design/current/screens/`) dùng chung iPhone và Android. App hiện là Flutter đã code xong nhưng theme sinh màu tự động (`fromSeed`), font và icon mặc định, và chỉ có Android. Mục tiêu: mọi màn giống bản vẽ (màu, chữ, icon, khoảng cách, sáng/tối) và chạy được trên iPhone từ cùng codebase, không đổi logic hay dữ liệu.
 
 Người dùng chọn (2026-11-04): giữ Flutter, không viết lại bằng Ionic + Capacitor; build iOS trên cloud vì máy phát triển là Windows.
 
@@ -52,7 +52,7 @@ Mỗi giai đoạn xong: `flutter analyze` sạch, `dart format lib test`, `flut
 ## 7. Kiểm thử và thử máy thật
 - Test mới: theme khớp token, tương phản, khóa icon cũ, lịch khoảng tùy chọn, xóa PIN cũ khi DB mới.
 - Thử tay: Galaxy A13 (Android 14, 32-bit, không build `--target-platform`) sau T5; iPhone thật qua TestFlight sau T6 (người dùng, VoiceOver và cỡ chữ lớn nhất).
-- Cuối: kiểm từng AC → rà SPEC theo kế hoạch → người dùng chọn gộp nhánh (lúc lập kế hoạch dùng lệnh của DemoChung; ở xưởng là việc của phiên điều phối). Người dùng đã chọn gộp 2026-11-05 (D-019).
+- Cuối: kiểm từng AC → rà SPEC theo kế hoạch → người dùng chọn gộp nhánh (ở xưởng là việc của phiên điều phối). Người dùng đã chọn gộp 2026-11-05 (D-019).
 
 ## 8. Câu hỏi còn mở
 - (Đã quyết, cập nhật khi gộp 2026-11-05) Dịch vụ build iOS: GitHub Actions. Build KHÔNG ký: `.github/workflows/ios.yml` của `main` (job `ios` trong `ci.yml` của nhánh này đã bỏ vì trùng); ký + TestFlight: `.github/workflows/release-ios.yml` (chưa chạy thật). Xem D-011.

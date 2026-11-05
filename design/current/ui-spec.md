@@ -606,7 +606,7 @@ Mọi lỗi nhập liệu hiện ngay trên màn, không dùng hộp thoại; kh
 
 ## 9. Hạn chế và điểm lệch đã biết
 
-Ghi theo code hiện tại; chi tiết và mức độ nằm ở `APP.md` mục "Việc dở" (lịch sử đầy đủ: `notes/archive-demochung/BACKLOG.md`).
+Ghi theo code hiện tại; chi tiết và mức độ nằm ở `APP.md` mục "Việc dở".
 
 - **Chưa có:** đồng bộ hai chiều giữa nhiều máy qua đám mây (cần khóa OAuth do người dùng tạo; chỉ có sao lưu một chiều vào thư mục đã chọn, F-24), widget hiện số tiền khi PIN bật (làm lộ số liệu), quy đổi tỉ giá nhiều tiền tệ, bản iOS của widget, sao lưu tự động và che nội dung (D-019) (xem `docs/SPEC.md` mục 4). Ẩn tài khoản không tự dừng các chuỗi định kỳ đang trỏ tới nó (chuỗi vẫn sinh khoản vào tài khoản ẩn).
 - **PIN:** không đếm lần nhập sai, không làm chậm; giờ ra nền lấy từ đồng hồ máy nên đổi giờ máy có thể qua được hạn 1 phút. PIN chỉ chặn người cầm máy, không mã hóa dữ liệu (D-007).

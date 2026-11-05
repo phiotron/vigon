@@ -48,7 +48,7 @@ Tự đánh giá của Claude từ mã và test, không phải kiểm thử xâm
 
 ## Tiếp nhận và xử lý lỗ hổng (COMPLIANCE S-05, D-08)
 - Kênh: email `phamphuongphuong@gmail.com`, hiện trong app (Cài đặt → Giới thiệu → Báo lỗi bảo mật, mở sẵn email có tiêu đề) và trong chính sách quyền riêng tư mục 9, 11.
-- Thủ tục: (1) xác nhận đã nhận trong 3 ngày làm việc; (2) tái hiện và đánh giá mức độ trong 7 ngày; (3) lỗi nghiêm trọng (lộ dữ liệu, vượt khóa PIN) thì phát hành bản sửa sớm nhất có thể và ghi BUG-xxx trong `APP.md` mục "Việc dở" kèm báo cáo trong `notes/` (BUG-001..013 cũ: `notes/archive-demochung/BACKLOG.md`); (4) báo lại người báo khi đã sửa.
+- Thủ tục: (1) xác nhận đã nhận trong 3 ngày làm việc; (2) tái hiện và đánh giá mức độ trong 7 ngày; (3) lỗi nghiêm trọng (lộ dữ liệu, vượt khóa PIN) thì phát hành bản sửa sớm nhất có thể và ghi BUG-xxx trong `APP.md` mục "Việc dở" kèm báo cáo trong `notes/`; (4) báo lại người báo khi đã sửa.
 - Sự cố dữ liệu: nhà phát triển không giữ dữ liệu người dùng nên không có kho dữ liệu nào để rò rỉ; rủi ro còn lại là lỗi trong app làm lộ dữ liệu trên máy, xử lý theo thủ tục trên. Nếu bán ở EU và thuộc phạm vi CRA thì thêm cảnh báo sớm 24 giờ, thông báo 72 giờ (S-06, chờ luật sư).
 
 ## Rà soát trước phát hành

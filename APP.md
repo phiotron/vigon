@@ -1,8 +1,7 @@
 # A002-vigon · Ví Gọn — APP.md
 
 > Brief + trạng thái của app. **Chỉ phiên điều phối sửa file này**; phiên con ghi báo cáo vào `notes/`.
-> App **nhập từ DemoChung** (APP-001, đã qua G1–G6 ở đó 2026-11-03..04). Lịch sử quy trình cũ (BACKLOG đầy đủ,
-> biên bản thử máy, lỗi đã sửa BUG-001..013, RUNBOOK, retro): `notes/archive-demochung/` — chỉ đọc.
+> App **đã code trước khi vào xưởng** (đủ F-01..F-26, có test).
 
 ## Brief
 - **Mã app / thư mục:** `A002-vigon` → `apps/A002-vigon/` — đã ghi trong `apps/REGISTRY.md`
@@ -33,7 +32,7 @@ Luồng nhanh nhất: Màn chính → chạm icon danh mục (hoặc −/+) → 
 ## Trạng thái
 | Phiên điều phối | Ngày | Phiên con đã mở | Kết quả |
 |---|---|---|---|
-| #1 Chuyển + gộp + product.md | 2026-11-04..05 | product.md · nền iOS + CI · store & pháp lý · gộp 2 nhánh (+2 phụ) · iOS mã hoá/iCloud · tài liệu D-020/021 | ✅ Xong: chuyển, gộp bản 1.2 + PLAN-001, 364 test, CI Android + iOS xanh, product.md v2 duyệt. Nhật ký: `memory/sessions/2026-11-05-A002-vigon.md` (repo xưởng) |
+| #1 Nhận app + gộp + product.md | 2026-11-04..05 | product.md · nền iOS + CI · store & pháp lý · gộp 2 nhánh (+2 phụ) · iOS mã hoá/iCloud · tài liệu D-020/021 | ✅ Xong: nhận app, gộp bản 1.2 + PLAN-001, 364 test, CI Android + iOS xanh, product.md v2 duyệt. Nhật ký: `memory/sessions/2026-11-05-A002-vigon.md` (repo xưởng) |
 | #2 Áp UI Hi-Fi + test 2 nền tảng | | D0 theme/arb → D1, D2, D3 song song → D4 thử máy | |
 | #3 Phát hành | | E ảnh store · F Android · G iOS | |
 
@@ -74,6 +73,8 @@ Flutter 3.47.8 ở `C:/src/flutter`, **chưa có trong PATH**. Git Bash: `export
 - **Máy thử Galaxy A13 (SM-A135F, Android 14) chỉ chạy 32-bit** → không build APK chỉ arm64.
 - **Không tự dùng adb trên điện thoại khi chưa hỏi.** Máy thử là máy người dùng đang dùng, có phiên khác (app khác) điều khiển cùng máy: trước mỗi lần chạm kiểm `mCurrentFocus` là Ví Gọn, không gộp nhiều lần chạm vào một lệnh. Dữ liệu Ví Gọn trên máy là dữ liệu MẪU chụp store.
 - `kotlin.incremental=false` trong `android/gradle.properties` là cố ý (BUG-002: dự án ổ D, pub cache ổ C).
+- Flutter bật deep link mặc định khi manifest thiếu khoá → giữ meta-data `flutter_deeplinking_enabled`=false (`test/manifest_deeplink_test.dart` canh); route `:id` dùng `int.tryParse`, sai thì về `/`.
+- Nhiều phiên cùng chạy `flutter test`/`build` trong một thư mục sẽ khoá `build/native_assets/windows/sqlite3.dll` → mỗi phiên chỉ chạy test của mình; test + build toàn bộ một lần ở cuối.
 - PIN 4 số chỉ chặn người tò mò, không mã hoá dữ liệu (D-007). File `.vigon` là JSON thường (D-006).
 - Chỉ push lên GitHub khi người dùng bảo.
 
@@ -85,8 +86,8 @@ Flutter 3.47.8 ở `C:/src/flutter`, **chưa có trong PATH**. Git Bash: `export
 - **D-007** PIN băm có muối trong bộ nhớ an toàn, màn khoá phủ lên app. · **D-008** Liên hệ ở `app_info.dart`; bố cục co theo cỡ chữ; test a11y tự động.
 - **D-009** Logo "hai thẻ xếp chồng".
 - **D-010..D-019** (sau gộp): D-010 UI từ token · D-011 iOS build cloud (CI dùng `ios.yml`) · D-012..D-016 của bản 1.1/1.2 · D-017 mã cài đặt PIN/phát hiện cài lại iOS · D-018 giữ chọn danh mục = lưu luôn · D-019 gộp nhánh, tính năng 1.2 chỉ Android trên iOS ẩn.
-- **2026-11-05** Gộp cả hai nhánh song song vào main; gỡ hook pre-commit DemoChung (bản sao ở `D:/Mobile App/work/`). Nhánh/worktree cũ giữ nguyên.
-- **2026-11-04** Chuyển từ DemoChung sang xưởng, mã `A002-vigon`; giữ repo `phiotron/vigon`; giữ worktree cũ trong `.claude/worktrees/` (bị gitignore).
+- **2026-11-05** Gộp cả hai nhánh song song vào main; gỡ hook pre-commit cũ (chặn nhầm chữ "password"). Nhánh/worktree cũ giữ nguyên.
+- **2026-11-04** Nhận app đã code sẵn vào xưởng, mã `A002-vigon`; giữ repo `phiotron/vigon`; giữ worktree cũ trong `.claude/worktrees/` (bị gitignore).
 - **2026-11-04** UI bản 1 = **nâng cấp** từ thiết kế hiện tại qua Claude Design (không thiết kế lại từ đầu), phạm vi đúng SPEC.
 - **2026-11-04** Tài khoản Google Play và Apple đứng tên **cá nhân**.
 

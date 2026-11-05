@@ -49,7 +49,7 @@ app.*.map.json
 # Tệp tạm của hệ thống tệp
 .fuse_hidden*
 
-# Worktree cũ của thời DemoChung (giữ lại, không theo dõi)
+# Worktree cũ (trước khi vào xưởng; giữ lại, không theo dõi)
 .claude/worktrees/
 # Ảnh chụp của bộ chụp màn (flutter test tool/shots/shots_test.dart)
 tool/shots/out/

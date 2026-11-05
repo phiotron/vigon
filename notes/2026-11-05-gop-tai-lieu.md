@@ -28,7 +28,7 @@ Chưa commit, cần `git add` (12 file sửa + file báo cáo này):
 | `store/listing.md` | Bỏ dẫn chiếu SPEC-1.2; thêm ghi chú chỉ-Android vs App Store (D-019); trạng thái kiểm chứng trỏ TESTING M-1..M-7 |
 | `store/screenshots-spec.md` | Ảnh widget / sao lưu tự động chỉ cho bộ Play; ảnh iPhone không có công tắc che nội dung |
 
-Không đụng: `DECISIONS.md`, `COMPLIANCE.md`, `CHANGELOG.md`, `APP.md`, `product.md`, `CONTEXT.md`, `lib/`, `test/`, `ios/`, `android/`, `.github/`, `pubspec.*`, `notes/archive-demochung/`.
+Không đụng: `DECISIONS.md`, `COMPLIANCE.md`, `CHANGELOG.md`, `APP.md`, `product.md`, `CONTEXT.md`, `lib/`, `test/`, `ios/`, `android/`, `.github/`, `pubspec.*`.
 
 ## Cấu trúc SPEC mới (`docs/SPEC.md`)
 - Đầu file: dòng "Đã duyệt" giữ nguyên + bảng phiên bản (1.0, 1.1, 1.2, iOS, Gộp 2026-11-05).
@@ -40,7 +40,7 @@ Không đụng: `DECISIONS.md`, `COMPLIANCE.md`, `CHANGELOG.md`, `APP.md`, `prod
 - **5** Ràng buộc: quyền Android (POST_NOTIFICATIONS + RECEIVE_BOOT_COMPLETED) và iOS (chỉ quyền thông báo khi bật nhắc), giao diện `design/current/`; tiểu mục **"iOS"** (COMPLIANCE D-11 trỏ tới "SPEC mục iOS"): tương ứng nền tảng khi đọc AC, danh sách tính năng chỉ Android + test `merge_ios_gating_test.dart`, F-25 chạy iOS, cách kiểm chứng khi chưa có iPhone.
 - **5b, 5c**: giữ; 5b sửa "không tác vụ nền" cho đúng bản 1.2, chốt máy đo Galaxy A13.
 - **6** Dữ liệu: sao lưu tay có thể mã hóa, sao lưu tự động luôn mã hóa, cấu hình ở Keystore; iOS nằm trong sao lưu iPhone/iCloud.
-- **7** Rủi ro: bỏ "máy chưa cài Flutter" (DemoChung), thêm rủi ro Windows/iOS, quên mật khẩu sao lưu.
+- **7** Rủi ro: bỏ "máy chưa cài Flutter" (khung cũ), thêm rủi ro Windows/iOS, quên mật khẩu sao lưu.
 - **8** Tiêu chí hoàn thành: F-01..F-26 theo nền tảng, biên bản Android + iPhone (TestFlight), CI iOS xanh, COMPLIANCE P-01..P-05.
 
 Kiểm: 64 dòng AC duy nhất (AC-01..AC-64), 26 mục F. `grep -rn "SPEC-1.1\|SPEC-1.2\|docs/store/\|design-mobile/" docs store design` chỉ còn: `docs/DECISIONS.md` (không được sửa; nói về lịch sử), dòng bảng phiên bản ở đầu `docs/SPEC.md` (lịch sử có chủ đích). Ngoài phạm vi grep: `notes/2026-11-04-*.md` (nhật ký, giữ nguyên).

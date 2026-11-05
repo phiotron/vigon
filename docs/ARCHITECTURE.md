@@ -35,5 +35,5 @@ Không có API, không khóa, không biến môi trường. Chỉ dùng thành p
 - Sửa bảng trong `database.dart` thì chạy `dart run build_runner build` rồi mới analyze/test.
 - `startupProvider` (chọn tiền tệ, tạo khoản định kỳ) phải được `VigonApp` theo dõi, nếu không sẽ không chạy.
 - Khóa PIN dùng `Offstage` giữ app bên dưới sống; mọi thứ bên dưới vẫn chạy khi đang khóa.
-- Build release: KHÔNG dùng `--target-platform android-arm64` (BUG-001); `kotlin.incremental=false` trong `android/gradle.properties` là cố ý (BUG-002, đã sửa; xem `notes/archive-demochung/BACKLOG.md`).
+- Build release: KHÔNG dùng `--target-platform android-arm64` (BUG-001); `kotlin.incremental=false` trong `android/gradle.properties` là cố ý (BUG-002: dự án ổ D, pub cache ổ C).
 - Thêm tính năng gốc nền tảng: nếu chỉ có một nền tảng thì ẩn mục cài đặt ở nền tảng kia qua `platform_features.dart` và thêm ca vào `test/features/merge_ios_gating_test.dart` (D-019).
