@@ -13,7 +13,7 @@ Project iOS trên `main` sau gộp (đối chiếu lại 2026-11-05, commit `a00
 **chỉ màn dọc**, tên hiển thị `Ví Gọn`, min iOS **16.0** (D-024, commit `b0c9fee`; trước là 15.0), `CFBundleLocalizations` en + vi, `FlutterDeepLinkingEnabled = false`,
 `LSApplicationQueriesSchemes` chỉ `mailto`, `https`, `ITSAppUsesNonExemptEncryption = true` (**D-020**, commit `8441b6a`; xem mục Export compliance),
 DB loại khỏi sao lưu iCloud/máy tính (**D-021**, commit `8441b6a`; CI iOS chưa xác nhận lúc ghi),
-`ios/Runner/PrivacyInfo.xcprivacy` (không tracking; `NSPrivacyCollectedDataTypes` đang rỗng — cần thêm Coarse Location cho khớp App Privacy thận trọng, xem mục App Privacy; required-reason API FileTimestamp `C617.1`, DiskSpace `E174.1`,
+`ios/Runner/PrivacyInfo.xcprivacy` (không tracking, không thu thập; required-reason API FileTimestamp `C617.1`, DiskSpace `E174.1`,
 UserDefaults `CA92.1` + `1C8F.1` — thêm ở D4 cho bookmark thư mục và App Group),
 không khoá `NS…UsageDescription`, không `UIFileSharingEnabled`; icon `AppIcon` đủ cỡ, bản 1024×1024 RGB không alpha (PLAN-001).
 Widget extension `VigonWidgetExtension` (`com.phiotron.vigon.VigonWidget`, min **iOS 16.0**, App Group `group.com.phiotron.vigon`) có
@@ -197,27 +197,24 @@ Kết quả dự kiến: **4+** ở mọi vùng (Việt Nam theo thang riêng c�
 Kiểm lại câu chữ thật của bảng hỏi trong App Store Connect khi điền; ghi kết quả vào COMPLIANCE P-05.
 
 ## App Privacy (nhãn quyền riêng tư)
-**Hướng khai: THẬN TRỌNG** — người dùng chọn 2026-11-05 (sau D-025), thay bản cũ "Data Not Collected" (bản cũ: phiên con D7). Soạn ở phiên
-con D8 (`notes/2026-11-05-d8-privacy-declarations.md`). Cùng lý do với Data safety ở `store/listing.md`: yêu cầu tải tỉ giá duy nhất
-(`GET https://open.er-api.com/v6/latest/USD`, khi người dùng đổi tiền tệ) để lộ **địa chỉ IP** cho ExchangeRate-API, IP có thể suy ra
-**vị trí gần đúng**. App không đọc vị trí (không Core Location, không `NSLocation…UsageDescription`), nhà phát triển không nhận IP.
+**Hướng khai: "Data Not Collected" — giống A001** (người dùng chốt 2026-11-05, phiên con D8 lần 2; bỏ bản nháp "thận trọng — Coarse
+Location" của D8 lần 1, commit `18075d3`). Cùng lý do với Data safety ở `store/listing.md`.
 
-### Từng màn trong App Store Connect → App Privacy → Get Started / Edit
-| Màn / câu hỏi | Trả lời | Lý do |
+### Từng màn trong App Store Connect → App Privacy
+| Câu hỏi | Trả lời | Lý do |
 |---|---|---|
-| Do you or your third-party partners collect data from this app? | **Yes, we collect data from this app** | Apple: "thu thập" = truyền ra khỏi máy để nhà phát triển hoặc **đối tác bên thứ ba** truy cập lâu hơn thời gian phục vụ yêu cầu tức thời. ExchangeRate-API giới hạn tần suất theo IP (chặn 20 phút) → giữ IP lâu hơn một yêu cầu. Thận trọng: coi họ là "đối tác bên thứ ba" (nhà cung cấp bên ngoài mà app gọi) |
-| Chọn loại dữ liệu | Chỉ **Location › Coarse Location** | Coarse Location = vị trí độ phân giải thấp hơn toạ độ 3 chữ số thập phân — vị trí suy từ IP thuộc nhóm này. KHÔNG chọn Precise Location, Contact Info, Financial Info (số tiền chỉ ở trên máy), User Content (file sao lưu/CSV do người dùng tự chọn đích), Identifiers (không gửi User ID/Device ID/IDFA), Usage Data, Diagnostics (crash qua Apple, không phải app gửi), Other Data |
-| Coarse Location — Indicate how … is being used by you or your third-party partners | Chỉ **App Functionality** | Để lấy tỉ giá quy đổi số tiền. KHÔNG Third-Party Advertising, Developer's Advertising or Marketing, Analytics, Product Personalization, Other Purposes |
-| Is the coarse location collected from this app linked to the user's identity? | **No** | App không có tài khoản, không gửi ID nào (không User ID, Device ID, IDFA), URL giống nhau cho mọi người dùng; nhà phát triển không có gì để nối IP với một người. Nêu để người dùng biết: Apple coi dữ liệu là "linked" trừ khi đã bỏ định danh trước khi thu; IP tự nó không phải định danh tài khoản ở đây |
-| Do you or your third-party partners use coarse location for tracking purposes? | **No** | Không quảng cáo, không chia sẻ cho data broker, không ATT/IDFA; `NSPrivacyTracking = false` |
+| Privacy Policy URL | Trang chính sách vi/en (`docs/legal/privacy-policy.md`) | Bắt buộc; CHƯA đăng — người dùng đăng |
+| Privacy Choices URL | (để trống) | Không có gì để người dùng chọn |
+| Do you or your third-party partners collect data from this app? | **No, we do not collect data from this app** | Apple: "thu thập" = truyền ra khỏi máy để nhà phát triển hoặc đối tác truy cập lâu hơn thời gian cần để phục vụ yêu cầu tức thời. Dữ liệu chỉ ở trên máy; yêu cầu tỉ giá không chứa dữ liệu người dùng; IP tất yếu đi kèm mọi kết nối Internet, nhà phát triển không nhận; ExchangeRate-API không phải SDK/mã bên thứ ba đặt trong app |
+| **Kết quả trên store** | **Data Not Collected** | Đối chiếu bản xem trước trước khi Publish |
 
-**Nhãn dự kiến trên trang App Store:** *Data Not Linked to You: Location* · *Data Used to Track You*: không có. Đối chiếu bản xem trước
-(Preview) trong App Store Connect trước khi Publish.
-
-**Vì sao không dùng ngoại lệ "optional disclosure" của Apple:** ngoại lệ đòi đủ bốn điều, trong đó dữ liệu phải do **người dùng tự nhập trong
-giao diện app** kèm tên rõ ràng — IP không do người dùng nhập → không áp dụng. Vì vậy phải khai (khớp hướng thận trọng).
-
-### Lý do các phần khác vẫn KHÔNG phải "thu thập" (giữ nguyên đánh giá cũ)
+### Lý do chi tiết (vì sao từng phần không phải "thu thập")
+- Không có máy chủ. ~~Không có mã gọi mạng~~ — từ D-025 (2026-11-05) có đúng MỘT chỗ gọi mạng: `lib/src/data/exchange_rate.dart`
+  (`dart:io HttpClient`, không gói `http`/`dio`, không WebView), chỉ `GET https://open.er-api.com/v6/latest/USD` khi người dùng đổi
+  tiền tệ. URL cố định, giống nhau cho mọi người dùng; không gửi dữ liệu người dùng, không gửi tiền tệ đang dùng; kết quả là dữ liệu
+  công khai đi VÀO máy. Nhà cung cấp (ExchangeRate-API) thấy IP như mọi kết nối mạng; đó không phải dữ liệu app thu thập để nhà phát
+  triển hay "đối tác" truy cập → **Data Not Collected** (cách đánh giá giống A001: `apps/A001-subnest/store/forms/app-store.md` mục 1).
+  `test/manifest_test.dart` canh chỉ một file tạo `HttpClient`.
   - Không SDK bên thứ ba thu dữ liệu: các gói dùng (`drift`/SQLite, `flutter_secure_storage`, `share_plus`, `file_picker`,
     `path_provider`, `package_info_plus`, `url_launcher`, `fl_chart`, `crypto`, `cryptography`, `flutter_local_notifications`,
     `timezone`, `flutter_timezone`, `material_symbols_icons`) chỉ chạy trên máy (SBOM `docs/sbom/vigon.cdx.json`).
@@ -233,15 +230,11 @@ giao diện app** kèm tên rõ ràng — IP không do người dùng nhập →
     giữa app và extension, chỉ trên máy); mặc định không có số, PIN bật thì không bao giờ có số. Không truyền đi → không ảnh hưởng nhãn.
   - Che nội dung (F-22): lớp phủ native, không lưu hay gửi gì.
   - Không theo dõi (tracking) → không cần App Tracking Transparency.
-- Privacy manifest: `ios/Runner/PrivacyInfo.xcprivacy` và `ios/VigonWidget/PrivacyInfo.xcprivacy` đang có `NSPrivacyTracking = false`,
-  `NSPrivacyTrackingDomains` rỗng, `NSPrivacyCollectedDataTypes` rỗng (kiểm 2026-11-04; widget kiểm 2026-11-05); các plugin tự kèm manifest riêng.
-  **Chưa khớp nhãn thận trọng (D8, 2026-11-05):** để báo cáo privacy của Xcode khớp App Privacy, manifest của **app** (`ios/Runner`) nên
-  thêm một mục `NSPrivacyCollectedDataTypes`: `NSPrivacyCollectedDataType` = `NSPrivacyCollectedDataTypeCoarseLocation`,
-  `NSPrivacyCollectedDataTypeLinked` = false, `NSPrivacyCollectedDataTypeTracking` = false, `NSPrivacyCollectedDataTypePurposes` =
-  [`NSPrivacyCollectedDataTypePurposeAppFunctionality`]. Việc của phiên code (ngoài phạm vi phiên store; `test/` có thể cần sửa theo).
-  Widget extension không gọi mạng → manifest widget giữ nguyên rỗng.
+- Privacy manifest: `ios/Runner/PrivacyInfo.xcprivacy` và `ios/VigonWidget/PrivacyInfo.xcprivacy` khớp nhãn: `NSPrivacyTracking = false`,
+  `NSPrivacyTrackingDomains` rỗng, `NSPrivacyCollectedDataTypes` rỗng (kiểm 2026-11-04; widget kiểm 2026-11-05; D8 2026-11-05: giữ rỗng
+  theo hướng "Data Not Collected"); các plugin tự kèm manifest riêng. Kiểm: Xcode archive → Generate Privacy Report không có mục "collected data".
 - Nếu sau này thêm SDK báo crash, analytics, đồng bộ đám mây, hay bất kỳ yêu cầu mạng nào khác ngoài tải bảng tỉ giá (hoặc gửi kèm dữ
-  liệu người dùng/tiền tệ đang dùng) → nhãn này SAI, phải khai lại trước khi nộp bản đó.
+  liệu người dùng/tiền tệ đang dùng/API key theo người dùng) → nhãn này SAI, phải khai lại trước khi nộp bản đó.
 
 ## Export compliance (mã hoá) — D-020 (người dùng quyết 2026-11-05): khai "có mã hoá chuẩn ngoài iOS", vẫn bán ở Pháp
 **Sự thật trong code (kiểm 2026-11-05):**
@@ -291,7 +284,7 @@ sau không — KHÔNG tự bỏ (trái D-020).
 - Liên hệ: họ tên + email `phamphuongphuongnd@gmail.com` + số điện thoại của người dùng (chỉ Apple thấy).
 - Notes (dán nguyên, tiếng Anh):
   ```
-  Ví Gọn is an offline-first personal expense tracker. There is no account and no server; all data stays on the device. The only network request is an HTTPS GET of a public exchange rate table (open.er-api.com) made when the user changes currency in Settings > Currency, so the amounts can be converted; no user data is sent. Because the rate provider sees the device's IP address, which can reveal an approximate location, App Privacy declares Coarse Location (App Functionality, not linked, no tracking). Without a connection the user can type the rate manually.
+  Ví Gọn is an offline-first personal expense tracker. There is no account and no server; all data stays on the device. The only network request is an HTTPS GET of a public exchange rate table (open.er-api.com) made when the user changes currency in Settings > Currency, so the amounts can be converted; no user data is sent. Without a connection the user can type the rate manually.
   To try it: tap − or + on the home screen, type an amount, choose a category, Save.
   PIN lock: Settings > Lock with PIN (4 digits, entered twice). The PIN only hides the app UI; data is not encrypted, and the app says so.
   Backup: Settings > Export backup opens the iOS share sheet (Save to Files); you can optionally turn on "Protect file with a password", which encrypts the file on the device (AES-256-GCM). Settings > Restore from backup opens the Files picker for a .vigon file.

@@ -125,7 +125,7 @@ Nhắc ghi chép, mật khẩu file sao lưu, tìm kiếm, ẩn tài khoản, ng
 | Privacy policy | Đường dẫn công khai của `docs/legal/privacy-policy.md` | CHƯA đăng — người dùng đăng |
 | Ads | **No**, app không chứa quảng cáo | |
 | App access | **All functionality is available without special access** | Không đăng nhập; PIN do người dùng tự bật, mặc định tắt |
-| Content rating (IARC) | Danh mục bảng hỏi: **Utility, Productivity, Communication, or Other** (không phải game). Mọi câu bạo lực, tình dục, ngôn từ, ma tuý, cờ bạc: **No**. "Người dùng tương tác/chia sẻ nội dung với nhau": **No**. "Chia sẻ vị trí" (với người dùng khác): **No** — vị trí gần đúng suy từ IP khai riêng ở Data safety, không chia sẻ cho người dùng khác. "Mua hàng số": **No**. "Trình duyệt web không giới hạn": **No** | Kết quả dự kiến: mức thấp nhất (Everyone / PEGI 3 / IARC 3+) |
+| Content rating (IARC) | Danh mục bảng hỏi: **Utility, Productivity, Communication, or Other** (không phải game). Mọi câu bạo lực, tình dục, ngôn từ, ma tuý, cờ bạc: **No**. "Người dùng tương tác/chia sẻ nội dung với nhau": **No**. "Chia sẻ vị trí" (với người dùng khác): **No**. "Mua hàng số": **No**. "Trình duyệt web không giới hạn": **No** | Kết quả dự kiến: mức thấp nhất (Everyone / PEGI 3 / IARC 3+) |
 | Target audience and content | Nhóm tuổi: **13–15, 16–17, 18+**. Không chọn nhóm dưới 13 → không vào chương trình Families. "App có hấp dẫn trẻ em không": **No** | COMPLIANCE P-12; Play Age Signals chờ người dùng quyết (D-12) |
 | News app | No | |
 | Government app | No | |
@@ -134,51 +134,41 @@ Nhắc ghi chép, mật khẩu file sao lưu, tìm kiếm, ẩn tài khoản, ng
 | Data safety | Xem mục dưới | |
 
 ## Data safety (khai trong Play Console)
-**Hướng khai: THẬN TRỌNG** — người dùng chọn 2026-11-05 (sau D-025), thay bản cũ "No data collected" (bản cũ: phiên con D7). Soạn ở phiên
-con D8 (`notes/2026-11-05-d8-privacy-declarations.md`). Bảng App Privacy tương ứng: `store/app-store.md` mục "App Privacy".
+**Hướng khai: "KHÔNG THU THẬP, KHÔNG CHIA SẺ" — giống A001** (người dùng chốt 2026-11-05, phiên con D8 lần 2; bỏ bản nháp "thận trọng —
+vị trí gần đúng" của D8 lần 1, commit `18075d3`). Bảng App Privacy tương ứng: `store/app-store.md` mục "App Privacy".
 
-**Vì sao khai.** Từ D-025 app có đúng MỘT yêu cầu mạng: `GET https://open.er-api.com/v6/latest/USD`, chỉ khi người dùng đổi tiền tệ trong
-Cài đặt (`lib/src/data/exchange_rate.dart`) — URL cố định, không query/body/cookie, giống nhau cho mọi người dùng, không chứa dữ liệu thu chi,
-tiền tệ đang dùng hay ID nào. Nhưng như mọi kết nối web, nhà cung cấp tỉ giá ExchangeRate-API (AYR Tech (Pty) Ltd) **thấy địa chỉ IP** của
-máy, và IP có thể suy ra **vị trí gần đúng** (thành phố/quốc gia). Play định nghĩa "collect" = truyền dữ liệu ra khỏi máy (kể cả tới bên thứ
-ba); IP nằm sẵn trong kết nối do app mở → khai **Approximate location: collected + shared**. App KHÔNG đọc vị trí, KHÔNG có quyền vị trí
-(`ACCESS_COARSE_LOCATION`/`ACCESS_FINE_LOCATION` không có trong manifest), nhà phát triển không nhận IP.
+**Vì sao "No".** Play định nghĩa "collect" = truyền dữ liệu người dùng ra khỏi máy. Từ D-025 app có đúng MỘT yêu cầu mạng:
+`GET https://open.er-api.com/v6/latest/USD`, chỉ khi người dùng đổi tiền tệ trong Cài đặt (`lib/src/data/exchange_rate.dart`) — URL cố
+định, không query/body/cookie, giống nhau cho mọi người dùng, **không chứa dữ liệu người dùng** (không số tiền, không tiền tệ đang dùng,
+không ID máy, không API key theo người dùng); kết quả là dữ liệu công khai đi VÀO máy. **Địa chỉ IP tất yếu đi kèm mọi kết nối Internet**
+— không phải dữ liệu app "collect": app không đọc, không gửi IP như một trường dữ liệu, không dùng nó để suy ra vị trí, và nhà phát triển
+không nhận. Mọi dữ liệu thu chi chỉ lưu trên máy (xử lý trên máy không tính là "collect") → **No**. Cách đánh giá giống A001 (cùng gọi
+ExchangeRate-API: `apps/A001-subnest/store/forms/google-play.md` mục 6).
 
-### Từng màn của form (đi đúng thứ tự Play Console → App content → Data safety)
-**Màn "Data collection and security"**
-| Câu hỏi | Trả lời | Lý do |
+### Từng màn của form (Play Console → App content → Data safety)
+| Màn / câu hỏi | Trả lời | Lý do |
 |---|---|---|
-| Does your app collect or share any of the required user data types? | **Yes** | Vị trí gần đúng suy ra từ IP tới ExchangeRate-API (trên) |
-| Is all of the user data collected by your app encrypted in transit? | **Yes** | Yêu cầu duy nhất đi qua HTTPS; app chỉ cho `https`, Android cấm cleartext, không theo chuyển hướng (`test/manifest_test.dart`, `test/data/exchange_rate_source_test.dart`) |
-| Which of the following methods of account creation does your app support? (nếu form hỏi) | **My app does not allow users to create an account** | Không tài khoản |
-| Do you provide a way for users to request that their data is deleted? | **No** — CẦN NGƯỜI DÙNG DUYỆT | Dữ liệu duy nhất "thu thập" là IP/vị trí gần đúng nằm ở nhật ký của ExchangeRate-API; nhà phát triển không giữ, không xoá hộ được. Dữ liệu thu chi chỉ ở trên máy, người dùng tự xoá (Cài đặt → Xóa toàn bộ dữ liệu, hoặc gỡ app) — đó không phải dữ liệu "thu thập" nên không dùng để trả lời Yes. Phương án khác: **Yes** kèm cách "gỡ app/xoá trong app" — loại vì không xoá được thứ đã khai là thu thập |
+| Data collection and security — Does your app collect or share any of the required user data types? | **No** | Như trên: không dữ liệu người dùng nào được truyền khỏi máy tới nhà phát triển hay bên thứ ba |
+| Is all of the user data collected by your app encrypted in transit? | — không áp dụng (chỉ hiện khi trả lời Yes) — | Nếu bản form đang dùng vẫn hỏi: **Yes** (yêu cầu tỉ giá duy nhất đi qua HTTPS; app chỉ cho `https`, Android cấm cleartext) |
+| Do you provide a way for users to request that their data is deleted? | — không áp dụng (chỉ hiện khi trả lời Yes) — | Nếu vẫn hỏi: người dùng tự xoá trong app (Cài đặt → Xóa toàn bộ dữ liệu) hoặc gỡ app |
+| Account creation | App không tạo tài khoản → không cần URL xoá tài khoản | Không đăng nhập |
+| Independent security review (MASA) | Không (tuỳ chọn) | |
+| Data types / data usage and handling | — bỏ qua (vì trả lời No) — | |
+| **Kết quả hiển thị trên store** | "No data collected" · "No data shared with third parties" | Chụp màn xem trước khi điền, đối chiếu |
 
-**Màn "Data types"** — chỉ tích **Location › Approximate location**. KHÔNG tích mục nào khác:
-Precise location (không), Personal info, Financial info (số tiền chỉ ở trên máy), Messages, Photos/videos, Audio, Files and docs (file
-sao lưu/CSV do người dùng tự chọn đích — ngoại lệ "user-initiated"), Calendar, Contacts, App activity, Web browsing, App info and
-performance (crash xem qua Android vitals của Google, không phải app gửi), **Device or other IDs** (không gửi ID máy/ID quảng cáo/FID;
-Play liệt kê nhóm này là IMEI, MAC, Advertising ID, Firebase ID… — IP không nằm trong danh sách đó; IP được khai qua vị trí gần đúng).
-
-**Màn "Approximate location" (data usage and handling)**
-| Câu hỏi | Trả lời | Lý do |
-|---|---|---|
-| Is this data collected, shared, or both? | **Collected** ✔ và **Shared** ✔ | Thu thập: IP rời máy trong yêu cầu tỉ giá. Chia sẻ: tới bên thứ ba (ExchangeRate-API) không xử lý theo chỉ dẫn của nhà phát triển (gói Open Access miễn phí, không hợp đồng xử lý dữ liệu) → không vào ngoại lệ "service provider" |
-| Is this data processed ephemerally? | **No** — CẦN NGƯỜI DÙNG BIẾT | Play: "ephemeral" = chỉ giữ trong bộ nhớ, không lâu hơn mức cần để phục vụ đúng yêu cầu đó. ExchangeRate-API **giới hạn tần suất theo IP** (quá thì chặn 20 phút — docs/free), tức họ giữ IP lâu hơn một yêu cầu; nhật ký máy chủ của họ cũng không được cam kết. Không chứng minh được → trả lời No (thận trọng). Brief ban đầu ghi "ephemeral nếu đúng định nghĩa" — không đúng nên KHÔNG khai |
-| Is this data required for your app, or can users choose whether it's collected? | **Users can choose whether this data is collected** (optional) | Chỉ xảy ra khi người dùng tự đổi tiền tệ; mọi tính năng khác chạy không mạng. Lưu ý: khi đã mở hộp quy đổi, app tự tải tỉ giá (không có công tắc riêng); người dùng tránh được bằng cách không đổi tiền tệ hoặc tắt mạng rồi nhập tỉ giá tay |
-| Why is this user data collected? (Collected) | **App functionality** | Lấy tỉ giá để quy đổi số tiền. Không Analytics, Developer communications, Advertising or marketing, Fraud prevention/security, Personalization, Account management |
-| Why is this user data shared? (Shared) | **App functionality** | Như trên; nhà cung cấp cần kết nối để trả bảng tỉ giá |
-
-**Màn xem trước** — trang store dự kiến hiện: *Data shared: Location (Approximate location)* · *Data collected: Location (Approximate
-location)* · *Data is encrypted in transit* · (câu xoá dữ liệu theo trả lời "No"). Chụp màn xem trước khi điền, đối chiếu lại.
-
-### Ghi chú khi điền
-- Bản 1.2: sao lưu tự động chỉ ghi file mã hóa vào thư mục người dùng chọn — do người dùng và hệ thống Android quản lý, nhà phát triển không nhận được.
-- Về "chia sẻ" (Play tính cả chuyển dữ liệu cho app khác trên máy): file sao lưu/CSV qua bảng chia sẻ và sao lưu tự động vào thư mục
+### Các điểm dễ hỏi khi review
+- **Gọi API tỉ giá:** request chỉ là `GET` bảng tỉ giá công khai, không chứa dữ liệu người dùng; IP tất yếu đi kèm mọi kết nối Internet
+  không phải dữ liệu app "collect" → vẫn "No". Chính sách quyền riêng tư mục 1 đã nói nhà cung cấp tỉ giá nhận IP, giờ và thông tin kỹ
+  thuật như mọi yêu cầu web, theo chính sách của họ.
+- **Phải xem lại khai báo nếu:** đổi sang API cần API key gắn theo người dùng, gửi kèm ID máy/tiền tệ/dữ liệu người dùng, thêm nguồn tỉ giá
+  hay yêu cầu mạng khác, thêm SDK crash/analytics, đồng bộ đám mây.
+- **Sao lưu tự động (bản 1.2):** chỉ ghi file mã hóa vào thư mục người dùng chọn — do người dùng và hệ thống Android quản lý, nhà phát
+  triển không nhận được.
+- **"Chia sẻ"** (Play tính cả chuyển dữ liệu cho app khác trên máy): file sao lưu/CSV qua bảng chia sẻ và sao lưu tự động vào thư mục
   Drive/Dropbox đều do **người dùng chủ động bật và chọn đích**, app giải thích trước ("Ví Gọn chỉ ghi file vào thư mục bạn chọn…") —
-  thuộc ngoại lệ "chuyển theo hành động người dùng chủ động, người dùng biết rõ", nên KHÔNG khai Files and docs / Financial info. File tự
-  động luôn mã hóa, khoá không rời máy.
-- Chính sách quyền riêng tư mục 1 đã nói IP + vị trí gần đúng (khớp khai báo này). Câu chữ form Play đổi theo thời gian — đọc lại hướng
-  dẫn Data safety (support.google.com/googleplay/android-developer/answer/10787469) ngày điền; nếu Play thêm câu hỏi mới, giữ hướng thận trọng.
+  thuộc ngoại lệ "chuyển theo hành động người dùng chủ động, người dùng biết rõ", nên vẫn "không chia sẻ". File tự động luôn mã hóa,
+  khoá không rời máy.
+- Đây là đánh giá theo định nghĩa của Play; đọc lại hướng dẫn Data safety ngày điền.
 - Quyền của app (đúng `AndroidManifest.xml` và manifest đã gộp của bản release trong `build/app/intermediates/merged_manifests/release/`, kiểm lại 2026-11-05 sau D-025): **3 quyền** —
   `INTERNET` (D-025, quyền thường, tự cấp khi cài; chỉ để tải bảng tỉ giá khi người dùng đổi tiền tệ) và 2 quyền chỉ phục vụ Nhắc ghi chép:
   `POST_NOTIFICATIONS` — quyền chạy (runtime) trên Android 13+, **chỉ xin sau lời giải thích khi người dùng bật** Nhắc ghi chép; từ chối thì app vẫn dùng bình thường.

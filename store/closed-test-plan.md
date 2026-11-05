@@ -109,7 +109,7 @@ Form bằng tiếng Anh; câu hỏi có thể đổi. **Thay mọi `[...]` bằn
 - **Who is the intended audience of your app?**
   `Adults and teenagers (13+) in Vietnam and worldwide who want a quick, private way to track personal or family spending, in Vietnamese or English.`
 - **Describe how your app provides value to users.**
-  `Ví Gọn records an expense in three taps and shows spending by category with a chart, budgets and recurring records. It works offline with no account, no ads and no analytics, so financial data never leaves the phone (the only network use is downloading a public exchange rate table when the user changes currency; the rate provider sees only the device IP address).`
+  `Ví Gọn records an expense in three taps and shows spending by category with a chart, budgets and recurring records. It works offline with no account, no ads, no analytics and no data collection, so financial data never leaves the phone (the only network use is downloading a public exchange rate table when the user changes currency; the rate provider sees only the device IP address).`
 - **How many installs do you expect in your first year?** → chọn mức thấp, thực tế (ví dụ "0–10K").
 - **What changes did you make to your app based on what you learned during closed testing?**
   `[liệt kê thay đổi thật, ví dụ: redesigned the home screen and entry keypad (build [k]); fixed [lỗi] reported by testers; clarified the PIN warning text].`
