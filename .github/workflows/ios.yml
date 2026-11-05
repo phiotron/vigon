@@ -1,19 +1,12 @@
 # CI iOS: build bản simulator (không ký) + mở app và chạy integration test trên iOS Simulator.
-# Repo private → phút macOS tính ×10 quota: chỉ chạy khi push nhánh main có đổi code, hoặc chạy tay.
+# Repo private → phút macOS tính ×10 quota. 2026-11-05 (hết phút Actions, luật xưởng "dev → main"): KHÔNG chạy theo push;
+# chỉ chạy khi gắn tag `v*` (bản phát hành) hoặc bấm tay (workflow_dispatch) khi có đổi phần iOS cần kiểm.
 # Máy làm việc là Windows, không có Mac/iPhone → đây là nơi DUY NHẤT build + thử iOS (A002 D-001).
 name: iOS
 
 on:
   push:
-    branches: [main]
-    paths-ignore:
-      - '**/*.md'
-      - 'docs/**'
-      - 'store/**'
-      - 'design/**'
-      - 'notes/**'
-      - 'android/**'
-      - 'tool/**'
+    tags: ['v*']
   workflow_dispatch:
     inputs:
       integration_test:
