@@ -10,7 +10,7 @@ Checklist xưởng dùng kèm: `D:\Mobile App\playbook\checklists\release-androi
   `.github/workflows/release-ios.yml`) nên tự tăng mỗi lần build ký — không trùng với versionCode Android, đó là bình thường.
 - Store: Google Play [x] · App Store [x] (iOS thêm vào bản 1 ngày 2026-11-04, D-001) · phân phối nội bộ [ ]
 - Android: minSdk 24 (Android 7.0), targetSdk 36 (kiểm bằng `aapt2 dump badging`, 2026-11-03). Quyền (bản 1.2): chỉ `POST_NOTIFICATIONS`
-  và `RECEIVE_BOOT_COMPLETED` cho nhắc ghi chép (D-015); bản release không có INTERNET (`test/manifest_test.dart` và `aapt2 dump permissions`).
+  và `RECEIVE_BOOT_COMPLETED` cho nhắc ghi chép (D-015); từ D-025 thêm `INTERNET` chỉ để tải tỉ giá khi đổi tiền tệ (`test/manifest_test.dart`; kiểm lại bằng `aapt2 dump permissions`).
 - iOS: min iOS 16.0 (D-024), **chỉ iPhone**, chỉ dọc, tên hiển thị `Ví Gọn`, không khoá `NS…UsageDescription`,
   `ITSAppUsesNonExemptEncryption` = **`true`** (D-020: F-21 dùng AES-256-GCM Dart thuần trên iOS; bán ở Pháp → khai báo mã hoá Pháp, mục
   "Khai báo mã hoá cho Pháp" bên dưới), DB **loại khỏi sao lưu iCloud/máy tính** (D-021, giống Android `allowBackup=false`) — cả hai đã có trong
@@ -95,8 +95,8 @@ tài liệu khoảng **2 ngày làm việc**. Dự trù **≥ 6 tuần** trướ
    | Brochure technique | Tờ kỹ thuật 1–2 trang, nội dung ở bước 5 |
    | Manuel utilisateur / guide administrateur (nếu có) | Không bắt buộc; có thể đính trang Support |
 5. **Tờ kỹ thuật** (đúng code 2026-11-05; code đổi thì sửa lại):
-   - Sản phẩm: Ví Gọn, app iPhone (bundle `com.phiotron.vigon`, bản 1.0.0), sổ thu chi cá nhân, miễn phí, chạy offline, không máy chủ,
-     không truyền dữ liệu qua mạng.
+   - Sản phẩm: Ví Gọn, app iPhone (bundle `com.phiotron.vigon`, bản 1.0.0), sổ thu chi cá nhân, miễn phí, chạy offline, không máy chủ;
+     kết nối mạng duy nhất: tải bảng tỉ giá công khai qua HTTPS (TLS client của Flutter/BoringSSL, không phải của iOS) khi người dùng đổi tiền tệ (D-025), không gửi dữ liệu người dùng.
    - Chức năng mã hoá **duy nhất**: mã hoá tuỳ chọn file sao lưu do người dùng tự xuất (bảo mật dữ liệu lưu trữ). Không mã hoá truyền
      thông, không nhắn tin, không VPN.
    - Thuật toán: **AES-256-GCM** (khoá 256 bit, nonce 12 byte); khoá suy ra từ mật khẩu người dùng bằng **PBKDF2-HMAC-SHA256**,

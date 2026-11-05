@@ -17,8 +17,8 @@
   (`ui-spec.md` + bộ màn `screens/`); store `store/`; thuật ngữ `CONTEXT.md` (khi có); mô tả gửi Claude Design `product.md` (khi có).
 
 ## Tiêu chuẩn áp dụng (`playbook/STANDARDS.md`)
-- **Khác đối thủ ở đâu (S-30):** ghi một khoản ≤ 3 chạm từ màn chính (vòng icon danh mục, chọn = lưu D-018); hoàn toàn
-  offline, không tài khoản, không quảng cáo/SDK, không quyền mạng; sao lưu mã hoá bằng mật khẩu; song ngữ vi/en.
+- **Khác đối thủ ở đâu (S-30):** ghi một khoản ≤ 3 chạm từ màn chính (vòng icon danh mục, chọn = lưu D-018); dùng offline
+  (mạng chỉ để tải tỉ giá khi đổi tiền tệ, D-025), không tài khoản, không quảng cáo/SDK; sao lưu mã hoá bằng mật khẩu; song ngữ vi/en.
 - **Mục A:** bắt buộc toàn bộ (S-10…S-71).
 - **Mục B được bật:** **S-89** (tự mã hoá file sao lưu AES-256-GCM → D-020, khai báo ANSSI). Không S-80..S-88.
 - **Thị trường:** toàn cầu (gồm EU, Pháp), trừ Trung Quốc đại lục.
@@ -91,7 +91,7 @@ Flutter 3.47.8 ở `C:/src/flutter`, **chưa có trong PATH**. Git Bash: `export
 
 ## Quyết định riêng của app (chi tiết: `docs/DECISIONS.md`)
 - **D-001** Flutter; ~~Android trước~~ → **2026-11-04: thêm iOS vào bản 1**, build/ký/test trên GitHub Actions macOS runner (đồng bộ với xưởng); không có iPhone → thử trên simulator CI.
-- **D-002** Chỉ lưu trên máy, không máy chủ, không SDK bên thứ ba, không quyền INTERNET.
+- **D-002** Chỉ lưu trên máy, không máy chủ, không SDK bên thứ ba. ~~Không quyền INTERNET~~ → từ D-025 có INTERNET chỉ để tải tỉ giá khi đổi tiền tệ.
 - **D-003** Flutter 3.47.8 (không FVM), Riverpod 3 viết tay, go_router, l10n `.arb`. · **D-004** drift/SQLite, commit file sinh.
 - **D-005** Tiền số nguyên, ngày dạng chữ, cài đặt trong DB. · **D-006** Sao lưu `.vigon` JSON có mã băm, khôi phục thay toàn bộ trong 1 giao dịch.
 - **D-007** PIN băm có muối trong bộ nhớ an toàn, màn khoá phủ lên app. · **D-008** Liên hệ ở `app_info.dart`; bố cục co theo cỡ chữ; test a11y tự động.
