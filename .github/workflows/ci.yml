@@ -1,9 +1,18 @@
-# CI Android/Dart: phân tích + unit/widget test trên Ubuntu (rẻ), chạy mọi push và PR.
+# CI Android/Dart: phân tích + unit/widget test trên Ubuntu.
+# 2026-11-05: hết phút Actions → CHỈ chạy khi push lên `main` (đã kiểm cục bộ trên nhánh `dev` rồi mới gộp),
+# bỏ qua commit chỉ đổi tài liệu; nhánh khác muốn chạy thì bấm tay (workflow_dispatch). Không chạy theo PR.
 # Ghim Flutter 3.47.8 cho khớp máy phát triển (D-003). iOS ở ios.yml (macOS, chỉ nhánh main).
 name: CI
 on:
   push:
-  pull_request:
+    branches: [main]
+    paths-ignore:
+      - '**/*.md'
+      - 'docs/**'
+      - 'store/**'
+      - 'design/**'
+      - 'notes/**'
+      - 'tool/**'
   workflow_dispatch:
 
 concurrency:
