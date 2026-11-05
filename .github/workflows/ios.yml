@@ -65,6 +65,17 @@ jobs:
           test "$(plutil -extract NSPrivacyTracking raw ios/Runner/PrivacyInfo.xcprivacy)" = "false"
           # Không xin quyền nào (D-002): không có khoá NS...UsageDescription.
           if grep -q "UsageDescription" ios/Runner/Info.plist; then echo "Info.plist có xin quyền"; exit 1; fi
+          # D-022: widget extension, App Group, URL scheme của nút widget (S-21: extension có manifest riêng).
+          plutil -lint ios/VigonWidget/Info.plist ios/VigonWidget/PrivacyInfo.xcprivacy             ios/Runner/Runner.entitlements ios/VigonWidget/VigonWidget.entitlements             ios/VigonWidget/en.lproj/Localizable.strings ios/VigonWidget/vi.lproj/Localizable.strings
+          test "$(plutil -extract NSExtension.NSExtensionPointIdentifier raw ios/VigonWidget/Info.plist)" = "com.apple.widgetkit-extension"
+          test "$(plutil -extract NSPrivacyTracking raw ios/VigonWidget/PrivacyInfo.xcprivacy)" = "false"
+          test "$(python3 -c 'import plistlib,sys; print(plistlib.load(open(sys.argv[1],"rb"))["com.apple.security.application-groups"][0])' ios/Runner/Runner.entitlements)" = "group.com.phiotron.vigon"
+          test "$(python3 -c 'import plistlib,sys; print(plistlib.load(open(sys.argv[1],"rb"))["com.apple.security.application-groups"][0])' ios/VigonWidget/VigonWidget.entitlements)" = "group.com.phiotron.vigon"
+          test "$(plutil -extract CFBundleURLTypes.0.CFBundleURLSchemes.0 raw ios/Runner/Info.plist)" = "vigon"
+          test "$(plutil -extract FlutterDeepLinkingEnabled raw ios/Runner/Info.plist)" = "false"
+
+      - name: Test cấu hình iOS (Dart, chỉ đọc file)
+        run: flutter test test/plan001_t6_ios_config_test.dart test/hifi_d4_ios_config_test.dart
 
       - name: Build iOS simulator (debug, không ký)
         run: |
@@ -74,6 +85,14 @@ jobs:
           test -f "$APP/PrivacyInfo.xcprivacy"
           plutil -p "$APP/Info.plist" | tee ci-logs/built-info-plist.txt
           ls "$APP/Frameworks" | tee ci-logs/frameworks.txt
+          # Widget extension (F-26) phải được build và nhúng, kèm manifest + chữ EN/VI.
+          APPEX="$APP/PlugIns/VigonWidgetExtension.appex"
+          ls -R "$APPEX" | tee ci-logs/widget-appex.txt
+          test -f "$APPEX/PrivacyInfo.xcprivacy"
+          test -f "$APPEX/en.lproj/Localizable.strings"
+          test -f "$APPEX/vi.lproj/Localizable.strings"
+          plutil -p "$APPEX/Info.plist" | tee ci-logs/widget-info-plist.txt
+          test "$(plutil -extract CFBundleShortVersionString raw "$APPEX/Info.plist")" = "$(plutil -extract CFBundleShortVersionString raw "$APP/Info.plist")"
 
       # Bản release cho máy thật (arm64, AOT) — bắt lỗi chỉ lộ ra khi build release; không ký nên không cần secrets.
       - name: Build iOS release (không ký)
@@ -81,6 +100,7 @@ jobs:
           set -o pipefail
           flutter build ios --release --no-codesign 2>&1 | tee ci-logs/build-ios-release.log
           test -f build/ios/iphoneos/Runner.app/PrivacyInfo.xcprivacy
+          test -f build/ios/iphoneos/Runner.app/PlugIns/VigonWidgetExtension.appex/PrivacyInfo.xcprivacy
 
       - name: Khởi động iOS Simulator (iPhone)
         id: sim
@@ -115,6 +135,24 @@ jobs:
           xcrun simctl spawn "$UDID" log show --last 3m --style compact \
             --predicate 'eventMessage CONTAINS "VigonBackupExclusion"' | tee ci-logs/backup-exclusion.txt
           grep -Eq "VigonBackupExclusion: excluded=([2-9]|[1-9][0-9]+) failed=0" ci-logs/backup-exclusion.txt
+          # D-022: kênh native iOS sống. Widget mặc định tắt số → Dart gọi "clear" (D-016);
+          # che nội dung mặc định tắt → setSecure(false).
+          xcrun simctl spawn "$UDID" log show --last 3m --style compact             --predicate 'eventMessage CONTAINS "VigonWidget:" OR eventMessage CONTAINS "VigonSecure:"' | tee ci-logs/native-channels.txt
+          grep -q "VigonWidget: clear" ci-logs/native-channels.txt
+          grep -q "VigonSecure: enabled=0" ci-logs/native-channels.txt
+          # Nút widget (F-26): URL lúc app đang chạy, rồi lúc khởi động nguội.
+          xcrun simctl openurl "$UDID" "vigon://open/entry/new?type=expense"
+          sleep 5
+          xcrun simctl io "$UDID" screenshot ci-logs/deeplink-warm.png
+          xcrun simctl terminate "$UDID" "$BUNDLE_ID" || true
+          sleep 2
+          xcrun simctl openurl "$UDID" "vigon://open/entry/new?type=income"
+          sleep 20
+          xcrun simctl io "$UDID" screenshot ci-logs/deeplink-cold.png
+          xcrun simctl spawn "$UDID" log show --last 2m --style compact             --predicate 'eventMessage CONTAINS "VigonDeepLink"' | tee ci-logs/deeplink.txt
+          grep -q "pending route /entry/new?type=expense" ci-logs/deeplink.txt
+          # Khởi động nguội: chưa chắc engine kịp đăng ký trước scene (ghi cảnh báo, không chặn CI).
+          grep -q "pending route /entry/new?type=income" ci-logs/deeplink.txt             || echo "::warning::Deep link lúc khởi động nguội chưa tới native (xem ci-logs/deeplink.txt)"
           xcrun simctl terminate "$UDID" "$BUNDLE_ID" || true
 
       # Chỉ khi chạy tay và chọn integration_test. Cả `flutter test -d <iOS>` (run 41809982864) lẫn
