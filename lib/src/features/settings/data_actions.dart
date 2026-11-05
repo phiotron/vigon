@@ -3,7 +3,9 @@ import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:material_symbols_icons/symbols.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
 
@@ -13,7 +15,9 @@ import '../../data/backup_crypto.dart';
 import '../../data/money.dart';
 import '../../l10n_names.dart';
 import '../../providers.dart';
+import '../../ui/confirm_dialog.dart';
 import '../../ui/messenger.dart';
+import '../../ui/tokens.g.dart';
 import '../lock/app_lock.dart';
 import '../lock/pin_pad.dart';
 import 'auto_backup_providers.dart';
@@ -96,7 +100,8 @@ Future<void> exportCsvFile(BuildContext context, WidgetRef ref) async {
   );
 }
 
-/// Chọn file sao lưu, hỏi xác nhận rồi khôi phục (AC-29).
+/// Chọn file sao lưu, hỏi xác nhận rồi khôi phục (AC-29, 8.6–8.8). Kiểm hết
+/// file trước rồi mới hỏi, để file hỏng không bao giờ tới bước thay dữ liệu.
 Future<void> restoreFromFile(BuildContext context, WidgetRef ref) async {
   final l = AppLocalizations.of(context);
   final picked = await FilePicker.pickFile();
@@ -132,7 +137,13 @@ Future<void> restoreFromFile(BuildContext context, WidgetRef ref) async {
     return;
   }
   if (!context.mounted) return;
-  final ok = await _confirm(context, l.restore, l.restoreConfirm, l.confirm);
+  final ok = await showConfirmDialog(
+    context,
+    icon: Symbols.settings_backup_restore_rounded,
+    title: l.restore,
+    body: l.restoreConfirm,
+    action: l.confirm,
+  );
   if (!ok) return;
   try {
     await importBackup(ref.read(databaseProvider), content);
@@ -143,16 +154,28 @@ Future<void> restoreFromFile(BuildContext context, WidgetRef ref) async {
   }
 }
 
-/// Xóa toàn bộ dữ liệu sau hai lần xác nhận (AC-34, AC-42). Trả về true nếu đã xóa.
+/// Xóa toàn bộ dữ liệu sau hai lần xác nhận (AC-34, AC-42, 8.9–8.11); cũng là
+/// bước 2–3 của Quên mã ở màn khóa. Trả về true nếu đã xóa.
 Future<bool> deleteEverything(BuildContext context, WidgetRef ref) async {
   final l = AppLocalizations.of(context);
-  if (!await _confirm(context, l.deleteAll, l.deleteAllConfirm, l.delete)) {
-    return false;
-  }
-  if (!context.mounted) return false;
-  if (!await _confirm(context, l.deleteAll, l.deleteAllConfirm2, l.deleteAll)) {
-    return false;
-  }
+  final first = await showConfirmDialog(
+    context,
+    icon: Symbols.delete_forever_rounded,
+    title: l.deleteAllTitle,
+    body: l.deleteAllConfirm,
+    action: l.delete,
+    style: ConfirmStyle.danger,
+  );
+  if (!first || !context.mounted) return false;
+  final second = await showConfirmDialog(
+    context,
+    icon: Symbols.warning_rounded,
+    title: l.cannotUndo,
+    body: l.deleteAllConfirm2,
+    action: l.deleteAll,
+    style: ConfirmStyle.danger,
+  );
+  if (!second) return false;
   await deleteAllData(ref.read(databaseProvider));
   await ref.read(pinServiceProvider).disable();
   ref.invalidate(pinEnabledProvider);
@@ -164,57 +187,65 @@ Future<bool> deleteEverything(BuildContext context, WidgetRef ref) async {
       .read(settingsRepositoryProvider)
       .ensureCurrency(ref.read(deviceLocaleProvider));
   ref.read(accountFilterProvider.notifier).select(null);
+  HapticFeedback.lightImpact();
   showMessage(l.deleteAllDone);
   return true;
 }
 
-Future<bool> _confirm(
-  BuildContext context,
-  String title,
-  String body,
-  String action,
-) async =>
-    await showDialog<bool>(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text(title),
-        content: Text(body),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context, false),
-            child: Text(AppLocalizations.of(context).cancel),
-          ),
-          FilledButton(
-            onPressed: () => Navigator.pop(context, true),
-            child: Text(action),
-          ),
-        ],
-      ),
-    ) ??
-    false;
-
-/// Đặt mã PIN: nhập hai lần cho khớp, có cảnh báo quên mã (AC-31).
+/// Đặt mã PIN (AC-31, 8.1–8.3): màn toàn khung nhập hai lần cho khớp. Mũi tên
+/// quay lại, Back hoặc vuốt mép trái là hủy, PIN không bật.
 Future<void> setupPin(BuildContext context, WidgetRef ref) async {
-  final pin = await showDialog<String>(
-    context: context,
-    builder: (context) => const Dialog.fullscreen(child: _PinSetup()),
-  );
+  final pin = await Navigator.of(context)
+      .push<String>(MaterialPageRoute(builder: (_) => const _PinSetup()));
   if (pin == null) return;
   await ref.read(pinServiceProvider).setPin(pin);
   ref.invalidate(pinEnabledProvider);
 }
 
-/// Tắt khóa PIN, phải nhập đúng mã đang dùng.
+/// Tắt khóa PIN (8.4), phải nhập đúng mã đang dùng.
 Future<void> disablePin(BuildContext context, WidgetRef ref) async {
-  final l = AppLocalizations.of(context);
-  final ok = await showDialog<bool>(
-    context: context,
-    builder: (context) =>
-        Dialog.fullscreen(child: _PinCheck(title: l.enterPin)),
-  );
+  final ok = await Navigator.of(context)
+      .push<bool>(MaterialPageRoute(builder: (_) => const _PinCheck()));
   if (ok != true) return;
   await ref.read(pinServiceProvider).disable();
   ref.invalidate(pinEnabledProvider);
+}
+
+/// Khung chung của màn PIN trong Cài đặt (`.vg-pin`): thanh tiêu đề "Khóa bằng
+/// mã PIN" có mũi tên quay lại; tiêu đề, chấm, dòng lỗi ở trên, bàn phím dồn
+/// xuống đáy; thiếu chỗ (cỡ chữ lớn) thì cả màn cuộn được. [pad] phải bật
+/// `expand`.
+class _PinScaffold extends StatelessWidget {
+  const _PinScaffold({required this.pad});
+
+  final PinPad pad;
+
+  @override
+  Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
+    return Scaffold(
+      appBar: AppBar(title: Text(l.pinLock)),
+      body: SafeArea(
+        top: false,
+        child: CustomScrollView(
+          slivers: [
+            SliverFillRemaining(
+              hasScrollBody: false,
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(
+                  VgSpace.s4,
+                  VgSpace.s6,
+                  VgSpace.s4,
+                  VgSpace.s6,
+                ),
+                child: pad,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 }
 
 class _PinSetup extends StatefulWidget {
@@ -231,41 +262,38 @@ class _PinSetupState extends State<_PinSetup> {
   @override
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context);
-    return Scaffold(
-      appBar: AppBar(title: Text(l.pinLock)),
-      body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(24),
-          child: PinPad(
-            title: _first == null ? l.newPin : l.confirmPin,
-            message: l.pinWarning,
-            error: _error,
-            onCompleted: (pin) async {
-              if (_first == null) {
-                setState(() {
-                  _first = pin;
-                  _error = null;
-                });
-              } else if (pin == _first) {
-                Navigator.pop(context, pin);
-              } else {
-                setState(() {
-                  _first = null;
-                  _error = l.pinMismatch;
-                });
-              }
-            },
-          ),
-        ),
+    final firstStep = _first == null;
+    return _PinScaffold(
+      pad: PinPad(
+        expand: true,
+        titleStyle: Theme.of(context).textTheme.titleLarge,
+        title: firstStep ? l.newPin : l.confirmPin,
+        // Cảnh báo quên mã chỉ ở lần nhập đầu (8.1, 8.3), không ở 8.2.
+        message: firstStep ? l.pinWarning : null,
+        error: _error,
+        onCompleted: (pin) async {
+          if (_first == null) {
+            setState(() {
+              _first = pin;
+              _error = null;
+            });
+          } else if (pin == _first) {
+            Navigator.pop(context, pin);
+          } else {
+            HapticFeedback.lightImpact();
+            setState(() {
+              _first = null;
+              _error = l.pinMismatch;
+            });
+          }
+        },
       ),
     );
   }
 }
 
 class _PinCheck extends ConsumerStatefulWidget {
-  const _PinCheck({required this.title});
-
-  final String title;
+  const _PinCheck();
 
   @override
   ConsumerState<_PinCheck> createState() => _PinCheckState();
@@ -277,25 +305,22 @@ class _PinCheckState extends ConsumerState<_PinCheck> {
   @override
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context);
-    return Scaffold(
-      appBar: AppBar(title: Text(l.pinLock)),
-      body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(24),
-          child: PinPad(
-            title: widget.title,
-            error: _error,
-            onCompleted: (pin) async {
-              final ok = await ref.read(pinServiceProvider).verify(pin);
-              if (!context.mounted) return;
-              if (ok) {
-                Navigator.pop(context, true);
-              } else {
-                setState(() => _error = l.wrongPin);
-              }
-            },
-          ),
-        ),
+    return _PinScaffold(
+      pad: PinPad(
+        expand: true,
+        titleStyle: Theme.of(context).textTheme.titleLarge,
+        title: l.enterPin,
+        error: _error,
+        onCompleted: (pin) async {
+          final ok = await ref.read(pinServiceProvider).verify(pin);
+          if (!context.mounted) return;
+          if (ok) {
+            Navigator.pop(context, true);
+          } else {
+            HapticFeedback.lightImpact();
+            setState(() => _error = l.wrongPin);
+          }
+        },
       ),
     );
   }

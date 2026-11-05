@@ -2,6 +2,7 @@ import 'package:drift/drift.dart' show Value;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:material_symbols_icons/symbols.dart';
 
 import '../../../l10n/app_localizations.dart';
 import '../../data/calculator.dart';
@@ -10,8 +11,10 @@ import '../../data/dates.dart';
 import '../../data/money.dart';
 import '../../l10n_names.dart';
 import '../../providers.dart';
+import '../../ui/amount_display.dart';
 import '../../ui/format.dart';
 import '../../ui/messenger.dart';
+import '../../ui/tokens.g.dart';
 import '../entry/keypad.dart';
 
 /// Chuyển tiền giữa hai tài khoản (AC-19); sửa hoặc xóa lần chuyển có sẵn.
@@ -125,30 +128,65 @@ class _TransferScreenState extends ConsumerState<TransferScreen> {
   @override
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context);
+    final scheme = Theme.of(context).colorScheme;
     final currency = ref.watch(currencyProvider).value ?? 'VND';
     final digits = currencyDecimalDigits(currency);
     final accounts = ref.watch(accountsProvider).value ?? const <Account>[];
     final all = ref.watch(allAccountsProvider).value ?? accounts;
     final value = evaluateToMinorUnits(_expression, decimalDigits: digits);
+    final from = _from ?? (accounts.isEmpty ? null : accounts.first.id);
+    final to = _to ?? (accounts.length < 2 ? null : accounts[1].id);
+    // Hai tài khoản giống nhau: báo ngay, ô Đến viền `error` (6.7).
+    final same = from != null && from == to;
+    final error = same ? l.sameAccountError : _error;
 
-    // Tài khoản đã ẩn chỉ hiện khi là tài khoản sẵn có của lần chuyển đang sửa (AC-44).
+    // Ô chọn tài khoản (`.vg-field`, cao tối thiểu 48), tên dài vẫn một dòng
+    // vì mỗi ô chiếm cả bề ngang. Tài khoản đã ẩn chỉ hiện khi là tài khoản
+    // sẵn có của lần chuyển đang sửa (AC-44).
     Widget accountPicker(
       String label,
       int? selected,
-      ValueChanged<int?> onChanged,
-    ) => DropdownButtonFormField<int>(
-      isExpanded: true,
-      initialValue: selected,
-      decoration: InputDecoration(labelText: label),
-      items: [
-        for (final a in accounts)
-          DropdownMenuItem(value: a.id, child: Text(accountLabel(l, a))),
-        for (final a in all)
-          if (a.id == selected && !accounts.any((v) => v.id == a.id))
-            DropdownMenuItem(value: a.id, child: Text(accountLabel(l, a))),
-      ],
-      onChanged: onChanged,
-    );
+      ValueChanged<int?> onChanged, {
+      bool invalid = false,
+    }) {
+      final errorBorder = OutlineInputBorder(
+        borderRadius: BorderRadius.circular(VgRadius.sm),
+        borderSide: BorderSide(color: scheme.error, width: 2),
+      );
+      return DropdownButtonFormField<int>(
+        // Đổi khóa theo giá trị để ô hiện đúng tài khoản sau khi nạp lần chuyển cũ.
+        key: ValueKey('$label-$selected'),
+        isExpanded: true,
+        initialValue: selected,
+        style: Theme.of(context).textTheme.bodyLarge,
+        icon: const Icon(Symbols.arrow_drop_down_rounded),
+        decoration: InputDecoration(
+          labelText: label,
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: VgSpace.s4,
+            vertical: VgSpace.s3,
+          ),
+          enabledBorder: invalid ? errorBorder : null,
+          focusedBorder: invalid ? errorBorder : null,
+        ),
+        items: [
+          for (final a in [
+            ...accounts,
+            for (final a in all)
+              if (a.id == selected && !accounts.any((v) => v.id == a.id)) a,
+          ])
+            DropdownMenuItem(
+              value: a.id,
+              child: Text(
+                accountLabel(l, a),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+        ],
+        onChanged: onChanged,
+      );
+    }
 
     return Scaffold(
       appBar: AppBar(
@@ -156,7 +194,7 @@ class _TransferScreenState extends ConsumerState<TransferScreen> {
         actions: [
           if (_original != null)
             IconButton(
-              icon: const Icon(Icons.delete_outline),
+              icon: const Icon(Symbols.delete_rounded),
               tooltip: l.delete,
               onPressed: _delete,
             ),
@@ -172,68 +210,93 @@ class _TransferScreenState extends ConsumerState<TransferScreen> {
                   Expanded(
                     child: SingleChildScrollView(
                       child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
+                          // Từ và Đến xếp dọc (6.6).
                           Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 16),
-                            child: Row(
+                            padding: const EdgeInsets.fromLTRB(
+                              VgSpace.s4,
+                              VgSpace.s3,
+                              VgSpace.s4,
+                              0,
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.stretch,
                               children: [
-                                Expanded(
+                                KeyedSubtree(
+                                  key: const ValueKey('transfer-from'),
                                   child: accountPicker(
                                     l.transferFrom,
-                                    _from ?? accounts.first.id,
-                                    (v) => setState(() => _from = v),
+                                    from,
+                                    (v) => setState(() {
+                                      _from = v;
+                                      _error = null;
+                                    }),
                                   ),
                                 ),
-                                const Padding(
-                                  padding: EdgeInsets.symmetric(horizontal: 8),
-                                  child: Icon(Icons.arrow_forward),
-                                ),
-                                Expanded(
+                                const SizedBox(height: VgSpace.s4),
+                                KeyedSubtree(
+                                  key: const ValueKey('transfer-to'),
                                   child: accountPicker(
                                     l.transferTo,
-                                    _to ?? accounts[1].id,
-                                    (v) => setState(() => _to = v),
+                                    to,
+                                    (v) => setState(() {
+                                      _to = v;
+                                      _error = null;
+                                    }),
+                                    invalid: same,
                                   ),
                                 ),
                               ],
                             ),
                           ),
-                          const SizedBox(height: 8),
-                          Text(
-                            money(context, currency, value ?? 0),
-                            style: Theme.of(context).textTheme.headlineLarge,
+                          AmountDisplay(
+                            expression: _expression,
+                            amount: money(context, currency, value ?? 0),
+                            color: scheme.onSurface,
+                            error: error,
                           ),
-                          if (_error != null)
-                            Text(
-                              _error!,
-                              style: TextStyle(
-                                color: Theme.of(context).colorScheme.error,
+                          // Chip ngày (`.vg-chips`): căn trái, lề 16.
+                          Padding(
+                            padding: const EdgeInsets.fromLTRB(
+                              VgSpace.s4,
+                              0,
+                              VgSpace.s4,
+                              VgSpace.s3,
+                            ),
+                            child: Align(
+                              alignment: AlignmentDirectional.centerStart,
+                              child: ActionChip(
+                                avatar: const Icon(
+                                  Symbols.calendar_today_rounded,
+                                  size: 18,
+                                ),
+                                label: Text(
+                                  _date == dateOnly(ref.read(clockProvider)())
+                                      ? l.today
+                                      : shortDate(context, _date),
+                                ),
+                                onPressed: () async {
+                                  final now = ref.read(clockProvider)();
+                                  final picked = await showDatePicker(
+                                    context: context,
+                                    initialDate: _date,
+                                    firstDate: _date.isBefore(DateTime(2000))
+                                        ? _date
+                                        : DateTime(2000),
+                                    lastDate: DateTime(now.year + 10),
+                                  );
+                                  if (picked != null) {
+                                    setState(() => _date = dateOnly(picked));
+                                  }
+                                },
                               ),
                             ),
-                          ActionChip(
-                            avatar: const Icon(Icons.event, size: 18),
-                            label: Text(
-                              _date == dateOnly(ref.read(clockProvider)())
-                                  ? l.today
-                                  : shortDate(context, _date),
-                            ),
-                            onPressed: () async {
-                              final now = ref.read(clockProvider)();
-                              final picked = await showDatePicker(
-                                context: context,
-                                initialDate: _date,
-                                firstDate: _date.isBefore(DateTime(2000))
-                                    ? _date
-                                    : DateTime(2000),
-                                lastDate: DateTime(now.year + 10),
-                              );
-                              if (picked != null) {
-                                setState(() => _date = dateOnly(picked));
-                              }
-                            },
                           ),
                           Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 16),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: VgSpace.s4,
+                            ),
                             child: TextField(
                               controller: _note,
                               maxLength: 200,
@@ -248,7 +311,8 @@ class _TransferScreenState extends ConsumerState<TransferScreen> {
                     decimalDigits: digits,
                     onKey: _onKey,
                     saveLabel: l.save,
-                    saveColor: Theme.of(context).colorScheme.primary,
+                    saveColor: scheme.primary,
+                    saveForeground: scheme.onPrimary,
                     onSave: () => _save(accounts),
                   ),
                 ],

@@ -80,6 +80,15 @@ Finder findPlainText(String text) => find.byWidgetPredicate(
   (w) => w is Text && w.data != null && plain(w.data!) == text,
 );
 
+/// Tìm vùng có nhãn đọc [label] (không phân biệt dấu cách thường/không ngắt),
+/// ví dụ thanh Số dư hiện "Số dư" và số tiền ở hai chỗ nhưng đọc một câu.
+Finder findSemanticsLabel(String label) => find.byWidgetPredicate(
+  (w) =>
+      w is Semantics &&
+      w.properties.label != null &&
+      plain(w.properties.label!) == label,
+);
+
 /// Ghi một khoản thẳng vào cơ sở dữ liệu.
 Future<int> insertEntry(
   WidgetTester tester,

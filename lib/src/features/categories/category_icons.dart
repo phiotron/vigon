@@ -1,46 +1,57 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
+import 'package:material_symbols_icons/symbols.dart';
 
-/// Bộ icon chọn được cho danh mục. Khóa là chữ lưu trong cơ sở dữ liệu.
+import '../../ui/tokens.g.dart';
+
+/// 31 icon chọn được cho danh mục, đúng thứ tự trong `design-system-guide.md`
+/// mục Biểu tượng. Khóa là chữ lưu trong cơ sở dữ liệu (D-010).
 const categoryIcons = <String, IconData>{
-  'restaurant': Icons.restaurant,
-  'local_cafe': Icons.local_cafe,
-  'local_grocery_store': Icons.local_grocery_store,
-  'directions_bus': Icons.directions_bus,
-  'local_gas_station': Icons.local_gas_station,
-  'two_wheeler': Icons.two_wheeler,
-  'home': Icons.home,
-  'receipt_long': Icons.receipt_long,
-  'bolt': Icons.bolt,
-  'wifi': Icons.wifi,
-  'phone_android': Icons.phone_android,
-  'shopping_bag': Icons.shopping_bag,
-  'checkroom': Icons.checkroom,
-  'medical_services': Icons.medical_services,
-  'fitness_center': Icons.fitness_center,
-  'movie': Icons.movie,
-  'sports_esports': Icons.sports_esports,
-  'flight': Icons.flight,
-  'school': Icons.school,
-  'menu_book': Icons.menu_book,
-  'family_restroom': Icons.family_restroom,
-  'child_care': Icons.child_care,
-  'pets': Icons.pets,
-  'card_giftcard': Icons.card_giftcard,
-  'volunteer_activism': Icons.volunteer_activism,
-  'payments': Icons.payments,
-  'redeem': Icons.redeem,
-  'savings': Icons.savings,
-  'trending_up': Icons.trending_up,
-  'work': Icons.work,
-  'more_horiz': Icons.more_horiz,
+  'restaurant': Symbols.restaurant_rounded,
+  'local_cafe': Symbols.local_cafe_rounded,
+  'directions_bus': Symbols.directions_bus_rounded,
+  'two_wheeler': Symbols.two_wheeler_rounded,
+  'local_gas_station': Symbols.local_gas_station_rounded,
+  'home': Symbols.home_rounded,
+  'receipt_long': Symbols.receipt_long_rounded,
+  'bolt': Symbols.bolt_rounded,
+  'water_drop': Symbols.water_drop_rounded,
+  'wifi': Symbols.wifi_rounded,
+  'shopping_bag': Symbols.shopping_bag_rounded,
+  'checkroom': Symbols.checkroom_rounded,
+  'health_and_safety': Symbols.health_and_safety_rounded,
+  'medication': Symbols.medication_rounded,
+  'movie': Symbols.movie_rounded,
+  'sports_esports': Symbols.sports_esports_rounded,
+  'school': Symbols.school_rounded,
+  'menu_book': Symbols.menu_book_rounded,
+  'family_restroom': Symbols.family_restroom_rounded,
+  'child_care': Symbols.child_care_rounded,
+  'pets': Symbols.pets_rounded,
+  'redeem': Symbols.redeem_rounded,
+  'payments': Symbols.payments_rounded,
+  'savings': Symbols.savings_rounded,
+  'work': Symbols.work_rounded,
+  'flight': Symbols.flight_rounded,
+  'fitness_center': Symbols.fitness_center_rounded,
+  'spa': Symbols.spa_rounded,
+  'volunteer_activism': Symbols.volunteer_activism_rounded,
+  'build': Symbols.build_rounded,
+  'more_horiz': Symbols.more_horiz_rounded,
 };
 
-IconData iconFor(String key) => categoryIcons[key] ?? Icons.category;
+/// Khóa của bộ icon trước PLAN-001, không còn trong bảng chọn nhưng vẫn có thể
+/// nằm trong cơ sở dữ liệu hoặc file sao lưu cũ; vẫn phải hiện được icon.
+const legacyCategoryIcons = <String, IconData>{
+  'local_grocery_store': Symbols.local_grocery_store_rounded,
+  'phone_android': Symbols.phone_android_rounded,
+  'medical_services': Symbols.medical_services_rounded,
+  'card_giftcard': Symbols.card_giftcard_rounded,
+  'trending_up': Symbols.trending_up_rounded,
+};
 
-/// Bảng màu danh mục. Màu đậm để icon trắng đạt tương phản tối thiểu 3:1 (AC-40).
-const categoryColors = <int>[
-  0xFFC62828, 0xFFAD1457, 0xFF6A1B9A, 0xFF4527A0, //
-  0xFF283593, 0xFF1565C0, 0xFF0277BD, 0xFF00838F, //
-  0xFF00695C, 0xFF2E7D32, 0xFF558B2F, 0xFFE65100, //
-  0xFFBF360C, 0xFF5D4037, 0xFF455A64, 0xFF616161, //
-];
+IconData iconFor(String key) =>
+    categoryIcons[key] ?? legacyCategoryIcons[key] ?? Symbols.category_rounded;
+
+/// Bảng 16 màu danh mục cat-01 … cat-16 (ARGB lưu trong cơ sở dữ liệu). Màu
+/// đậm để icon trắng đạt tương phản tối thiểu 3:1 (AC-40).
+final categoryColors = <int>[for (final c in vgCategoryColors) c.toARGB32()];

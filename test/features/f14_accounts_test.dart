@@ -77,12 +77,12 @@ void main() {
     // Đang lọc đúng tài khoản sắp ẩn.
     containerOf(tester).read(accountFilterProvider.notifier).select(card);
     await settle(tester);
-    expect(findPlainText('Số dư: -20.000 ₫'), findsOneWidget);
+    expect(findSemanticsLabel('Số dư: -20.000 ₫'), findsOneWidget);
     await tester.runAsync(() => AccountRepository(db).archive(card));
     await settle(tester);
     // Bộ lọc tự bỏ, khoản của tài khoản ẩn vẫn nằm trong tổng.
     expect(containerOf(tester).read(accountFilterProvider), isNull);
-    expect(findPlainText('Số dư: -20.000 ₫'), findsOneWidget);
+    expect(findSemanticsLabel('Số dư: -20.000 ₫'), findsOneWidget);
     // Chỉ còn một tài khoản hiện: không có menu lọc.
     expect(find.byTooltip('Tài khoản'), findsNothing);
     // Danh sách khoản vẫn có khoản cũ, ghi đúng tên tài khoản ẩn.

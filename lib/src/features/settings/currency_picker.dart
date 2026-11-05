@@ -2,9 +2,11 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:material_symbols_icons/symbols.dart';
 
 import '../../../l10n/app_localizations.dart';
 import '../../data/currency_table.dart';
+import '../../ui/tokens.g.dart';
 
 /// Nhãn "VND · ₫" của một mã tiền tệ (mã, kèm ký hiệu nếu khác mã).
 String currencyCodeLabel(String code) {
@@ -51,20 +53,28 @@ class _CurrencyPickerDialogState extends State<CurrencyPickerDialog> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Padding(
-              padding: const EdgeInsets.fromLTRB(24, 20, 24, 8),
-              child: Text(
-                l.currency,
-                style: Theme.of(context).textTheme.titleLarge,
+              padding: const EdgeInsets.fromLTRB(
+                VgSpace.s6,
+                VgSpace.s6,
+                VgSpace.s6,
+                VgSpace.s2,
+              ),
+              child: Semantics(
+                header: true,
+                child: Text(
+                  l.currency,
+                  style: Theme.of(context).textTheme.titleMedium,
+                ),
               ),
             ),
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
+              padding: const EdgeInsets.symmetric(horizontal: VgSpace.s4),
               child: TextField(
                 controller: _search,
                 textInputAction: TextInputAction.search,
                 decoration: InputDecoration(
                   hintText: l.currencySearchHint,
-                  prefixIcon: const Icon(Icons.search),
+                  prefixIcon: const Icon(Symbols.search_rounded),
                   border: const OutlineInputBorder(),
                   isDense: true,
                 ),
@@ -79,13 +89,23 @@ class _CurrencyPickerDialogState extends State<CurrencyPickerDialog> {
                 itemBuilder: (context, i) {
                   if (i == 0) {
                     return Padding(
-                      padding: const EdgeInsets.fromLTRB(24, 12, 24, 8),
-                      child: Text(l.currencyNote),
+                      padding: const EdgeInsets.fromLTRB(
+                        VgSpace.s6,
+                        VgSpace.s3,
+                        VgSpace.s6,
+                        VgSpace.s2,
+                      ),
+                      child: Text(
+                        l.currencyNote,
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
+                        ),
+                      ),
                     );
                   }
                   if (_shown.isEmpty) {
                     return Padding(
-                      padding: const EdgeInsets.all(24),
+                      padding: const EdgeInsets.all(VgSpace.s6),
                       child: Text(l.currencyNoMatch),
                     );
                   }
@@ -95,10 +115,27 @@ class _CurrencyPickerDialogState extends State<CurrencyPickerDialog> {
                     selected: selected,
                     title: Text(currencyCodeLabel(c.code)),
                     subtitle: Text(c.name(lang)),
-                    trailing: selected ? const Icon(Icons.check) : null,
+                    trailing: selected
+                        ? const Icon(Symbols.check_rounded)
+                        : null,
                     onTap: () => Navigator.pop(context, c.code),
                   );
                 },
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(
+                VgSpace.s4,
+                VgSpace.s2,
+                VgSpace.s4,
+                VgSpace.s4,
+              ),
+              child: Align(
+                alignment: AlignmentDirectional.centerEnd,
+                child: TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: Text(l.cancel),
+                ),
               ),
             ),
           ],

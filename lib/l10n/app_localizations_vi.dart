@@ -719,4 +719,37 @@ class AppLocalizationsVi extends AppLocalizations {
   String iconNumber(int n) {
     return 'Biểu tượng $n';
   }
+
+  @override
+  String get viewBy => 'Xem theo';
+
+  @override
+  String get apply => 'Áp dụng';
+
+  @override
+  String get deleteAllTitle => 'Xóa toàn bộ dữ liệu?';
+
+  @override
+  String get cannotUndo => 'Không hoàn tác được';
+
+  @override
+  String get previousMonth => 'Tháng trước';
+
+  @override
+  String get nextMonth => 'Tháng sau';
+
+  @override
+  String get rangeHint => 'Chọn ngày đầu rồi ngày cuối';
+
+  @override
+  String get amountLabel => 'Số tiền';
+
+  @override
+  String get initialBalanceHelper => 'Để trống = 0. Cho phép số âm.';
+
+  @override
+  String get recurringEditNote => 'Áp dụng cho các lần sinh sau.';
+
+  @override
+  String get deleteCategoryEmptyBody => 'Danh mục này chưa có khoản nào.';
 }

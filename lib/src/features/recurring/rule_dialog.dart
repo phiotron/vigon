@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:material_symbols_icons/symbols.dart';
 
 import '../../../l10n/app_localizations.dart';
 import '../../data/calculator.dart';
 import '../../data/database.dart';
 import '../../l10n_names.dart';
+import '../../ui/tokens.g.dart';
 import '../entry/entry_editor_screen.dart' show repeatLabel;
 import '../entry/keypad.dart' show minorUnitsToInput;
 
@@ -34,12 +36,16 @@ class RuleDialog extends StatefulWidget {
     super.key,
     required this.rule,
     required this.digits,
+    this.symbol = '',
     required this.categories,
     required this.accounts,
   });
 
   final RecurringRule rule;
   final int digits;
+
+  /// Ký hiệu tiền tệ cuối ô số tiền (7.2).
+  final String symbol;
 
   /// Danh mục cùng loại thu/chi với chuỗi; rỗng với chuỗi chuyển tiền.
   final List<Category> categories;
@@ -100,6 +106,11 @@ class _RuleDialogState extends State<RuleDialog> {
         if (a.id != widget.rule.toAccountId) a,
     ];
     final categories = widget.categories;
+    // Ô chọn (`.vg-field`): mũi tên Material Symbols, cách nhau 16.
+    const gap = SizedBox(height: VgSpace.s4);
+    const arrow = Icon(Symbols.arrow_drop_down_rounded);
+    // Sửa chuỗi (7.2): Số tiền tự focus, ghi chú áp dụng cho các lần sinh sau;
+    // bản 1.1 thêm tần suất, danh mục, tài khoản (AC-50).
     return AlertDialog(
       title: Text(l.recurring),
       scrollable: true,
@@ -107,23 +118,39 @@ class _RuleDialogState extends State<RuleDialog> {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
+          const SizedBox(height: VgSpace.s2),
           TextField(
             controller: _amount,
+            autofocus: true,
             keyboardType: const TextInputType.numberWithOptions(decimal: true),
             inputFormatters: [
               FilteringTextInputFormatter.allow(RegExp(r'[0-9.,]')),
             ],
-            decoration: InputDecoration(errorText: _error),
+            style: const TextStyle(
+              fontFeatures: [FontFeature.tabularFigures()],
+            ),
+            decoration: InputDecoration(
+              labelText: l.amountLabel,
+              suffixText: widget.symbol.isEmpty ? null : widget.symbol,
+              errorText: _error,
+            ),
           ),
+          const SizedBox(height: VgSpace.s6),
           TextField(
             controller: _note,
             maxLength: 200,
-            decoration: InputDecoration(hintText: l.noteHint),
+            decoration: InputDecoration(
+              labelText: l.noteHint,
+              helperText: l.recurringEditNote,
+              helperMaxLines: 3,
+            ),
           ),
+          gap,
           DropdownButtonFormField<RecurrenceFrequency>(
             key: const Key('rule-frequency'),
             initialValue: _frequency,
             isExpanded: true,
+            icon: arrow,
             decoration: InputDecoration(labelText: l.repeat),
             items: [
               for (final f in RecurrenceFrequency.values)
@@ -131,25 +158,33 @@ class _RuleDialogState extends State<RuleDialog> {
             ],
             onChanged: (f) => setState(() => _frequency = f ?? _frequency),
           ),
-          if (categories.isNotEmpty && _categoryId != null)
+          if (categories.isNotEmpty && _categoryId != null) ...[
+            gap,
             DropdownButtonFormField<int>(
               key: const Key('rule-category'),
               initialValue: categories.any((c) => c.id == _categoryId)
                   ? _categoryId
                   : null,
               isExpanded: true,
+              icon: arrow,
               decoration: InputDecoration(labelText: l.categories),
               items: [
                 for (final c in categories)
                   DropdownMenuItem(
                     value: c.id,
-                    child: Text(categoryLabel(l, c)),
+                    child: Text(
+                      categoryLabel(l, c),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
                   ),
               ],
               onChanged: (id) =>
                   setState(() => _categoryId = id ?? _categoryId),
             ),
-          if (accounts.length > 1)
+          ],
+          if (accounts.length > 1) ...[
+            gap,
             DropdownButtonFormField<int>(
               key: const Key('rule-account'),
               // Tài khoản hiện tại đã ẩn thì để trống, giữ nguyên tới khi chọn lại.
@@ -157,16 +192,22 @@ class _RuleDialogState extends State<RuleDialog> {
                   ? _accountId
                   : null,
               isExpanded: true,
+              icon: arrow,
               decoration: InputDecoration(labelText: l.account),
               items: [
                 for (final a in accounts)
                   DropdownMenuItem(
                     value: a.id,
-                    child: Text(accountLabel(l, a)),
+                    child: Text(
+                      accountLabel(l, a),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
                   ),
               ],
               onChanged: (id) => setState(() => _accountId = id ?? _accountId),
             ),
+          ],
         ],
       ),
       actions: [

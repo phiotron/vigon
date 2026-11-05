@@ -76,6 +76,9 @@ void main() {
     await tester.tap(find.byTooltip('Cài đặt'));
     await settle(tester);
     await tester.scrollUntilVisible(find.text('Khóa bằng mã PIN'), 200);
+    // Dòng có thể đã dựng nhưng còn nằm dưới mép màn; kéo hẳn vào trong.
+    await tester.ensureVisible(find.text('Khóa bằng mã PIN'));
+    await settle(tester);
     await tester.tap(find.text('Khóa bằng mã PIN'));
     await settle(tester);
     expect(find.text('Đặt mã PIN 4 số'), findsOneWidget);

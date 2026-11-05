@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:material_symbols_icons/symbols.dart';
 
 import '../../../l10n/app_localizations.dart';
 import '../../data/database.dart';
@@ -9,7 +10,9 @@ import '../../l10n_names.dart';
 import '../../providers.dart';
 import '../../ui/category_avatar.dart';
 import '../../ui/format.dart';
+import '../../ui/tokens.g.dart';
 import '../entry/entry_editor_screen.dart' show repeatLabel;
+import '../settings/budget_dialog.dart' show currencySymbol;
 import 'rule_dialog.dart';
 
 /// Danh sách chuỗi định kỳ: dừng, chạy lại, sửa số tiền (AC-25).
@@ -29,40 +32,32 @@ class RecurringScreen extends ConsumerWidget {
           c.id: c,
     };
     final repo = ref.read(recurringRepositoryProvider);
+    final scheme = Theme.of(context).colorScheme;
     return Scaffold(
       appBar: AppBar(title: Text(l.recurring)),
       body: rules.isEmpty
+          // Trống (7.3): lời nhắc giữa màn.
           ? Center(
               child: Padding(
-                padding: const EdgeInsets.all(24),
-                child: Text(l.noRecurring, textAlign: TextAlign.center),
+                padding: const EdgeInsets.symmetric(horizontal: VgSpace.s8),
+                child: Text(
+                  l.noRecurring,
+                  textAlign: TextAlign.center,
+                  style: Theme.of(context).textTheme.bodyLarge
+                      ?.copyWith(color: scheme.onSurfaceVariant),
+                ),
               ),
             )
           : ListView(
               children: [
                 for (final r in rules)
-                  ListTile(
-                    leading: categories[r.categoryId] == null
-                        ? const Icon(Icons.repeat)
-                        : CategoryAvatar(
-                            category: categories[r.categoryId]!,
-                            size: 40,
-                          ),
-                    title: Text(
-                      '${categories[r.categoryId] == null ? '' : categoryLabel(l, categories[r.categoryId]!)}'
-                      ' · ${money(context, currency, r.amount)}',
-                    ),
-                    subtitle: Text(
-                      r.active
-                          ? '${repeatLabel(l, r.frequency)} · ${shortDate(context, RecurringRepository.nextDate(r))}'
-                          : '${repeatLabel(l, r.frequency)} · ${l.repeatStopped}',
-                    ),
-                    trailing: Switch(
-                      value: r.active,
-                      onChanged: (on) => on
-                          ? repo.resume(r.id, ref.read(clockProvider)())
-                          : repo.stop(r.id),
-                    ),
+                  _RuleTile(
+                    rule: r,
+                    category: categories[r.categoryId],
+                    amount: money(context, currency, r.amount),
+                    onToggle: (on) => on
+                        ? repo.resume(r.id, ref.read(clockProvider)())
+                        : repo.stop(r.id),
                     onTap: () => _edit(context, ref, r),
                   ),
               ],
@@ -75,9 +70,7 @@ class RecurringScreen extends ConsumerWidget {
     WidgetRef ref,
     RecurringRule rule,
   ) async {
-    final digits = currencyDecimalDigits(
-      ref.read(currencyProvider).value ?? 'VND',
-    );
+    final currency = ref.read(currencyProvider).value ?? 'VND';
     final categories = switch (rule.type) {
       EntryType.transfer => const <Category>[],
       EntryType.income =>
@@ -89,7 +82,8 @@ class RecurringScreen extends ConsumerWidget {
       context: context,
       builder: (context) => RuleDialog(
         rule: rule,
-        digits: digits,
+        digits: currencyDecimalDigits(currency),
+        symbol: currencySymbol(currency),
         categories: categories ?? const <Category>[],
         accounts: ref.read(accountsProvider).value ?? const <Account>[],
       ),
@@ -106,5 +100,51 @@ class RecurringScreen extends ConsumerWidget {
             accountId: saved.accountId,
           );
     }
+  }
+}
+
+/// Một chuỗi (7.1): icon danh mục, "Danh mục · số tiền", "Tần suất · ngày
+/// tới hạn" hoặc "Đã dừng", công tắc; chạm dòng để sửa.
+class _RuleTile extends StatelessWidget {
+  const _RuleTile({
+    required this.rule,
+    required this.category,
+    required this.amount,
+    required this.onToggle,
+    required this.onTap,
+  });
+
+  final RecurringRule rule;
+  final Category? category;
+  final String amount;
+  final ValueChanged<bool> onToggle;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
+    final name = category == null ? '' : categoryLabel(l, category!);
+    final title = '$name · $amount';
+    return ListTile(
+      leading: category == null
+          ? const SizedBox(
+              width: 40,
+              child: Center(child: Icon(Symbols.event_repeat_rounded)),
+            )
+          : CategoryAvatar(category: category!, size: 40),
+      title: Text(title),
+      subtitle: Text(
+        rule.active
+            ? '${repeatLabel(l, rule.frequency)} · '
+                  '${shortDate(context, RecurringRepository.nextDate(rule))}'
+            : '${repeatLabel(l, rule.frequency)} · ${l.repeatStopped}',
+      ),
+      // Công tắc đọc tên chuỗi để TalkBack biết đang bật/tắt chuỗi nào.
+      trailing: Semantics(
+        label: title,
+        child: Switch(value: rule.active, onChanged: onToggle),
+      ),
+      onTap: onTap,
+    );
   }
 }

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:material_symbols_icons/symbols.dart';
 
 import '../../../l10n/app_localizations.dart';
+import '../../ui/tokens.g.dart';
 
 /// Nhập mã PIN 4 số bằng bàn phím của app; đủ 4 số thì gọi [onCompleted].
 class PinPad extends StatefulWidget {
@@ -10,11 +12,24 @@ class PinPad extends StatefulWidget {
     required this.onCompleted,
     this.error,
     this.message,
+    this.leading,
+    this.titleStyle,
+    this.expand = false,
   });
 
   final String title;
   final String? message;
   final String? error;
+
+  /// Hiện phía trên tiêu đề, ví dụ icon khóa ở màn khóa (1.1).
+  final Widget? leading;
+
+  /// Kiểu chữ tiêu đề; mặc định title-md.
+  final TextStyle? titleStyle;
+
+  /// Dồn bàn phím xuống đáy khoảng được cấp (`.vg-pinpad` margin-top auto).
+  /// Khi bật, cha phải cấp chiều cao hữu hạn, ví dụ `SliverFillRemaining`.
+  final bool expand;
 
   /// Gọi khi đủ 4 số; xong thì ô nhập tự xóa để nhập lại nếu cần.
   final Future<void> Function(String pin) onCompleted;
@@ -49,40 +64,78 @@ class _PinPadState extends State<PinPad> {
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context);
     final scheme = Theme.of(context).colorScheme;
-    Widget key(String k, {String? label}) => Expanded(
-      child: Padding(
-        padding: const EdgeInsets.all(6),
-        child: k.isEmpty
-            ? const SizedBox(height: 64)
-            : TextButton(
-                style: TextButton.styleFrom(
-                  minimumSize: const Size.fromHeight(64),
-                  backgroundColor: scheme.surfaceContainerHighest,
-                  shape: const StadiumBorder(),
-                ),
-                onPressed: () => _press(k),
-                child: Text(
-                  k,
-                  semanticsLabel: label ?? l.digit(k),
-                  style: Theme.of(context).textTheme.headlineSmall,
-                ),
+    // Phím PIN (1.1, 8.1): bầu dục 88×64 nền `surface-container-high`; phím
+    // xóa lùi không có nền, màu chữ phụ.
+    Widget key(String k) => SizedBox(
+      width: 88,
+      height: VgSize.tapMain,
+      child: k.isEmpty
+          ? null
+          : TextButton(
+              style: TextButton.styleFrom(
+                padding: EdgeInsets.zero,
+                backgroundColor: k == '⌫' ? null : scheme.surfaceContainerHigh,
+                foregroundColor: k == '⌫'
+                    ? scheme.onSurfaceVariant
+                    : scheme.onSurface,
+                textStyle: VgType.keyDigit,
+                shape: const StadiumBorder(),
               ),
+              onPressed: () => _press(k),
+              child: k == '⌫'
+                  ? Icon(
+                      Symbols.backspace_rounded,
+                      semanticLabel: l.keypadBackspace,
+                    )
+                  : Text(k, semanticsLabel: l.digit(k)),
+            ),
+    );
+    Widget row(List<String> keys) => Padding(
+      padding: const EdgeInsets.only(top: VgSpace.s3),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          for (var i = 0; i < keys.length; i++) ...[
+            if (i > 0) const SizedBox(width: VgSpace.s6),
+            key(keys[i]),
+          ],
+        ],
       ),
     );
     return Column(
-      mainAxisSize: MainAxisSize.min,
+      mainAxisSize: widget.expand ? MainAxisSize.max : MainAxisSize.min,
       children: [
-        Text(
-          widget.title,
-          style: Theme.of(context).textTheme.headlineSmall,
-          textAlign: TextAlign.center,
+        if (widget.leading != null) ...[
+          widget.leading!,
+          const SizedBox(height: VgSpace.s3),
+        ],
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: VgSpace.s6),
+          child: Semantics(
+            header: true,
+            child: Text(
+              widget.title,
+              style:
+                  widget.titleStyle ?? Theme.of(context).textTheme.titleMedium,
+              textAlign: TextAlign.center,
+            ),
+          ),
         ),
         if (widget.message != null)
           Padding(
-            padding: const EdgeInsets.all(8),
-            child: Text(widget.message!, textAlign: TextAlign.center),
+            padding: const EdgeInsets.fromLTRB(
+              VgSpace.s8,
+              VgSpace.s2,
+              VgSpace.s8,
+              0,
+            ),
+            child: Text(
+              widget.message!,
+              textAlign: TextAlign.center,
+              style: VgType.bodySm.copyWith(color: scheme.onSurfaceVariant),
+            ),
           ),
-        const SizedBox(height: 16),
+        const SizedBox(height: VgSpace.s6),
         Semantics(
           liveRegion: true,
           label: l.pinProgress(_pin.length),
@@ -90,39 +143,46 @@ class _PinPadState extends State<PinPad> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              for (var i = 0; i < 4; i++)
+              for (var i = 0; i < 4; i++) ...[
+                if (i > 0) const SizedBox(width: VgSpace.s4),
                 Container(
-                  margin: const EdgeInsets.all(8),
                   width: 16,
                   height: 16,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    color: i < _pin.length ? scheme.primary : null,
-                    border: Border.all(color: scheme.outline, width: 2),
+                    color: i < _pin.length ? scheme.onSurface : null,
+                    border: Border.all(
+                      color: i < _pin.length
+                          ? scheme.onSurface
+                          : scheme.onSurfaceVariant,
+                      width: 2,
+                    ),
                   ),
                 ),
+              ],
             ],
           ),
         ),
-        SizedBox(
+        // Dòng lỗi cao cố định để bàn phím không nhảy (S01).
+        Container(
           height: 24,
+          margin: const EdgeInsets.only(top: VgSpace.s3),
+          alignment: Alignment.center,
           child: widget.error == null
               ? null
-              : Text(widget.error!, style: TextStyle(color: scheme.error)),
+              : Semantics(
+                  liveRegion: true,
+                  child: Text(
+                    widget.error!,
+                    style: VgType.bodySm.copyWith(color: scheme.error),
+                  ),
+                ),
         ),
-        for (final row in const [
-          ['1', '2', '3'],
-          ['4', '5', '6'],
-          ['7', '8', '9'],
-        ])
-          Row(children: [for (final k in row) key(k)]),
-        Row(
-          children: [
-            key(''),
-            key('0'),
-            key('⌫', label: l.keypadBackspace),
-          ],
-        ),
+        if (widget.expand) const Spacer(),
+        row(const ['1', '2', '3']),
+        row(const ['4', '5', '6']),
+        row(const ['7', '8', '9']),
+        row(const ['', '0', '⌫']),
       ],
     );
   }

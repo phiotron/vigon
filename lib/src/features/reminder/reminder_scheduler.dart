@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter_timezone/flutter_timezone.dart';
 import 'package:timezone/data/latest.dart' as tzdata;
 import 'package:timezone/timezone.dart' as tz;
@@ -88,6 +89,13 @@ class LocalNotificationsScheduler implements ReminderScheduler {
       await _plugin.initialize(
         settings: const InitializationSettings(
           android: AndroidInitializationSettings('ic_stat_vigon'),
+          // iOS: KHÔNG xin quyền lúc khởi tạo; chỉ xin khi người dùng bật
+          // công tắc nhắc, sau lời giải thích (AC-61, D-019).
+          iOS: DarwinInitializationSettings(
+            requestAlertPermission: false,
+            requestSoundPermission: false,
+            requestBadgePermission: false,
+          ),
         ),
         onDidReceiveNotificationResponse: (response) => onTap(response.payload),
       );
@@ -114,9 +122,20 @@ class LocalNotificationsScheduler implements ReminderScheduler {
         AndroidFlutterLocalNotificationsPlugin
       >();
 
+  IOSFlutterLocalNotificationsPlugin? get _ios => _plugin
+      .resolvePlatformSpecificImplementation<
+        IOSFlutterLocalNotificationsPlugin
+      >();
+
   @override
   Future<bool> requestPermission() async {
     try {
+      final ios = _ios;
+      if (ios != null) {
+        // Hộp thoại cho phép thông báo của iOS (chỉ hiện lần đầu); đã từ chối
+        // thì trả về false ngay và người dùng phải mở Cài đặt của iPhone.
+        return await ios.requestPermissions(alert: true, sound: true) ?? false;
+      }
       final android = _android;
       if (android == null) return false;
       final granted = await android.requestNotificationsPermission();
@@ -185,6 +204,7 @@ class LocalNotificationsScheduler implements ReminderScheduler {
             // Không rung: khỏi cần quyền VIBRATE ngoài danh sách cho phép.
             enableVibration: false,
           ),
+          iOS: const DarwinNotificationDetails(),
         ),
         androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
         matchDateTimeComponents: DateTimeComponents.time,
@@ -203,7 +223,13 @@ class LocalNotificationsScheduler implements ReminderScheduler {
   @override
   Future<void> openSystemSettings() async {
     try {
-      await _android?.openAppNotificationSettings();
+      final android = _android;
+      if (android != null) {
+        await android.openAppNotificationSettings();
+      } else if (_ios != null) {
+        // iOS không có API mở thẳng mục thông báo; mở trang cài đặt của app.
+        await launchUrl(Uri.parse('app-settings:'));
+      }
     } catch (_) {}
   }
 }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:material_symbols_icons/symbols.dart';
 
 import '../../../l10n/app_localizations.dart';
 import '../../data/database.dart';
@@ -99,7 +100,7 @@ class _EntriesAppBarState extends ConsumerState<EntriesAppBar> {
         title: Text(widget.title),
         actions: [
           IconButton(
-            icon: const Icon(Icons.search),
+            icon: const Icon(Symbols.search_rounded),
             tooltip: l.search,
             onPressed: () => ref.read(entrySearchProvider.notifier).open(),
           ),
@@ -126,7 +127,7 @@ class _EntriesAppBarState extends ConsumerState<EntriesAppBar> {
       ),
       actions: [
         IconButton(
-          icon: const Icon(Icons.close),
+          icon: const Icon(Symbols.close_rounded),
           tooltip: l.searchClose,
           onPressed: _close,
         ),

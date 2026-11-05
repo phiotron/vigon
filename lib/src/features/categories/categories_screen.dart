@@ -2,6 +2,7 @@ import 'package:drift/drift.dart' show Value;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:material_symbols_icons/symbols.dart';
 
 import '../../../l10n/app_localizations.dart';
 import '../../data/calculator.dart';
@@ -10,16 +11,24 @@ import '../../data/money.dart';
 import '../../l10n_names.dart';
 import '../../providers.dart';
 import '../../ui/category_avatar.dart';
+import '../../ui/choice_sheet.dart';
+import '../../ui/confirm_dialog.dart';
+import '../../ui/theme.dart';
+import '../../ui/tokens.g.dart';
 import '../entry/keypad.dart' show minorUnitsToInput;
 import 'category_icons.dart';
 
-/// Quản lý danh mục chi và thu: thêm, sửa, sắp xếp, xóa (F-05).
+/// Quản lý danh mục chi và thu: thêm, sửa, sắp xếp, xóa (F-05), theo S10
+/// (6.1–6.3): hai tab Chi / Thu, nút nổi + "Thêm danh mục".
 class CategoriesScreen extends StatelessWidget {
   const CategoriesScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context);
+    final scheme = Theme.of(context).colorScheme;
+    // Vạch chọn rộng 40% tab, dày 3, bo trên (`.vg-tabs`).
+    final tabWidth = MediaQuery.sizeOf(context).width / 2;
     return DefaultTabController(
       length: 2,
       child: Builder(
@@ -27,9 +36,23 @@ class CategoriesScreen extends StatelessWidget {
           appBar: AppBar(
             title: Text(l.categories),
             bottom: TabBar(
+              labelStyle: VgType.titleSm,
+              unselectedLabelStyle: VgType.titleSm,
+              labelColor: scheme.primary,
+              unselectedLabelColor: scheme.onSurfaceVariant,
+              dividerColor: scheme.outlineVariant,
+              dividerHeight: 1,
+              indicatorSize: TabBarIndicatorSize.tab,
+              indicator: UnderlineTabIndicator(
+                borderSide: BorderSide(width: 3, color: scheme.primary),
+                borderRadius: const BorderRadius.vertical(
+                  top: Radius.circular(3),
+                ),
+                insets: EdgeInsets.symmetric(horizontal: tabWidth * 0.3),
+              ),
               tabs: [
-                Tab(text: l.expense),
-                Tab(text: l.income),
+                Tab(height: VgSize.tapMin, text: l.expense),
+                Tab(height: VgSize.tapMin, text: l.income),
               ],
             ),
           ),
@@ -48,7 +71,7 @@ class CategoriesScreen extends StatelessWidget {
                 type: index == 0 ? CategoryType.expense : CategoryType.income,
               );
             },
-            child: const Icon(Icons.add),
+            child: const Icon(Symbols.add_rounded),
           ),
         ),
       ),
@@ -86,7 +109,7 @@ class _CategoryList extends ConsumerWidget {
               message: l.reorderHint,
               child: const Padding(
                 padding: EdgeInsets.all(12),
-                child: Icon(Icons.drag_handle),
+                child: Icon(Symbols.drag_handle_rounded),
               ),
             ),
           ),
@@ -97,7 +120,8 @@ class _CategoryList extends ConsumerWidget {
   }
 }
 
-/// Thêm hoặc sửa danh mục: tên, icon, màu (AC-16); xóa có chuyển khoản (AC-17).
+/// Thêm hoặc sửa danh mục: tên, icon, màu (AC-16); xóa có chuyển khoản
+/// (AC-17). Bảng kéo theo 6.2.
 Future<void> showCategoryEditor(
   BuildContext context, {
   required CategoryType type,
@@ -111,6 +135,46 @@ Future<void> showCategoryEditor(
     child: _CategoryEditor(type: type, category: category),
   ),
 );
+
+/// Lưới ô vuông 48 (vùng chạm tối thiểu, AC-37), tối đa [maxColumns] cột,
+/// căn đều hai mép như `.vg-icongrid` / `.vg-colorgrid`. Lề hai bên 24 như
+/// bản vẽ khi đủ chỗ; thiếu chỗ thì lề co tới 12 rồi mới bớt cột.
+class _CellGrid extends StatelessWidget {
+  const _CellGrid({required this.maxColumns, required this.children});
+
+  final int maxColumns;
+  final List<Widget> children;
+
+  static const _cell = VgSize.tapMin;
+
+  @override
+  Widget build(BuildContext context) => LayoutBuilder(
+    builder: (context, constraints) {
+      final width = constraints.maxWidth;
+      final pad = ((width - maxColumns * _cell) / 2).clamp(
+        VgSpace.s3,
+        VgSpace.s6,
+      );
+      final inner = width - 2 * pad;
+      final columns = (inner / _cell).floor().clamp(1, maxColumns);
+      final gap = columns > 1 ? (inner - columns * _cell) / (columns - 1) : 0.0;
+      return Padding(
+        padding: EdgeInsets.symmetric(horizontal: pad),
+        child: Wrap(
+          // Trừ một chút để sai số làm tròn không đẩy ô cuối xuống dòng.
+          spacing: (gap - 0.01).clamp(0, double.infinity),
+          children: [
+            for (final c in children)
+              SizedBox.square(
+                dimension: _cell,
+                child: Center(child: c),
+              ),
+          ],
+        ),
+      );
+    },
+  );
+}
 
 class _CategoryEditor extends ConsumerStatefulWidget {
   const _CategoryEditor({required this.type, this.category});
@@ -202,6 +266,8 @@ class _CategoryEditorState extends ConsumerState<_CategoryEditor> {
     if (mounted) Navigator.pop(context);
   }
 
+  /// Xóa (6.3): có khoản hoặc chuỗi định kỳ thì chọn danh mục nhận, chạm là
+  /// xóa; chưa dùng ở đâu thì chỉ hỏi xác nhận.
   Future<void> _delete() async {
     final l = AppLocalizations.of(context);
     final c = widget.category!;
@@ -212,30 +278,28 @@ class _CategoryEditorState extends ConsumerState<_CategoryEditor> {
             .toList();
     if (others.isEmpty) return;
     final count = await repo.usageCount(c.id);
+    final usedByRule =
+        (ref.read(recurringRulesProvider).value ?? const <RecurringRule>[]).any(
+          (r) => r.categoryId == c.id,
+        );
     if (!mounted) return;
-    final target = await showDialog<int>(
-      context: context,
-      builder: (context) => SimpleDialog(
-        title: Text(l.deleteCategoryConfirm),
-        children: [
-          Padding(
-            padding: const EdgeInsets.fromLTRB(24, 0, 24, 8),
-            child: Text(l.moveEntriesTo(count)),
-          ),
-          for (final o in others)
-            SimpleDialogOption(
-              onPressed: () => Navigator.pop(context, o.id),
-              child: Row(
-                children: [
-                  CategoryAvatar(category: o, size: 32),
-                  const SizedBox(width: 12),
-                  Expanded(child: Text(categoryLabel(l, o))),
-                ],
-              ),
-            ),
-        ],
-      ),
-    );
+    final int? target;
+    if (count == 0 && !usedByRule) {
+      final ok = await showConfirmDialog(
+        context,
+        title: l.deleteCategoryConfirm,
+        body: l.deleteCategoryEmptyBody,
+        action: l.delete,
+        icon: Symbols.delete_rounded,
+        style: ConfirmStyle.danger,
+      );
+      target = ok ? others.first.id : null;
+    } else {
+      target = await showDialog<int>(
+        context: context,
+        builder: (context) => _MoveToDialog(count: count, categories: others),
+      );
+    }
     if (target == null) return;
     await repo.delete(c.id, moveTo: target);
     if (mounted) Navigator.pop(context);
@@ -244,112 +308,120 @@ class _CategoryEditorState extends ConsumerState<_CategoryEditor> {
   @override
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context);
+    final scheme = Theme.of(context).colorScheme;
     final isEdit = widget.category != null;
     final canDelete =
         isEdit &&
         (ref.watch(categoriesProvider(widget.type)).value?.length ?? 0) > 1;
+    // Nhãn nhóm (`.vg-flabel`): label-md màu chữ phụ, lề 16/24/8.
+    Widget label(String text) => Padding(
+      padding: const EdgeInsets.fromLTRB(
+        VgSpace.s6,
+        VgSpace.s4,
+        VgSpace.s6,
+        VgSpace.s2,
+      ),
+      child: Text(
+        text,
+        style: VgType.labelMd.copyWith(color: scheme.onSurfaceVariant),
+      ),
+    );
     return SafeArea(
       child: Column(
         mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Flexible(
             child: SingleChildScrollView(
-              padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  Text(
-                    isEdit ? l.editCategory : l.addCategory,
-                    style: Theme.of(context).textTheme.titleLarge,
-                  ),
-                  const SizedBox(height: 12),
-                  TextField(
-                    controller: _name,
-                    maxLength: 50,
-                    autofocus: !isEdit,
-                    decoration: InputDecoration(
-                      labelText: l.name,
-                      errorText: _error,
+                  SheetHeader(isEdit ? l.editCategory : l.addCategory),
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(
+                      VgSpace.s6,
+                      VgSpace.s2,
+                      VgSpace.s6,
+                      0,
+                    ),
+                    child: TextField(
+                      controller: _name,
+                      maxLength: 50,
+                      autofocus: !isEdit,
+                      decoration: InputDecoration(
+                        labelText: l.name,
+                        errorText: _error,
+                      ),
                     ),
                   ),
                   if (widget.type == CategoryType.expense)
-                    TextField(
-                      key: const ValueKey('category-budget'),
-                      controller: _budget,
-                      keyboardType: const TextInputType.numberWithOptions(
-                        decimal: true,
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(
+                        VgSpace.s6,
+                        VgSpace.s2,
+                        VgSpace.s6,
+                        0,
                       ),
-                      inputFormatters: [
-                        FilteringTextInputFormatter.allow(RegExp(r'[0-9.,]')),
-                      ],
-                      decoration: InputDecoration(
-                        labelText: l.categoryBudget,
-                        helperText: l.categoryBudgetHint,
-                        errorText: _budgetError,
+                      child: TextField(
+                        key: const ValueKey('category-budget'),
+                        controller: _budget,
+                        keyboardType: const TextInputType.numberWithOptions(
+                          decimal: true,
+                        ),
+                        inputFormatters: [
+                          FilteringTextInputFormatter.allow(RegExp(r'[0-9.,]')),
+                        ],
+                        style: const TextStyle(
+                          fontFeatures: [FontFeature.tabularFigures()],
+                        ),
+                        decoration: InputDecoration(
+                          labelText: l.categoryBudget,
+                          helperText: l.categoryBudgetHint,
+                          helperMaxLines: 3,
+                          errorText: _budgetError,
+                        ),
                       ),
                     ),
-                  const SizedBox(height: 8),
-                  Text(l.icon, style: Theme.of(context).textTheme.titleSmall),
-                  const SizedBox(height: 8),
-                  Wrap(
-                    spacing: 4,
-                    runSpacing: 4,
+                  label(l.icon),
+                  // 31 biểu tượng, 7 cột; ô đang chọn nền màu danh mục, icon tô đầy.
+                  _CellGrid(
+                    maxColumns: 7,
                     children: [
                       for (final (index, entry)
                           in categoryIcons.entries.indexed)
                         IconButton(
+                          key: ValueKey('icon-${entry.key}'),
                           isSelected: entry.key == _icon,
+                          iconSize: 22,
                           style: IconButton.styleFrom(
                             backgroundColor: entry.key == _icon
                                 ? Color(_color)
                                 : null,
                             foregroundColor: entry.key == _icon
-                                ? Colors.white
-                                : null,
+                                ? context.vg.onCat
+                                : scheme.onSurfaceVariant,
                           ),
-                          icon: Icon(entry.value),
-                          key: ValueKey('icon-${entry.key}'),
+                          icon: Icon(
+                            entry.value,
+                            fill: entry.key == _icon ? 1 : 0,
+                          ),
                           tooltip: l.iconNumber(index + 1),
                           onPressed: () => setState(() => _icon = entry.key),
                         ),
                     ],
                   ),
-                  const SizedBox(height: 12),
-                  Text(l.color, style: Theme.of(context).textTheme.titleSmall),
-                  const SizedBox(height: 8),
-                  Wrap(
-                    spacing: 8,
-                    runSpacing: 8,
+                  label(l.color),
+                  // 16 màu; ô đang chọn có vòng `ink` và dấu ✓ (màu không phải kênh
+                  // duy nhất).
+                  _CellGrid(
+                    maxColumns: 8,
                     children: [
-                      for (final color in categoryColors)
-                        Semantics(
-                          button: true,
+                      for (final (index, color) in categoryColors.indexed)
+                        _ColorSwatch(
+                          color: Color(color),
                           selected: color == _color,
-                          label:
-                              '${l.color} ${categoryColors.indexOf(color) + 1}',
-                          child: InkWell(
-                            customBorder: const CircleBorder(),
-                            onTap: () => setState(() => _color = color),
-                            child: Container(
-                              width: 48,
-                              height: 48,
-                              decoration: BoxDecoration(
-                                color: Color(color),
-                                shape: BoxShape.circle,
-                                border: color == _color
-                                    ? Border.all(
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .onSurface,
-                                        width: 3,
-                                      )
-                                    : null,
-                              ),
-                              child: color == _color
-                                  ? const Icon(Icons.check, color: Colors.white)
-                                  : null,
-                            ),
-                          ),
+                          label: '${l.color} ${index + 1}',
+                          onTap: () => setState(() => _color = color),
                         ),
                     ],
                   ),
@@ -357,24 +429,157 @@ class _CategoryEditorState extends ConsumerState<_CategoryEditor> {
               ),
             ),
           ),
-          // Nút nằm ngoài vùng cuộn để "Lưu" luôn thấy dù thêm ô hạn mức.
+          // Nút nằm ngoài vùng cuộn để "Lưu" luôn thấy dù thêm ô hạn mức (F-20).
           Padding(
-            padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+            padding: const EdgeInsets.fromLTRB(
+              VgSpace.s4,
+              VgSpace.s3,
+              VgSpace.s4,
+              VgSpace.s4,
+            ),
             child: Row(
               children: [
                 if (canDelete)
-                  TextButton.icon(
+                  TextButton(
+                    style: TextButton.styleFrom(foregroundColor: scheme.error),
                     onPressed: _delete,
-                    icon: const Icon(Icons.delete_outline),
-                    label: Text(l.deleteCategory),
+                    child: Text(l.deleteCategory),
                   ),
                 const Spacer(),
-                FilledButton(onPressed: _save, child: Text(l.save)),
+                FilledButton(
+                  style: FilledButton.styleFrom(
+                    minimumSize: const Size(VgSize.tapMin, VgSize.tapMin),
+                    padding: const EdgeInsets.symmetric(horizontal: VgSpace.s6),
+                    textStyle: VgType.labelLg.copyWith(
+                      fontFamily: vgFontFamily,
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(VgRadius.lg),
+                    ),
+                  ),
+                  onPressed: _save,
+                  child: Text(l.save),
+                ),
               ],
             ),
           ),
         ],
       ),
+    );
+  }
+}
+
+/// Ô màu tròn 32 trong vùng chạm 48; đang chọn thì có vòng `ink` dày 2 cách
+/// 3 và dấu ✓ (`.vg-colorgrid > span.on`).
+class _ColorSwatch extends StatelessWidget {
+  const _ColorSwatch({
+    required this.color,
+    required this.selected,
+    required this.label,
+    required this.onTap,
+  });
+
+  final Color color;
+  final bool selected;
+  final String label;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) => Semantics(
+    button: true,
+    selected: selected,
+    label: label,
+    child: InkWell(
+      customBorder: const CircleBorder(),
+      onTap: onTap,
+      child: SizedBox.square(
+        dimension: VgSize.tapMin,
+        child: Center(
+          child: Container(
+            key: selected ? const ValueKey('color-selected') : null,
+            width: 42,
+            height: 42,
+            padding: const EdgeInsets.all(5),
+            decoration: selected
+                ? BoxDecoration(
+                    shape: BoxShape.circle,
+                    border: Border.all(
+                      color: Theme.of(context).colorScheme.onSurface,
+                      width: 2,
+                    ),
+                  )
+                : null,
+            child: DecoratedBox(
+              decoration: BoxDecoration(color: color, shape: BoxShape.circle),
+              child: selected
+                  ? Icon(
+                      Symbols.check_rounded,
+                      size: 18,
+                      color: context.vg.onCat,
+                    )
+                  : null,
+            ),
+          ),
+        ),
+      ),
+    ),
+  );
+}
+
+/// Chọn danh mục nhận các khoản khi xóa (6.3); chạm là xóa, có nút Hủy.
+class _MoveToDialog extends StatelessWidget {
+  const _MoveToDialog({required this.count, required this.categories});
+
+  final int count;
+  final List<Category> categories;
+
+  @override
+  Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
+    final scheme = Theme.of(context).colorScheme;
+    return AlertDialog(
+      title: Text(l.deleteCategoryConfirm),
+      contentPadding: const EdgeInsets.fromLTRB(
+        VgSpace.s6,
+        VgSpace.s3,
+        VgSpace.s6,
+        0,
+      ),
+      content: SizedBox(
+        width: double.maxFinite,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Text(
+              l.moveEntriesTo(count),
+              style: Theme.of(context).textTheme.bodyMedium
+                  ?.copyWith(color: scheme.onSurfaceVariant),
+            ),
+            const SizedBox(height: VgSpace.s1),
+            Flexible(
+              child: ListView(
+                shrinkWrap: true,
+                children: [
+                  for (final o in categories)
+                    ListTile(
+                      contentPadding: EdgeInsets.zero,
+                      leading: CategoryAvatar(category: o, size: 40),
+                      title: Text(categoryLabel(l, o)),
+                      onTap: () => Navigator.pop(context, o.id),
+                    ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.pop(context),
+          child: Text(l.cancel),
+        ),
+      ],
     );
   }
 }

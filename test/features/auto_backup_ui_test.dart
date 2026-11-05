@@ -138,6 +138,9 @@ void main() {
     await settle(tester);
     expect(h.folder.writes, 1);
 
+    // Giao diện mới cao hơn: cuộn nút vào màn trước khi chạm (gộp 2026-11-05).
+    await tester.ensureVisible(find.text('Sao lưu ngay'));
+    await settle(tester);
     await tester.tap(find.text('Sao lưu ngay'));
     await settle(tester);
     await tester.pumpAndSettle(const Duration(milliseconds: 200));
@@ -147,6 +150,9 @@ void main() {
 
     // Quyền bị thu hồi: báo lỗi rõ, app không văng, công tắc vẫn bật.
     h.folder.failWith = BackupFolderError.permissionDenied;
+    // Giao diện mới cao hơn: cuộn nút vào màn trước khi chạm (gộp 2026-11-05).
+    await tester.ensureVisible(find.text('Sao lưu ngay'));
+    await settle(tester);
     await tester.tap(find.text('Sao lưu ngay'));
     await settle(tester);
     await tester.pumpAndSettle(const Duration(milliseconds: 200));

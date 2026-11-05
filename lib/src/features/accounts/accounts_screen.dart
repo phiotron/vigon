@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:material_symbols_icons/symbols.dart';
 
 import '../../../l10n/app_localizations.dart';
 import '../../data/calculator.dart';
@@ -10,10 +11,19 @@ import '../../data/money.dart';
 import '../entry/keypad.dart' show minorUnitsToInput;
 import '../../l10n_names.dart';
 import '../../providers.dart';
+import '../../ui/choice_sheet.dart';
 import '../../ui/format.dart';
 import 'account_manage.dart';
+import '../../ui/tokens.g.dart';
+import '../settings/budget_dialog.dart' show currencySymbol;
 
-/// Danh sách tài khoản và số dư hiện tại (F-06).
+/// Icon đầu dòng tài khoản: tiền mặt mặc định là tờ tiền, còn lại là ví.
+IconData accountIcon(Account a) => a.nameKey == 'cash'
+    ? Symbols.payments_rounded
+    : Symbols.account_balance_wallet_rounded;
+
+/// Danh sách tài khoản và số dư hiện tại (F-06), theo 6.4: số dư bên phải,
+/// ⇄ khi có từ 2 tài khoản, nút nổi +.
 class AccountsScreen extends ConsumerWidget {
   const AccountsScreen({super.key});
 
@@ -24,9 +34,13 @@ class AccountsScreen extends ConsumerWidget {
     final balances =
         ref.watch(accountBalancesProvider).value ?? const <int, int>{};
     final currency = ref.watch(currencyProvider).value ?? 'VND';
+    final large = isLargeText(context);
     Widget balance(Account a) => Text(
       money(context, currency, balances[a.id] ?? a.initialBalance),
-      style: Theme.of(context).textTheme.titleMedium,
+      style: VgType.bodyMd.copyWith(
+        color: Theme.of(context).colorScheme.onSurface,
+        fontFeatures: const [FontFeature.tabularFigures()],
+      ),
     );
     return Scaffold(
       appBar: AppBar(
@@ -34,21 +48,25 @@ class AccountsScreen extends ConsumerWidget {
         actions: [
           if (accounts.length > 1)
             IconButton(
-              icon: const Icon(Icons.swap_horiz),
+              icon: const Icon(Symbols.swap_horiz_rounded),
               tooltip: l.transfer,
               onPressed: () => context.push('/transfer'),
             ),
         ],
       ),
       body: ListView(
+        // Đệm đáy để nút + không che dòng cuối.
         padding: const EdgeInsets.only(bottom: 88),
         children: [
           for (final a in accounts)
             ListTile(
-              leading: const Icon(Icons.account_balance_wallet_outlined),
+              leading: SizedBox(
+                width: 40,
+                child: Center(child: Icon(accountIcon(a))),
+              ),
               title: Text(accountLabel(l, a)),
-              subtitle: isLargeText(context) ? balance(a) : null,
-              trailing: isLargeText(context) ? null : balance(a),
+              subtitle: large ? balance(a) : null,
+              trailing: large ? null : balance(a),
               onTap: () => showAccountEditor(context, account: a),
             ),
           const ArchivedAccountsSection(),
@@ -57,13 +75,13 @@ class AccountsScreen extends ConsumerWidget {
       floatingActionButton: FloatingActionButton(
         tooltip: l.addAccount,
         onPressed: () => showAccountEditor(context),
-        child: const Icon(Icons.add),
+        child: const Icon(Symbols.add_rounded),
       ),
     );
   }
 }
 
-/// Thêm hoặc sửa tài khoản: tên và số dư ban đầu (AC-18).
+/// Thêm hoặc sửa tài khoản: tên và số dư ban đầu (AC-18), bảng kéo 6.5.
 Future<void> showAccountEditor(BuildContext context, {Account? account}) =>
     showModalBottomSheet<void>(
       context: context,
@@ -146,45 +164,83 @@ class _AccountEditorState extends ConsumerState<_AccountEditor> {
   @override
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context);
+    final currency = ref.watch(currencyProvider).value ?? 'VND';
     return SafeArea(
       child: SingleChildScrollView(
-        padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+        padding: const EdgeInsets.only(bottom: VgSpace.s6),
         child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Text(
-              widget.account == null ? l.addAccount : l.editAccount,
-              style: Theme.of(context).textTheme.titleLarge,
-            ),
-            const SizedBox(height: 12),
-            TextField(
-              controller: _name,
-              maxLength: 50,
-              autofocus: widget.account == null,
-              decoration: InputDecoration(
-                labelText: l.name,
-                errorText: _nameError,
+            SheetHeader(widget.account == null ? l.addAccount : l.editAccount),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(
+                VgSpace.s6,
+                VgSpace.s2,
+                VgSpace.s6,
+                0,
+              ),
+              child: TextField(
+                controller: _name,
+                maxLength: 50,
+                autofocus: widget.account == null,
+                decoration: InputDecoration(
+                  labelText: l.name,
+                  errorText: _nameError,
+                ),
               ),
             ),
-            TextField(
-              controller: _balance,
-              keyboardType: const TextInputType.numberWithOptions(
-                decimal: true,
-                signed: true,
+            Padding(
+              padding: const EdgeInsets.fromLTRB(
+                VgSpace.s6,
+                VgSpace.s3,
+                VgSpace.s6,
+                0,
               ),
-              inputFormatters: [
-                FilteringTextInputFormatter.allow(RegExp(r'[0-9.,\-]')),
-              ],
-              decoration: InputDecoration(
-                labelText: l.initialBalance,
-                errorText: _balanceError,
+              child: TextField(
+                controller: _balance,
+                keyboardType: const TextInputType.numberWithOptions(
+                  decimal: true,
+                  signed: true,
+                ),
+                inputFormatters: [
+                  FilteringTextInputFormatter.allow(RegExp(r'[0-9.,\-]')),
+                ],
+                style: const TextStyle(
+                  fontFeatures: [FontFeature.tabularFigures()],
+                ),
+                decoration: InputDecoration(
+                  labelText: l.initialBalance,
+                  suffixText: currencySymbol(currency),
+                  helperText: l.initialBalanceHelper,
+                  helperMaxLines: 3,
+                  errorText: _balanceError,
+                ),
               ),
             ),
-            const SizedBox(height: 16),
-            Align(
-              alignment: Alignment.centerRight,
-              child: FilledButton(onPressed: _save, child: Text(l.save)),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(
+                VgSpace.s4,
+                VgSpace.s6,
+                VgSpace.s4,
+                0,
+              ),
+              child: Align(
+                alignment: Alignment.centerRight,
+                child: FilledButton(
+                  style: FilledButton.styleFrom(
+                    minimumSize: const Size(VgSize.tapMin, VgSize.tapMin),
+                    padding: const EdgeInsets.symmetric(horizontal: VgSpace.s6),
+                    textStyle: VgType.labelLg.copyWith(
+                      fontFamily: vgFontFamily,
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(VgRadius.lg),
+                    ),
+                  ),
+                  onPressed: _save,
+                  child: Text(l.save),
+                ),
+              ),
             ),
             if (widget.account != null)
               AccountRemoveSection(account: widget.account!),

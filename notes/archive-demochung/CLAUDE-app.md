@@ -5,16 +5,17 @@ App mobile CHỈ dành cho điện thoại. Mở Claude ngay trong thư mục n�
 - Mã app: APP-001
 - Thư mục: apps/APP-001-vi-gon
 - Giai đoạn hiện tại: G6 (phần Claude làm được đã xong, chờ người dùng: TalkBack/cỡ chữ trên máy, đăng chính sách, đo nốt NFR)
-- Nền tảng: Android (v1); iOS để sau (D-001)
+- Nền tảng: Android; iOS đang thêm theo PLAN-001 giai đoạn T6, build trên cloud (D-011)
+- Đang làm: PLAN-001 (giao diện theo `design-mobile/screens/`, D-010) trên nhánh `feature/PLAN-001`
 - Quy mô: chuẩn
 - Stack: Flutter
 
 ## Điểm dừng (Claude cập nhật bằng /end; đọc mục này đầu tiên khi quay lại app sau thời gian dài)
-- Cập nhật lần cuối: 2026-11-04 (phiên 1, nhật ký `memory/sessions/2026-11-04-p1.md`). Bản 1.1 + 1.2 (F-14..F-26) xong code trên nhánh `integration/spec-1.1` (worktree `.claude/worktrees/integration`): 294 test đạt, APK release 1.2 đã build; CHƯA gộp với `feature/PLAN-001` của chat khác; CHƯA cài và CHƯA thử máy thật
-- Đang làm dở: thử máy thật bản 1.2 (M-1..M-7 ở `docs/TESTING.md`; rủi ro nhất: chọn thư mục Drive/Dropbox cho F-24); release: khóa ký, URL chính sách vào `AppInfo.privacyPolicyUrl`, ảnh store có widget, nhãn hiệu, tên tiếng Anh, TalkBack/cỡ chữ lớn nhất, CSV bằng Excel
-- Bước tiếp theo: HỎI người dùng rồi cài APK 1.2 (người dùng vừa trả lời "Chưa cài"; KHÔNG tự dùng adb khi chưa hỏi); xin xác nhận widget 2×2 và dòng trạng thái widget khi công tắc tắt + PIN bật; hỏi có gộp hai nhánh không
-- Đang chờ (ai/cái gì): người dùng: cho phép cài máy, đăng chính sách lên Google Sites, trả lời tên cá nhân hay công ty và Play Age Signals, sao lưu `D:/DemoChung` ra ngoài ổ D; remote https://github.com/phiotron/vigon (nhánh `main`, chỉ đẩy khi người dùng bảo)
-- Lưu ý dễ vấp: Galaxy A13 (SM-A135F, Android 14) chỉ 32-bit, không build `arm64` riêng (BUG-001); dữ liệu Ví Gọn trên máy là dữ liệu MẪU; phiên Claude khác dùng chung máy (kiểm `mCurrentFocus` trước mỗi lần chạm, mỗi lần một lệnh); PIN 4 số không phải mã hóa (D-007); Flutter chưa trong PATH; nhiều agent chạy test chung một worktree khóa sqlite3.dll (`memory/facts/`); hook chặn chữ "password" là dương tính giả, chỉ người dùng được bỏ qua
+- (Lưu trữ thời DemoChung, không còn cập nhật. Trạng thái hiện hành: `APP.md`.)
+- Nhánh `integration/spec-1.1` (bản 1.2, F-14..F-26) và `feature/PLAN-001` (giao diện theo thiết kế + iOS) đã gộp vào `main` của repo `phiotron/vigon` ngày 2026-11-04/05 — xem `notes/2026-11-04-gop-nhanh.md`.
+- Điểm dừng cuối bên nhánh integration: bản 1.1 + 1.2 xong code, 294 test đạt, APK 1.2 đã build; CHƯA thử máy thật bản 1.2 (M-1..M-7 ở `docs/TESTING.md`).
+- Điểm dừng cuối bên nhánh PLAN-001: T1–T6 xong phần code; so ảnh với bản vẽ (UI-04) một phần.
+- Lưu ý dễ vấp: Galaxy A13 (SM-A135F, Android 14) chỉ 32-bit, không build `arm64` riêng (BUG-001); dữ liệu Ví Gọn trên máy là dữ liệu MẪU; phiên Claude khác dùng chung máy (kiểm `mCurrentFocus` trước mỗi lần chạm, mỗi lần một lệnh); PIN 4 số không phải mã hóa (D-007); Flutter chưa trong PATH; nhiều agent chạy test chung một worktree khóa sqlite3.dll.
 
 ## Mô tả
 - Mục đích: Ghi chép thu chi cá nhân nhanh, xem biểu đồ theo danh mục (chức năng tương đương Monefy)

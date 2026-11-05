@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:material_symbols_icons/symbols.dart';
 
 import '../../../l10n/app_localizations.dart';
 import '../../providers.dart';
 import '../../ui/messenger.dart';
 import '../reminder/reminder_providers.dart';
+import 'settings_lead.dart';
 
 /// Nhóm "Nhắc ghi chép" trong Cài đặt: công tắc và giờ nhắc (AC-61).
 class ReminderSection extends ConsumerWidget {
@@ -23,14 +25,14 @@ class ReminderSection extends ConsumerWidget {
       children: [
         header,
         SwitchListTile(
-          secondary: const Icon(Icons.notifications_none),
+          secondary: const SettingsLead(Symbols.notifications_rounded),
           title: Text(l.reminderSwitch),
           subtitle: Text(l.reminderSwitchNote),
           value: enabled,
           onChanged: (on) => _toggle(context, ref, on),
         ),
         ListTile(
-          leading: const Icon(Icons.schedule),
+          leading: const SettingsLead(Symbols.schedule_rounded),
           title: Text(l.reminderTime),
           subtitle: time == null ? null : Text(time.format(context)),
           onTap: time == null ? null : () => _pickTime(context, ref, time),

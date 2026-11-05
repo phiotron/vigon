@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
+import 'package:material_symbols_icons/symbols.dart';
 
 import '../../../l10n/app_localizations.dart';
 import '../../data/auto_backup_service.dart';
@@ -8,6 +9,7 @@ import '../../data/backup_folder_service.dart';
 import '../../ui/messenger.dart';
 import 'auto_backup_providers.dart';
 import 'backup_password_dialogs.dart';
+import 'settings_lead.dart';
 
 /// Nhóm "Sao lưu tự động" trong Cài đặt → Dữ liệu (F-24, AC-58..60).
 class AutoBackupSection extends ConsumerStatefulWidget {
@@ -53,7 +55,7 @@ class _AutoBackupSectionState extends ConsumerState<AutoBackupSection>
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         SwitchListTile(
-          secondary: const Icon(Icons.cloud_upload_outlined),
+          secondary: const SettingsLead(Symbols.cloud_upload_rounded),
           title: Text(l.autoBackup),
           subtitle: Text(l.autoBackupNote),
           value: state.enabled,

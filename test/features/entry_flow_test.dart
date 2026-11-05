@@ -29,7 +29,7 @@ void main() {
       await settle(tester);
 
       expect(find.text('Khoản chi mới'), findsNothing);
-      expect(findPlainText('Số dư: -155 ₫'), findsOneWidget);
+      expect(findSemanticsLabel('Số dư: -155 ₫'), findsOneWidget);
       final rows = await tester.runAsync(() => db.select(db.entries).get());
       expect(rows!.single.amount, 155);
       expect(rows.single.type, EntryType.expense);
@@ -104,7 +104,7 @@ void main() {
     await settle(tester);
     expect(find.text('Sửa khoản'), findsOneWidget);
 
-    await tester.tap(find.text('⌫'));
+    await tester.tap(find.bySemanticsLabel('Xóa lùi'));
     await tester.pump();
     await tester.tap(find.text('Lưu'));
     await settle(tester);

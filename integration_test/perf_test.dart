@@ -15,6 +15,7 @@ import 'package:vigon/src/data/pin_service.dart';
 import 'package:vigon/src/features/entry/keypad.dart';
 import 'package:vigon/src/features/lock/app_lock.dart';
 import 'package:vigon/src/providers.dart';
+import 'package:material_symbols_icons/symbols.dart';
 
 /// Đo NFR mục 5b trên máy thật, bản profile (không đụng dữ liệu thật của app):
 ///   flutter drive --profile --driver=test_driver/perf_driver.dart \
@@ -110,7 +111,7 @@ void main() {
     final list = find.byType(Scrollable).first;
 
     await binding.watchPerformance(() async {
-      await tester.tap(find.byIcon(Icons.expand_more).first);
+      await tester.tap(find.byIcon(Symbols.expand_more_rounded).first);
       await tester.pumpAndSettle();
     }, reportKey: 'expand_5000');
     debugPrint('PERF expand_5000=${binding.reportData?['expand_5000']}');
@@ -128,6 +129,10 @@ void main() {
     debugPrint('PERF scroll_5000=${binding.reportData?['scroll_5000']}');
 
     binding.reportData!['save_ms'] = saveTimes;
+    // Gỡ cây widget (ProviderScope + stream drift) trước khi đóng DB; đóng khi
+    // stream còn nghe thì test treo ở cuối trên iOS (notes/2026-11-04-ios-ci.md).
+    await tester.pumpWidget(const SizedBox());
+    await tester.pumpAndSettle();
     await db.close();
     file.deleteSync();
   });

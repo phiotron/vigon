@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 
 import '../data/database.dart';
 import '../features/categories/category_icons.dart';
+import 'theme.dart';
 
-/// Icon danh mục trên nền màu của nó; vùng chạm 48×48 dp (AC-37).
+/// Icon danh mục (bản tô đầy) trên nền màu của nó: 48 ở lưới và quanh biểu
+/// đồ, 40 ở danh sách, 24 trong chip; vùng chạm 48×48 dp (AC-37).
 class CategoryAvatar extends StatelessWidget {
   const CategoryAvatar({
     super.key,
@@ -30,8 +32,9 @@ class CategoryAvatar extends StatelessWidget {
           dimension: size,
           child: Icon(
             iconFor(category.icon),
-            color: Colors.white,
-            size: size * 0.5,
+            fill: 1,
+            color: context.vg.onCat,
+            size: _iconSize(size),
           ),
         ),
       ),
@@ -48,3 +51,10 @@ class CategoryAvatar extends StatelessWidget {
     );
   }
 }
+
+/// Cỡ icon theo bản vẽ: 24 trên vòng tròn 48, 22 trên 40, 16 trong chấm 24.
+double _iconSize(double avatar) => switch (avatar) {
+  >= 48 => 24,
+  >= 40 => 22,
+  _ => avatar * 2 / 3,
+};

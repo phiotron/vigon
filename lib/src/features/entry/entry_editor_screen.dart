@@ -2,6 +2,7 @@ import 'package:drift/drift.dart' show Value;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:material_symbols_icons/symbols.dart';
 
 import '../../../l10n/app_localizations.dart';
 import '../../data/calculator.dart';
@@ -10,10 +11,14 @@ import '../../data/dates.dart';
 import '../../data/money.dart';
 import '../../l10n_names.dart';
 import '../../providers.dart';
+import '../../ui/amount_display.dart';
 import '../../ui/category_avatar.dart';
 import '../../ui/category_grid.dart';
+import '../../ui/choice_sheet.dart';
 import '../../ui/format.dart';
 import '../../ui/messenger.dart';
+import '../../ui/theme.dart';
+import '../../ui/tokens.g.dart';
 import 'keypad.dart';
 
 /// Ghi khoản mới hoặc sửa khoản có sẵn (F-01, F-04).
@@ -192,26 +197,20 @@ class _EntryEditorScreenState extends ConsumerState<EntryEditorScreen> {
     return showCategorySheet(context, type: type, selectedId: _categoryId);
   }
 
+  /// Bảng "Lặp lại" (3.5), chỉ có khi ghi khoản mới.
   Future<void> _pickRepeat() async {
     final l = AppLocalizations.of(context);
-    final options = <RecurrenceFrequency?>[null, ...RecurrenceFrequency.values];
-    final picked = await showModalBottomSheet<(RecurrenceFrequency?,)>(
-      context: context,
-      showDragHandle: true,
-      builder: (context) => SafeArea(
-        child: ListView(
-          shrinkWrap: true,
-          children: [
-            for (final f in options)
-              ListTile(
-                title: Text(repeatLabel(l, f)),
-                selected: f == _repeat,
-                trailing: f == _repeat ? const Icon(Icons.check) : null,
-                onTap: () => Navigator.pop(context, (f,)),
-              ),
-          ],
-        ),
-      ),
+    final picked = await showChoiceSheet<RecurrenceFrequency?>(
+      context,
+      title: l.repeat,
+      selected: _repeat,
+      options: [
+        for (final f in <RecurrenceFrequency?>[
+          null,
+          ...RecurrenceFrequency.values,
+        ])
+          ChoiceOption(f, repeatLabel(l, f)),
+      ],
     );
     if (picked != null) setState(() => _repeat = picked.$1);
   }
@@ -238,26 +237,24 @@ class _EntryEditorScreenState extends ConsumerState<EntryEditorScreen> {
     if (picked != null) setState(() => _date = dateOnly(picked));
   }
 
+  /// Bảng "Tài khoản" (3.6); chip chỉ hiện khi có từ 2 tài khoản.
   Future<void> _pickAccount(List<Account> accounts) async {
     final l = AppLocalizations.of(context);
-    final picked = await showModalBottomSheet<int>(
-      context: context,
-      showDragHandle: true,
-      builder: (context) => SafeArea(
-        child: ListView(
-          shrinkWrap: true,
-          children: [
-            for (final a in accounts)
-              ListTile(
-                title: Text(accountLabel(l, a)),
-                selected: a.id == (_accountId ?? accounts.first.id),
-                onTap: () => Navigator.pop(context, a.id),
-              ),
-          ],
-        ),
-      ),
+    final picked = await showChoiceSheet<int>(
+      context,
+      title: l.account,
+      selected: _accountId ?? accounts.first.id,
+      options: [
+        for (final a in accounts)
+          // Dữ liệu tài khoản không có icon riêng.
+          ChoiceOption(
+            a.id,
+            accountLabel(l, a),
+            icon: Symbols.account_balance_wallet_rounded,
+          ),
+      ],
     );
-    if (picked != null) setState(() => _accountId = picked);
+    if (picked != null) setState(() => _accountId = picked.$1);
   }
 
   @override
@@ -266,6 +263,7 @@ class _EntryEditorScreenState extends ConsumerState<EntryEditorScreen> {
     final currency = ref.watch(currencyProvider).value ?? 'VND';
     final digits = currencyDecimalDigits(currency);
     final accounts = ref.watch(accountsProvider).value ?? const <Account>[];
+    final scheme = Theme.of(context).colorScheme;
     final isIncome = _type == EntryType.income;
     final color = isIncome ? incomeColor(context) : expenseColor(context);
     final value = evaluateToMinorUnits(_expression, decimalDigits: digits);
@@ -291,7 +289,8 @@ class _EntryEditorScreenState extends ConsumerState<EntryEditorScreen> {
       ...accounts,
       if (account != null && !accounts.any((a) => a.id == account.id)) account,
     ];
-    final title = _original != null
+    // Màn sửa giữ tiêu đề "Sửa khoản" cả lúc đang nạp (4.7).
+    final title = widget.entryId != null
         ? l.editEntry
         : (isIncome ? l.newIncome : l.newExpense);
 
@@ -301,7 +300,7 @@ class _EntryEditorScreenState extends ConsumerState<EntryEditorScreen> {
         actions: [
           if (_original != null)
             IconButton(
-              icon: const Icon(Icons.delete_outline),
+              icon: const Icon(Symbols.delete_rounded),
               tooltip: l.delete,
               onPressed: _delete,
             ),
@@ -317,50 +316,27 @@ class _EntryEditorScreenState extends ConsumerState<EntryEditorScreen> {
                   Expanded(
                     child: SingleChildScrollView(
                       child: Column(
+                        // Số tiền căn phải, hàng chip căn trái, ô ghi chú rộng
+                        // hết (bản vẽ 3.1); mặc định của Column là căn giữa.
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
-                          Padding(
-                            padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
-                            child: Semantics(
-                              liveRegion: true,
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.end,
-                                children: [
-                                  Text(
-                                    _expression.isEmpty ? ' ' : _expression,
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .bodyLarge,
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                  FittedBox(
-                                    fit: BoxFit.scaleDown,
-                                    child: Text(
-                                      money(context, currency, value ?? 0),
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .headlineLarge
-                                          ?.copyWith(color: color),
-                                    ),
-                                  ),
-                                  if (_error != null)
-                                    Text(
-                                      _error!,
-                                      style: TextStyle(
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .error,
-                                      ),
-                                    ),
-                                ],
-                              ),
-                            ),
+                          AmountDisplay(
+                            expression: _expression,
+                            amount: money(context, currency, value ?? 0),
+                            color: color,
+                            error: _error,
                           ),
+                          // Hàng chip `.vg-chips`: lề 16, cách 8. Chip cao 40
+                          // trong vùng chạm 48 nên hàng tự cách nhau 8.
                           Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 12),
+                            padding: const EdgeInsets.fromLTRB(
+                              VgSpace.s4,
+                              0,
+                              VgSpace.s4,
+                              VgSpace.s2,
+                            ),
                             child: Wrap(
-                              spacing: 8,
-                              runSpacing: 4,
+                              spacing: VgSpace.s2,
                               children: [
                                 if (category != null)
                                   ActionChip(
@@ -377,7 +353,10 @@ class _EntryEditorScreenState extends ConsumerState<EntryEditorScreen> {
                                     },
                                   ),
                                 ActionChip(
-                                  avatar: const Icon(Icons.event, size: 18),
+                                  avatar: const Icon(
+                                    Symbols.calendar_today_rounded,
+                                    size: 18,
+                                  ),
                                   label: Text(
                                     _date == dateOnly(ref.read(clockProvider)())
                                         ? l.today
@@ -387,18 +366,27 @@ class _EntryEditorScreenState extends ConsumerState<EntryEditorScreen> {
                                 ),
                                 if (_original == null)
                                   ActionChip(
-                                    avatar: const Icon(Icons.repeat, size: 18),
+                                    avatar: const Icon(
+                                      Symbols.repeat_rounded,
+                                      size: 18,
+                                    ),
                                     label: Text(repeatLabel(l, _repeat)),
                                     onPressed: _pickRepeat,
                                   )
                                 else if (_rule != null && _rule!.active)
                                   InputChip(
-                                    avatar: const Icon(Icons.repeat, size: 18),
+                                    avatar: const Icon(
+                                      Symbols.repeat_rounded,
+                                      size: 18,
+                                    ),
                                     label: Text(
                                       repeatLabel(l, _rule!.frequency),
                                     ),
-                                    deleteIcon: const Icon(
-                                      Icons.stop_circle_outlined,
+                                    deleteIcon: Icon(
+                                      Symbols.stop_circle_rounded,
+                                      fill: 1,
+                                      size: 20,
+                                      color: context.vg.error,
                                     ),
                                     deleteButtonTooltipMessage: l.stopRepeat,
                                     onDeleted: _stopRepeat,
@@ -406,7 +394,7 @@ class _EntryEditorScreenState extends ConsumerState<EntryEditorScreen> {
                                 if (account != null && pickable.length > 1)
                                   ActionChip(
                                     avatar: const Icon(
-                                      Icons.account_balance_wallet_outlined,
+                                      Symbols.account_balance_wallet_rounded,
                                       size: 18,
                                     ),
                                     label: Text(accountLabel(l, account)),
@@ -415,12 +403,34 @@ class _EntryEditorScreenState extends ConsumerState<EntryEditorScreen> {
                               ],
                             ),
                           ),
+                          // Ô ghi chú `.vg-field` viền outline, cao 52, bộ
+                          // đếm label-sm "0/200" bên phải (AC-04).
                           Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 16),
+                            padding: const EdgeInsets.fromLTRB(
+                              VgSpace.s4,
+                              0,
+                              VgSpace.s4,
+                              VgSpace.s3,
+                            ),
                             child: TextField(
                               controller: _note,
                               maxLength: 200,
-                              decoration: InputDecoration(hintText: l.noteHint),
+                              style: VgType.bodyMd.copyWith(
+                                color: scheme.onSurface,
+                              ),
+                              decoration: InputDecoration(
+                                hintText: l.noteHint,
+                                hintStyle: VgType.bodyMd.copyWith(
+                                  color: scheme.onSurfaceVariant,
+                                ),
+                                contentPadding: const EdgeInsets.symmetric(
+                                  horizontal: VgSpace.s4,
+                                  vertical: 14,
+                                ),
+                                counterStyle: VgType.labelSm.copyWith(
+                                  color: scheme.onSurfaceVariant,
+                                ),
+                              ),
                               textInputAction: TextInputAction.done,
                             ),
                           ),
@@ -433,6 +443,9 @@ class _EntryEditorScreenState extends ConsumerState<EntryEditorScreen> {
                     onKey: _onKey,
                     saveLabel: _categoryId == null ? l.chooseCategory : l.save,
                     saveColor: color,
+                    saveForeground: isIncome
+                        ? context.vg.onIncome
+                        : context.vg.onExpense,
                     onSave: _save,
                   ),
                 ],

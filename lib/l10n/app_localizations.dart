@@ -1393,6 +1393,72 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Icon {n}'**
   String iconNumber(int n);
+
+  /// No description provided for @viewBy.
+  ///
+  /// In en, this message translates to:
+  /// **'View by'**
+  String get viewBy;
+
+  /// No description provided for @apply.
+  ///
+  /// In en, this message translates to:
+  /// **'Apply'**
+  String get apply;
+
+  /// No description provided for @deleteAllTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete all data?'**
+  String get deleteAllTitle;
+
+  /// No description provided for @cannotUndo.
+  ///
+  /// In en, this message translates to:
+  /// **'This cannot be undone'**
+  String get cannotUndo;
+
+  /// No description provided for @previousMonth.
+  ///
+  /// In en, this message translates to:
+  /// **'Previous month'**
+  String get previousMonth;
+
+  /// No description provided for @nextMonth.
+  ///
+  /// In en, this message translates to:
+  /// **'Next month'**
+  String get nextMonth;
+
+  /// No description provided for @rangeHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Pick the first day, then the last day'**
+  String get rangeHint;
+
+  /// No description provided for @amountLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Amount'**
+  String get amountLabel;
+
+  /// No description provided for @initialBalanceHelper.
+  ///
+  /// In en, this message translates to:
+  /// **'Leave empty for 0. Negative amounts are allowed.'**
+  String get initialBalanceHelper;
+
+  /// No description provided for @recurringEditNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Applies to the records it creates from now on.'**
+  String get recurringEditNote;
+
+  /// No description provided for @deleteCategoryEmptyBody.
+  ///
+  /// In en, this message translates to:
+  /// **'This category has no records.'**
+  String get deleteCategoryEmptyBody;
 }
 
 class _AppLocalizationsDelegate

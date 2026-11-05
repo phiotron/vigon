@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:material_symbols_icons/symbols.dart';
 
 import '../../../l10n/app_localizations.dart';
 import '../../data/database.dart';
 import '../../l10n_names.dart';
 import '../../providers.dart';
+import '../../ui/confirm_dialog.dart';
 import '../../ui/format.dart';
+import '../../ui/tokens.g.dart';
+import 'accounts_screen.dart' show accountIcon;
 
 /// Nút Ẩn và Xóa trong bảng sửa tài khoản (AC-44, AC-45, AC-46). Xong thì đóng bảng.
 class AccountRemoveSection extends ConsumerWidget {
@@ -20,25 +24,14 @@ class AccountRemoveSection extends ConsumerWidget {
 
   Future<void> _delete(BuildContext context, WidgetRef ref) async {
     final l = AppLocalizations.of(context);
-    final ok =
-        await showDialog<bool>(
-          context: context,
-          builder: (context) => AlertDialog(
-            title: Text(l.deleteAccount),
-            content: Text(l.deleteAccountConfirm(accountLabel(l, account))),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.pop(context, false),
-                child: Text(l.cancel),
-              ),
-              FilledButton(
-                onPressed: () => Navigator.pop(context, true),
-                child: Text(l.delete),
-              ),
-            ],
-          ),
-        ) ??
-        false;
+    final ok = await showConfirmDialog(
+      context,
+      title: l.deleteAccount,
+      body: l.deleteAccountConfirm(accountLabel(l, account)),
+      action: l.delete,
+      icon: Symbols.delete_rounded,
+      style: ConfirmStyle.danger,
+    );
     if (!ok || !context.mounted) return;
     await ref.read(accountRepositoryProvider).delete(account.id);
     if (context.mounted) Navigator.pop(context);
@@ -49,37 +42,49 @@ class AccountRemoveSection extends ConsumerWidget {
     final l = AppLocalizations.of(context);
     final visible = ref.watch(accountsProvider).value ?? const <Account>[];
     final inUse = ref.watch(accountInUseProvider(account.id)).value;
-    final hint = Theme.of(context).textTheme.bodyMedium;
+    final hint = VgType.bodyMd.copyWith(
+      fontFamily: vgFontFamily,
+      color: Theme.of(context).colorScheme.onSurfaceVariant,
+    );
+    // Lề ngang theo bảng sửa tài khoản (6.4): 24.
+    const pad = EdgeInsets.fromLTRB(VgSpace.s6, VgSpace.s2, VgSpace.s6, 0);
     if (visible.length <= 1) {
       return Padding(
-        padding: const EdgeInsets.only(top: 8),
+        padding: pad,
         child: Text(l.accountLastOneHint, style: hint),
       );
     }
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Divider(height: 24),
-        OutlinedButton.icon(
-          icon: const Icon(Icons.visibility_off_outlined),
-          label: Text(l.archiveAccount),
-          onPressed: () => _archive(context, ref),
-        ),
-        if (inUse == false)
-          TextButton.icon(
-            style: TextButton.styleFrom(
-              foregroundColor: Theme.of(context).colorScheme.error,
+    return Padding(
+      padding: pad,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Divider(height: VgSpace.s6),
+          OutlinedButton.icon(
+            style: OutlinedButton.styleFrom(
+              minimumSize: const Size(VgSize.tapMin, VgSize.tapMin),
             ),
-            icon: const Icon(Icons.delete_outline),
-            label: Text(l.deleteAccount),
-            onPressed: () => _delete(context, ref),
-          )
-        else if (inUse == true)
-          Padding(
-            padding: const EdgeInsets.only(top: 8),
-            child: Text(l.accountInUseHint, style: hint),
+            icon: const Icon(Symbols.visibility_off_rounded),
+            label: Text(l.archiveAccount),
+            onPressed: () => _archive(context, ref),
           ),
-      ],
+          if (inUse == false)
+            TextButton.icon(
+              style: TextButton.styleFrom(
+                foregroundColor: Theme.of(context).colorScheme.error,
+                minimumSize: const Size(VgSize.tapMin, VgSize.tapMin),
+              ),
+              icon: const Icon(Symbols.delete_rounded),
+              label: Text(l.deleteAccount),
+              onPressed: () => _delete(context, ref),
+            )
+          else if (inUse == true)
+            Padding(
+              padding: const EdgeInsets.only(top: VgSpace.s2),
+              child: Text(l.accountInUseHint, style: hint),
+            ),
+        ],
+      ),
     );
   }
 }
@@ -99,14 +104,24 @@ class ArchivedAccountsSection extends ConsumerWidget {
         ref.watch(accountBalancesProvider).value ?? const <int, int>{};
     final currency = ref.watch(currencyProvider).value ?? 'VND';
     return ExpansionTile(
-      leading: const Icon(Icons.visibility_off_outlined),
+      leading: const SizedBox(
+        width: 40,
+        child: Center(child: Icon(Symbols.visibility_off_rounded)),
+      ),
       title: Text(l.archivedAccounts),
       children: [
         for (final a in archived)
           ListTile(
+            leading: SizedBox(
+              width: 40,
+              child: Center(child: Icon(accountIcon(a))),
+            ),
             title: Text(accountLabel(l, a)),
             subtitle: Text(
               money(context, currency, balances[a.id] ?? a.initialBalance),
+              style: const TextStyle(
+                fontFeatures: [FontFeature.tabularFigures()],
+              ),
             ),
             trailing: TextButton(
               onPressed: () =>

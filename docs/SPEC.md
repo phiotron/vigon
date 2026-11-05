@@ -84,7 +84,7 @@ Quy ước kiểm chứng: **[T]** = test tự động (`flutter test`), **[M]**
 - AC-43: App không có quyền INTERNET trong manifest của bản phát hành và không gửi dữ liệu đi đâu. [T: kiểm manifest đã build]
 
 ## 4. Ngoài phạm vi (cố ý KHÔNG làm ở bản đầu)
-- Bản iOS (code Flutter vẫn viết để chạy được iOS sau này, nhưng không build, không phát hành iOS ở v1).
+- ~~Bản iOS~~: đưa vào phạm vi ngày 2026-11-04 theo PLAN-001 (người dùng duyệt), xem mục 5 và D-011.
 - Tài khoản người dùng, đăng nhập, máy chủ, đồng bộ đám mây (Google Drive, Dropbox).
 - Nhiều tiền tệ cùng lúc và quy đổi tỉ giá.
 - Ngân sách theo từng danh mục, nhắc nhở bằng thông báo, widget màn hình chính, mở khóa bằng vân tay.
@@ -93,6 +93,8 @@ Quy ước kiểm chứng: **[T]** = test tự động (`flutter test`), **[M]**
 
 ## 5. Ràng buộc mobile
 - Hệ điều hành: Android; minSdk theo mặc định của phiên bản Flutter được ghim (ghi rõ trong D-xxx khi khởi tạo); targetSdk theo yêu cầu Google Play hiện hành (P-06).
+- iOS (thêm 2026-11-04, PLAN-001): cùng codebase Flutter, cùng tính năng và AC như Android; iOS tối thiểu theo mặc định của Flutter được ghim; build trên cloud có máy macOS vì máy phát triển là Windows (D-011); yêu cầu App Store P-01 tới P-05 trong COMPLIANCE. AC ghi [M] phải thử trên cả Android và iPhone thật trước khi phát hành iOS.
+- Giao diện: theo bộ thiết kế đã duyệt `design-mobile/screens/` (token, chữ Be Vietnam Pro, icon Material Symbols Rounded), giống nhau trên hai nền tảng, chỉ khác ở chỗ hệ điều hành quyết định (D-010).
 - Offline: toàn bộ app chạy không cần mạng; không có tính năng nào gọi mạng. Dữ liệu ghi xuống bộ nhớ máy ngay khi bấm Lưu.
 - Quyền thiết bị: KHÔNG xin quyền nào. Sao lưu/khôi phục dùng bảng chia sẻ và trình chọn file của hệ điều hành (không cần quyền bộ nhớ).
 - Màn hình: chiều rộng nhỏ nhất 360 dp; chỉ màn hình dọc.

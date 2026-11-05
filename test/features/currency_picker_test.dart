@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:material_symbols_icons/symbols.dart';
 import 'package:vigon/src/data/currency_table.dart';
 import 'package:vigon/src/data/database.dart';
 import 'package:vigon/src/data/settings_repository.dart';
@@ -30,7 +31,7 @@ void main() {
     // Dòng đang dùng có dấu tick.
     final checks = find.descendant(
       of: rows,
-      matching: find.byIcon(Icons.check),
+      matching: find.byIcon(Symbols.check_rounded),
     );
     expect(checks, findsOneWidget);
     expect(
