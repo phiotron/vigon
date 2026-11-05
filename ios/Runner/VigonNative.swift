@@ -29,9 +29,8 @@ enum VigonNative {
 
 // MARK: - F-22 che nội dung, F-26 liên kết sâu
 
-/// Nhận sự kiện vòng đời scene qua `FlutterSceneDelegate` (đăng ký bằng `addSceneDelegate`).
-/// Tên hàm Swift đặt riêng, bộ chọn Objective-C khai báo tường minh để khớp giao thức
-/// `FlutterSceneLifeCycleDelegate` mà không phụ thuộc cách Swift đổi tên.
+/// Nhận sự kiện vòng đời scene qua `FlutterSceneDelegate` (đăng ký bằng `addSceneDelegate`),
+/// theo tên Swift của giao thức `FlutterSceneLifeCycleDelegate` (đã kiểm bằng trình biên dịch trên CI).
 final class VigonSceneHandler: NSObject, FlutterSceneLifeCycleDelegate {
   static let urlScheme = "vigon"
   static let urlHost = "open"
@@ -70,31 +69,27 @@ final class VigonSceneHandler: NSObject, FlutterSceneLifeCycleDelegate {
     }
   }
 
-  @objc(scene:willConnectToSession:options:)
-  func vgWillConnect(
-    _ scene: UIScene, session: UISceneSession, options: UIScene.ConnectionOptions?
+  func scene(
+    _ scene: UIScene, willConnectTo session: UISceneSession,
+    options connectionOptions: UIScene.ConnectionOptions?
   ) -> Bool {
-    guard let contexts = options?.urlContexts, !contexts.isEmpty else { return false }
+    guard let contexts = connectionOptions?.urlContexts, !contexts.isEmpty else { return false }
     return accept(contexts, notify: false)
   }
 
-  @objc(scene:openURLContexts:)
-  func vgOpenURLs(_ scene: UIScene, contexts: Set<UIOpenURLContext>) -> Bool {
-    accept(contexts, notify: true)
+  func scene(_ scene: UIScene, openURLContexts URLContexts: Set<UIOpenURLContext>) -> Bool {
+    accept(URLContexts, notify: true)
   }
 
-  @objc(sceneWillResignActive:)
-  func vgWillResignActive(_ scene: UIScene) {
+  func sceneWillResignActive(_ scene: UIScene) {
     showCover(in: scene)
   }
 
-  @objc(sceneDidEnterBackground:)
-  func vgDidEnterBackground(_ scene: UIScene) {
+  func sceneDidEnterBackground(_ scene: UIScene) {
     showCover(in: scene)
   }
 
-  @objc(sceneDidBecomeActive:)
-  func vgDidBecomeActive(_ scene: UIScene) {
+  func sceneDidBecomeActive(_ scene: UIScene) {
     hideCover()
     takeWidgetRoute()
   }

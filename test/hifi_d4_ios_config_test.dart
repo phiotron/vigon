@@ -45,9 +45,9 @@ void main() {
 
   group('F-22 che nội dung', () {
     test('phủ khi rời trạng thái hoạt động, gỡ khi quay lại', () {
-      expect(native, contains('@objc(sceneWillResignActive:)'));
-      expect(native, contains('@objc(sceneDidEnterBackground:)'));
-      expect(native, contains('@objc(sceneDidBecomeActive:)'));
+      expect(native, contains('func sceneWillResignActive(_ scene: UIScene)'));
+      expect(native, contains('func sceneDidEnterBackground(_ scene: UIScene)'));
+      expect(native, contains('func sceneDidBecomeActive(_ scene: UIScene)'));
       expect(native, contains('PrivacyCoverView'));
       expect(
         File('ios/Runner/Assets.xcassets/PrivacyLogo.imageset/Contents.json')
