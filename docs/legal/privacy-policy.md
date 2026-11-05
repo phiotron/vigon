@@ -26,8 +26,9 @@
 > - **Cập nhật 2026-11-05 theo D-021** (người dùng quyết: DB iOS loại khỏi sao lưu hệ thống, giống Android `allowBackup=false`): mục 2
 >   (bỏ ý "dữ liệu có trong sao lưu iPhone nếu bạn bật" → cả hai nền tảng không vào sao lưu Google/iCloud/máy tính, đổi máy thì tự xuất
 >   file `.vigon`; viết lại câu khôi phục iPhone từ sao lưu: app bắt đầu trống, PIN cũ bị xoá theo D-017) và mục 7 (bỏ "bản sao lưu
->   iPhone/iCloud"). Code do phiên iOS làm song song (đặt cờ `isExcludedFromBackup` cho file DB mỗi lần mở, kênh `vigon/backup_exclusion`;
->   lúc viết CHƯA commit) → **trước khi đăng: kiểm code đã vào `main` và log CI simulator báo đã đặt cờ**; nếu không thì không đăng bản này.
+>   iPhone/iCloud"). Code: commit `8441b6a` (phiên iOS, 2026-11-05) — mỗi lần mở DB đặt cờ `isExcludedFromBackup` cho thư mục Documents + `vigon.sqlite`
+>   (`-wal`, `-shm`, `-journal`) qua kênh `vigon/backup_exclusion`; `ios.yml` bắt buộc log simulator `VigonBackupExclusion: excluded=≥2 failed=0`.
+>   **Trước khi đăng: kiểm CI iOS xanh với bước đó**; chưa kiểm trên iPhone thật.
 >   Mục PIN: Keychain mặc định `accessibility = unlocked` (không ThisDeviceOnly) nên mục PIN có thể vẫn đi theo bản sao lưu mã hoá
 >   của iPhone — vì vậy câu viết "nếu mục mã PIN được khôi phục theo, app cũng xoá nó" (dựa trên D-017, chưa thử trên máy thật).
 >   Cố ý KHÔNG hứa "chuyển máy trực tiếp không mang dữ liệu theo": Android 12+ ở máy một số hãng vẫn chuyển dữ liệu máy-sang-máy (D2D) dù

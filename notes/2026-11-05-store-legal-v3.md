@@ -15,9 +15,10 @@ Chỉ sửa tài liệu. Không sửa code, `ios/`, `APP.md`, `product.md`. Khô
 | `docs/RELEASE.md` | Định danh iOS theo D-020/D-021. **Mục mới "Khai báo mã hoá cho Pháp (ANSSI)"**: vì sao, thời gian, 11 bước (nộp ở đâu, tài khoản, giấy tờ ANSSI ↔ bản tương đương cho cá nhân, tờ kỹ thuật điền sẵn theo code, xác nhận, tải lên App Store Connect, mã compliance, lưu hồ sơ ngoài repo), nguồn có link. Điều kiện chặn iOS: 2 quyết định đánh [x], thêm 5 việc còn mở (khoá trên `main`, ANSSI, Apple duyệt + mã, code loại DB + log CI) |
 
 ## Kiểm tra thế nào
-- Đọc code đang sửa của phiên iOS chạy song song (chỉ đọc `git diff`, chưa commit lúc kiểm): `ios/Runner/Info.plist` đổi
+- Đọc code của phiên iOS chạy song song (lúc đầu qua `git diff`, sau đó phiên đó commit `8441b6a` + báo cáo `notes/2026-11-05-ios-encryption-icloud.md`): `ios/Runner/Info.plist` đổi
   `ITSAppUsesNonExemptEncryption` → `<true/>`; `AppDelegate.swift` kênh `vigon/backup_exclusion` đặt `isExcludedFromBackup` và đọc lại cờ;
-  `lib/src/data/database.dart` gọi loại khỏi sao lưu sau mỗi lần mở DB. Tài liệu mô tả theo cách này, ghi "chưa commit lúc ghi".
+  `lib/src/data/database.dart` gọi loại khỏi sao lưu sau mỗi lần mở DB (thư mục Documents + `vigon.sqlite`, `-wal`, `-shm`, `-journal`).
+  Tài liệu dẫn commit `8441b6a`; báo cáo của phiên iOS lúc đọc chưa điền kết quả test/CI → tài liệu ghi "CI iOS chưa xác nhận".
 - `lib/src/data/backup_crypto.dart`: AES-256-GCM, nonce 12 byte, PBKDF2-HMAC-SHA256 100.000 vòng, muối 16 byte → dùng cho tờ kỹ thuật ANSSI.
 - `android/app/src/main/AndroidManifest.xml`: `allowBackup="false"`, **không** có `dataExtractionRules`.
 - Nhãn trong chính sách khớp `.arb`: "Khôi phục từ bản sao lưu" / "Restore from backup".
@@ -47,7 +48,8 @@ Chỉ sửa tài liệu. Không sửa code, `ios/`, `APP.md`, `product.md`. Khô
 5. Đăng chính sách: chỉ đăng bản này **sau khi** code loại DB khỏi sao lưu iOS đã vào `main` (nếu không, chính sách hứa sai).
 
 ## Việc dở / rủi ro (cho phiên điều phối)
-- **Phụ thuộc phiên code iOS:** khoá `true`, test, `ios.yml`, cờ loại DB khỏi sao lưu — lúc ghi CHƯA commit. Tài liệu đã viết theo quyết định; nếu phiên code làm khác (ví dụ đổi chỗ DB) thì sửa mục 2 chính sách, D-021, COMPLIANCE mục 4.
+- **Phụ thuộc phiên code iOS:** khoá `true`, test, `ios.yml`, cờ loại DB khỏi sao lưu đã ở commit `8441b6a`; CHƯA thấy CI iOS xanh. Nếu sau này đổi cách làm (ví dụ chuyển chỗ DB) thì sửa mục 2 chính sách, D-021, COMPLIANCE mục 4.
+- Fact chung `side-session-notes/.../A002-ios-ci-facts.md` vẫn ghi `ITSAppUsesNonExemptEncryption = false` (ngoài repo, ngoài phạm vi).
 - **Sau khi Apple duyệt:** cần một việc code nhỏ thêm `ITSEncryptionExportComplianceCode` vào `Info.plist` (và test nếu test kiểm khoá).
 - **Android D2D:** app target 36; ở máy một số hãng `allowBackup=false` vẫn cho chuyển dữ liệu máy-sang-máy trực tiếp. Chính sách đã viết
   để không hứa điều này. Muốn thật sự "giống nhau" → thêm `android:dataExtractionRules` loại `device-transfer` (việc code, cần quyết).

@@ -10,8 +10,8 @@ Không sao chép tên, icon, mô tả hay ảnh của app khác (SPEC mục 7).
 
 Project iOS trên `main` sau gộp (đối chiếu lại 2026-11-05, commit `a00bec8`): **chỉ iPhone** (`TARGETED_DEVICE_FAMILY = 1`),
 **chỉ màn dọc**, tên hiển thị `Ví Gọn`, min iOS 15.0, `CFBundleLocalizations` en + vi, `FlutterDeepLinkingEnabled = false`,
-`LSApplicationQueriesSchemes` chỉ `mailto`, `https`, `ITSAppUsesNonExemptEncryption = false` (**phải đổi thành `true` theo D-020**
-— phiên code iOS sửa `Info.plist` + test + CI; xem mục Export compliance), DB **chưa** loại khỏi sao lưu iCloud (**phải loại theo D-021**, phiên code iOS),
+`LSApplicationQueriesSchemes` chỉ `mailto`, `https`, `ITSAppUsesNonExemptEncryption = true` (**D-020**, commit `8441b6a`; xem mục Export compliance),
+DB loại khỏi sao lưu iCloud/máy tính (**D-021**, commit `8441b6a`; CI iOS chưa xác nhận lúc ghi),
 `ios/Runner/PrivacyInfo.xcprivacy` (không tracking, không thu thập; required-reason API FileTimestamp `C617.1`, DiskSpace `E174.1`),
 không khoá `NS…UsageDescription`, không `UIFileSharingEnabled`; icon `AppIcon` đủ cỡ, bản 1024×1024 RGB không alpha (PLAN-001).
 Tính năng theo nền tảng (`lib/src/platform_features.dart`, D-019): iOS **có** nhắc ghi chép (thông báo cục bộ, xin quyền khi bật),
@@ -19,7 +19,7 @@ mật khẩu file sao lưu, tìm kiếm, ẩn tài khoản, ngân sách theo dan
 che nội dung đa nhiệm, icon đơn sắc. Nếu `ios/` hoặc danh sách này đổi, sửa lại "Mô tả", "Ảnh chụp", "Export compliance", "App Privacy".
 Cập nhật 2026-11-05 (phiên con "Tài liệu theo quyết định mã hoá + iCloud"): mô tả, phân phối, App Privacy, Export compliance viết theo
 **D-020** (khai có mã hoá chuẩn, vẫn bán ở Pháp, người dùng nộp khai báo cho ANSSI) và **D-021** (DB iOS không vào sao lưu iCloud/máy tính).
-Các câu này chỉ đúng khi code iOS đã làm xong hai quyết định — **đối chiếu `ios/Runner/Info.plist` và code loại DB khỏi sao lưu trước khi dán**.
+Code đã có ở commit `8441b6a` — trước khi dán vẫn **đối chiếu `ios/Runner/Info.plist` và CI iOS xanh** (bước kiểm log `VigonBackupExclusion`).
 
 ## Tra trùng tên (2026-11-04)
 - Tìm "Ví Gọn" / "Vi Gon" trên web (apps.apple.com, Google Play): **không thấy app nào trùng tên**. Các app gần tên nhất
@@ -207,8 +207,8 @@ Kiểm lại câu chữ thật của bảng hỏi trong App Store Connect khi đ
 | Thuật toán tự chế / không chuẩn | CCATS + khai báo Pháp | Không |
 
 **Đã quyết (D-020):**
-1. `ios/Runner/Info.plist`: `ITSAppUsesNonExemptEncryption` = **`true`** (phiên code iOS đổi, kèm test `plan001_t6_ios_config_test`
-   và bước plutil của `.github/workflows/ios.yml` đang kiểm `false`). Đối chiếu file thật trước khi nộp.
+1. `ios/Runner/Info.plist`: `ITSAppUsesNonExemptEncryption` = **`true`** — đã đổi ở commit `8441b6a` (kèm test `plan001_t6_ios_config_test`
+   và bước plutil của `.github/workflows/ios.yml`). Đối chiếu file thật trước khi nộp.
 2. Bảng hỏi App Store Connect (App Information → App Encryption Documentation → "+", hoặc nút Manage cạnh build thiếu thông tin):
    - Loại thuật toán: **"Standard encryption algorithms instead of, or in addition to, using or accessing the encryption within
      Apple's operating system"** (KHÔNG chọn "proprietary / not accepted as standard", KHÔNG chọn "only Apple's operating system").

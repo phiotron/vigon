@@ -13,8 +13,8 @@ Checklist xưởng dùng kèm: `D:\Mobile App\playbook\checklists\release-androi
   và `RECEIVE_BOOT_COMPLETED` cho nhắc ghi chép (D-015); bản release không có INTERNET (`test/manifest_test.dart` và `aapt2 dump permissions`).
 - iOS: min iOS 15.0, **chỉ iPhone**, chỉ dọc, tên hiển thị `Ví Gọn`, không khoá `NS…UsageDescription`,
   `ITSAppUsesNonExemptEncryption` = **`true`** (D-020: F-21 dùng AES-256-GCM Dart thuần trên iOS; bán ở Pháp → khai báo mã hoá Pháp, mục
-  "Khai báo mã hoá cho Pháp" bên dưới), DB **loại khỏi sao lưu iCloud/máy tính** (D-021, giống Android `allowBackup=false`) — cả hai do phiên
-  code iOS làm 2026-11-05 (chưa commit lúc ghi), `ios/Runner/PrivacyInfo.xcprivacy` (commit `9438ddd`).
+  "Khai báo mã hoá cho Pháp" bên dưới), DB **loại khỏi sao lưu iCloud/máy tính** (D-021, giống Android `allowBackup=false`) — cả hai đã có trong
+  code (commit `8441b6a`, 2026-11-05; CHƯA thấy CI iOS xanh), `ios/Runner/PrivacyInfo.xcprivacy` (commit `9438ddd`).
   Widget, sao lưu tự động, che nội dung, icon đơn sắc chỉ có trên Android; nhắc ghi chép có cả iOS (D-019).
 - Tài khoản nhà phát triển: **cá nhân** trên cả hai store (2026-11-04) → tên người bán hiện công khai là họ tên thật; Play bắt closed test.
 
@@ -158,12 +158,12 @@ iOS:
 - [ ] Chạy "Release iOS" thành công một lần; xác nhận Xcode 26+ trong log (P-01)
 - [x] Icon App Store 1024×1024 gốc: có sau gộp PLAN-001 (kiểm header PNG 2026-11-05)
 - [x] Quyết export compliance: khoá `true`, bảng hỏi "Standard encryption algorithms…", vẫn bán ở Pháp (D-020, 2026-11-05)
-- [ ] `ITSAppUsesNonExemptEncryption = true` trên `main` + `plan001_t6_ios_config_test` + bước plutil `ios.yml` (phiên code iOS)
+- [ ] `ITSAppUsesNonExemptEncryption = true` trên `main` + test + plutil `ios.yml` (đã commit `8441b6a`) — còn: CI iOS xanh
 - [ ] **Người dùng:** nộp khai báo mã hoá cho ANSSI và có xác nhận (mục "Khai báo mã hoá cho Pháp" — nộp ngay, chờ ~1 tháng)
 - [ ] **Người dùng:** tải khai báo lên App Store Connect (App Encryption Documentation), Apple duyệt; phiên code thêm `ITSEncryptionExportComplianceCode` vào `Info.plist` — phải xong TRƯỚC khi gửi App Review / TestFlight App Review
 - [ ] Điền App Privacy, Age Rating, Review Notes, trader status (EU) trong App Store Connect (`store/app-store.md`)
 - [x] Quyết sao lưu iCloud: loại DB khỏi sao lưu hệ thống, giống Android (D-021, 2026-11-05)
-- [ ] Code loại DB khỏi sao lưu trên `main` + log CI simulator xác nhận cờ đã đặt (phiên code iOS); chỉ đăng chính sách bản D-021 khi mục này xong
+- [ ] Code loại DB khỏi sao lưu (đã commit `8441b6a`) — còn: CI iOS xanh với bước kiểm log `VigonBackupExclusion`; chỉ đăng chính sách bản D-021 khi mục này xong
 - [x] Xoá PIN còn sót trong Keychain khi cài lại: đã có trong code (D-017, `PinService.clearIfReinstalled`); CHƯA kiểm chứng trên iPhone thật (COMPLIANCE mục 4)
 
 ## Lịch sử phát hành
