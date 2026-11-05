@@ -27,7 +27,7 @@ Kiểm lại bảng kích thước của Google/Apple ngày chụp (đổi theo 
 Thứ tự ảnh: 3 ảnh đầu hiện ngay trong kết quả tìm kiếm → đặt 3 ảnh mạnh nhất (màn chính, nhập nhanh, riêng tư) lên đầu.
 
 ## 2. Bộ ảnh (mỗi ngôn ngữ một bộ; cập nhật 2026-11-05 theo bản đã gộp F-01..F-26)
-Ảnh 1–8 chung hai store (chụp riêng trên từng nền tảng). Cập nhật 2026-11-05 theo D-022: iPhone nay có widget (iOS 16+), sao lưu tự động,
+Ảnh 1–8 chung hai store (chụp riêng trên từng nền tảng). Cập nhật 2026-11-05 theo D-022: iPhone nay có widget, sao lưu tự động,
 che nội dung → ảnh 8 widget dùng cho cả hai; ảnh "chữ cỡ lớn" trước đây dành riêng cho App Store thành ảnh tuỳ chọn.
 | # | Màn | Trạng thái cần dựng | Chú thích vi | Chú thích en |
 |---|---|---|---|---|
@@ -38,7 +38,7 @@ che nội dung → ảnh 8 widget dùng cho cả hai; ảnh "chữ cỡ lớn" t
 | 5 | Khoản định kỳ | 3 chuỗi: Tiền nhà (tháng), Internet (tháng), Học phí (tháng) | Khoản định kỳ tự ghi | Recurring bills, added for you |
 | 6 | Tài khoản + chuyển tiền | 3 tài khoản: Tiền mặt, Ngân hàng, Thẻ tín dụng; có 1 khoản chuyển | Nhiều ví, chuyển qua lại | Cash, bank and card in one place |
 | 7 | Màn chính, giao diện tối | Như ảnh 1 | Giao diện sáng và tối | Light and dark themes |
-| 8 | Màn hình chính của máy có widget Ví Gọn (Android 2×2; iPhone widget nhỏ hoặc vừa, iOS 16+) | Nút "Chi"/"Thu"; bật "Hiện số tiền trên widget", PIN tắt → dòng "Tháng này đã chi 12.980.000 / 15.000.000". Hình nền trơn, **không có icon app khác** trên màn hình (nhãn hiệu người khác). iPhone: widget đọc số qua App Group — trên simulator CI chưa ký App Group thì widget có thể không có số → chụp qua TestFlight hoặc chụp trạng thái mặc định (chỉ hai nút) | Ghi khoản ngay từ màn hình chính | Add a record from your home screen |
+| 8 | Màn hình chính của máy có widget Ví Gọn (Android 2×2; iPhone widget nhỏ hoặc vừa) | Nút "Chi"/"Thu"; bật "Hiện số tiền trên widget", PIN tắt → dòng "Tháng này đã chi 12.980.000 / 15.000.000". Hình nền trơn, **không có icon app khác** trên màn hình (nhãn hiệu người khác). iPhone: widget đọc số qua App Group — trên simulator CI chưa ký App Group thì widget có thể không có số → chụp qua TestFlight hoặc chụp trạng thái mặc định (chỉ hai nút) | Ghi khoản ngay từ màn hình chính | Add a record from your home screen |
 
 Tuỳ chọn thêm (chỉ khi bỏ bớt ảnh khác, Play tối đa 8): Cài đặt → Sao lưu tự động (cả hai); màn tìm kiếm khoản (cả hai); màn chính cỡ chữ lớn
 ("Dễ đọc với chữ cỡ lớn" / "Built for large text", App Store cho tới 10 ảnh nên có thể thêm làm ảnh 9).

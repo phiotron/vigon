@@ -106,7 +106,7 @@ iOS cũng loại dữ liệu khỏi sao lưu iCloud/máy tính (D-021), mô tả
 Theo D-022 (2026-11-05, thay phần iOS của D-019) widget, sao lưu tự động và che nội dung có ở **cả hai** store, nhưng cách chạy khác nhau nên chữ khác nhau:
 che nội dung — Android chặn chụp màn hình + ẩn ảnh xem trước; iPhone chỉ che ở màn chuyển app, không chặn chụp màn hình;
 sao lưu tự động — Android chạy tối đa mỗi ngày một lần khi dữ liệu đổi; iPhone chạy khi mở app (iPhone không cho app chạy theo giờ), thư mục chọn trong app Tệp;
-widget — iPhone cần iOS 16 trở lên. Chỉ **icon đơn sắc** (F-23) là của riêng Android.
+bản App Store cần iOS 16.0 trở lên (D-024). Chỉ **icon đơn sắc** (F-23) là của riêng Android.
 Nhắc ghi chép, mật khẩu file sao lưu, tìm kiếm, ẩn tài khoản, ngân sách theo danh mục, đủ tiền tệ ISO cũng có ở cả hai.
 
 ## Ghi chú phát hành (Play "Release notes", ≤ 500 ký tự mỗi ngôn ngữ)

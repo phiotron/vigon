@@ -4,13 +4,13 @@ Bản nháp để dán vào App Store Connect ở phiên điều phối #3. Ngư
 Nội dung phải khớp với Play (`store/listing.md`) và với code; không hứa điều code không làm. Viết 2026-11-04; cập nhật 2026-11-05
 sau khi gộp bản 1.2 với giao diện/iOS (D-019): thêm tính năng 1.1/1.2 **có trên iPhone** (tìm kiếm, ẩn tài khoản, ngân sách theo
 danh mục, đủ tiền tệ ISO, nhắc ghi chép hằng ngày, đặt mật khẩu cho file sao lưu). ~~Widget, sao lưu tự động, che nội dung chỉ có
-trên Android~~ → **thay bằng D-022 (2026-11-05): iOS có đủ widget màn hình chính (iOS 16+), sao lưu tự động vào thư mục chọn trong app
+trên Android~~ → **thay bằng D-022 (2026-11-05): iOS có đủ widget màn hình chính, sao lưu tự động vào thư mục chọn trong app
 Tệp, che nội dung ở màn chuyển app** — đã đưa vào mô tả, What's New, Review Notes, App Privacy và quy cách ảnh (phiên con D6).
 Chỉ **icon đơn sắc (F-23)** vẫn chỉ Android → không nhắc. Không nhắc nền tảng khác trong metadata (App Review 2.3.1, 2.3.10).
 Không sao chép tên, icon, mô tả hay ảnh của app khác (SPEC mục 7).
 
 Project iOS trên `main` sau gộp (đối chiếu lại 2026-11-05, commit `a00bec8`): **chỉ iPhone** (`TARGETED_DEVICE_FAMILY = 1`),
-**chỉ màn dọc**, tên hiển thị `Ví Gọn`, min iOS 15.0, `CFBundleLocalizations` en + vi, `FlutterDeepLinkingEnabled = false`,
+**chỉ màn dọc**, tên hiển thị `Ví Gọn`, min iOS **16.0** (D-024, commit `b0c9fee`; trước là 15.0), `CFBundleLocalizations` en + vi, `FlutterDeepLinkingEnabled = false`,
 `LSApplicationQueriesSchemes` chỉ `mailto`, `https`, `ITSAppUsesNonExemptEncryption = true` (**D-020**, commit `8441b6a`; xem mục Export compliance),
 DB loại khỏi sao lưu iCloud/máy tính (**D-021**, commit `8441b6a`; CI iOS chưa xác nhận lúc ghi),
 `ios/Runner/PrivacyInfo.xcprivacy` (không tracking, không thu thập; required-reason API FileTimestamp `C617.1`, DiskSpace `E174.1`,
@@ -19,7 +19,7 @@ không khoá `NS…UsageDescription`, không `UIFileSharingEnabled`; icon `AppIc
 Widget extension `VigonWidgetExtension` (`com.phiotron.vigon.VigonWidget`, min **iOS 16.0**, App Group `group.com.phiotron.vigon`) có
 `PrivacyInfo.xcprivacy` riêng (không tracking, không thu thập; UserDefaults `1C8F.1`) — D4, commit `6ed915c` (kiểm lại 2026-11-05).
 Tính năng theo nền tảng (`lib/src/platform_features.dart`, D-022 thay phần iOS của D-019): iOS **có** nhắc ghi chép (thông báo cục bộ,
-xin quyền khi bật), mật khẩu file sao lưu, tìm kiếm, ẩn tài khoản, ngân sách theo danh mục, tiền tệ ISO, **widget (iOS 16+), sao lưu
+xin quyền khi bật), mật khẩu file sao lưu, tìm kiếm, ẩn tài khoản, ngân sách theo danh mục, tiền tệ ISO, **widget, sao lưu
 tự động, che nội dung ở màn chuyển app**; iOS **không có** icon đơn sắc. Nếu `ios/` hoặc danh sách này đổi, sửa lại "Mô tả", "Ảnh chụp",
 "Export compliance", "App Privacy".
 Cập nhật 2026-11-05 (phiên con "Tài liệu theo quyết định mã hoá + iCloud"): mô tả, phân phối, App Privacy, Export compliance viết theo
@@ -75,7 +75,7 @@ QUICK ENTRY
 • Tap − or +, type the amount on a keypad with built-in math (add, subtract, multiply, divide), pick a category. Three taps at most.
 • Edit or delete records; undo a delete right away.
 • Search records by note, category or amount.
-• Home screen widget with two big buttons to add an expense or an income (iOS 16 or later).
+• Home screen widget with two big buttons to add an expense or an income.
 
 SEE YOUR SPENDING
 • Donut chart by category, with income, expenses and balance.
@@ -131,7 +131,7 @@ GHI NHANH
 • Chạm − hoặc +, nhập số tiền bằng bàn phím có phép tính (cộng, trừ, nhân, chia), chọn danh mục là xong, tối đa 3 lần chạm.
 • Sửa hoặc xóa khoản đã ghi; xóa nhầm thì hoàn tác ngay.
 • Tìm khoản theo ghi chú, danh mục hoặc số tiền.
-• Widget màn hình chính với hai nút lớn "Chi" và "Thu" để mở ngay màn nhập khoản (iOS 16 trở lên).
+• Widget màn hình chính với hai nút lớn "Chi" và "Thu" để mở ngay màn nhập khoản.
 
 NHÌN RÕ CHI TIÊU
 • Biểu đồ vòng theo danh mục, tổng thu, tổng chi và số dư.
@@ -175,8 +175,8 @@ Theo D-022 (2026-11-05) bản App Store CÓ widget, sao lưu tự động, che n
 không nhắc. Khác bản Play có chủ đích ở ba tính năng này, theo đúng chữ trong app (`*Ios` trong `.arb`):
 che nội dung — iPhone chỉ che ở màn chuyển app, **không** viết "chặn chụp màn hình" (`secureWindowNoteIos`);
 sao lưu tự động — chọn thư mục trong app Tệp, chạy **khi mở app**, mỗi ngày tối đa một lần (`autoBackupNoteIos`, `autoBackupRunsOnOpenIos`),
-không hứa chạy nền theo giờ; widget — ghi "iOS 16 trở lên" vì app hỗ trợ từ iOS 15 nhưng extension cần iOS 16 (S-31: không để người
-dùng iOS 15 tưởng có widget). Mật khẩu sao lưu tự động: "Keychain" (Play: "kho khóa an toàn").
+không hứa chạy nền theo giờ. Không ghi "widget cần iOS 16" vì cả app cần iOS 16.0 trở lên (D-024) — App Store tự hiện yêu
+cầu hệ thống. Mật khẩu sao lưu tự động: "Keychain" (Play: "kho khóa an toàn").
 
 ## Age Rating (bảng câu hỏi mới của Apple, từ 2025: 4+, 9+, 13+, 16+, 18+)
 Trả lời đề xuất (mọi câu theo tần suất chọn **None**, mọi câu có/không chọn **No**):
@@ -268,7 +268,7 @@ sau không — KHÔNG tự bỏ (trái D-020).
   Backup: Settings > Export backup opens the iOS share sheet (Save to Files); you can optionally turn on "Protect file with a password", which encrypts the file on the device (AES-256-GCM). Settings > Restore from backup opens the Files picker for a .vigon file.
   Daily reminder (off by default): Settings > Daily reminder shows a short explanation, then the iOS notification permission prompt. The notification is scheduled locally on the device and contains no figures.
   Automatic backup (off by default): Settings > Automatic backup asks you to pick a folder in the Files app (for example iCloud Drive) and set a password. Because iOS does not run apps on a schedule, the encrypted backup is written when the app is opened, at most once a day and only if data changed; "Back up now" writes one immediately. The app itself makes no network connection.
-  Home screen widget (iOS 16 or later): add "Ví Gọn" from the widget gallery. Its Expense and Income buttons open the entry screen. Amounts appear only if Settings > "Show amounts on widget" is on and the PIN lock is off.
+  Home screen widget: add "Ví Gọn" from the widget gallery. Its Expense and Income buttons open the entry screen. Amounts appear only if Settings > "Show amounts on widget" is on and the PIN lock is off.
   Hide content when switching apps: Settings > Hide content when switching apps covers the app's content in the app switcher. It does not block screenshots.
   The app is free, has no in-app purchases and no ads.
   ```
