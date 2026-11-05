@@ -1,0 +1,2943 @@
+{
+ "v": 3,
+ "createdOnFiles": {
+  "v": 1,
+  "at": "2026-11-05T03:40:59Z"
+ },
+ "title": "Ví Gọn Hi-Fi P1",
+ "launch": {
+  "view": "canvas",
+  "page": "and-light"
+ },
+ "pages": [
+  {
+   "id": "and-light",
+   "name": "Android · Light"
+  },
+  {
+   "id": "and-dark",
+   "name": "Android · Dark"
+  },
+  {
+   "id": "ios-light",
+   "name": "iPhone · Light"
+  },
+  {
+   "id": "ios-dark",
+   "name": "iPhone · Dark"
+  },
+  {
+   "id": "variants",
+   "name": "VI + 200 % (Android light)"
+  }
+ ],
+ "boards": {
+  "Main.dc.html": {
+   "x": 0,
+   "y": 240,
+   "w": 360,
+   "h": 800,
+   "title": "android/light/01_home__more-categories.png",
+   "page": "and-light",
+   "radius": 28
+  },
+  "and-light_07_home--more-categories__default.dc.html": {
+   "x": 0,
+   "y": 1400,
+   "w": 360,
+   "h": 800,
+   "title": "android/light/07_home~more-categories__default.png",
+   "page": "and-light",
+   "radius": 28
+  },
+  "and-light_10_entries__category-budget.dc.html": {
+   "x": 0,
+   "y": 2560,
+   "w": 360,
+   "h": 800,
+   "title": "android/light/10_entries__category-budget.png",
+   "page": "and-light",
+   "radius": 28
+  },
+  "and-light_10_entries__long-text.dc.html": {
+   "x": 440,
+   "y": 2560,
+   "w": 360,
+   "h": 800,
+   "title": "android/light/10_entries__long-text.png",
+   "page": "and-light",
+   "radius": 28
+  },
+  "and-light_11_entries--search__empty.dc.html": {
+   "x": 0,
+   "y": 3720,
+   "w": 360,
+   "h": 800,
+   "title": "android/light/11_entries~search__empty.png",
+   "page": "and-light",
+   "radius": 28
+  },
+  "and-light_11_entries--search__searching.dc.html": {
+   "x": 440,
+   "y": 3720,
+   "w": 360,
+   "h": 800,
+   "title": "android/light/11_entries~search__searching.png",
+   "page": "and-light",
+   "radius": 28
+  },
+  "and-light_11_entries--search__all-time.dc.html": {
+   "x": 880,
+   "y": 3720,
+   "w": 360,
+   "h": 800,
+   "title": "android/light/11_entries~search__all-time.png",
+   "page": "and-light",
+   "radius": 28
+  },
+  "and-light_11_entries--search__amount.dc.html": {
+   "x": 1320,
+   "y": 3720,
+   "w": 360,
+   "h": 800,
+   "title": "android/light/11_entries~search__amount.png",
+   "page": "and-light",
+   "radius": 28
+  },
+  "and-light_11_entries--search__no-match.dc.html": {
+   "x": 1760,
+   "y": 3720,
+   "w": 360,
+   "h": 800,
+   "title": "android/light/11_entries~search__no-match.png",
+   "page": "and-light",
+   "radius": 28
+  },
+  "and-light_12_settings__top.dc.html": {
+   "x": 0,
+   "y": 4880,
+   "w": 360,
+   "h": 800,
+   "title": "android/light/12_settings__top.png",
+   "page": "and-light",
+   "radius": 28
+  },
+  "and-light_12_settings__middle.dc.html": {
+   "x": 440,
+   "y": 4880,
+   "w": 360,
+   "h": 800,
+   "title": "android/light/12_settings__middle.png",
+   "page": "and-light",
+   "radius": 28
+  },
+  "and-light_12_settings__bottom.dc.html": {
+   "x": 880,
+   "y": 4880,
+   "w": 360,
+   "h": 800,
+   "title": "android/light/12_settings__bottom.png",
+   "page": "and-light",
+   "radius": 28
+  },
+  "and-light_13_settings--currency__default.dc.html": {
+   "x": 0,
+   "y": 6040,
+   "w": 360,
+   "h": 800,
+   "title": "android/light/13_settings~currency__default.png",
+   "page": "and-light",
+   "radius": 28
+  },
+  "and-light_13_settings--currency__searching.dc.html": {
+   "x": 440,
+   "y": 6040,
+   "w": 360,
+   "h": 800,
+   "title": "android/light/13_settings~currency__searching.png",
+   "page": "and-light",
+   "radius": 28
+  },
+  "and-light_13_settings--currency__no-match.dc.html": {
+   "x": 880,
+   "y": 6040,
+   "w": 360,
+   "h": 800,
+   "title": "android/light/13_settings~currency__no-match.png",
+   "page": "and-light",
+   "radius": 28
+  },
+  "and-light_16_categories--edit__budget-set.dc.html": {
+   "x": 0,
+   "y": 7200,
+   "w": 360,
+   "h": 800,
+   "title": "android/light/16_categories~edit__budget-set.png",
+   "page": "and-light",
+   "radius": 28
+  },
+  "and-light_16_categories--edit__budget-error.dc.html": {
+   "x": 440,
+   "y": 7200,
+   "w": 360,
+   "h": 800,
+   "title": "android/light/16_categories~edit__budget-error.png",
+   "page": "and-light",
+   "radius": 28
+  },
+  "and-light_17_accounts__hidden.dc.html": {
+   "x": 0,
+   "y": 8360,
+   "w": 360,
+   "h": 800,
+   "title": "android/light/17_accounts__hidden.png",
+   "page": "and-light",
+   "radius": 28
+  },
+  "and-light_17_accounts__hidden-open.dc.html": {
+   "x": 440,
+   "y": 8360,
+   "w": 360,
+   "h": 800,
+   "title": "android/light/17_accounts__hidden-open.png",
+   "page": "and-light",
+   "radius": 28
+  },
+  "and-light_18_accounts--edit__unused.dc.html": {
+   "x": 0,
+   "y": 9520,
+   "w": 360,
+   "h": 800,
+   "title": "android/light/18_accounts~edit__unused.png",
+   "page": "and-light",
+   "radius": 28
+  },
+  "and-light_18_accounts--edit__used.dc.html": {
+   "x": 440,
+   "y": 9520,
+   "w": 360,
+   "h": 800,
+   "title": "android/light/18_accounts~edit__used.png",
+   "page": "and-light",
+   "radius": 28
+  },
+  "and-light_18_accounts--edit__last-visible.dc.html": {
+   "x": 880,
+   "y": 9520,
+   "w": 360,
+   "h": 800,
+   "title": "android/light/18_accounts~edit__last-visible.png",
+   "page": "and-light",
+   "radius": 28
+  },
+  "and-light_18_accounts--delete__default.dc.html": {
+   "x": 1320,
+   "y": 9520,
+   "w": 360,
+   "h": 800,
+   "title": "android/light/18_accounts~delete__default.png",
+   "page": "and-light",
+   "radius": 28
+  },
+  "and-light_21_recurring--edit__running.dc.html": {
+   "x": 0,
+   "y": 10680,
+   "w": 360,
+   "h": 800,
+   "title": "android/light/21_recurring~edit__running.png",
+   "page": "and-light",
+   "radius": 28
+  },
+  "and-light_21_recurring--edit__frequency-changed.dc.html": {
+   "x": 440,
+   "y": 10680,
+   "w": 360,
+   "h": 800,
+   "title": "android/light/21_recurring~edit__frequency-changed.png",
+   "page": "and-light",
+   "radius": 28
+  },
+  "and-light_21_recurring--edit__error.dc.html": {
+   "x": 880,
+   "y": 10680,
+   "w": 360,
+   "h": 800,
+   "title": "android/light/21_recurring~edit__error.png",
+   "page": "and-light",
+   "radius": 28
+  },
+  "and-light_21_recurring--edit__one-account.dc.html": {
+   "x": 1320,
+   "y": 10680,
+   "w": 360,
+   "h": 800,
+   "title": "android/light/21_recurring~edit__one-account.png",
+   "page": "and-light",
+   "radius": 28
+  },
+  "and-light_26_settings--backup-export__off.dc.html": {
+   "x": 0,
+   "y": 11840,
+   "w": 360,
+   "h": 800,
+   "title": "android/light/26_settings~backup-export__off.png",
+   "page": "and-light",
+   "radius": 28
+  },
+  "and-light_26_settings--backup-export__on-empty.dc.html": {
+   "x": 440,
+   "y": 11840,
+   "w": 360,
+   "h": 800,
+   "title": "android/light/26_settings~backup-export__on-empty.png",
+   "page": "and-light",
+   "radius": 28
+  },
+  "and-light_26_settings--backup-export__error.dc.html": {
+   "x": 880,
+   "y": 11840,
+   "w": 360,
+   "h": 800,
+   "title": "android/light/26_settings~backup-export__error.png",
+   "page": "and-light",
+   "radius": 28
+  },
+  "and-light_26_settings--backup-export__working.dc.html": {
+   "x": 1320,
+   "y": 11840,
+   "w": 360,
+   "h": 800,
+   "title": "android/light/26_settings~backup-export__working.png",
+   "page": "and-light",
+   "radius": 28
+  },
+  "and-light_27_settings--restore-password__default.dc.html": {
+   "x": 0,
+   "y": 13000,
+   "w": 360,
+   "h": 800,
+   "title": "android/light/27_settings~restore-password__default.png",
+   "page": "and-light",
+   "radius": 28
+  },
+  "and-light_27_settings--restore-password__error.dc.html": {
+   "x": 440,
+   "y": 13000,
+   "w": 360,
+   "h": 800,
+   "title": "android/light/27_settings~restore-password__error.png",
+   "page": "and-light",
+   "radius": 28
+  },
+  "and-light_27_settings--restore-password__working.dc.html": {
+   "x": 880,
+   "y": 13000,
+   "w": 360,
+   "h": 800,
+   "title": "android/light/27_settings~restore-password__working.png",
+   "page": "and-light",
+   "radius": 28
+  },
+  "and-light_27_settings--restore__confirm.dc.html": {
+   "x": 1320,
+   "y": 13000,
+   "w": 360,
+   "h": 800,
+   "title": "android/light/27_settings~restore__confirm.png",
+   "page": "and-light",
+   "radius": 28
+  },
+  "and-light_30_settings--reminder__explain.dc.html": {
+   "x": 0,
+   "y": 14160,
+   "w": 360,
+   "h": 800,
+   "title": "android/light/30_settings~reminder__explain.png",
+   "page": "and-light",
+   "radius": 28
+  },
+  "and-light_30_settings--reminder__permission.dc.html": {
+   "x": 440,
+   "y": 14160,
+   "w": 360,
+   "h": 800,
+   "title": "android/light/30_settings~reminder__permission.png",
+   "page": "and-light",
+   "radius": 28
+  },
+  "and-light_30_settings--reminder__denied.dc.html": {
+   "x": 880,
+   "y": 14160,
+   "w": 360,
+   "h": 800,
+   "title": "android/light/30_settings~reminder__denied.png",
+   "page": "and-light",
+   "radius": 28
+  },
+  "and-light_30_settings--reminder__time-picker.dc.html": {
+   "x": 1320,
+   "y": 14160,
+   "w": 360,
+   "h": 800,
+   "title": "android/light/30_settings~reminder__time-picker.png",
+   "page": "and-light",
+   "radius": 28
+  },
+  "and-light_30_settings--reminder__time-changed.dc.html": {
+   "x": 1760,
+   "y": 14160,
+   "w": 360,
+   "h": 800,
+   "title": "android/light/30_settings~reminder__time-changed.png",
+   "page": "and-light",
+   "radius": 28
+  },
+  "and-light_31_settings--auto-backup__off.dc.html": {
+   "x": 0,
+   "y": 15320,
+   "w": 360,
+   "h": 800,
+   "title": "android/light/31_settings~auto-backup__off.png",
+   "page": "and-light",
+   "radius": 28
+  },
+  "and-light_31_settings--auto-backup__picker.dc.html": {
+   "x": 440,
+   "y": 15320,
+   "w": 360,
+   "h": 800,
+   "title": "android/light/31_settings~auto-backup__picker.png",
+   "page": "and-light",
+   "radius": 28
+  },
+  "and-light_31_settings--auto-backup__never-run.dc.html": {
+   "x": 880,
+   "y": 15320,
+   "w": 360,
+   "h": 800,
+   "title": "android/light/31_settings~auto-backup__never-run.png",
+   "page": "and-light",
+   "radius": 28
+  },
+  "and-light_31_settings--auto-backup__running.dc.html": {
+   "x": 1320,
+   "y": 15320,
+   "w": 360,
+   "h": 800,
+   "title": "android/light/31_settings~auto-backup__running.png",
+   "page": "and-light",
+   "radius": 28
+  },
+  "and-light_31_settings--auto-backup__ok.dc.html": {
+   "x": 1760,
+   "y": 15320,
+   "w": 360,
+   "h": 800,
+   "title": "android/light/31_settings~auto-backup__ok.png",
+   "page": "and-light",
+   "radius": 28
+  },
+  "and-light_31_settings--auto-backup__folder-error.dc.html": {
+   "x": 2200,
+   "y": 15320,
+   "w": 360,
+   "h": 800,
+   "title": "android/light/31_settings~auto-backup__folder-error.png",
+   "page": "and-light",
+   "radius": 28
+  },
+  "and-light_31_settings--auto-backup__other-error.dc.html": {
+   "x": 2640,
+   "y": 15320,
+   "w": 360,
+   "h": 800,
+   "title": "android/light/31_settings~auto-backup__other-error.png",
+   "page": "and-light",
+   "radius": 28
+  },
+  "and-light_31_settings--auto-backup__busy.dc.html": {
+   "x": 3080,
+   "y": 15320,
+   "w": 360,
+   "h": 800,
+   "title": "android/light/31_settings~auto-backup__busy.png",
+   "page": "and-light",
+   "radius": 28
+  },
+  "and-light_31_settings--auto-backup__turned-off.dc.html": {
+   "x": 3520,
+   "y": 15320,
+   "w": 360,
+   "h": 800,
+   "title": "android/light/31_settings~auto-backup__turned-off.png",
+   "page": "and-light",
+   "radius": 28
+  },
+  "and-light_31_settings--auto-backup-password__default.dc.html": {
+   "x": 3960,
+   "y": 15320,
+   "w": 360,
+   "h": 800,
+   "title": "android/light/31_settings~auto-backup-password__default.png",
+   "page": "and-light",
+   "radius": 28
+  },
+  "and-light_31_settings--auto-backup-password__error.dc.html": {
+   "x": 4400,
+   "y": 15320,
+   "w": 360,
+   "h": 800,
+   "title": "android/light/31_settings~auto-backup-password__error.png",
+   "page": "and-light",
+   "radius": 28
+  },
+  "and-light_EXT01_ext-widget__default.dc.html": {
+   "x": 0,
+   "y": 16480,
+   "w": 360,
+   "h": 800,
+   "title": "android/light/EXT01_ext-widget__default.png",
+   "page": "and-light",
+   "radius": 28
+  },
+  "and-light_EXT01_ext-widget__spent.dc.html": {
+   "x": 440,
+   "y": 16480,
+   "w": 360,
+   "h": 800,
+   "title": "android/light/EXT01_ext-widget__spent.png",
+   "page": "and-light",
+   "radius": 28
+  },
+  "and-light_EXT01_ext-widget__budget.dc.html": {
+   "x": 880,
+   "y": 16480,
+   "w": 360,
+   "h": 800,
+   "title": "android/light/EXT01_ext-widget__budget.png",
+   "page": "and-light",
+   "radius": 28
+  },
+  "and-light_EXT01_ext-widget__locked.dc.html": {
+   "x": 1320,
+   "y": 16480,
+   "w": 360,
+   "h": 800,
+   "title": "android/light/EXT01_ext-widget__locked.png",
+   "page": "and-light",
+   "radius": 28
+  },
+  "and-light_EXT01_ext-widget__stale.dc.html": {
+   "x": 1760,
+   "y": 16480,
+   "w": 360,
+   "h": 800,
+   "title": "android/light/EXT01_ext-widget__stale.png",
+   "page": "and-light",
+   "radius": 28
+  },
+  "and-light_EXT01_ext-widget__4x2.dc.html": {
+   "x": 2200,
+   "y": 16480,
+   "w": 360,
+   "h": 800,
+   "title": "android/light/EXT01_ext-widget__4x2.png",
+   "page": "and-light",
+   "radius": 28
+  },
+  "and-light_EXT01_ext-widget__picker.dc.html": {
+   "x": 2640,
+   "y": 16480,
+   "w": 360,
+   "h": 800,
+   "title": "android/light/EXT01_ext-widget__picker.png",
+   "page": "and-light",
+   "radius": 28
+  },
+  "and-light_EXT02_ext-reminder__lockscreen.dc.html": {
+   "x": 0,
+   "y": 17640,
+   "w": 360,
+   "h": 800,
+   "title": "android/light/EXT02_ext-reminder__lockscreen.png",
+   "page": "and-light",
+   "radius": 28
+  },
+  "and-light_EXT02_ext-reminder__shade.dc.html": {
+   "x": 440,
+   "y": 17640,
+   "w": 360,
+   "h": 800,
+   "title": "android/light/EXT02_ext-reminder__shade.png",
+   "page": "and-light",
+   "radius": 28
+  },
+  "and-light_EXT03_ext-recents__default.dc.html": {
+   "x": 0,
+   "y": 18800,
+   "w": 360,
+   "h": 800,
+   "title": "android/light/EXT03_ext-recents__default.png",
+   "page": "and-light",
+   "radius": 28
+  },
+  "and-light_EXT03_ext-recents__hidden.dc.html": {
+   "x": 440,
+   "y": 18800,
+   "w": 360,
+   "h": 800,
+   "title": "android/light/EXT03_ext-recents__hidden.png",
+   "page": "and-light",
+   "radius": 28
+  },
+  "and-dark_01_home__more-categories.dc.html": {
+   "x": 0,
+   "y": 240,
+   "w": 360,
+   "h": 800,
+   "title": "android/dark/01_home__more-categories.png",
+   "page": "and-dark",
+   "radius": 28
+  },
+  "and-dark_07_home--more-categories__default.dc.html": {
+   "x": 0,
+   "y": 1400,
+   "w": 360,
+   "h": 800,
+   "title": "android/dark/07_home~more-categories__default.png",
+   "page": "and-dark",
+   "radius": 28
+  },
+  "and-dark_10_entries__category-budget.dc.html": {
+   "x": 0,
+   "y": 2560,
+   "w": 360,
+   "h": 800,
+   "title": "android/dark/10_entries__category-budget.png",
+   "page": "and-dark",
+   "radius": 28
+  },
+  "and-dark_10_entries__long-text.dc.html": {
+   "x": 440,
+   "y": 2560,
+   "w": 360,
+   "h": 800,
+   "title": "android/dark/10_entries__long-text.png",
+   "page": "and-dark",
+   "radius": 28
+  },
+  "and-dark_11_entries--search__empty.dc.html": {
+   "x": 0,
+   "y": 3720,
+   "w": 360,
+   "h": 800,
+   "title": "android/dark/11_entries~search__empty.png",
+   "page": "and-dark",
+   "radius": 28
+  },
+  "and-dark_11_entries--search__searching.dc.html": {
+   "x": 440,
+   "y": 3720,
+   "w": 360,
+   "h": 800,
+   "title": "android/dark/11_entries~search__searching.png",
+   "page": "and-dark",
+   "radius": 28
+  },
+  "and-dark_11_entries--search__all-time.dc.html": {
+   "x": 880,
+   "y": 3720,
+   "w": 360,
+   "h": 800,
+   "title": "android/dark/11_entries~search__all-time.png",
+   "page": "and-dark",
+   "radius": 28
+  },
+  "and-dark_11_entries--search__amount.dc.html": {
+   "x": 1320,
+   "y": 3720,
+   "w": 360,
+   "h": 800,
+   "title": "android/dark/11_entries~search__amount.png",
+   "page": "and-dark",
+   "radius": 28
+  },
+  "and-dark_11_entries--search__no-match.dc.html": {
+   "x": 1760,
+   "y": 3720,
+   "w": 360,
+   "h": 800,
+   "title": "android/dark/11_entries~search__no-match.png",
+   "page": "and-dark",
+   "radius": 28
+  },
+  "and-dark_12_settings__top.dc.html": {
+   "x": 0,
+   "y": 4880,
+   "w": 360,
+   "h": 800,
+   "title": "android/dark/12_settings__top.png",
+   "page": "and-dark",
+   "radius": 28
+  },
+  "and-dark_12_settings__middle.dc.html": {
+   "x": 440,
+   "y": 4880,
+   "w": 360,
+   "h": 800,
+   "title": "android/dark/12_settings__middle.png",
+   "page": "and-dark",
+   "radius": 28
+  },
+  "and-dark_12_settings__bottom.dc.html": {
+   "x": 880,
+   "y": 4880,
+   "w": 360,
+   "h": 800,
+   "title": "android/dark/12_settings__bottom.png",
+   "page": "and-dark",
+   "radius": 28
+  },
+  "and-dark_13_settings--currency__default.dc.html": {
+   "x": 0,
+   "y": 6040,
+   "w": 360,
+   "h": 800,
+   "title": "android/dark/13_settings~currency__default.png",
+   "page": "and-dark",
+   "radius": 28
+  },
+  "and-dark_13_settings--currency__searching.dc.html": {
+   "x": 440,
+   "y": 6040,
+   "w": 360,
+   "h": 800,
+   "title": "android/dark/13_settings~currency__searching.png",
+   "page": "and-dark",
+   "radius": 28
+  },
+  "and-dark_13_settings--currency__no-match.dc.html": {
+   "x": 880,
+   "y": 6040,
+   "w": 360,
+   "h": 800,
+   "title": "android/dark/13_settings~currency__no-match.png",
+   "page": "and-dark",
+   "radius": 28
+  },
+  "and-dark_16_categories--edit__budget-set.dc.html": {
+   "x": 0,
+   "y": 7200,
+   "w": 360,
+   "h": 800,
+   "title": "android/dark/16_categories~edit__budget-set.png",
+   "page": "and-dark",
+   "radius": 28
+  },
+  "and-dark_16_categories--edit__budget-error.dc.html": {
+   "x": 440,
+   "y": 7200,
+   "w": 360,
+   "h": 800,
+   "title": "android/dark/16_categories~edit__budget-error.png",
+   "page": "and-dark",
+   "radius": 28
+  },
+  "and-dark_17_accounts__hidden.dc.html": {
+   "x": 0,
+   "y": 8360,
+   "w": 360,
+   "h": 800,
+   "title": "android/dark/17_accounts__hidden.png",
+   "page": "and-dark",
+   "radius": 28
+  },
+  "and-dark_17_accounts__hidden-open.dc.html": {
+   "x": 440,
+   "y": 8360,
+   "w": 360,
+   "h": 800,
+   "title": "android/dark/17_accounts__hidden-open.png",
+   "page": "and-dark",
+   "radius": 28
+  },
+  "and-dark_18_accounts--edit__unused.dc.html": {
+   "x": 0,
+   "y": 9520,
+   "w": 360,
+   "h": 800,
+   "title": "android/dark/18_accounts~edit__unused.png",
+   "page": "and-dark",
+   "radius": 28
+  },
+  "and-dark_18_accounts--edit__used.dc.html": {
+   "x": 440,
+   "y": 9520,
+   "w": 360,
+   "h": 800,
+   "title": "android/dark/18_accounts~edit__used.png",
+   "page": "and-dark",
+   "radius": 28
+  },
+  "and-dark_18_accounts--edit__last-visible.dc.html": {
+   "x": 880,
+   "y": 9520,
+   "w": 360,
+   "h": 800,
+   "title": "android/dark/18_accounts~edit__last-visible.png",
+   "page": "and-dark",
+   "radius": 28
+  },
+  "and-dark_18_accounts--delete__default.dc.html": {
+   "x": 1320,
+   "y": 9520,
+   "w": 360,
+   "h": 800,
+   "title": "android/dark/18_accounts~delete__default.png",
+   "page": "and-dark",
+   "radius": 28
+  },
+  "and-dark_21_recurring--edit__running.dc.html": {
+   "x": 0,
+   "y": 10680,
+   "w": 360,
+   "h": 800,
+   "title": "android/dark/21_recurring~edit__running.png",
+   "page": "and-dark",
+   "radius": 28
+  },
+  "and-dark_21_recurring--edit__frequency-changed.dc.html": {
+   "x": 440,
+   "y": 10680,
+   "w": 360,
+   "h": 800,
+   "title": "android/dark/21_recurring~edit__frequency-changed.png",
+   "page": "and-dark",
+   "radius": 28
+  },
+  "and-dark_21_recurring--edit__error.dc.html": {
+   "x": 880,
+   "y": 10680,
+   "w": 360,
+   "h": 800,
+   "title": "android/dark/21_recurring~edit__error.png",
+   "page": "and-dark",
+   "radius": 28
+  },
+  "and-dark_21_recurring--edit__one-account.dc.html": {
+   "x": 1320,
+   "y": 10680,
+   "w": 360,
+   "h": 800,
+   "title": "android/dark/21_recurring~edit__one-account.png",
+   "page": "and-dark",
+   "radius": 28
+  },
+  "and-dark_26_settings--backup-export__off.dc.html": {
+   "x": 0,
+   "y": 11840,
+   "w": 360,
+   "h": 800,
+   "title": "android/dark/26_settings~backup-export__off.png",
+   "page": "and-dark",
+   "radius": 28
+  },
+  "and-dark_26_settings--backup-export__on-empty.dc.html": {
+   "x": 440,
+   "y": 11840,
+   "w": 360,
+   "h": 800,
+   "title": "android/dark/26_settings~backup-export__on-empty.png",
+   "page": "and-dark",
+   "radius": 28
+  },
+  "and-dark_26_settings--backup-export__error.dc.html": {
+   "x": 880,
+   "y": 11840,
+   "w": 360,
+   "h": 800,
+   "title": "android/dark/26_settings~backup-export__error.png",
+   "page": "and-dark",
+   "radius": 28
+  },
+  "and-dark_26_settings--backup-export__working.dc.html": {
+   "x": 1320,
+   "y": 11840,
+   "w": 360,
+   "h": 800,
+   "title": "android/dark/26_settings~backup-export__working.png",
+   "page": "and-dark",
+   "radius": 28
+  },
+  "and-dark_27_settings--restore-password__default.dc.html": {
+   "x": 0,
+   "y": 13000,
+   "w": 360,
+   "h": 800,
+   "title": "android/dark/27_settings~restore-password__default.png",
+   "page": "and-dark",
+   "radius": 28
+  },
+  "and-dark_27_settings--restore-password__error.dc.html": {
+   "x": 440,
+   "y": 13000,
+   "w": 360,
+   "h": 800,
+   "title": "android/dark/27_settings~restore-password__error.png",
+   "page": "and-dark",
+   "radius": 28
+  },
+  "and-dark_27_settings--restore-password__working.dc.html": {
+   "x": 880,
+   "y": 13000,
+   "w": 360,
+   "h": 800,
+   "title": "android/dark/27_settings~restore-password__working.png",
+   "page": "and-dark",
+   "radius": 28
+  },
+  "and-dark_27_settings--restore__confirm.dc.html": {
+   "x": 1320,
+   "y": 13000,
+   "w": 360,
+   "h": 800,
+   "title": "android/dark/27_settings~restore__confirm.png",
+   "page": "and-dark",
+   "radius": 28
+  },
+  "and-dark_30_settings--reminder__explain.dc.html": {
+   "x": 0,
+   "y": 14160,
+   "w": 360,
+   "h": 800,
+   "title": "android/dark/30_settings~reminder__explain.png",
+   "page": "and-dark",
+   "radius": 28
+  },
+  "and-dark_30_settings--reminder__permission.dc.html": {
+   "x": 440,
+   "y": 14160,
+   "w": 360,
+   "h": 800,
+   "title": "android/dark/30_settings~reminder__permission.png",
+   "page": "and-dark",
+   "radius": 28
+  },
+  "and-dark_30_settings--reminder__denied.dc.html": {
+   "x": 880,
+   "y": 14160,
+   "w": 360,
+   "h": 800,
+   "title": "android/dark/30_settings~reminder__denied.png",
+   "page": "and-dark",
+   "radius": 28
+  },
+  "and-dark_30_settings--reminder__time-picker.dc.html": {
+   "x": 1320,
+   "y": 14160,
+   "w": 360,
+   "h": 800,
+   "title": "android/dark/30_settings~reminder__time-picker.png",
+   "page": "and-dark",
+   "radius": 28
+  },
+  "and-dark_30_settings--reminder__time-changed.dc.html": {
+   "x": 1760,
+   "y": 14160,
+   "w": 360,
+   "h": 800,
+   "title": "android/dark/30_settings~reminder__time-changed.png",
+   "page": "and-dark",
+   "radius": 28
+  },
+  "and-dark_31_settings--auto-backup__off.dc.html": {
+   "x": 0,
+   "y": 15320,
+   "w": 360,
+   "h": 800,
+   "title": "android/dark/31_settings~auto-backup__off.png",
+   "page": "and-dark",
+   "radius": 28
+  },
+  "and-dark_31_settings--auto-backup__picker.dc.html": {
+   "x": 440,
+   "y": 15320,
+   "w": 360,
+   "h": 800,
+   "title": "android/dark/31_settings~auto-backup__picker.png",
+   "page": "and-dark",
+   "radius": 28
+  },
+  "and-dark_31_settings--auto-backup__never-run.dc.html": {
+   "x": 880,
+   "y": 15320,
+   "w": 360,
+   "h": 800,
+   "title": "android/dark/31_settings~auto-backup__never-run.png",
+   "page": "and-dark",
+   "radius": 28
+  },
+  "and-dark_31_settings--auto-backup__running.dc.html": {
+   "x": 1320,
+   "y": 15320,
+   "w": 360,
+   "h": 800,
+   "title": "android/dark/31_settings~auto-backup__running.png",
+   "page": "and-dark",
+   "radius": 28
+  },
+  "and-dark_31_settings--auto-backup__ok.dc.html": {
+   "x": 1760,
+   "y": 15320,
+   "w": 360,
+   "h": 800,
+   "title": "android/dark/31_settings~auto-backup__ok.png",
+   "page": "and-dark",
+   "radius": 28
+  },
+  "and-dark_31_settings--auto-backup__folder-error.dc.html": {
+   "x": 2200,
+   "y": 15320,
+   "w": 360,
+   "h": 800,
+   "title": "android/dark/31_settings~auto-backup__folder-error.png",
+   "page": "and-dark",
+   "radius": 28
+  },
+  "and-dark_31_settings--auto-backup__other-error.dc.html": {
+   "x": 2640,
+   "y": 15320,
+   "w": 360,
+   "h": 800,
+   "title": "android/dark/31_settings~auto-backup__other-error.png",
+   "page": "and-dark",
+   "radius": 28
+  },
+  "and-dark_31_settings--auto-backup__busy.dc.html": {
+   "x": 3080,
+   "y": 15320,
+   "w": 360,
+   "h": 800,
+   "title": "android/dark/31_settings~auto-backup__busy.png",
+   "page": "and-dark",
+   "radius": 28
+  },
+  "and-dark_31_settings--auto-backup__turned-off.dc.html": {
+   "x": 3520,
+   "y": 15320,
+   "w": 360,
+   "h": 800,
+   "title": "android/dark/31_settings~auto-backup__turned-off.png",
+   "page": "and-dark",
+   "radius": 28
+  },
+  "and-dark_31_settings--auto-backup-password__default.dc.html": {
+   "x": 3960,
+   "y": 15320,
+   "w": 360,
+   "h": 800,
+   "title": "android/dark/31_settings~auto-backup-password__default.png",
+   "page": "and-dark",
+   "radius": 28
+  },
+  "and-dark_31_settings--auto-backup-password__error.dc.html": {
+   "x": 4400,
+   "y": 15320,
+   "w": 360,
+   "h": 800,
+   "title": "android/dark/31_settings~auto-backup-password__error.png",
+   "page": "and-dark",
+   "radius": 28
+  },
+  "and-dark_EXT01_ext-widget__default.dc.html": {
+   "x": 0,
+   "y": 16480,
+   "w": 360,
+   "h": 800,
+   "title": "android/dark/EXT01_ext-widget__default.png",
+   "page": "and-dark",
+   "radius": 28
+  },
+  "and-dark_EXT01_ext-widget__spent.dc.html": {
+   "x": 440,
+   "y": 16480,
+   "w": 360,
+   "h": 800,
+   "title": "android/dark/EXT01_ext-widget__spent.png",
+   "page": "and-dark",
+   "radius": 28
+  },
+  "and-dark_EXT01_ext-widget__budget.dc.html": {
+   "x": 880,
+   "y": 16480,
+   "w": 360,
+   "h": 800,
+   "title": "android/dark/EXT01_ext-widget__budget.png",
+   "page": "and-dark",
+   "radius": 28
+  },
+  "and-dark_EXT01_ext-widget__locked.dc.html": {
+   "x": 1320,
+   "y": 16480,
+   "w": 360,
+   "h": 800,
+   "title": "android/dark/EXT01_ext-widget__locked.png",
+   "page": "and-dark",
+   "radius": 28
+  },
+  "and-dark_EXT01_ext-widget__stale.dc.html": {
+   "x": 1760,
+   "y": 16480,
+   "w": 360,
+   "h": 800,
+   "title": "android/dark/EXT01_ext-widget__stale.png",
+   "page": "and-dark",
+   "radius": 28
+  },
+  "and-dark_EXT01_ext-widget__4x2.dc.html": {
+   "x": 2200,
+   "y": 16480,
+   "w": 360,
+   "h": 800,
+   "title": "android/dark/EXT01_ext-widget__4x2.png",
+   "page": "and-dark",
+   "radius": 28
+  },
+  "and-dark_EXT01_ext-widget__picker.dc.html": {
+   "x": 2640,
+   "y": 16480,
+   "w": 360,
+   "h": 800,
+   "title": "android/dark/EXT01_ext-widget__picker.png",
+   "page": "and-dark",
+   "radius": 28
+  },
+  "and-dark_EXT02_ext-reminder__lockscreen.dc.html": {
+   "x": 0,
+   "y": 17640,
+   "w": 360,
+   "h": 800,
+   "title": "android/dark/EXT02_ext-reminder__lockscreen.png",
+   "page": "and-dark",
+   "radius": 28
+  },
+  "and-dark_EXT02_ext-reminder__shade.dc.html": {
+   "x": 440,
+   "y": 17640,
+   "w": 360,
+   "h": 800,
+   "title": "android/dark/EXT02_ext-reminder__shade.png",
+   "page": "and-dark",
+   "radius": 28
+  },
+  "and-dark_EXT03_ext-recents__default.dc.html": {
+   "x": 0,
+   "y": 18800,
+   "w": 360,
+   "h": 800,
+   "title": "android/dark/EXT03_ext-recents__default.png",
+   "page": "and-dark",
+   "radius": 28
+  },
+  "and-dark_EXT03_ext-recents__hidden.dc.html": {
+   "x": 440,
+   "y": 18800,
+   "w": 360,
+   "h": 800,
+   "title": "android/dark/EXT03_ext-recents__hidden.png",
+   "page": "and-dark",
+   "radius": 28
+  },
+  "ios-light_01_home__more-categories.dc.html": {
+   "x": 0,
+   "y": 240,
+   "w": 393,
+   "h": 852,
+   "title": "ios/light/01_home__more-categories.png",
+   "page": "ios-light",
+   "radius": 55
+  },
+  "ios-light_07_home--more-categories__default.dc.html": {
+   "x": 0,
+   "y": 1452,
+   "w": 393,
+   "h": 852,
+   "title": "ios/light/07_home~more-categories__default.png",
+   "page": "ios-light",
+   "radius": 55
+  },
+  "ios-light_10_entries__category-budget.dc.html": {
+   "x": 0,
+   "y": 2664,
+   "w": 393,
+   "h": 852,
+   "title": "ios/light/10_entries__category-budget.png",
+   "page": "ios-light",
+   "radius": 55
+  },
+  "ios-light_10_entries__long-text.dc.html": {
+   "x": 473,
+   "y": 2664,
+   "w": 393,
+   "h": 852,
+   "title": "ios/light/10_entries__long-text.png",
+   "page": "ios-light",
+   "radius": 55
+  },
+  "ios-light_11_entries--search__empty.dc.html": {
+   "x": 0,
+   "y": 3876,
+   "w": 393,
+   "h": 852,
+   "title": "ios/light/11_entries~search__empty.png",
+   "page": "ios-light",
+   "radius": 55
+  },
+  "ios-light_11_entries--search__searching.dc.html": {
+   "x": 473,
+   "y": 3876,
+   "w": 393,
+   "h": 852,
+   "title": "ios/light/11_entries~search__searching.png",
+   "page": "ios-light",
+   "radius": 55
+  },
+  "ios-light_11_entries--search__all-time.dc.html": {
+   "x": 946,
+   "y": 3876,
+   "w": 393,
+   "h": 852,
+   "title": "ios/light/11_entries~search__all-time.png",
+   "page": "ios-light",
+   "radius": 55
+  },
+  "ios-light_11_entries--search__amount.dc.html": {
+   "x": 1419,
+   "y": 3876,
+   "w": 393,
+   "h": 852,
+   "title": "ios/light/11_entries~search__amount.png",
+   "page": "ios-light",
+   "radius": 55
+  },
+  "ios-light_11_entries--search__no-match.dc.html": {
+   "x": 1892,
+   "y": 3876,
+   "w": 393,
+   "h": 852,
+   "title": "ios/light/11_entries~search__no-match.png",
+   "page": "ios-light",
+   "radius": 55
+  },
+  "ios-light_33_settings__ios-top.dc.html": {
+   "x": 0,
+   "y": 5088,
+   "w": 393,
+   "h": 852,
+   "title": "ios/light/33_settings__ios-top.png",
+   "page": "ios-light",
+   "radius": 55
+  },
+  "ios-light_33_settings__ios-middle.dc.html": {
+   "x": 473,
+   "y": 5088,
+   "w": 393,
+   "h": 852,
+   "title": "ios/light/33_settings__ios-middle.png",
+   "page": "ios-light",
+   "radius": 55
+  },
+  "ios-light_33_settings__ios-bottom.dc.html": {
+   "x": 946,
+   "y": 5088,
+   "w": 393,
+   "h": 852,
+   "title": "ios/light/33_settings__ios-bottom.png",
+   "page": "ios-light",
+   "radius": 55
+  },
+  "ios-light_13_settings--currency__default.dc.html": {
+   "x": 0,
+   "y": 6300,
+   "w": 393,
+   "h": 852,
+   "title": "ios/light/13_settings~currency__default.png",
+   "page": "ios-light",
+   "radius": 55
+  },
+  "ios-light_13_settings--currency__searching.dc.html": {
+   "x": 473,
+   "y": 6300,
+   "w": 393,
+   "h": 852,
+   "title": "ios/light/13_settings~currency__searching.png",
+   "page": "ios-light",
+   "radius": 55
+  },
+  "ios-light_13_settings--currency__no-match.dc.html": {
+   "x": 946,
+   "y": 6300,
+   "w": 393,
+   "h": 852,
+   "title": "ios/light/13_settings~currency__no-match.png",
+   "page": "ios-light",
+   "radius": 55
+  },
+  "ios-light_16_categories--edit__budget-set.dc.html": {
+   "x": 0,
+   "y": 7512,
+   "w": 393,
+   "h": 852,
+   "title": "ios/light/16_categories~edit__budget-set.png",
+   "page": "ios-light",
+   "radius": 55
+  },
+  "ios-light_16_categories--edit__budget-error.dc.html": {
+   "x": 473,
+   "y": 7512,
+   "w": 393,
+   "h": 852,
+   "title": "ios/light/16_categories~edit__budget-error.png",
+   "page": "ios-light",
+   "radius": 55
+  },
+  "ios-light_17_accounts__hidden.dc.html": {
+   "x": 0,
+   "y": 8724,
+   "w": 393,
+   "h": 852,
+   "title": "ios/light/17_accounts__hidden.png",
+   "page": "ios-light",
+   "radius": 55
+  },
+  "ios-light_17_accounts__hidden-open.dc.html": {
+   "x": 473,
+   "y": 8724,
+   "w": 393,
+   "h": 852,
+   "title": "ios/light/17_accounts__hidden-open.png",
+   "page": "ios-light",
+   "radius": 55
+  },
+  "ios-light_18_accounts--edit__unused.dc.html": {
+   "x": 0,
+   "y": 9936,
+   "w": 393,
+   "h": 852,
+   "title": "ios/light/18_accounts~edit__unused.png",
+   "page": "ios-light",
+   "radius": 55
+  },
+  "ios-light_18_accounts--edit__used.dc.html": {
+   "x": 473,
+   "y": 9936,
+   "w": 393,
+   "h": 852,
+   "title": "ios/light/18_accounts~edit__used.png",
+   "page": "ios-light",
+   "radius": 55
+  },
+  "ios-light_18_accounts--edit__last-visible.dc.html": {
+   "x": 946,
+   "y": 9936,
+   "w": 393,
+   "h": 852,
+   "title": "ios/light/18_accounts~edit__last-visible.png",
+   "page": "ios-light",
+   "radius": 55
+  },
+  "ios-light_18_accounts--delete__default.dc.html": {
+   "x": 1419,
+   "y": 9936,
+   "w": 393,
+   "h": 852,
+   "title": "ios/light/18_accounts~delete__default.png",
+   "page": "ios-light",
+   "radius": 55
+  },
+  "ios-light_21_recurring--edit__running.dc.html": {
+   "x": 0,
+   "y": 11148,
+   "w": 393,
+   "h": 852,
+   "title": "ios/light/21_recurring~edit__running.png",
+   "page": "ios-light",
+   "radius": 55
+  },
+  "ios-light_21_recurring--edit__frequency-changed.dc.html": {
+   "x": 473,
+   "y": 11148,
+   "w": 393,
+   "h": 852,
+   "title": "ios/light/21_recurring~edit__frequency-changed.png",
+   "page": "ios-light",
+   "radius": 55
+  },
+  "ios-light_21_recurring--edit__error.dc.html": {
+   "x": 946,
+   "y": 11148,
+   "w": 393,
+   "h": 852,
+   "title": "ios/light/21_recurring~edit__error.png",
+   "page": "ios-light",
+   "radius": 55
+  },
+  "ios-light_21_recurring--edit__one-account.dc.html": {
+   "x": 1419,
+   "y": 11148,
+   "w": 393,
+   "h": 852,
+   "title": "ios/light/21_recurring~edit__one-account.png",
+   "page": "ios-light",
+   "radius": 55
+  },
+  "ios-light_26_settings--backup-export__off.dc.html": {
+   "x": 0,
+   "y": 12360,
+   "w": 393,
+   "h": 852,
+   "title": "ios/light/26_settings~backup-export__off.png",
+   "page": "ios-light",
+   "radius": 55
+  },
+  "ios-light_26_settings--backup-export__on-empty.dc.html": {
+   "x": 473,
+   "y": 12360,
+   "w": 393,
+   "h": 852,
+   "title": "ios/light/26_settings~backup-export__on-empty.png",
+   "page": "ios-light",
+   "radius": 55
+  },
+  "ios-light_26_settings--backup-export__error.dc.html": {
+   "x": 946,
+   "y": 12360,
+   "w": 393,
+   "h": 852,
+   "title": "ios/light/26_settings~backup-export__error.png",
+   "page": "ios-light",
+   "radius": 55
+  },
+  "ios-light_26_settings--backup-export__working.dc.html": {
+   "x": 1419,
+   "y": 12360,
+   "w": 393,
+   "h": 852,
+   "title": "ios/light/26_settings~backup-export__working.png",
+   "page": "ios-light",
+   "radius": 55
+  },
+  "ios-light_27_settings--restore-password__default.dc.html": {
+   "x": 0,
+   "y": 13572,
+   "w": 393,
+   "h": 852,
+   "title": "ios/light/27_settings~restore-password__default.png",
+   "page": "ios-light",
+   "radius": 55
+  },
+  "ios-light_27_settings--restore-password__error.dc.html": {
+   "x": 473,
+   "y": 13572,
+   "w": 393,
+   "h": 852,
+   "title": "ios/light/27_settings~restore-password__error.png",
+   "page": "ios-light",
+   "radius": 55
+  },
+  "ios-light_27_settings--restore-password__working.dc.html": {
+   "x": 946,
+   "y": 13572,
+   "w": 393,
+   "h": 852,
+   "title": "ios/light/27_settings~restore-password__working.png",
+   "page": "ios-light",
+   "radius": 55
+  },
+  "ios-light_27_settings--restore__confirm.dc.html": {
+   "x": 1419,
+   "y": 13572,
+   "w": 393,
+   "h": 852,
+   "title": "ios/light/27_settings~restore__confirm.png",
+   "page": "ios-light",
+   "radius": 55
+  },
+  "ios-light_30_settings--reminder__explain.dc.html": {
+   "x": 0,
+   "y": 14784,
+   "w": 393,
+   "h": 852,
+   "title": "ios/light/30_settings~reminder__explain.png",
+   "page": "ios-light",
+   "radius": 55
+  },
+  "ios-light_30_settings--reminder__permission.dc.html": {
+   "x": 473,
+   "y": 14784,
+   "w": 393,
+   "h": 852,
+   "title": "ios/light/30_settings~reminder__permission.png",
+   "page": "ios-light",
+   "radius": 55
+  },
+  "ios-light_30_settings--reminder__denied.dc.html": {
+   "x": 946,
+   "y": 14784,
+   "w": 393,
+   "h": 852,
+   "title": "ios/light/30_settings~reminder__denied.png",
+   "page": "ios-light",
+   "radius": 55
+  },
+  "ios-light_30_settings--reminder__time-picker.dc.html": {
+   "x": 1419,
+   "y": 14784,
+   "w": 393,
+   "h": 852,
+   "title": "ios/light/30_settings~reminder__time-picker.png",
+   "page": "ios-light",
+   "radius": 55
+  },
+  "ios-light_30_settings--reminder__time-changed.dc.html": {
+   "x": 1892,
+   "y": 14784,
+   "w": 393,
+   "h": 852,
+   "title": "ios/light/30_settings~reminder__time-changed.png",
+   "page": "ios-light",
+   "radius": 55
+  },
+  "ios-light_EXT02_ext-reminder__lockscreen.dc.html": {
+   "x": 0,
+   "y": 15996,
+   "w": 393,
+   "h": 852,
+   "title": "ios/light/EXT02_ext-reminder__lockscreen.png",
+   "page": "ios-light",
+   "radius": 55
+  },
+  "ios-light_EXT02_ext-reminder__shade.dc.html": {
+   "x": 473,
+   "y": 15996,
+   "w": 393,
+   "h": 852,
+   "title": "ios/light/EXT02_ext-reminder__shade.png",
+   "page": "ios-light",
+   "radius": 55
+  },
+  "ios-dark_01_home__more-categories.dc.html": {
+   "x": 0,
+   "y": 240,
+   "w": 393,
+   "h": 852,
+   "title": "ios/dark/01_home__more-categories.png",
+   "page": "ios-dark",
+   "radius": 55
+  },
+  "ios-dark_07_home--more-categories__default.dc.html": {
+   "x": 0,
+   "y": 1452,
+   "w": 393,
+   "h": 852,
+   "title": "ios/dark/07_home~more-categories__default.png",
+   "page": "ios-dark",
+   "radius": 55
+  },
+  "ios-dark_10_entries__category-budget.dc.html": {
+   "x": 0,
+   "y": 2664,
+   "w": 393,
+   "h": 852,
+   "title": "ios/dark/10_entries__category-budget.png",
+   "page": "ios-dark",
+   "radius": 55
+  },
+  "ios-dark_10_entries__long-text.dc.html": {
+   "x": 473,
+   "y": 2664,
+   "w": 393,
+   "h": 852,
+   "title": "ios/dark/10_entries__long-text.png",
+   "page": "ios-dark",
+   "radius": 55
+  },
+  "ios-dark_11_entries--search__empty.dc.html": {
+   "x": 0,
+   "y": 3876,
+   "w": 393,
+   "h": 852,
+   "title": "ios/dark/11_entries~search__empty.png",
+   "page": "ios-dark",
+   "radius": 55
+  },
+  "ios-dark_11_entries--search__searching.dc.html": {
+   "x": 473,
+   "y": 3876,
+   "w": 393,
+   "h": 852,
+   "title": "ios/dark/11_entries~search__searching.png",
+   "page": "ios-dark",
+   "radius": 55
+  },
+  "ios-dark_11_entries--search__all-time.dc.html": {
+   "x": 946,
+   "y": 3876,
+   "w": 393,
+   "h": 852,
+   "title": "ios/dark/11_entries~search__all-time.png",
+   "page": "ios-dark",
+   "radius": 55
+  },
+  "ios-dark_11_entries--search__amount.dc.html": {
+   "x": 1419,
+   "y": 3876,
+   "w": 393,
+   "h": 852,
+   "title": "ios/dark/11_entries~search__amount.png",
+   "page": "ios-dark",
+   "radius": 55
+  },
+  "ios-dark_11_entries--search__no-match.dc.html": {
+   "x": 1892,
+   "y": 3876,
+   "w": 393,
+   "h": 852,
+   "title": "ios/dark/11_entries~search__no-match.png",
+   "page": "ios-dark",
+   "radius": 55
+  },
+  "ios-dark_33_settings__ios-top.dc.html": {
+   "x": 0,
+   "y": 5088,
+   "w": 393,
+   "h": 852,
+   "title": "ios/dark/33_settings__ios-top.png",
+   "page": "ios-dark",
+   "radius": 55
+  },
+  "ios-dark_33_settings__ios-middle.dc.html": {
+   "x": 473,
+   "y": 5088,
+   "w": 393,
+   "h": 852,
+   "title": "ios/dark/33_settings__ios-middle.png",
+   "page": "ios-dark",
+   "radius": 55
+  },
+  "ios-dark_33_settings__ios-bottom.dc.html": {
+   "x": 946,
+   "y": 5088,
+   "w": 393,
+   "h": 852,
+   "title": "ios/dark/33_settings__ios-bottom.png",
+   "page": "ios-dark",
+   "radius": 55
+  },
+  "ios-dark_13_settings--currency__default.dc.html": {
+   "x": 0,
+   "y": 6300,
+   "w": 393,
+   "h": 852,
+   "title": "ios/dark/13_settings~currency__default.png",
+   "page": "ios-dark",
+   "radius": 55
+  },
+  "ios-dark_13_settings--currency__searching.dc.html": {
+   "x": 473,
+   "y": 6300,
+   "w": 393,
+   "h": 852,
+   "title": "ios/dark/13_settings~currency__searching.png",
+   "page": "ios-dark",
+   "radius": 55
+  },
+  "ios-dark_13_settings--currency__no-match.dc.html": {
+   "x": 946,
+   "y": 6300,
+   "w": 393,
+   "h": 852,
+   "title": "ios/dark/13_settings~currency__no-match.png",
+   "page": "ios-dark",
+   "radius": 55
+  },
+  "ios-dark_16_categories--edit__budget-set.dc.html": {
+   "x": 0,
+   "y": 7512,
+   "w": 393,
+   "h": 852,
+   "title": "ios/dark/16_categories~edit__budget-set.png",
+   "page": "ios-dark",
+   "radius": 55
+  },
+  "ios-dark_16_categories--edit__budget-error.dc.html": {
+   "x": 473,
+   "y": 7512,
+   "w": 393,
+   "h": 852,
+   "title": "ios/dark/16_categories~edit__budget-error.png",
+   "page": "ios-dark",
+   "radius": 55
+  },
+  "ios-dark_17_accounts__hidden.dc.html": {
+   "x": 0,
+   "y": 8724,
+   "w": 393,
+   "h": 852,
+   "title": "ios/dark/17_accounts__hidden.png",
+   "page": "ios-dark",
+   "radius": 55
+  },
+  "ios-dark_17_accounts__hidden-open.dc.html": {
+   "x": 473,
+   "y": 8724,
+   "w": 393,
+   "h": 852,
+   "title": "ios/dark/17_accounts__hidden-open.png",
+   "page": "ios-dark",
+   "radius": 55
+  },
+  "ios-dark_18_accounts--edit__unused.dc.html": {
+   "x": 0,
+   "y": 9936,
+   "w": 393,
+   "h": 852,
+   "title": "ios/dark/18_accounts~edit__unused.png",
+   "page": "ios-dark",
+   "radius": 55
+  },
+  "ios-dark_18_accounts--edit__used.dc.html": {
+   "x": 473,
+   "y": 9936,
+   "w": 393,
+   "h": 852,
+   "title": "ios/dark/18_accounts~edit__used.png",
+   "page": "ios-dark",
+   "radius": 55
+  },
+  "ios-dark_18_accounts--edit__last-visible.dc.html": {
+   "x": 946,
+   "y": 9936,
+   "w": 393,
+   "h": 852,
+   "title": "ios/dark/18_accounts~edit__last-visible.png",
+   "page": "ios-dark",
+   "radius": 55
+  },
+  "ios-dark_18_accounts--delete__default.dc.html": {
+   "x": 1419,
+   "y": 9936,
+   "w": 393,
+   "h": 852,
+   "title": "ios/dark/18_accounts~delete__default.png",
+   "page": "ios-dark",
+   "radius": 55
+  },
+  "ios-dark_21_recurring--edit__running.dc.html": {
+   "x": 0,
+   "y": 11148,
+   "w": 393,
+   "h": 852,
+   "title": "ios/dark/21_recurring~edit__running.png",
+   "page": "ios-dark",
+   "radius": 55
+  },
+  "ios-dark_21_recurring--edit__frequency-changed.dc.html": {
+   "x": 473,
+   "y": 11148,
+   "w": 393,
+   "h": 852,
+   "title": "ios/dark/21_recurring~edit__frequency-changed.png",
+   "page": "ios-dark",
+   "radius": 55
+  },
+  "ios-dark_21_recurring--edit__error.dc.html": {
+   "x": 946,
+   "y": 11148,
+   "w": 393,
+   "h": 852,
+   "title": "ios/dark/21_recurring~edit__error.png",
+   "page": "ios-dark",
+   "radius": 55
+  },
+  "ios-dark_21_recurring--edit__one-account.dc.html": {
+   "x": 1419,
+   "y": 11148,
+   "w": 393,
+   "h": 852,
+   "title": "ios/dark/21_recurring~edit__one-account.png",
+   "page": "ios-dark",
+   "radius": 55
+  },
+  "ios-dark_26_settings--backup-export__off.dc.html": {
+   "x": 0,
+   "y": 12360,
+   "w": 393,
+   "h": 852,
+   "title": "ios/dark/26_settings~backup-export__off.png",
+   "page": "ios-dark",
+   "radius": 55
+  },
+  "ios-dark_26_settings--backup-export__on-empty.dc.html": {
+   "x": 473,
+   "y": 12360,
+   "w": 393,
+   "h": 852,
+   "title": "ios/dark/26_settings~backup-export__on-empty.png",
+   "page": "ios-dark",
+   "radius": 55
+  },
+  "ios-dark_26_settings--backup-export__error.dc.html": {
+   "x": 946,
+   "y": 12360,
+   "w": 393,
+   "h": 852,
+   "title": "ios/dark/26_settings~backup-export__error.png",
+   "page": "ios-dark",
+   "radius": 55
+  },
+  "ios-dark_26_settings--backup-export__working.dc.html": {
+   "x": 1419,
+   "y": 12360,
+   "w": 393,
+   "h": 852,
+   "title": "ios/dark/26_settings~backup-export__working.png",
+   "page": "ios-dark",
+   "radius": 55
+  },
+  "ios-dark_27_settings--restore-password__default.dc.html": {
+   "x": 0,
+   "y": 13572,
+   "w": 393,
+   "h": 852,
+   "title": "ios/dark/27_settings~restore-password__default.png",
+   "page": "ios-dark",
+   "radius": 55
+  },
+  "ios-dark_27_settings--restore-password__error.dc.html": {
+   "x": 473,
+   "y": 13572,
+   "w": 393,
+   "h": 852,
+   "title": "ios/dark/27_settings~restore-password__error.png",
+   "page": "ios-dark",
+   "radius": 55
+  },
+  "ios-dark_27_settings--restore-password__working.dc.html": {
+   "x": 946,
+   "y": 13572,
+   "w": 393,
+   "h": 852,
+   "title": "ios/dark/27_settings~restore-password__working.png",
+   "page": "ios-dark",
+   "radius": 55
+  },
+  "ios-dark_27_settings--restore__confirm.dc.html": {
+   "x": 1419,
+   "y": 13572,
+   "w": 393,
+   "h": 852,
+   "title": "ios/dark/27_settings~restore__confirm.png",
+   "page": "ios-dark",
+   "radius": 55
+  },
+  "ios-dark_30_settings--reminder__explain.dc.html": {
+   "x": 0,
+   "y": 14784,
+   "w": 393,
+   "h": 852,
+   "title": "ios/dark/30_settings~reminder__explain.png",
+   "page": "ios-dark",
+   "radius": 55
+  },
+  "ios-dark_30_settings--reminder__permission.dc.html": {
+   "x": 473,
+   "y": 14784,
+   "w": 393,
+   "h": 852,
+   "title": "ios/dark/30_settings~reminder__permission.png",
+   "page": "ios-dark",
+   "radius": 55
+  },
+  "ios-dark_30_settings--reminder__denied.dc.html": {
+   "x": 946,
+   "y": 14784,
+   "w": 393,
+   "h": 852,
+   "title": "ios/dark/30_settings~reminder__denied.png",
+   "page": "ios-dark",
+   "radius": 55
+  },
+  "ios-dark_30_settings--reminder__time-picker.dc.html": {
+   "x": 1419,
+   "y": 14784,
+   "w": 393,
+   "h": 852,
+   "title": "ios/dark/30_settings~reminder__time-picker.png",
+   "page": "ios-dark",
+   "radius": 55
+  },
+  "ios-dark_30_settings--reminder__time-changed.dc.html": {
+   "x": 1892,
+   "y": 14784,
+   "w": 393,
+   "h": 852,
+   "title": "ios/dark/30_settings~reminder__time-changed.png",
+   "page": "ios-dark",
+   "radius": 55
+  },
+  "ios-dark_EXT02_ext-reminder__lockscreen.dc.html": {
+   "x": 0,
+   "y": 15996,
+   "w": 393,
+   "h": 852,
+   "title": "ios/dark/EXT02_ext-reminder__lockscreen.png",
+   "page": "ios-dark",
+   "radius": 55
+  },
+  "ios-dark_EXT02_ext-reminder__shade.dc.html": {
+   "x": 473,
+   "y": 15996,
+   "w": 393,
+   "h": 852,
+   "title": "ios/dark/EXT02_ext-reminder__shade.png",
+   "page": "ios-dark",
+   "radius": 55
+  },
+  "and-light_01_home__vi.dc.html": {
+   "x": 0,
+   "y": 240,
+   "w": 360,
+   "h": 800,
+   "title": "android/light/01_home__vi.png",
+   "page": "variants",
+   "radius": 28
+  },
+  "and-light_01_home__text-200.dc.html": {
+   "x": 440,
+   "y": 240,
+   "w": 360,
+   "h": 800,
+   "title": "android/light/01_home__text-200.png",
+   "page": "variants",
+   "radius": 28
+  },
+  "and-light_10_entries__vi.dc.html": {
+   "x": 0,
+   "y": 1400,
+   "w": 360,
+   "h": 800,
+   "title": "android/light/10_entries__vi.png",
+   "page": "variants",
+   "radius": 28
+  },
+  "and-light_10_entries__text-200.dc.html": {
+   "x": 440,
+   "y": 1400,
+   "w": 360,
+   "h": 800,
+   "title": "android/light/10_entries__text-200.png",
+   "page": "variants",
+   "radius": 28
+  },
+  "and-light_11_entries--search__text-200.dc.html": {
+   "x": 0,
+   "y": 2560,
+   "w": 360,
+   "h": 800,
+   "title": "android/light/11_entries~search__text-200.png",
+   "page": "variants",
+   "radius": 28
+  },
+  "and-light_12_settings__top-vi.dc.html": {
+   "x": 0,
+   "y": 3720,
+   "w": 360,
+   "h": 800,
+   "title": "android/light/12_settings__top-vi.png",
+   "page": "variants",
+   "radius": 28
+  },
+  "and-light_12_settings__top-text-200.dc.html": {
+   "x": 440,
+   "y": 3720,
+   "w": 360,
+   "h": 800,
+   "title": "android/light/12_settings__top-text-200.png",
+   "page": "variants",
+   "radius": 28
+  },
+  "and-light_12_settings__middle-vi.dc.html": {
+   "x": 880,
+   "y": 3720,
+   "w": 360,
+   "h": 800,
+   "title": "android/light/12_settings__middle-vi.png",
+   "page": "variants",
+   "radius": 28
+  },
+  "and-light_12_settings__middle-text-200.dc.html": {
+   "x": 1320,
+   "y": 3720,
+   "w": 360,
+   "h": 800,
+   "title": "android/light/12_settings__middle-text-200.png",
+   "page": "variants",
+   "radius": 28
+  },
+  "and-light_12_settings__bottom-vi.dc.html": {
+   "x": 1760,
+   "y": 3720,
+   "w": 360,
+   "h": 800,
+   "title": "android/light/12_settings__bottom-vi.png",
+   "page": "variants",
+   "radius": 28
+  },
+  "and-light_13_settings--currency__vi.dc.html": {
+   "x": 0,
+   "y": 4880,
+   "w": 360,
+   "h": 800,
+   "title": "android/light/13_settings~currency__vi.png",
+   "page": "variants",
+   "radius": 28
+  },
+  "and-light_18_accounts--edit__text-200.dc.html": {
+   "x": 0,
+   "y": 6040,
+   "w": 360,
+   "h": 800,
+   "title": "android/light/18_accounts~edit__text-200.png",
+   "page": "variants",
+   "radius": 28
+  },
+  "and-light_18_accounts--edit__vi.dc.html": {
+   "x": 440,
+   "y": 6040,
+   "w": 360,
+   "h": 800,
+   "title": "android/light/18_accounts~edit__vi.png",
+   "page": "variants",
+   "radius": 28
+  },
+  "and-light_21_recurring--edit__text-200.dc.html": {
+   "x": 0,
+   "y": 7200,
+   "w": 360,
+   "h": 800,
+   "title": "android/light/21_recurring~edit__text-200.png",
+   "page": "variants",
+   "radius": 28
+  },
+  "and-light_21_recurring--edit__vi.dc.html": {
+   "x": 440,
+   "y": 7200,
+   "w": 360,
+   "h": 800,
+   "title": "android/light/21_recurring~edit__vi.png",
+   "page": "variants",
+   "radius": 28
+  },
+  "and-light_26_settings--backup-export__vi.dc.html": {
+   "x": 0,
+   "y": 8360,
+   "w": 360,
+   "h": 800,
+   "title": "android/light/26_settings~backup-export__vi.png",
+   "page": "variants",
+   "radius": 28
+  },
+  "and-light_26_settings--backup-export__text-200.dc.html": {
+   "x": 440,
+   "y": 8360,
+   "w": 360,
+   "h": 800,
+   "title": "android/light/26_settings~backup-export__text-200.png",
+   "page": "variants",
+   "radius": 28
+  },
+  "and-light_30_settings--reminder__vi.dc.html": {
+   "x": 0,
+   "y": 9520,
+   "w": 360,
+   "h": 800,
+   "title": "android/light/30_settings~reminder__vi.png",
+   "page": "variants",
+   "radius": 28
+  },
+  "and-light_30_settings--reminder__denied-vi.dc.html": {
+   "x": 440,
+   "y": 9520,
+   "w": 360,
+   "h": 800,
+   "title": "android/light/30_settings~reminder__denied-vi.png",
+   "page": "variants",
+   "radius": 28
+  },
+  "and-light_31_settings--auto-backup__vi.dc.html": {
+   "x": 0,
+   "y": 10680,
+   "w": 360,
+   "h": 800,
+   "title": "android/light/31_settings~auto-backup__vi.png",
+   "page": "variants",
+   "radius": 28
+  },
+  "and-light_31_settings--auto-backup__text-200.dc.html": {
+   "x": 440,
+   "y": 10680,
+   "w": 360,
+   "h": 800,
+   "title": "android/light/31_settings~auto-backup__text-200.png",
+   "page": "variants",
+   "radius": 28
+  },
+  "and-light_31_settings--auto-backup-password__vi.dc.html": {
+   "x": 880,
+   "y": 10680,
+   "w": 360,
+   "h": 800,
+   "title": "android/light/31_settings~auto-backup-password__vi.png",
+   "page": "variants",
+   "radius": 28
+  },
+  "and-light_EXT01_ext-widget__vi.dc.html": {
+   "x": 0,
+   "y": 11840,
+   "w": 360,
+   "h": 800,
+   "title": "android/light/EXT01_ext-widget__vi.png",
+   "page": "variants",
+   "radius": 28
+  }
+ },
+ "order": [
+  "Main.dc.html",
+  "and-light_07_home--more-categories__default.dc.html",
+  "and-light_10_entries__category-budget.dc.html",
+  "and-light_10_entries__long-text.dc.html",
+  "and-light_11_entries--search__empty.dc.html",
+  "and-light_11_entries--search__searching.dc.html",
+  "and-light_11_entries--search__all-time.dc.html",
+  "and-light_11_entries--search__amount.dc.html",
+  "and-light_11_entries--search__no-match.dc.html",
+  "and-light_12_settings__top.dc.html",
+  "and-light_12_settings__middle.dc.html",
+  "and-light_12_settings__bottom.dc.html",
+  "and-light_13_settings--currency__default.dc.html",
+  "and-light_13_settings--currency__searching.dc.html",
+  "and-light_13_settings--currency__no-match.dc.html",
+  "and-light_16_categories--edit__budget-set.dc.html",
+  "and-light_16_categories--edit__budget-error.dc.html",
+  "and-light_17_accounts__hidden.dc.html",
+  "and-light_17_accounts__hidden-open.dc.html",
+  "and-light_18_accounts--edit__unused.dc.html",
+  "and-light_18_accounts--edit__used.dc.html",
+  "and-light_18_accounts--edit__last-visible.dc.html",
+  "and-light_18_accounts--delete__default.dc.html",
+  "and-light_21_recurring--edit__running.dc.html",
+  "and-light_21_recurring--edit__frequency-changed.dc.html",
+  "and-light_21_recurring--edit__error.dc.html",
+  "and-light_21_recurring--edit__one-account.dc.html",
+  "and-light_26_settings--backup-export__off.dc.html",
+  "and-light_26_settings--backup-export__on-empty.dc.html",
+  "and-light_26_settings--backup-export__error.dc.html",
+  "and-light_26_settings--backup-export__working.dc.html",
+  "and-light_27_settings--restore-password__default.dc.html",
+  "and-light_27_settings--restore-password__error.dc.html",
+  "and-light_27_settings--restore-password__working.dc.html",
+  "and-light_27_settings--restore__confirm.dc.html",
+  "and-light_30_settings--reminder__explain.dc.html",
+  "and-light_30_settings--reminder__permission.dc.html",
+  "and-light_30_settings--reminder__denied.dc.html",
+  "and-light_30_settings--reminder__time-picker.dc.html",
+  "and-light_30_settings--reminder__time-changed.dc.html",
+  "and-light_31_settings--auto-backup__off.dc.html",
+  "and-light_31_settings--auto-backup__picker.dc.html",
+  "and-light_31_settings--auto-backup__never-run.dc.html",
+  "and-light_31_settings--auto-backup__running.dc.html",
+  "and-light_31_settings--auto-backup__ok.dc.html",
+  "and-light_31_settings--auto-backup__folder-error.dc.html",
+  "and-light_31_settings--auto-backup__other-error.dc.html",
+  "and-light_31_settings--auto-backup__busy.dc.html",
+  "and-light_31_settings--auto-backup__turned-off.dc.html",
+  "and-light_31_settings--auto-backup-password__default.dc.html",
+  "and-light_31_settings--auto-backup-password__error.dc.html",
+  "and-light_EXT01_ext-widget__default.dc.html",
+  "and-light_EXT01_ext-widget__spent.dc.html",
+  "and-light_EXT01_ext-widget__budget.dc.html",
+  "and-light_EXT01_ext-widget__locked.dc.html",
+  "and-light_EXT01_ext-widget__stale.dc.html",
+  "and-light_EXT01_ext-widget__4x2.dc.html",
+  "and-light_EXT01_ext-widget__picker.dc.html",
+  "and-light_EXT02_ext-reminder__lockscreen.dc.html",
+  "and-light_EXT02_ext-reminder__shade.dc.html",
+  "and-light_EXT03_ext-recents__default.dc.html",
+  "and-light_EXT03_ext-recents__hidden.dc.html",
+  "and-dark_01_home__more-categories.dc.html",
+  "and-dark_07_home--more-categories__default.dc.html",
+  "and-dark_10_entries__category-budget.dc.html",
+  "and-dark_10_entries__long-text.dc.html",
+  "and-dark_11_entries--search__empty.dc.html",
+  "and-dark_11_entries--search__searching.dc.html",
+  "and-dark_11_entries--search__all-time.dc.html",
+  "and-dark_11_entries--search__amount.dc.html",
+  "and-dark_11_entries--search__no-match.dc.html",
+  "and-dark_12_settings__top.dc.html",
+  "and-dark_12_settings__middle.dc.html",
+  "and-dark_12_settings__bottom.dc.html",
+  "and-dark_13_settings--currency__default.dc.html",
+  "and-dark_13_settings--currency__searching.dc.html",
+  "and-dark_13_settings--currency__no-match.dc.html",
+  "and-dark_16_categories--edit__budget-set.dc.html",
+  "and-dark_16_categories--edit__budget-error.dc.html",
+  "and-dark_17_accounts__hidden.dc.html",
+  "and-dark_17_accounts__hidden-open.dc.html",
+  "and-dark_18_accounts--edit__unused.dc.html",
+  "and-dark_18_accounts--edit__used.dc.html",
+  "and-dark_18_accounts--edit__last-visible.dc.html",
+  "and-dark_18_accounts--delete__default.dc.html",
+  "and-dark_21_recurring--edit__running.dc.html",
+  "and-dark_21_recurring--edit__frequency-changed.dc.html",
+  "and-dark_21_recurring--edit__error.dc.html",
+  "and-dark_21_recurring--edit__one-account.dc.html",
+  "and-dark_26_settings--backup-export__off.dc.html",
+  "and-dark_26_settings--backup-export__on-empty.dc.html",
+  "and-dark_26_settings--backup-export__error.dc.html",
+  "and-dark_26_settings--backup-export__working.dc.html",
+  "and-dark_27_settings--restore-password__default.dc.html",
+  "and-dark_27_settings--restore-password__error.dc.html",
+  "and-dark_27_settings--restore-password__working.dc.html",
+  "and-dark_27_settings--restore__confirm.dc.html",
+  "and-dark_30_settings--reminder__explain.dc.html",
+  "and-dark_30_settings--reminder__permission.dc.html",
+  "and-dark_30_settings--reminder__denied.dc.html",
+  "and-dark_30_settings--reminder__time-picker.dc.html",
+  "and-dark_30_settings--reminder__time-changed.dc.html",
+  "and-dark_31_settings--auto-backup__off.dc.html",
+  "and-dark_31_settings--auto-backup__picker.dc.html",
+  "and-dark_31_settings--auto-backup__never-run.dc.html",
+  "and-dark_31_settings--auto-backup__running.dc.html",
+  "and-dark_31_settings--auto-backup__ok.dc.html",
+  "and-dark_31_settings--auto-backup__folder-error.dc.html",
+  "and-dark_31_settings--auto-backup__other-error.dc.html",
+  "and-dark_31_settings--auto-backup__busy.dc.html",
+  "and-dark_31_settings--auto-backup__turned-off.dc.html",
+  "and-dark_31_settings--auto-backup-password__default.dc.html",
+  "and-dark_31_settings--auto-backup-password__error.dc.html",
+  "and-dark_EXT01_ext-widget__default.dc.html",
+  "and-dark_EXT01_ext-widget__spent.dc.html",
+  "and-dark_EXT01_ext-widget__budget.dc.html",
+  "and-dark_EXT01_ext-widget__locked.dc.html",
+  "and-dark_EXT01_ext-widget__stale.dc.html",
+  "and-dark_EXT01_ext-widget__4x2.dc.html",
+  "and-dark_EXT01_ext-widget__picker.dc.html",
+  "and-dark_EXT02_ext-reminder__lockscreen.dc.html",
+  "and-dark_EXT02_ext-reminder__shade.dc.html",
+  "and-dark_EXT03_ext-recents__default.dc.html",
+  "and-dark_EXT03_ext-recents__hidden.dc.html",
+  "ios-light_01_home__more-categories.dc.html",
+  "ios-light_07_home--more-categories__default.dc.html",
+  "ios-light_10_entries__category-budget.dc.html",
+  "ios-light_10_entries__long-text.dc.html",
+  "ios-light_11_entries--search__empty.dc.html",
+  "ios-light_11_entries--search__searching.dc.html",
+  "ios-light_11_entries--search__all-time.dc.html",
+  "ios-light_11_entries--search__amount.dc.html",
+  "ios-light_11_entries--search__no-match.dc.html",
+  "ios-light_33_settings__ios-top.dc.html",
+  "ios-light_33_settings__ios-middle.dc.html",
+  "ios-light_33_settings__ios-bottom.dc.html",
+  "ios-light_13_settings--currency__default.dc.html",
+  "ios-light_13_settings--currency__searching.dc.html",
+  "ios-light_13_settings--currency__no-match.dc.html",
+  "ios-light_16_categories--edit__budget-set.dc.html",
+  "ios-light_16_categories--edit__budget-error.dc.html",
+  "ios-light_17_accounts__hidden.dc.html",
+  "ios-light_17_accounts__hidden-open.dc.html",
+  "ios-light_18_accounts--edit__unused.dc.html",
+  "ios-light_18_accounts--edit__used.dc.html",
+  "ios-light_18_accounts--edit__last-visible.dc.html",
+  "ios-light_18_accounts--delete__default.dc.html",
+  "ios-light_21_recurring--edit__running.dc.html",
+  "ios-light_21_recurring--edit__frequency-changed.dc.html",
+  "ios-light_21_recurring--edit__error.dc.html",
+  "ios-light_21_recurring--edit__one-account.dc.html",
+  "ios-light_26_settings--backup-export__off.dc.html",
+  "ios-light_26_settings--backup-export__on-empty.dc.html",
+  "ios-light_26_settings--backup-export__error.dc.html",
+  "ios-light_26_settings--backup-export__working.dc.html",
+  "ios-light_27_settings--restore-password__default.dc.html",
+  "ios-light_27_settings--restore-password__error.dc.html",
+  "ios-light_27_settings--restore-password__working.dc.html",
+  "ios-light_27_settings--restore__confirm.dc.html",
+  "ios-light_30_settings--reminder__explain.dc.html",
+  "ios-light_30_settings--reminder__permission.dc.html",
+  "ios-light_30_settings--reminder__denied.dc.html",
+  "ios-light_30_settings--reminder__time-picker.dc.html",
+  "ios-light_30_settings--reminder__time-changed.dc.html",
+  "ios-light_EXT02_ext-reminder__lockscreen.dc.html",
+  "ios-light_EXT02_ext-reminder__shade.dc.html",
+  "ios-dark_01_home__more-categories.dc.html",
+  "ios-dark_07_home--more-categories__default.dc.html",
+  "ios-dark_10_entries__category-budget.dc.html",
+  "ios-dark_10_entries__long-text.dc.html",
+  "ios-dark_11_entries--search__empty.dc.html",
+  "ios-dark_11_entries--search__searching.dc.html",
+  "ios-dark_11_entries--search__all-time.dc.html",
+  "ios-dark_11_entries--search__amount.dc.html",
+  "ios-dark_11_entries--search__no-match.dc.html",
+  "ios-dark_33_settings__ios-top.dc.html",
+  "ios-dark_33_settings__ios-middle.dc.html",
+  "ios-dark_33_settings__ios-bottom.dc.html",
+  "ios-dark_13_settings--currency__default.dc.html",
+  "ios-dark_13_settings--currency__searching.dc.html",
+  "ios-dark_13_settings--currency__no-match.dc.html",
+  "ios-dark_16_categories--edit__budget-set.dc.html",
+  "ios-dark_16_categories--edit__budget-error.dc.html",
+  "ios-dark_17_accounts__hidden.dc.html",
+  "ios-dark_17_accounts__hidden-open.dc.html",
+  "ios-dark_18_accounts--edit__unused.dc.html",
+  "ios-dark_18_accounts--edit__used.dc.html",
+  "ios-dark_18_accounts--edit__last-visible.dc.html",
+  "ios-dark_18_accounts--delete__default.dc.html",
+  "ios-dark_21_recurring--edit__running.dc.html",
+  "ios-dark_21_recurring--edit__frequency-changed.dc.html",
+  "ios-dark_21_recurring--edit__error.dc.html",
+  "ios-dark_21_recurring--edit__one-account.dc.html",
+  "ios-dark_26_settings--backup-export__off.dc.html",
+  "ios-dark_26_settings--backup-export__on-empty.dc.html",
+  "ios-dark_26_settings--backup-export__error.dc.html",
+  "ios-dark_26_settings--backup-export__working.dc.html",
+  "ios-dark_27_settings--restore-password__default.dc.html",
+  "ios-dark_27_settings--restore-password__error.dc.html",
+  "ios-dark_27_settings--restore-password__working.dc.html",
+  "ios-dark_27_settings--restore__confirm.dc.html",
+  "ios-dark_30_settings--reminder__explain.dc.html",
+  "ios-dark_30_settings--reminder__permission.dc.html",
+  "ios-dark_30_settings--reminder__denied.dc.html",
+  "ios-dark_30_settings--reminder__time-picker.dc.html",
+  "ios-dark_30_settings--reminder__time-changed.dc.html",
+  "ios-dark_EXT02_ext-reminder__lockscreen.dc.html",
+  "ios-dark_EXT02_ext-reminder__shade.dc.html",
+  "and-light_01_home__vi.dc.html",
+  "and-light_01_home__text-200.dc.html",
+  "and-light_10_entries__vi.dc.html",
+  "and-light_10_entries__text-200.dc.html",
+  "and-light_11_entries--search__text-200.dc.html",
+  "and-light_12_settings__top-vi.dc.html",
+  "and-light_12_settings__top-text-200.dc.html",
+  "and-light_12_settings__middle-vi.dc.html",
+  "and-light_12_settings__middle-text-200.dc.html",
+  "and-light_12_settings__bottom-vi.dc.html",
+  "and-light_13_settings--currency__vi.dc.html",
+  "and-light_18_accounts--edit__text-200.dc.html",
+  "and-light_18_accounts--edit__vi.dc.html",
+  "and-light_21_recurring--edit__text-200.dc.html",
+  "and-light_21_recurring--edit__vi.dc.html",
+  "and-light_26_settings--backup-export__vi.dc.html",
+  "and-light_26_settings--backup-export__text-200.dc.html",
+  "and-light_30_settings--reminder__vi.dc.html",
+  "and-light_30_settings--reminder__denied-vi.dc.html",
+  "and-light_31_settings--auto-backup__vi.dc.html",
+  "and-light_31_settings--auto-backup__text-200.dc.html",
+  "and-light_31_settings--auto-backup-password__vi.dc.html",
+  "and-light_EXT01_ext-widget__vi.dc.html"
+ ],
+ "notes": {
+  "and-light-scr-01": {
+   "x": 0,
+   "y": 0,
+   "text": "SCR-01 Home · More categories",
+   "kind": "title1",
+   "maxW": 1200,
+   "page": "and-light"
+  },
+  "and-light-scr-07": {
+   "x": 0,
+   "y": 1160,
+   "text": "SCR-07 Category grid from ⋯",
+   "kind": "title1",
+   "maxW": 1200,
+   "page": "and-light"
+  },
+  "and-light-scr-10": {
+   "x": 0,
+   "y": 2320,
+   "text": "SCR-10 Entries · category budgets",
+   "kind": "title1",
+   "maxW": 1200,
+   "page": "and-light"
+  },
+  "and-light-scr-11": {
+   "x": 0,
+   "y": 3480,
+   "text": "SCR-11 Entries search",
+   "kind": "title1",
+   "maxW": 2120,
+   "page": "and-light"
+  },
+  "and-light-scr-12": {
+   "x": 0,
+   "y": 4640,
+   "text": "SCR-12 Settings",
+   "kind": "title1",
+   "maxW": 1240,
+   "page": "and-light"
+  },
+  "and-light-scr-13": {
+   "x": 0,
+   "y": 5800,
+   "text": "SCR-13 Currency picker",
+   "kind": "title1",
+   "maxW": 1240,
+   "page": "and-light"
+  },
+  "and-light-scr-16": {
+   "x": 0,
+   "y": 6960,
+   "text": "SCR-16 Edit category · budget",
+   "kind": "title1",
+   "maxW": 1200,
+   "page": "and-light"
+  },
+  "and-light-scr-17": {
+   "x": 0,
+   "y": 8120,
+   "text": "SCR-17 Accounts · hidden",
+   "kind": "title1",
+   "maxW": 1200,
+   "page": "and-light"
+  },
+  "and-light-scr-18": {
+   "x": 0,
+   "y": 9280,
+   "text": "SCR-18 Edit account · Hide / Delete",
+   "kind": "title1",
+   "maxW": 1680,
+   "page": "and-light"
+  },
+  "and-light-scr-21": {
+   "x": 0,
+   "y": 10440,
+   "text": "SCR-21 Edit repeating record",
+   "kind": "title1",
+   "maxW": 1680,
+   "page": "and-light"
+  },
+  "and-light-scr-26": {
+   "x": 0,
+   "y": 11600,
+   "text": "SCR-26 Export backup",
+   "kind": "title1",
+   "maxW": 1680,
+   "page": "and-light"
+  },
+  "and-light-scr-27": {
+   "x": 0,
+   "y": 12760,
+   "text": "SCR-27 Restore · password",
+   "kind": "title1",
+   "maxW": 1680,
+   "page": "and-light"
+  },
+  "and-light-scr-30": {
+   "x": 0,
+   "y": 13920,
+   "text": "SCR-30 Reminder",
+   "kind": "title1",
+   "maxW": 2120,
+   "page": "and-light"
+  },
+  "and-light-scr-31": {
+   "x": 0,
+   "y": 15080,
+   "text": "SCR-31 Automatic backup",
+   "kind": "title1",
+   "maxW": 4760,
+   "page": "and-light"
+  },
+  "and-light-ext-01": {
+   "x": 0,
+   "y": 16240,
+   "text": "EXT-01 Widget",
+   "kind": "title1",
+   "maxW": 3000,
+   "page": "and-light"
+  },
+  "and-light-ext-02": {
+   "x": 0,
+   "y": 17400,
+   "text": "EXT-02 Reminder notification",
+   "kind": "title1",
+   "maxW": 1200,
+   "page": "and-light"
+  },
+  "and-light-ext-03": {
+   "x": 0,
+   "y": 18560,
+   "text": "EXT-03 Recents",
+   "kind": "title1",
+   "maxW": 1200,
+   "page": "and-light"
+  },
+  "and-dark-scr-01": {
+   "x": 0,
+   "y": 0,
+   "text": "SCR-01 Home · More categories",
+   "kind": "title1",
+   "maxW": 1200,
+   "page": "and-dark"
+  },
+  "and-dark-scr-07": {
+   "x": 0,
+   "y": 1160,
+   "text": "SCR-07 Category grid from ⋯",
+   "kind": "title1",
+   "maxW": 1200,
+   "page": "and-dark"
+  },
+  "and-dark-scr-10": {
+   "x": 0,
+   "y": 2320,
+   "text": "SCR-10 Entries · category budgets",
+   "kind": "title1",
+   "maxW": 1200,
+   "page": "and-dark"
+  },
+  "and-dark-scr-11": {
+   "x": 0,
+   "y": 3480,
+   "text": "SCR-11 Entries search",
+   "kind": "title1",
+   "maxW": 2120,
+   "page": "and-dark"
+  },
+  "and-dark-scr-12": {
+   "x": 0,
+   "y": 4640,
+   "text": "SCR-12 Settings",
+   "kind": "title1",
+   "maxW": 1240,
+   "page": "and-dark"
+  },
+  "and-dark-scr-13": {
+   "x": 0,
+   "y": 5800,
+   "text": "SCR-13 Currency picker",
+   "kind": "title1",
+   "maxW": 1240,
+   "page": "and-dark"
+  },
+  "and-dark-scr-16": {
+   "x": 0,
+   "y": 6960,
+   "text": "SCR-16 Edit category · budget",
+   "kind": "title1",
+   "maxW": 1200,
+   "page": "and-dark"
+  },
+  "and-dark-scr-17": {
+   "x": 0,
+   "y": 8120,
+   "text": "SCR-17 Accounts · hidden",
+   "kind": "title1",
+   "maxW": 1200,
+   "page": "and-dark"
+  },
+  "and-dark-scr-18": {
+   "x": 0,
+   "y": 9280,
+   "text": "SCR-18 Edit account · Hide / Delete",
+   "kind": "title1",
+   "maxW": 1680,
+   "page": "and-dark"
+  },
+  "and-dark-scr-21": {
+   "x": 0,
+   "y": 10440,
+   "text": "SCR-21 Edit repeating record",
+   "kind": "title1",
+   "maxW": 1680,
+   "page": "and-dark"
+  },
+  "and-dark-scr-26": {
+   "x": 0,
+   "y": 11600,
+   "text": "SCR-26 Export backup",
+   "kind": "title1",
+   "maxW": 1680,
+   "page": "and-dark"
+  },
+  "and-dark-scr-27": {
+   "x": 0,
+   "y": 12760,
+   "text": "SCR-27 Restore · password",
+   "kind": "title1",
+   "maxW": 1680,
+   "page": "and-dark"
+  },
+  "and-dark-scr-30": {
+   "x": 0,
+   "y": 13920,
+   "text": "SCR-30 Reminder",
+   "kind": "title1",
+   "maxW": 2120,
+   "page": "and-dark"
+  },
+  "and-dark-scr-31": {
+   "x": 0,
+   "y": 15080,
+   "text": "SCR-31 Automatic backup",
+   "kind": "title1",
+   "maxW": 4760,
+   "page": "and-dark"
+  },
+  "and-dark-ext-01": {
+   "x": 0,
+   "y": 16240,
+   "text": "EXT-01 Widget",
+   "kind": "title1",
+   "maxW": 3000,
+   "page": "and-dark"
+  },
+  "and-dark-ext-02": {
+   "x": 0,
+   "y": 17400,
+   "text": "EXT-02 Reminder notification",
+   "kind": "title1",
+   "maxW": 1200,
+   "page": "and-dark"
+  },
+  "and-dark-ext-03": {
+   "x": 0,
+   "y": 18560,
+   "text": "EXT-03 Recents",
+   "kind": "title1",
+   "maxW": 1200,
+   "page": "and-dark"
+  },
+  "ios-light-scr-01": {
+   "x": 0,
+   "y": 0,
+   "text": "SCR-01 Home · More categories",
+   "kind": "title1",
+   "maxW": 1200,
+   "page": "ios-light"
+  },
+  "ios-light-scr-07": {
+   "x": 0,
+   "y": 1212,
+   "text": "SCR-07 Category grid from ⋯",
+   "kind": "title1",
+   "maxW": 1200,
+   "page": "ios-light"
+  },
+  "ios-light-scr-10": {
+   "x": 0,
+   "y": 2424,
+   "text": "SCR-10 Entries · category budgets",
+   "kind": "title1",
+   "maxW": 1200,
+   "page": "ios-light"
+  },
+  "ios-light-scr-11": {
+   "x": 0,
+   "y": 3636,
+   "text": "SCR-11 Entries search",
+   "kind": "title1",
+   "maxW": 2285,
+   "page": "ios-light"
+  },
+  "ios-light-scr-33": {
+   "x": 0,
+   "y": 4848,
+   "text": "SCR-33 Settings on iOS",
+   "kind": "title1",
+   "maxW": 1339,
+   "page": "ios-light"
+  },
+  "ios-light-scr-13": {
+   "x": 0,
+   "y": 6060,
+   "text": "SCR-13 Currency picker",
+   "kind": "title1",
+   "maxW": 1339,
+   "page": "ios-light"
+  },
+  "ios-light-scr-16": {
+   "x": 0,
+   "y": 7272,
+   "text": "SCR-16 Edit category · budget",
+   "kind": "title1",
+   "maxW": 1200,
+   "page": "ios-light"
+  },
+  "ios-light-scr-17": {
+   "x": 0,
+   "y": 8484,
+   "text": "SCR-17 Accounts · hidden",
+   "kind": "title1",
+   "maxW": 1200,
+   "page": "ios-light"
+  },
+  "ios-light-scr-18": {
+   "x": 0,
+   "y": 9696,
+   "text": "SCR-18 Edit account · Hide / Delete",
+   "kind": "title1",
+   "maxW": 1812,
+   "page": "ios-light"
+  },
+  "ios-light-scr-21": {
+   "x": 0,
+   "y": 10908,
+   "text": "SCR-21 Edit repeating record",
+   "kind": "title1",
+   "maxW": 1812,
+   "page": "ios-light"
+  },
+  "ios-light-scr-26": {
+   "x": 0,
+   "y": 12120,
+   "text": "SCR-26 Export backup",
+   "kind": "title1",
+   "maxW": 1812,
+   "page": "ios-light"
+  },
+  "ios-light-scr-27": {
+   "x": 0,
+   "y": 13332,
+   "text": "SCR-27 Restore · password",
+   "kind": "title1",
+   "maxW": 1812,
+   "page": "ios-light"
+  },
+  "ios-light-scr-30": {
+   "x": 0,
+   "y": 14544,
+   "text": "SCR-30 Reminder",
+   "kind": "title1",
+   "maxW": 2285,
+   "page": "ios-light"
+  },
+  "ios-light-ext-02": {
+   "x": 0,
+   "y": 15756,
+   "text": "EXT-02 Reminder notification",
+   "kind": "title1",
+   "maxW": 1200,
+   "page": "ios-light"
+  },
+  "ios-dark-scr-01": {
+   "x": 0,
+   "y": 0,
+   "text": "SCR-01 Home · More categories",
+   "kind": "title1",
+   "maxW": 1200,
+   "page": "ios-dark"
+  },
+  "ios-dark-scr-07": {
+   "x": 0,
+   "y": 1212,
+   "text": "SCR-07 Category grid from ⋯",
+   "kind": "title1",
+   "maxW": 1200,
+   "page": "ios-dark"
+  },
+  "ios-dark-scr-10": {
+   "x": 0,
+   "y": 2424,
+   "text": "SCR-10 Entries · category budgets",
+   "kind": "title1",
+   "maxW": 1200,
+   "page": "ios-dark"
+  },
+  "ios-dark-scr-11": {
+   "x": 0,
+   "y": 3636,
+   "text": "SCR-11 Entries search",
+   "kind": "title1",
+   "maxW": 2285,
+   "page": "ios-dark"
+  },
+  "ios-dark-scr-33": {
+   "x": 0,
+   "y": 4848,
+   "text": "SCR-33 Settings on iOS",
+   "kind": "title1",
+   "maxW": 1339,
+   "page": "ios-dark"
+  },
+  "ios-dark-scr-13": {
+   "x": 0,
+   "y": 6060,
+   "text": "SCR-13 Currency picker",
+   "kind": "title1",
+   "maxW": 1339,
+   "page": "ios-dark"
+  },
+  "ios-dark-scr-16": {
+   "x": 0,
+   "y": 7272,
+   "text": "SCR-16 Edit category · budget",
+   "kind": "title1",
+   "maxW": 1200,
+   "page": "ios-dark"
+  },
+  "ios-dark-scr-17": {
+   "x": 0,
+   "y": 8484,
+   "text": "SCR-17 Accounts · hidden",
+   "kind": "title1",
+   "maxW": 1200,
+   "page": "ios-dark"
+  },
+  "ios-dark-scr-18": {
+   "x": 0,
+   "y": 9696,
+   "text": "SCR-18 Edit account · Hide / Delete",
+   "kind": "title1",
+   "maxW": 1812,
+   "page": "ios-dark"
+  },
+  "ios-dark-scr-21": {
+   "x": 0,
+   "y": 10908,
+   "text": "SCR-21 Edit repeating record",
+   "kind": "title1",
+   "maxW": 1812,
+   "page": "ios-dark"
+  },
+  "ios-dark-scr-26": {
+   "x": 0,
+   "y": 12120,
+   "text": "SCR-26 Export backup",
+   "kind": "title1",
+   "maxW": 1812,
+   "page": "ios-dark"
+  },
+  "ios-dark-scr-27": {
+   "x": 0,
+   "y": 13332,
+   "text": "SCR-27 Restore · password",
+   "kind": "title1",
+   "maxW": 1812,
+   "page": "ios-dark"
+  },
+  "ios-dark-scr-30": {
+   "x": 0,
+   "y": 14544,
+   "text": "SCR-30 Reminder",
+   "kind": "title1",
+   "maxW": 2285,
+   "page": "ios-dark"
+  },
+  "ios-dark-ext-02": {
+   "x": 0,
+   "y": 15756,
+   "text": "EXT-02 Reminder notification",
+   "kind": "title1",
+   "maxW": 1200,
+   "page": "ios-dark"
+  },
+  "variants-scr-01": {
+   "x": 0,
+   "y": 0,
+   "text": "SCR-01 Home · More categories",
+   "kind": "title1",
+   "maxW": 1200,
+   "page": "variants"
+  },
+  "variants-scr-10": {
+   "x": 0,
+   "y": 1160,
+   "text": "SCR-10 Entries · category budgets",
+   "kind": "title1",
+   "maxW": 1200,
+   "page": "variants"
+  },
+  "variants-scr-11": {
+   "x": 0,
+   "y": 2320,
+   "text": "SCR-11 Entries search",
+   "kind": "title1",
+   "maxW": 1200,
+   "page": "variants"
+  },
+  "variants-scr-12": {
+   "x": 0,
+   "y": 3480,
+   "text": "SCR-12 Settings",
+   "kind": "title1",
+   "maxW": 2120,
+   "page": "variants"
+  },
+  "variants-scr-13": {
+   "x": 0,
+   "y": 4640,
+   "text": "SCR-13 Currency picker",
+   "kind": "title1",
+   "maxW": 1200,
+   "page": "variants"
+  },
+  "variants-scr-18": {
+   "x": 0,
+   "y": 5800,
+   "text": "SCR-18 Edit account · Hide / Delete",
+   "kind": "title1",
+   "maxW": 1200,
+   "page": "variants"
+  },
+  "variants-scr-21": {
+   "x": 0,
+   "y": 6960,
+   "text": "SCR-21 Edit repeating record",
+   "kind": "title1",
+   "maxW": 1200,
+   "page": "variants"
+  },
+  "variants-scr-26": {
+   "x": 0,
+   "y": 8120,
+   "text": "SCR-26 Export backup",
+   "kind": "title1",
+   "maxW": 1200,
+   "page": "variants"
+  },
+  "variants-scr-30": {
+   "x": 0,
+   "y": 9280,
+   "text": "SCR-30 Reminder",
+   "kind": "title1",
+   "maxW": 1200,
+   "page": "variants"
+  },
+  "variants-scr-31": {
+   "x": 0,
+   "y": 10440,
+   "text": "SCR-31 Automatic backup",
+   "kind": "title1",
+   "maxW": 1240,
+   "page": "variants"
+  },
+  "variants-ext-01": {
+   "x": 0,
+   "y": 11600,
+   "text": "EXT-01 Widget",
+   "kind": "title1",
+   "maxW": 1200,
+   "page": "variants"
+  }
+ },
+ "designSystems": [
+  {
+   "title": "Ví Gọn",
+   "namespace": "vigon",
+   "artifact": "https://claude.ai/artifact/EhNKP8PgiDPNqtmMdzTtVR",
+   "version": "1793849537-8405",
+   "copiedAt": "2026-11-05T03:40:59Z"
+  }
+ ]
+}

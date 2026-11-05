@@ -53,3 +53,8 @@ app.*.map.json
 .claude/worktrees/
 # Ảnh chụp của bộ chụp màn (flutter test tool/shots/shots_test.dart)
 tool/shots/out/
+
+# Claude Design exports: zips exceed GitHub 100 MB limit; PNGs stay local (HTML + tokens are committed)
+design/*.zip
+design/hifi/*.zip
+design/hifi/**/*.png

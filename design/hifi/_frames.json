@@ -1,0 +1,4155 @@
+[
+ {
+  "path": "android/light/01_home__more-categories",
+  "scr": "SCR-01",
+  "title": "Home · More categories (25 categories)",
+  "state": "more-categories",
+  "platform": "android",
+  "theme": "light",
+  "lang": "en",
+  "ts": 1.0,
+  "asm": [
+   "A01",
+   "A22"
+  ],
+  "new": [],
+  "flows": [
+   "F1(c): ⋯ → 07_home~more-categories → Pets → New expense (Pets pre-selected)"
+  ]
+ },
+ {
+  "path": "android/dark/01_home__more-categories",
+  "scr": "SCR-01",
+  "title": "Home · More categories (25 categories)",
+  "state": "more-categories",
+  "platform": "android",
+  "theme": "dark",
+  "lang": "en",
+  "ts": 1.0,
+  "asm": [
+   "A01",
+   "A22"
+  ],
+  "new": [],
+  "flows": [
+   "F1(c): ⋯ → 07_home~more-categories → Pets → New expense (Pets pre-selected)"
+  ]
+ },
+ {
+  "path": "ios/light/01_home__more-categories",
+  "scr": "SCR-01",
+  "title": "Home · More categories (25 categories)",
+  "state": "more-categories",
+  "platform": "ios",
+  "theme": "light",
+  "lang": "en",
+  "ts": 1.0,
+  "asm": [
+   "A01",
+   "A20",
+   "A22"
+  ],
+  "new": [],
+  "flows": [
+   "F1(c): ⋯ → 07_home~more-categories → Pets → New expense (Pets pre-selected)"
+  ]
+ },
+ {
+  "path": "ios/dark/01_home__more-categories",
+  "scr": "SCR-01",
+  "title": "Home · More categories (25 categories)",
+  "state": "more-categories",
+  "platform": "ios",
+  "theme": "dark",
+  "lang": "en",
+  "ts": 1.0,
+  "asm": [
+   "A01",
+   "A20",
+   "A22"
+  ],
+  "new": [],
+  "flows": [
+   "F1(c): ⋯ → 07_home~more-categories → Pets → New expense (Pets pre-selected)"
+  ]
+ },
+ {
+  "path": "android/light/01_home__vi",
+  "scr": "SCR-01",
+  "title": "Home · More categories (25 categories)",
+  "state": "vi",
+  "platform": "android",
+  "theme": "light",
+  "lang": "vi",
+  "ts": 1.0,
+  "asm": [
+   "A01",
+   "A02",
+   "A22"
+  ],
+  "new": [],
+  "flows": [
+   "F1(c): ⋯ → 07_home~more-categories → Pets → New expense (Pets pre-selected)"
+  ]
+ },
+ {
+  "path": "android/light/01_home__text-200",
+  "scr": "SCR-01",
+  "title": "Home · More categories (25 categories)",
+  "state": "text-200",
+  "platform": "android",
+  "theme": "light",
+  "lang": "en",
+  "ts": 2.0,
+  "asm": [
+   "A04",
+   "A02",
+   "A22"
+  ],
+  "new": [],
+  "flows": [
+   "F1(c): ⋯ → 07_home~more-categories → Pets → New expense (Pets pre-selected)"
+  ]
+ },
+ {
+  "path": "android/light/07_home~more-categories__default",
+  "scr": "SCR-07",
+  "title": "Category grid from ⋯ slot",
+  "state": "default",
+  "platform": "android",
+  "theme": "light",
+  "lang": "en",
+  "ts": 1.0,
+  "asm": [
+   "A22"
+  ],
+  "new": [],
+  "flows": []
+ },
+ {
+  "path": "android/dark/07_home~more-categories__default",
+  "scr": "SCR-07",
+  "title": "Category grid from ⋯ slot",
+  "state": "default",
+  "platform": "android",
+  "theme": "dark",
+  "lang": "en",
+  "ts": 1.0,
+  "asm": [
+   "A22"
+  ],
+  "new": [],
+  "flows": []
+ },
+ {
+  "path": "ios/light/07_home~more-categories__default",
+  "scr": "SCR-07",
+  "title": "Category grid from ⋯ slot",
+  "state": "default",
+  "platform": "ios",
+  "theme": "light",
+  "lang": "en",
+  "ts": 1.0,
+  "asm": [
+   "A20",
+   "A22"
+  ],
+  "new": [],
+  "flows": []
+ },
+ {
+  "path": "ios/dark/07_home~more-categories__default",
+  "scr": "SCR-07",
+  "title": "Category grid from ⋯ slot",
+  "state": "default",
+  "platform": "ios",
+  "theme": "dark",
+  "lang": "en",
+  "ts": 1.0,
+  "asm": [
+   "A20",
+   "A22"
+  ],
+  "new": [],
+  "flows": []
+ },
+ {
+  "path": "android/light/10_entries__category-budget",
+  "scr": "SCR-10",
+  "title": "Entries · category budgets",
+  "state": "category-budget",
+  "platform": "android",
+  "theme": "light",
+  "lang": "en",
+  "ts": 1.0,
+  "asm": [
+   "A05"
+  ],
+  "new": [
+   "categoryLimitThisMonth"
+  ],
+  "flows": [
+   "F6: Settings → Categories → Food → budget 3,000,000 → Save → this frame (Over by ₫240,000)"
+  ]
+ },
+ {
+  "path": "android/dark/10_entries__category-budget",
+  "scr": "SCR-10",
+  "title": "Entries · category budgets",
+  "state": "category-budget",
+  "platform": "android",
+  "theme": "dark",
+  "lang": "en",
+  "ts": 1.0,
+  "asm": [
+   "A05"
+  ],
+  "new": [
+   "categoryLimitThisMonth"
+  ],
+  "flows": [
+   "F6: Settings → Categories → Food → budget 3,000,000 → Save → this frame (Over by ₫240,000)"
+  ]
+ },
+ {
+  "path": "ios/light/10_entries__category-budget",
+  "scr": "SCR-10",
+  "title": "Entries · category budgets",
+  "state": "category-budget",
+  "platform": "ios",
+  "theme": "light",
+  "lang": "en",
+  "ts": 1.0,
+  "asm": [
+   "A05",
+   "A20"
+  ],
+  "new": [
+   "categoryLimitThisMonth"
+  ],
+  "flows": [
+   "F6: Settings → Categories → Food → budget 3,000,000 → Save → this frame (Over by ₫240,000)"
+  ]
+ },
+ {
+  "path": "ios/dark/10_entries__category-budget",
+  "scr": "SCR-10",
+  "title": "Entries · category budgets",
+  "state": "category-budget",
+  "platform": "ios",
+  "theme": "dark",
+  "lang": "en",
+  "ts": 1.0,
+  "asm": [
+   "A05",
+   "A20"
+  ],
+  "new": [
+   "categoryLimitThisMonth"
+  ],
+  "flows": [
+   "F6: Settings → Categories → Food → budget 3,000,000 → Save → this frame (Over by ₫240,000)"
+  ]
+ },
+ {
+  "path": "android/light/10_entries__vi",
+  "scr": "SCR-10",
+  "title": "Entries · category budgets",
+  "state": "vi",
+  "platform": "android",
+  "theme": "light",
+  "lang": "vi",
+  "ts": 1.0,
+  "asm": [
+   "A05",
+   "A02"
+  ],
+  "new": [
+   "categoryLimitThisMonth"
+  ],
+  "flows": [
+   "F6: Settings → Categories → Food → budget 3,000,000 → Save → this frame (Over by ₫240,000)"
+  ]
+ },
+ {
+  "path": "android/light/10_entries__text-200",
+  "scr": "SCR-10",
+  "title": "Entries · category budgets",
+  "state": "text-200",
+  "platform": "android",
+  "theme": "light",
+  "lang": "en",
+  "ts": 2.0,
+  "asm": [
+   "A05",
+   "A02"
+  ],
+  "new": [
+   "categoryLimitThisMonth"
+  ],
+  "flows": [
+   "F6: Settings → Categories → Food → budget 3,000,000 → Save → this frame (Over by ₫240,000)"
+  ]
+ },
+ {
+  "path": "android/light/10_entries__long-text",
+  "scr": "SCR-10",
+  "title": "Entries · stress: long notes, over-limit",
+  "state": "long-text",
+  "platform": "android",
+  "theme": "light",
+  "lang": "en",
+  "ts": 1.0,
+  "asm": [
+   "A05"
+  ],
+  "new": [
+   "categoryLimitThisMonth"
+  ],
+  "flows": [
+   "F6: Settings → Categories → Food → budget 3,000,000 → Save → this frame (Over by ₫240,000)"
+  ]
+ },
+ {
+  "path": "android/dark/10_entries__long-text",
+  "scr": "SCR-10",
+  "title": "Entries · stress: long notes, over-limit",
+  "state": "long-text",
+  "platform": "android",
+  "theme": "dark",
+  "lang": "en",
+  "ts": 1.0,
+  "asm": [
+   "A05"
+  ],
+  "new": [
+   "categoryLimitThisMonth"
+  ],
+  "flows": [
+   "F6: Settings → Categories → Food → budget 3,000,000 → Save → this frame (Over by ₫240,000)"
+  ]
+ },
+ {
+  "path": "ios/light/10_entries__long-text",
+  "scr": "SCR-10",
+  "title": "Entries · stress: long notes, over-limit",
+  "state": "long-text",
+  "platform": "ios",
+  "theme": "light",
+  "lang": "en",
+  "ts": 1.0,
+  "asm": [
+   "A05",
+   "A20"
+  ],
+  "new": [
+   "categoryLimitThisMonth"
+  ],
+  "flows": [
+   "F6: Settings → Categories → Food → budget 3,000,000 → Save → this frame (Over by ₫240,000)"
+  ]
+ },
+ {
+  "path": "ios/dark/10_entries__long-text",
+  "scr": "SCR-10",
+  "title": "Entries · stress: long notes, over-limit",
+  "state": "long-text",
+  "platform": "ios",
+  "theme": "dark",
+  "lang": "en",
+  "ts": 1.0,
+  "asm": [
+   "A05",
+   "A20"
+  ],
+  "new": [
+   "categoryLimitThisMonth"
+  ],
+  "flows": [
+   "F6: Settings → Categories → Food → budget 3,000,000 → Save → this frame (Over by ₫240,000)"
+  ]
+ },
+ {
+  "path": "android/light/11_entries~search__empty",
+  "scr": "SCR-11",
+  "title": "Entries search · empty query",
+  "state": "empty",
+  "platform": "android",
+  "theme": "light",
+  "lang": "en",
+  "ts": 1.0,
+  "asm": [
+   "A06",
+   "A21"
+  ],
+  "new": [
+   "searchClear"
+  ],
+  "flows": [
+   "F4: Entries → 🔍 → “rent” → All time → tap a row → Edit record (06)"
+  ]
+ },
+ {
+  "path": "android/dark/11_entries~search__empty",
+  "scr": "SCR-11",
+  "title": "Entries search · empty query",
+  "state": "empty",
+  "platform": "android",
+  "theme": "dark",
+  "lang": "en",
+  "ts": 1.0,
+  "asm": [
+   "A06",
+   "A21"
+  ],
+  "new": [
+   "searchClear"
+  ],
+  "flows": [
+   "F4: Entries → 🔍 → “rent” → All time → tap a row → Edit record (06)"
+  ]
+ },
+ {
+  "path": "ios/light/11_entries~search__empty",
+  "scr": "SCR-11",
+  "title": "Entries search · empty query",
+  "state": "empty",
+  "platform": "ios",
+  "theme": "light",
+  "lang": "en",
+  "ts": 1.0,
+  "asm": [
+   "A06",
+   "A20",
+   "A21"
+  ],
+  "new": [
+   "searchClear"
+  ],
+  "flows": [
+   "F4: Entries → 🔍 → “rent” → All time → tap a row → Edit record (06)"
+  ]
+ },
+ {
+  "path": "ios/dark/11_entries~search__empty",
+  "scr": "SCR-11",
+  "title": "Entries search · empty query",
+  "state": "empty",
+  "platform": "ios",
+  "theme": "dark",
+  "lang": "en",
+  "ts": 1.0,
+  "asm": [
+   "A06",
+   "A20",
+   "A21"
+  ],
+  "new": [
+   "searchClear"
+  ],
+  "flows": [
+   "F4: Entries → 🔍 → “rent” → All time → tap a row → Edit record (06)"
+  ]
+ },
+ {
+  "path": "android/light/11_entries~search__searching",
+  "scr": "SCR-11",
+  "title": "Entries search · typing with results",
+  "state": "searching",
+  "platform": "android",
+  "theme": "light",
+  "lang": "en",
+  "ts": 1.0,
+  "asm": [
+   "A21"
+  ],
+  "new": [
+   "searchClear"
+  ],
+  "flows": [
+   "F4: Entries → 🔍 → “rent” → All time → tap a row → Edit record (06)"
+  ]
+ },
+ {
+  "path": "android/dark/11_entries~search__searching",
+  "scr": "SCR-11",
+  "title": "Entries search · typing with results",
+  "state": "searching",
+  "platform": "android",
+  "theme": "dark",
+  "lang": "en",
+  "ts": 1.0,
+  "asm": [
+   "A21"
+  ],
+  "new": [
+   "searchClear"
+  ],
+  "flows": [
+   "F4: Entries → 🔍 → “rent” → All time → tap a row → Edit record (06)"
+  ]
+ },
+ {
+  "path": "ios/light/11_entries~search__searching",
+  "scr": "SCR-11",
+  "title": "Entries search · typing with results",
+  "state": "searching",
+  "platform": "ios",
+  "theme": "light",
+  "lang": "en",
+  "ts": 1.0,
+  "asm": [
+   "A20",
+   "A21"
+  ],
+  "new": [
+   "searchClear"
+  ],
+  "flows": [
+   "F4: Entries → 🔍 → “rent” → All time → tap a row → Edit record (06)"
+  ]
+ },
+ {
+  "path": "ios/dark/11_entries~search__searching",
+  "scr": "SCR-11",
+  "title": "Entries search · typing with results",
+  "state": "searching",
+  "platform": "ios",
+  "theme": "dark",
+  "lang": "en",
+  "ts": 1.0,
+  "asm": [
+   "A20",
+   "A21"
+  ],
+  "new": [
+   "searchClear"
+  ],
+  "flows": [
+   "F4: Entries → 🔍 → “rent” → All time → tap a row → Edit record (06)"
+  ]
+ },
+ {
+  "path": "android/light/11_entries~search__all-time",
+  "scr": "SCR-11",
+  "title": "Entries search · All time",
+  "state": "all-time",
+  "platform": "android",
+  "theme": "light",
+  "lang": "en",
+  "ts": 1.0,
+  "asm": [
+   "A21"
+  ],
+  "new": [
+   "searchClear"
+  ],
+  "flows": [
+   "F4: Entries → 🔍 → “rent” → All time → tap a row → Edit record (06)"
+  ]
+ },
+ {
+  "path": "android/dark/11_entries~search__all-time",
+  "scr": "SCR-11",
+  "title": "Entries search · All time",
+  "state": "all-time",
+  "platform": "android",
+  "theme": "dark",
+  "lang": "en",
+  "ts": 1.0,
+  "asm": [
+   "A21"
+  ],
+  "new": [
+   "searchClear"
+  ],
+  "flows": [
+   "F4: Entries → 🔍 → “rent” → All time → tap a row → Edit record (06)"
+  ]
+ },
+ {
+  "path": "ios/light/11_entries~search__all-time",
+  "scr": "SCR-11",
+  "title": "Entries search · All time",
+  "state": "all-time",
+  "platform": "ios",
+  "theme": "light",
+  "lang": "en",
+  "ts": 1.0,
+  "asm": [
+   "A20",
+   "A21"
+  ],
+  "new": [
+   "searchClear"
+  ],
+  "flows": [
+   "F4: Entries → 🔍 → “rent” → All time → tap a row → Edit record (06)"
+  ]
+ },
+ {
+  "path": "ios/dark/11_entries~search__all-time",
+  "scr": "SCR-11",
+  "title": "Entries search · All time",
+  "state": "all-time",
+  "platform": "ios",
+  "theme": "dark",
+  "lang": "en",
+  "ts": 1.0,
+  "asm": [
+   "A20",
+   "A21"
+  ],
+  "new": [
+   "searchClear"
+  ],
+  "flows": [
+   "F4: Entries → 🔍 → “rent” → All time → tap a row → Edit record (06)"
+  ]
+ },
+ {
+  "path": "android/light/11_entries~search__text-200",
+  "scr": "SCR-11",
+  "title": "Entries search · All time",
+  "state": "text-200",
+  "platform": "android",
+  "theme": "light",
+  "lang": "en",
+  "ts": 2.0,
+  "asm": [
+   "A02",
+   "A21"
+  ],
+  "new": [
+   "searchClear"
+  ],
+  "flows": [
+   "F4: Entries → 🔍 → “rent” → All time → tap a row → Edit record (06)"
+  ]
+ },
+ {
+  "path": "android/light/11_entries~search__amount",
+  "scr": "SCR-11",
+  "title": "Entries search · amount match",
+  "state": "amount",
+  "platform": "android",
+  "theme": "light",
+  "lang": "en",
+  "ts": 1.0,
+  "asm": [
+   "A07",
+   "A21"
+  ],
+  "new": [
+   "searchClear"
+  ],
+  "flows": [
+   "F4: Entries → 🔍 → “rent” → All time → tap a row → Edit record (06)"
+  ]
+ },
+ {
+  "path": "android/dark/11_entries~search__amount",
+  "scr": "SCR-11",
+  "title": "Entries search · amount match",
+  "state": "amount",
+  "platform": "android",
+  "theme": "dark",
+  "lang": "en",
+  "ts": 1.0,
+  "asm": [
+   "A07",
+   "A21"
+  ],
+  "new": [
+   "searchClear"
+  ],
+  "flows": [
+   "F4: Entries → 🔍 → “rent” → All time → tap a row → Edit record (06)"
+  ]
+ },
+ {
+  "path": "ios/light/11_entries~search__amount",
+  "scr": "SCR-11",
+  "title": "Entries search · amount match",
+  "state": "amount",
+  "platform": "ios",
+  "theme": "light",
+  "lang": "en",
+  "ts": 1.0,
+  "asm": [
+   "A07",
+   "A20",
+   "A21"
+  ],
+  "new": [
+   "searchClear"
+  ],
+  "flows": [
+   "F4: Entries → 🔍 → “rent” → All time → tap a row → Edit record (06)"
+  ]
+ },
+ {
+  "path": "ios/dark/11_entries~search__amount",
+  "scr": "SCR-11",
+  "title": "Entries search · amount match",
+  "state": "amount",
+  "platform": "ios",
+  "theme": "dark",
+  "lang": "en",
+  "ts": 1.0,
+  "asm": [
+   "A07",
+   "A20",
+   "A21"
+  ],
+  "new": [
+   "searchClear"
+  ],
+  "flows": [
+   "F4: Entries → 🔍 → “rent” → All time → tap a row → Edit record (06)"
+  ]
+ },
+ {
+  "path": "android/light/11_entries~search__no-match",
+  "scr": "SCR-11",
+  "title": "Entries search · no match",
+  "state": "no-match",
+  "platform": "android",
+  "theme": "light",
+  "lang": "en",
+  "ts": 1.0,
+  "asm": [
+   "A21"
+  ],
+  "new": [
+   "searchClear"
+  ],
+  "flows": [
+   "F4: Entries → 🔍 → “rent” → All time → tap a row → Edit record (06)"
+  ]
+ },
+ {
+  "path": "android/dark/11_entries~search__no-match",
+  "scr": "SCR-11",
+  "title": "Entries search · no match",
+  "state": "no-match",
+  "platform": "android",
+  "theme": "dark",
+  "lang": "en",
+  "ts": 1.0,
+  "asm": [
+   "A21"
+  ],
+  "new": [
+   "searchClear"
+  ],
+  "flows": [
+   "F4: Entries → 🔍 → “rent” → All time → tap a row → Edit record (06)"
+  ]
+ },
+ {
+  "path": "ios/light/11_entries~search__no-match",
+  "scr": "SCR-11",
+  "title": "Entries search · no match",
+  "state": "no-match",
+  "platform": "ios",
+  "theme": "light",
+  "lang": "en",
+  "ts": 1.0,
+  "asm": [
+   "A20",
+   "A21"
+  ],
+  "new": [
+   "searchClear"
+  ],
+  "flows": [
+   "F4: Entries → 🔍 → “rent” → All time → tap a row → Edit record (06)"
+  ]
+ },
+ {
+  "path": "ios/dark/11_entries~search__no-match",
+  "scr": "SCR-11",
+  "title": "Entries search · no match",
+  "state": "no-match",
+  "platform": "ios",
+  "theme": "dark",
+  "lang": "en",
+  "ts": 1.0,
+  "asm": [
+   "A20",
+   "A21"
+  ],
+  "new": [
+   "searchClear"
+  ],
+  "flows": [
+   "F4: Entries → 🔍 → “rent” → All time → tap a row → Edit record (06)"
+  ]
+ },
+ {
+  "path": "android/light/12_settings__top",
+  "scr": "SCR-12",
+  "title": "Settings · top",
+  "state": "top",
+  "platform": "android",
+  "theme": "light",
+  "lang": "en",
+  "ts": 1.0,
+  "asm": [
+   "A18"
+  ],
+  "new": [
+   "csvFormatEn"
+  ],
+  "flows": []
+ },
+ {
+  "path": "android/dark/12_settings__top",
+  "scr": "SCR-12",
+  "title": "Settings · top",
+  "state": "top",
+  "platform": "android",
+  "theme": "dark",
+  "lang": "en",
+  "ts": 1.0,
+  "asm": [
+   "A18"
+  ],
+  "new": [
+   "csvFormatEn"
+  ],
+  "flows": []
+ },
+ {
+  "path": "android/light/12_settings__top-vi",
+  "scr": "SCR-12",
+  "title": "Settings · top",
+  "state": "top-vi",
+  "platform": "android",
+  "theme": "light",
+  "lang": "vi",
+  "ts": 1.0,
+  "asm": [
+   "A02",
+   "A18"
+  ],
+  "new": [
+   "csvFormatVi"
+  ],
+  "flows": []
+ },
+ {
+  "path": "android/light/12_settings__top-text-200",
+  "scr": "SCR-12",
+  "title": "Settings · top",
+  "state": "top-text-200",
+  "platform": "android",
+  "theme": "light",
+  "lang": "en",
+  "ts": 2.0,
+  "asm": [
+   "A02",
+   "A18"
+  ],
+  "new": [
+   "csvFormatEn"
+  ],
+  "flows": []
+ },
+ {
+  "path": "ios/light/33_settings__ios-top",
+  "scr": "SCR-33",
+  "title": "Settings on iOS · top",
+  "state": "ios-top",
+  "platform": "ios",
+  "theme": "light",
+  "lang": "en",
+  "ts": 1.0,
+  "asm": [
+   "A20",
+   "A18"
+  ],
+  "new": [
+   "csvFormatEn"
+  ],
+  "flows": []
+ },
+ {
+  "path": "ios/dark/33_settings__ios-top",
+  "scr": "SCR-33",
+  "title": "Settings on iOS · top",
+  "state": "ios-top",
+  "platform": "ios",
+  "theme": "dark",
+  "lang": "en",
+  "ts": 1.0,
+  "asm": [
+   "A20",
+   "A18"
+  ],
+  "new": [
+   "csvFormatEn"
+  ],
+  "flows": []
+ },
+ {
+  "path": "android/light/12_settings__middle",
+  "scr": "SCR-12",
+  "title": "Settings · middle",
+  "state": "middle",
+  "platform": "android",
+  "theme": "light",
+  "lang": "en",
+  "ts": 1.0,
+  "asm": [
+   "A08",
+   "A18"
+  ],
+  "new": [
+   "csvFormatEn"
+  ],
+  "flows": []
+ },
+ {
+  "path": "android/dark/12_settings__middle",
+  "scr": "SCR-12",
+  "title": "Settings · middle",
+  "state": "middle",
+  "platform": "android",
+  "theme": "dark",
+  "lang": "en",
+  "ts": 1.0,
+  "asm": [
+   "A08",
+   "A18"
+  ],
+  "new": [
+   "csvFormatEn"
+  ],
+  "flows": []
+ },
+ {
+  "path": "android/light/12_settings__middle-vi",
+  "scr": "SCR-12",
+  "title": "Settings · middle",
+  "state": "middle-vi",
+  "platform": "android",
+  "theme": "light",
+  "lang": "vi",
+  "ts": 1.0,
+  "asm": [
+   "A08",
+   "A02",
+   "A18"
+  ],
+  "new": [
+   "csvFormatVi"
+  ],
+  "flows": []
+ },
+ {
+  "path": "android/light/12_settings__middle-text-200",
+  "scr": "SCR-12",
+  "title": "Settings · middle",
+  "state": "middle-text-200",
+  "platform": "android",
+  "theme": "light",
+  "lang": "en",
+  "ts": 2.0,
+  "asm": [
+   "A08",
+   "A02",
+   "A18"
+  ],
+  "new": [
+   "csvFormatEn"
+  ],
+  "flows": []
+ },
+ {
+  "path": "ios/light/33_settings__ios-middle",
+  "scr": "SCR-33",
+  "title": "Settings on iOS · middle",
+  "state": "ios-middle",
+  "platform": "ios",
+  "theme": "light",
+  "lang": "en",
+  "ts": 1.0,
+  "asm": [
+   "A20",
+   "A18"
+  ],
+  "new": [
+   "csvFormatEn"
+  ],
+  "flows": []
+ },
+ {
+  "path": "ios/dark/33_settings__ios-middle",
+  "scr": "SCR-33",
+  "title": "Settings on iOS · middle",
+  "state": "ios-middle",
+  "platform": "ios",
+  "theme": "dark",
+  "lang": "en",
+  "ts": 1.0,
+  "asm": [
+   "A20",
+   "A18"
+  ],
+  "new": [
+   "csvFormatEn"
+  ],
+  "flows": []
+ },
+ {
+  "path": "android/light/12_settings__bottom",
+  "scr": "SCR-12",
+  "title": "Settings · bottom",
+  "state": "bottom",
+  "platform": "android",
+  "theme": "light",
+  "lang": "en",
+  "ts": 1.0,
+  "asm": [
+   "A18"
+  ],
+  "new": [
+   "csvFormatEn"
+  ],
+  "flows": []
+ },
+ {
+  "path": "android/dark/12_settings__bottom",
+  "scr": "SCR-12",
+  "title": "Settings · bottom",
+  "state": "bottom",
+  "platform": "android",
+  "theme": "dark",
+  "lang": "en",
+  "ts": 1.0,
+  "asm": [
+   "A18"
+  ],
+  "new": [
+   "csvFormatEn"
+  ],
+  "flows": []
+ },
+ {
+  "path": "android/light/12_settings__bottom-vi",
+  "scr": "SCR-12",
+  "title": "Settings · bottom",
+  "state": "bottom-vi",
+  "platform": "android",
+  "theme": "light",
+  "lang": "vi",
+  "ts": 1.0,
+  "asm": [
+   "A02",
+   "A18"
+  ],
+  "new": [
+   "csvFormatVi"
+  ],
+  "flows": []
+ },
+ {
+  "path": "ios/light/33_settings__ios-bottom",
+  "scr": "SCR-33",
+  "title": "Settings on iOS · bottom",
+  "state": "ios-bottom",
+  "platform": "ios",
+  "theme": "light",
+  "lang": "en",
+  "ts": 1.0,
+  "asm": [
+   "A20",
+   "A18"
+  ],
+  "new": [
+   "csvFormatEn"
+  ],
+  "flows": []
+ },
+ {
+  "path": "ios/dark/33_settings__ios-bottom",
+  "scr": "SCR-33",
+  "title": "Settings on iOS · bottom",
+  "state": "ios-bottom",
+  "platform": "ios",
+  "theme": "dark",
+  "lang": "en",
+  "ts": 1.0,
+  "asm": [
+   "A20",
+   "A18"
+  ],
+  "new": [
+   "csvFormatEn"
+  ],
+  "flows": []
+ },
+ {
+  "path": "android/light/13_settings~currency__default",
+  "scr": "SCR-13",
+  "title": "Currency picker · default",
+  "state": "default",
+  "platform": "android",
+  "theme": "light",
+  "lang": "en",
+  "ts": 1.0,
+  "asm": [
+   "A09"
+  ],
+  "new": [
+   "csvFormatEn",
+   "showMore",
+   "showLess",
+   "currencyCurrent"
+  ],
+  "flows": []
+ },
+ {
+  "path": "android/dark/13_settings~currency__default",
+  "scr": "SCR-13",
+  "title": "Currency picker · default",
+  "state": "default",
+  "platform": "android",
+  "theme": "dark",
+  "lang": "en",
+  "ts": 1.0,
+  "asm": [
+   "A09"
+  ],
+  "new": [
+   "csvFormatEn",
+   "showMore",
+   "showLess",
+   "currencyCurrent"
+  ],
+  "flows": []
+ },
+ {
+  "path": "ios/light/13_settings~currency__default",
+  "scr": "SCR-13",
+  "title": "Currency picker · default",
+  "state": "default",
+  "platform": "ios",
+  "theme": "light",
+  "lang": "en",
+  "ts": 1.0,
+  "asm": [
+   "A09",
+   "A20"
+  ],
+  "new": [
+   "csvFormatEn",
+   "showMore",
+   "showLess",
+   "currencyCurrent"
+  ],
+  "flows": []
+ },
+ {
+  "path": "ios/dark/13_settings~currency__default",
+  "scr": "SCR-13",
+  "title": "Currency picker · default",
+  "state": "default",
+  "platform": "ios",
+  "theme": "dark",
+  "lang": "en",
+  "ts": 1.0,
+  "asm": [
+   "A09",
+   "A20"
+  ],
+  "new": [
+   "csvFormatEn",
+   "showMore",
+   "showLess",
+   "currencyCurrent"
+  ],
+  "flows": []
+ },
+ {
+  "path": "android/light/13_settings~currency__vi",
+  "scr": "SCR-13",
+  "title": "Currency picker · default",
+  "state": "vi",
+  "platform": "android",
+  "theme": "light",
+  "lang": "vi",
+  "ts": 1.0,
+  "asm": [
+   "A09",
+   "A02"
+  ],
+  "new": [
+   "csvFormatVi",
+   "showMore",
+   "showLess",
+   "currencyCurrent"
+  ],
+  "flows": []
+ },
+ {
+  "path": "android/light/13_settings~currency__searching",
+  "scr": "SCR-13",
+  "title": "Currency picker · search “dol”",
+  "state": "searching",
+  "platform": "android",
+  "theme": "light",
+  "lang": "en",
+  "ts": 1.0,
+  "asm": [
+   "A09"
+  ],
+  "new": [
+   "csvFormatEn",
+   "searchClear",
+   "showMore",
+   "showLess"
+  ],
+  "flows": []
+ },
+ {
+  "path": "android/dark/13_settings~currency__searching",
+  "scr": "SCR-13",
+  "title": "Currency picker · search “dol”",
+  "state": "searching",
+  "platform": "android",
+  "theme": "dark",
+  "lang": "en",
+  "ts": 1.0,
+  "asm": [
+   "A09"
+  ],
+  "new": [
+   "csvFormatEn",
+   "searchClear",
+   "showMore",
+   "showLess"
+  ],
+  "flows": []
+ },
+ {
+  "path": "ios/light/13_settings~currency__searching",
+  "scr": "SCR-13",
+  "title": "Currency picker · search “dol”",
+  "state": "searching",
+  "platform": "ios",
+  "theme": "light",
+  "lang": "en",
+  "ts": 1.0,
+  "asm": [
+   "A09",
+   "A20"
+  ],
+  "new": [
+   "csvFormatEn",
+   "searchClear",
+   "showMore",
+   "showLess"
+  ],
+  "flows": []
+ },
+ {
+  "path": "ios/dark/13_settings~currency__searching",
+  "scr": "SCR-13",
+  "title": "Currency picker · search “dol”",
+  "state": "searching",
+  "platform": "ios",
+  "theme": "dark",
+  "lang": "en",
+  "ts": 1.0,
+  "asm": [
+   "A09",
+   "A20"
+  ],
+  "new": [
+   "csvFormatEn",
+   "searchClear",
+   "showMore",
+   "showLess"
+  ],
+  "flows": []
+ },
+ {
+  "path": "android/light/13_settings~currency__no-match",
+  "scr": "SCR-13",
+  "title": "Currency picker · no match",
+  "state": "no-match",
+  "platform": "android",
+  "theme": "light",
+  "lang": "en",
+  "ts": 1.0,
+  "asm": [
+   "A09"
+  ],
+  "new": [
+   "csvFormatEn",
+   "searchClear",
+   "showMore",
+   "showLess"
+  ],
+  "flows": []
+ },
+ {
+  "path": "android/dark/13_settings~currency__no-match",
+  "scr": "SCR-13",
+  "title": "Currency picker · no match",
+  "state": "no-match",
+  "platform": "android",
+  "theme": "dark",
+  "lang": "en",
+  "ts": 1.0,
+  "asm": [
+   "A09"
+  ],
+  "new": [
+   "csvFormatEn",
+   "searchClear",
+   "showMore",
+   "showLess"
+  ],
+  "flows": []
+ },
+ {
+  "path": "ios/light/13_settings~currency__no-match",
+  "scr": "SCR-13",
+  "title": "Currency picker · no match",
+  "state": "no-match",
+  "platform": "ios",
+  "theme": "light",
+  "lang": "en",
+  "ts": 1.0,
+  "asm": [
+   "A09",
+   "A20"
+  ],
+  "new": [
+   "csvFormatEn",
+   "searchClear",
+   "showMore",
+   "showLess"
+  ],
+  "flows": []
+ },
+ {
+  "path": "ios/dark/13_settings~currency__no-match",
+  "scr": "SCR-13",
+  "title": "Currency picker · no match",
+  "state": "no-match",
+  "platform": "ios",
+  "theme": "dark",
+  "lang": "en",
+  "ts": 1.0,
+  "asm": [
+   "A09",
+   "A20"
+  ],
+  "new": [
+   "csvFormatEn",
+   "searchClear",
+   "showMore",
+   "showLess"
+  ],
+  "flows": []
+ },
+ {
+  "path": "android/light/16_categories~edit__budget-set",
+  "scr": "SCR-16",
+  "title": "Edit category · budget set",
+  "state": "budget-set",
+  "platform": "android",
+  "theme": "light",
+  "lang": "en",
+  "ts": 1.0,
+  "asm": [],
+  "new": [],
+  "flows": [
+   "F6: Categories → Food → Category monthly budget 3,000,000 → Save"
+  ]
+ },
+ {
+  "path": "android/dark/16_categories~edit__budget-set",
+  "scr": "SCR-16",
+  "title": "Edit category · budget set",
+  "state": "budget-set",
+  "platform": "android",
+  "theme": "dark",
+  "lang": "en",
+  "ts": 1.0,
+  "asm": [],
+  "new": [],
+  "flows": [
+   "F6: Categories → Food → Category monthly budget 3,000,000 → Save"
+  ]
+ },
+ {
+  "path": "ios/light/16_categories~edit__budget-set",
+  "scr": "SCR-16",
+  "title": "Edit category · budget set",
+  "state": "budget-set",
+  "platform": "ios",
+  "theme": "light",
+  "lang": "en",
+  "ts": 1.0,
+  "asm": [
+   "A20"
+  ],
+  "new": [],
+  "flows": [
+   "F6: Categories → Food → Category monthly budget 3,000,000 → Save"
+  ]
+ },
+ {
+  "path": "ios/dark/16_categories~edit__budget-set",
+  "scr": "SCR-16",
+  "title": "Edit category · budget set",
+  "state": "budget-set",
+  "platform": "ios",
+  "theme": "dark",
+  "lang": "en",
+  "ts": 1.0,
+  "asm": [
+   "A20"
+  ],
+  "new": [],
+  "flows": [
+   "F6: Categories → Food → Category monthly budget 3,000,000 → Save"
+  ]
+ },
+ {
+  "path": "android/light/16_categories~edit__budget-error",
+  "scr": "SCR-16",
+  "title": "Edit category · budget error",
+  "state": "budget-error",
+  "platform": "android",
+  "theme": "light",
+  "lang": "en",
+  "ts": 1.0,
+  "asm": [],
+  "new": [],
+  "flows": [
+   "F6: Categories → Food → Category monthly budget 3,000,000 → Save"
+  ]
+ },
+ {
+  "path": "android/dark/16_categories~edit__budget-error",
+  "scr": "SCR-16",
+  "title": "Edit category · budget error",
+  "state": "budget-error",
+  "platform": "android",
+  "theme": "dark",
+  "lang": "en",
+  "ts": 1.0,
+  "asm": [],
+  "new": [],
+  "flows": [
+   "F6: Categories → Food → Category monthly budget 3,000,000 → Save"
+  ]
+ },
+ {
+  "path": "ios/light/16_categories~edit__budget-error",
+  "scr": "SCR-16",
+  "title": "Edit category · budget error",
+  "state": "budget-error",
+  "platform": "ios",
+  "theme": "light",
+  "lang": "en",
+  "ts": 1.0,
+  "asm": [
+   "A20"
+  ],
+  "new": [],
+  "flows": [
+   "F6: Categories → Food → Category monthly budget 3,000,000 → Save"
+  ]
+ },
+ {
+  "path": "ios/dark/16_categories~edit__budget-error",
+  "scr": "SCR-16",
+  "title": "Edit category · budget error",
+  "state": "budget-error",
+  "platform": "ios",
+  "theme": "dark",
+  "lang": "en",
+  "ts": 1.0,
+  "asm": [
+   "A20"
+  ],
+  "new": [],
+  "flows": [
+   "F6: Categories → Food → Category monthly budget 3,000,000 → Save"
+  ]
+ },
+ {
+  "path": "android/light/17_accounts__hidden",
+  "scr": "SCR-17",
+  "title": "Accounts · hidden section collapsed",
+  "state": "hidden",
+  "platform": "android",
+  "theme": "light",
+  "lang": "en",
+  "ts": 1.0,
+  "asm": [],
+  "new": [],
+  "flows": [
+   "F7: Accounts → Old card → Hide account → Hidden accounts (n) → Show again"
+  ]
+ },
+ {
+  "path": "android/dark/17_accounts__hidden",
+  "scr": "SCR-17",
+  "title": "Accounts · hidden section collapsed",
+  "state": "hidden",
+  "platform": "android",
+  "theme": "dark",
+  "lang": "en",
+  "ts": 1.0,
+  "asm": [],
+  "new": [],
+  "flows": [
+   "F7: Accounts → Old card → Hide account → Hidden accounts (n) → Show again"
+  ]
+ },
+ {
+  "path": "ios/light/17_accounts__hidden",
+  "scr": "SCR-17",
+  "title": "Accounts · hidden section collapsed",
+  "state": "hidden",
+  "platform": "ios",
+  "theme": "light",
+  "lang": "en",
+  "ts": 1.0,
+  "asm": [
+   "A20"
+  ],
+  "new": [],
+  "flows": [
+   "F7: Accounts → Old card → Hide account → Hidden accounts (n) → Show again"
+  ]
+ },
+ {
+  "path": "ios/dark/17_accounts__hidden",
+  "scr": "SCR-17",
+  "title": "Accounts · hidden section collapsed",
+  "state": "hidden",
+  "platform": "ios",
+  "theme": "dark",
+  "lang": "en",
+  "ts": 1.0,
+  "asm": [
+   "A20"
+  ],
+  "new": [],
+  "flows": [
+   "F7: Accounts → Old card → Hide account → Hidden accounts (n) → Show again"
+  ]
+ },
+ {
+  "path": "android/light/17_accounts__hidden-open",
+  "scr": "SCR-17",
+  "title": "Accounts · hidden section open",
+  "state": "hidden-open",
+  "platform": "android",
+  "theme": "light",
+  "lang": "en",
+  "ts": 1.0,
+  "asm": [
+   "A10"
+  ],
+  "new": [],
+  "flows": [
+   "F7: Accounts → Old card → Hide account → Hidden accounts (n) → Show again"
+  ]
+ },
+ {
+  "path": "android/dark/17_accounts__hidden-open",
+  "scr": "SCR-17",
+  "title": "Accounts · hidden section open",
+  "state": "hidden-open",
+  "platform": "android",
+  "theme": "dark",
+  "lang": "en",
+  "ts": 1.0,
+  "asm": [
+   "A10"
+  ],
+  "new": [],
+  "flows": [
+   "F7: Accounts → Old card → Hide account → Hidden accounts (n) → Show again"
+  ]
+ },
+ {
+  "path": "ios/light/17_accounts__hidden-open",
+  "scr": "SCR-17",
+  "title": "Accounts · hidden section open",
+  "state": "hidden-open",
+  "platform": "ios",
+  "theme": "light",
+  "lang": "en",
+  "ts": 1.0,
+  "asm": [
+   "A10",
+   "A20"
+  ],
+  "new": [],
+  "flows": [
+   "F7: Accounts → Old card → Hide account → Hidden accounts (n) → Show again"
+  ]
+ },
+ {
+  "path": "ios/dark/17_accounts__hidden-open",
+  "scr": "SCR-17",
+  "title": "Accounts · hidden section open",
+  "state": "hidden-open",
+  "platform": "ios",
+  "theme": "dark",
+  "lang": "en",
+  "ts": 1.0,
+  "asm": [
+   "A10",
+   "A20"
+  ],
+  "new": [],
+  "flows": [
+   "F7: Accounts → Old card → Hide account → Hidden accounts (n) → Show again"
+  ]
+ },
+ {
+  "path": "android/light/18_accounts~edit__unused",
+  "scr": "SCR-18",
+  "title": "Edit account · unused (Hide + Delete)",
+  "state": "unused",
+  "platform": "android",
+  "theme": "light",
+  "lang": "en",
+  "ts": 1.0,
+  "asm": [],
+  "new": [],
+  "flows": []
+ },
+ {
+  "path": "android/dark/18_accounts~edit__unused",
+  "scr": "SCR-18",
+  "title": "Edit account · unused (Hide + Delete)",
+  "state": "unused",
+  "platform": "android",
+  "theme": "dark",
+  "lang": "en",
+  "ts": 1.0,
+  "asm": [],
+  "new": [],
+  "flows": []
+ },
+ {
+  "path": "ios/light/18_accounts~edit__unused",
+  "scr": "SCR-18",
+  "title": "Edit account · unused (Hide + Delete)",
+  "state": "unused",
+  "platform": "ios",
+  "theme": "light",
+  "lang": "en",
+  "ts": 1.0,
+  "asm": [
+   "A20"
+  ],
+  "new": [],
+  "flows": []
+ },
+ {
+  "path": "ios/dark/18_accounts~edit__unused",
+  "scr": "SCR-18",
+  "title": "Edit account · unused (Hide + Delete)",
+  "state": "unused",
+  "platform": "ios",
+  "theme": "dark",
+  "lang": "en",
+  "ts": 1.0,
+  "asm": [
+   "A20"
+  ],
+  "new": [],
+  "flows": []
+ },
+ {
+  "path": "android/light/18_accounts~edit__text-200",
+  "scr": "SCR-18",
+  "title": "Edit account · unused (Hide + Delete)",
+  "state": "text-200",
+  "platform": "android",
+  "theme": "light",
+  "lang": "en",
+  "ts": 2.0,
+  "asm": [
+   "A02"
+  ],
+  "new": [],
+  "flows": []
+ },
+ {
+  "path": "android/light/18_accounts~edit__used",
+  "scr": "SCR-18",
+  "title": "Edit account · used (Hide + hint)",
+  "state": "used",
+  "platform": "android",
+  "theme": "light",
+  "lang": "en",
+  "ts": 1.0,
+  "asm": [],
+  "new": [],
+  "flows": []
+ },
+ {
+  "path": "android/dark/18_accounts~edit__used",
+  "scr": "SCR-18",
+  "title": "Edit account · used (Hide + hint)",
+  "state": "used",
+  "platform": "android",
+  "theme": "dark",
+  "lang": "en",
+  "ts": 1.0,
+  "asm": [],
+  "new": [],
+  "flows": []
+ },
+ {
+  "path": "ios/light/18_accounts~edit__used",
+  "scr": "SCR-18",
+  "title": "Edit account · used (Hide + hint)",
+  "state": "used",
+  "platform": "ios",
+  "theme": "light",
+  "lang": "en",
+  "ts": 1.0,
+  "asm": [
+   "A20"
+  ],
+  "new": [],
+  "flows": []
+ },
+ {
+  "path": "ios/dark/18_accounts~edit__used",
+  "scr": "SCR-18",
+  "title": "Edit account · used (Hide + hint)",
+  "state": "used",
+  "platform": "ios",
+  "theme": "dark",
+  "lang": "en",
+  "ts": 1.0,
+  "asm": [
+   "A20"
+  ],
+  "new": [],
+  "flows": []
+ },
+ {
+  "path": "android/light/18_accounts~edit__vi",
+  "scr": "SCR-18",
+  "title": "Edit account · used (Hide + hint)",
+  "state": "vi",
+  "platform": "android",
+  "theme": "light",
+  "lang": "vi",
+  "ts": 1.0,
+  "asm": [
+   "A02"
+  ],
+  "new": [],
+  "flows": []
+ },
+ {
+  "path": "android/light/18_accounts~edit__last-visible",
+  "scr": "SCR-18",
+  "title": "Edit account · last visible",
+  "state": "last-visible",
+  "platform": "android",
+  "theme": "light",
+  "lang": "en",
+  "ts": 1.0,
+  "asm": [
+   "A11"
+  ],
+  "new": [],
+  "flows": []
+ },
+ {
+  "path": "android/dark/18_accounts~edit__last-visible",
+  "scr": "SCR-18",
+  "title": "Edit account · last visible",
+  "state": "last-visible",
+  "platform": "android",
+  "theme": "dark",
+  "lang": "en",
+  "ts": 1.0,
+  "asm": [
+   "A11"
+  ],
+  "new": [],
+  "flows": []
+ },
+ {
+  "path": "ios/light/18_accounts~edit__last-visible",
+  "scr": "SCR-18",
+  "title": "Edit account · last visible",
+  "state": "last-visible",
+  "platform": "ios",
+  "theme": "light",
+  "lang": "en",
+  "ts": 1.0,
+  "asm": [
+   "A11",
+   "A20"
+  ],
+  "new": [],
+  "flows": []
+ },
+ {
+  "path": "ios/dark/18_accounts~edit__last-visible",
+  "scr": "SCR-18",
+  "title": "Edit account · last visible",
+  "state": "last-visible",
+  "platform": "ios",
+  "theme": "dark",
+  "lang": "en",
+  "ts": 1.0,
+  "asm": [
+   "A11",
+   "A20"
+  ],
+  "new": [],
+  "flows": []
+ },
+ {
+  "path": "android/light/18_accounts~delete__default",
+  "scr": "SCR-18",
+  "title": "Delete account confirm",
+  "state": "default",
+  "platform": "android",
+  "theme": "light",
+  "lang": "en",
+  "ts": 1.0,
+  "asm": [],
+  "new": [],
+  "flows": []
+ },
+ {
+  "path": "android/dark/18_accounts~delete__default",
+  "scr": "SCR-18",
+  "title": "Delete account confirm",
+  "state": "default",
+  "platform": "android",
+  "theme": "dark",
+  "lang": "en",
+  "ts": 1.0,
+  "asm": [],
+  "new": [],
+  "flows": []
+ },
+ {
+  "path": "ios/light/18_accounts~delete__default",
+  "scr": "SCR-18",
+  "title": "Delete account confirm",
+  "state": "default",
+  "platform": "ios",
+  "theme": "light",
+  "lang": "en",
+  "ts": 1.0,
+  "asm": [
+   "A20"
+  ],
+  "new": [],
+  "flows": []
+ },
+ {
+  "path": "ios/dark/18_accounts~delete__default",
+  "scr": "SCR-18",
+  "title": "Delete account confirm",
+  "state": "default",
+  "platform": "ios",
+  "theme": "dark",
+  "lang": "en",
+  "ts": 1.0,
+  "asm": [
+   "A20"
+  ],
+  "new": [],
+  "flows": []
+ },
+ {
+  "path": "android/light/21_recurring~edit__running",
+  "scr": "SCR-21",
+  "title": "Edit repeating record · running series",
+  "state": "running",
+  "platform": "android",
+  "theme": "light",
+  "lang": "en",
+  "ts": 1.0,
+  "asm": [],
+  "new": [],
+  "flows": [
+   "F9: Settings → Repeating records → Rent → Monthly → Weekly, Account → Card → Save"
+  ]
+ },
+ {
+  "path": "android/dark/21_recurring~edit__running",
+  "scr": "SCR-21",
+  "title": "Edit repeating record · running series",
+  "state": "running",
+  "platform": "android",
+  "theme": "dark",
+  "lang": "en",
+  "ts": 1.0,
+  "asm": [],
+  "new": [],
+  "flows": [
+   "F9: Settings → Repeating records → Rent → Monthly → Weekly, Account → Card → Save"
+  ]
+ },
+ {
+  "path": "ios/light/21_recurring~edit__running",
+  "scr": "SCR-21",
+  "title": "Edit repeating record · running series",
+  "state": "running",
+  "platform": "ios",
+  "theme": "light",
+  "lang": "en",
+  "ts": 1.0,
+  "asm": [
+   "A20"
+  ],
+  "new": [],
+  "flows": [
+   "F9: Settings → Repeating records → Rent → Monthly → Weekly, Account → Card → Save"
+  ]
+ },
+ {
+  "path": "ios/dark/21_recurring~edit__running",
+  "scr": "SCR-21",
+  "title": "Edit repeating record · running series",
+  "state": "running",
+  "platform": "ios",
+  "theme": "dark",
+  "lang": "en",
+  "ts": 1.0,
+  "asm": [
+   "A20"
+  ],
+  "new": [],
+  "flows": [
+   "F9: Settings → Repeating records → Rent → Monthly → Weekly, Account → Card → Save"
+  ]
+ },
+ {
+  "path": "android/light/21_recurring~edit__text-200",
+  "scr": "SCR-21",
+  "title": "Edit repeating record · running series",
+  "state": "text-200",
+  "platform": "android",
+  "theme": "light",
+  "lang": "en",
+  "ts": 2.0,
+  "asm": [
+   "A02"
+  ],
+  "new": [],
+  "flows": [
+   "F9: Settings → Repeating records → Rent → Monthly → Weekly, Account → Card → Save"
+  ]
+ },
+ {
+  "path": "android/light/21_recurring~edit__frequency-changed",
+  "scr": "SCR-21",
+  "title": "Edit repeating record · frequency changed",
+  "state": "frequency-changed",
+  "platform": "android",
+  "theme": "light",
+  "lang": "en",
+  "ts": 1.0,
+  "asm": [
+   "A12"
+  ],
+  "new": [
+   "recurringRestartHint"
+  ],
+  "flows": [
+   "F9: Settings → Repeating records → Rent → Monthly → Weekly, Account → Card → Save"
+  ]
+ },
+ {
+  "path": "android/dark/21_recurring~edit__frequency-changed",
+  "scr": "SCR-21",
+  "title": "Edit repeating record · frequency changed",
+  "state": "frequency-changed",
+  "platform": "android",
+  "theme": "dark",
+  "lang": "en",
+  "ts": 1.0,
+  "asm": [
+   "A12"
+  ],
+  "new": [
+   "recurringRestartHint"
+  ],
+  "flows": [
+   "F9: Settings → Repeating records → Rent → Monthly → Weekly, Account → Card → Save"
+  ]
+ },
+ {
+  "path": "ios/light/21_recurring~edit__frequency-changed",
+  "scr": "SCR-21",
+  "title": "Edit repeating record · frequency changed",
+  "state": "frequency-changed",
+  "platform": "ios",
+  "theme": "light",
+  "lang": "en",
+  "ts": 1.0,
+  "asm": [
+   "A12",
+   "A20"
+  ],
+  "new": [
+   "recurringRestartHint"
+  ],
+  "flows": [
+   "F9: Settings → Repeating records → Rent → Monthly → Weekly, Account → Card → Save"
+  ]
+ },
+ {
+  "path": "ios/dark/21_recurring~edit__frequency-changed",
+  "scr": "SCR-21",
+  "title": "Edit repeating record · frequency changed",
+  "state": "frequency-changed",
+  "platform": "ios",
+  "theme": "dark",
+  "lang": "en",
+  "ts": 1.0,
+  "asm": [
+   "A12",
+   "A20"
+  ],
+  "new": [
+   "recurringRestartHint"
+  ],
+  "flows": [
+   "F9: Settings → Repeating records → Rent → Monthly → Weekly, Account → Card → Save"
+  ]
+ },
+ {
+  "path": "android/light/21_recurring~edit__vi",
+  "scr": "SCR-21",
+  "title": "Edit repeating record · frequency changed",
+  "state": "vi",
+  "platform": "android",
+  "theme": "light",
+  "lang": "vi",
+  "ts": 1.0,
+  "asm": [
+   "A12",
+   "A02"
+  ],
+  "new": [
+   "recurringRestartHint"
+  ],
+  "flows": [
+   "F9: Settings → Repeating records → Rent → Monthly → Weekly, Account → Card → Save"
+  ]
+ },
+ {
+  "path": "android/light/21_recurring~edit__error",
+  "scr": "SCR-21",
+  "title": "Edit repeating record · amount error",
+  "state": "error",
+  "platform": "android",
+  "theme": "light",
+  "lang": "en",
+  "ts": 1.0,
+  "asm": [],
+  "new": [],
+  "flows": [
+   "F9: Settings → Repeating records → Rent → Monthly → Weekly, Account → Card → Save"
+  ]
+ },
+ {
+  "path": "android/dark/21_recurring~edit__error",
+  "scr": "SCR-21",
+  "title": "Edit repeating record · amount error",
+  "state": "error",
+  "platform": "android",
+  "theme": "dark",
+  "lang": "en",
+  "ts": 1.0,
+  "asm": [],
+  "new": [],
+  "flows": [
+   "F9: Settings → Repeating records → Rent → Monthly → Weekly, Account → Card → Save"
+  ]
+ },
+ {
+  "path": "ios/light/21_recurring~edit__error",
+  "scr": "SCR-21",
+  "title": "Edit repeating record · amount error",
+  "state": "error",
+  "platform": "ios",
+  "theme": "light",
+  "lang": "en",
+  "ts": 1.0,
+  "asm": [
+   "A20"
+  ],
+  "new": [],
+  "flows": [
+   "F9: Settings → Repeating records → Rent → Monthly → Weekly, Account → Card → Save"
+  ]
+ },
+ {
+  "path": "ios/dark/21_recurring~edit__error",
+  "scr": "SCR-21",
+  "title": "Edit repeating record · amount error",
+  "state": "error",
+  "platform": "ios",
+  "theme": "dark",
+  "lang": "en",
+  "ts": 1.0,
+  "asm": [
+   "A20"
+  ],
+  "new": [],
+  "flows": [
+   "F9: Settings → Repeating records → Rent → Monthly → Weekly, Account → Card → Save"
+  ]
+ },
+ {
+  "path": "android/light/21_recurring~edit__one-account",
+  "scr": "SCR-21",
+  "title": "Edit repeating record · stopped · one account",
+  "state": "one-account",
+  "platform": "android",
+  "theme": "light",
+  "lang": "en",
+  "ts": 1.0,
+  "asm": [],
+  "new": [],
+  "flows": [
+   "F9: Settings → Repeating records → Rent → Monthly → Weekly, Account → Card → Save"
+  ]
+ },
+ {
+  "path": "android/dark/21_recurring~edit__one-account",
+  "scr": "SCR-21",
+  "title": "Edit repeating record · stopped · one account",
+  "state": "one-account",
+  "platform": "android",
+  "theme": "dark",
+  "lang": "en",
+  "ts": 1.0,
+  "asm": [],
+  "new": [],
+  "flows": [
+   "F9: Settings → Repeating records → Rent → Monthly → Weekly, Account → Card → Save"
+  ]
+ },
+ {
+  "path": "ios/light/21_recurring~edit__one-account",
+  "scr": "SCR-21",
+  "title": "Edit repeating record · stopped · one account",
+  "state": "one-account",
+  "platform": "ios",
+  "theme": "light",
+  "lang": "en",
+  "ts": 1.0,
+  "asm": [
+   "A20"
+  ],
+  "new": [],
+  "flows": [
+   "F9: Settings → Repeating records → Rent → Monthly → Weekly, Account → Card → Save"
+  ]
+ },
+ {
+  "path": "ios/dark/21_recurring~edit__one-account",
+  "scr": "SCR-21",
+  "title": "Edit repeating record · stopped · one account",
+  "state": "one-account",
+  "platform": "ios",
+  "theme": "dark",
+  "lang": "en",
+  "ts": 1.0,
+  "asm": [
+   "A20"
+  ],
+  "new": [],
+  "flows": [
+   "F9: Settings → Repeating records → Rent → Monthly → Weekly, Account → Card → Save"
+  ]
+ },
+ {
+  "path": "android/light/26_settings~backup-export__off",
+  "scr": "SCR-26",
+  "title": "Export backup · switch off",
+  "state": "off",
+  "platform": "android",
+  "theme": "light",
+  "lang": "en",
+  "ts": 1.0,
+  "asm": [],
+  "new": [
+   "csvFormatEn"
+  ],
+  "flows": [
+   "F10: Export backup → Protect with password → Export → share sheet"
+  ]
+ },
+ {
+  "path": "android/dark/26_settings~backup-export__off",
+  "scr": "SCR-26",
+  "title": "Export backup · switch off",
+  "state": "off",
+  "platform": "android",
+  "theme": "dark",
+  "lang": "en",
+  "ts": 1.0,
+  "asm": [],
+  "new": [
+   "csvFormatEn"
+  ],
+  "flows": [
+   "F10: Export backup → Protect with password → Export → share sheet"
+  ]
+ },
+ {
+  "path": "ios/light/26_settings~backup-export__off",
+  "scr": "SCR-26",
+  "title": "Export backup · switch off",
+  "state": "off",
+  "platform": "ios",
+  "theme": "light",
+  "lang": "en",
+  "ts": 1.0,
+  "asm": [
+   "A20"
+  ],
+  "new": [
+   "csvFormatEn"
+  ],
+  "flows": [
+   "F10: Export backup → Protect with password → Export → share sheet"
+  ]
+ },
+ {
+  "path": "ios/dark/26_settings~backup-export__off",
+  "scr": "SCR-26",
+  "title": "Export backup · switch off",
+  "state": "off",
+  "platform": "ios",
+  "theme": "dark",
+  "lang": "en",
+  "ts": 1.0,
+  "asm": [
+   "A20"
+  ],
+  "new": [
+   "csvFormatEn"
+  ],
+  "flows": [
+   "F10: Export backup → Protect with password → Export → share sheet"
+  ]
+ },
+ {
+  "path": "android/light/26_settings~backup-export__on-empty",
+  "scr": "SCR-26",
+  "title": "Export backup · password on, empty",
+  "state": "on-empty",
+  "platform": "android",
+  "theme": "light",
+  "lang": "en",
+  "ts": 1.0,
+  "asm": [],
+  "new": [
+   "showPassword",
+   "hidePassword",
+   "csvFormatEn"
+  ],
+  "flows": [
+   "F10: Export backup → Protect with password → Export → share sheet"
+  ]
+ },
+ {
+  "path": "android/dark/26_settings~backup-export__on-empty",
+  "scr": "SCR-26",
+  "title": "Export backup · password on, empty",
+  "state": "on-empty",
+  "platform": "android",
+  "theme": "dark",
+  "lang": "en",
+  "ts": 1.0,
+  "asm": [],
+  "new": [
+   "showPassword",
+   "hidePassword",
+   "csvFormatEn"
+  ],
+  "flows": [
+   "F10: Export backup → Protect with password → Export → share sheet"
+  ]
+ },
+ {
+  "path": "ios/light/26_settings~backup-export__on-empty",
+  "scr": "SCR-26",
+  "title": "Export backup · password on, empty",
+  "state": "on-empty",
+  "platform": "ios",
+  "theme": "light",
+  "lang": "en",
+  "ts": 1.0,
+  "asm": [
+   "A20"
+  ],
+  "new": [
+   "showPassword",
+   "hidePassword",
+   "csvFormatEn"
+  ],
+  "flows": [
+   "F10: Export backup → Protect with password → Export → share sheet"
+  ]
+ },
+ {
+  "path": "ios/dark/26_settings~backup-export__on-empty",
+  "scr": "SCR-26",
+  "title": "Export backup · password on, empty",
+  "state": "on-empty",
+  "platform": "ios",
+  "theme": "dark",
+  "lang": "en",
+  "ts": 1.0,
+  "asm": [
+   "A20"
+  ],
+  "new": [
+   "showPassword",
+   "hidePassword",
+   "csvFormatEn"
+  ],
+  "flows": [
+   "F10: Export backup → Protect with password → Export → share sheet"
+  ]
+ },
+ {
+  "path": "android/light/26_settings~backup-export__vi",
+  "scr": "SCR-26",
+  "title": "Export backup · password on, empty",
+  "state": "vi",
+  "platform": "android",
+  "theme": "light",
+  "lang": "vi",
+  "ts": 1.0,
+  "asm": [
+   "A02"
+  ],
+  "new": [
+   "showPassword",
+   "hidePassword",
+   "csvFormatVi"
+  ],
+  "flows": [
+   "F10: Export backup → Protect with password → Export → share sheet"
+  ]
+ },
+ {
+  "path": "android/light/26_settings~backup-export__error",
+  "scr": "SCR-26",
+  "title": "Export backup · errors",
+  "state": "error",
+  "platform": "android",
+  "theme": "light",
+  "lang": "en",
+  "ts": 1.0,
+  "asm": [],
+  "new": [
+   "showPassword",
+   "hidePassword",
+   "csvFormatEn"
+  ],
+  "flows": [
+   "F10: Export backup → Protect with password → Export → share sheet"
+  ]
+ },
+ {
+  "path": "android/dark/26_settings~backup-export__error",
+  "scr": "SCR-26",
+  "title": "Export backup · errors",
+  "state": "error",
+  "platform": "android",
+  "theme": "dark",
+  "lang": "en",
+  "ts": 1.0,
+  "asm": [],
+  "new": [
+   "showPassword",
+   "hidePassword",
+   "csvFormatEn"
+  ],
+  "flows": [
+   "F10: Export backup → Protect with password → Export → share sheet"
+  ]
+ },
+ {
+  "path": "ios/light/26_settings~backup-export__error",
+  "scr": "SCR-26",
+  "title": "Export backup · errors",
+  "state": "error",
+  "platform": "ios",
+  "theme": "light",
+  "lang": "en",
+  "ts": 1.0,
+  "asm": [
+   "A20"
+  ],
+  "new": [
+   "showPassword",
+   "hidePassword",
+   "csvFormatEn"
+  ],
+  "flows": [
+   "F10: Export backup → Protect with password → Export → share sheet"
+  ]
+ },
+ {
+  "path": "ios/dark/26_settings~backup-export__error",
+  "scr": "SCR-26",
+  "title": "Export backup · errors",
+  "state": "error",
+  "platform": "ios",
+  "theme": "dark",
+  "lang": "en",
+  "ts": 1.0,
+  "asm": [
+   "A20"
+  ],
+  "new": [
+   "showPassword",
+   "hidePassword",
+   "csvFormatEn"
+  ],
+  "flows": [
+   "F10: Export backup → Protect with password → Export → share sheet"
+  ]
+ },
+ {
+  "path": "android/light/26_settings~backup-export__working",
+  "scr": "SCR-26",
+  "title": "Export backup · working",
+  "state": "working",
+  "platform": "android",
+  "theme": "light",
+  "lang": "en",
+  "ts": 1.0,
+  "asm": [
+   "A13"
+  ],
+  "new": [
+   "showPassword",
+   "hidePassword",
+   "csvFormatEn"
+  ],
+  "flows": [
+   "F10: Export backup → Protect with password → Export → share sheet"
+  ]
+ },
+ {
+  "path": "android/dark/26_settings~backup-export__working",
+  "scr": "SCR-26",
+  "title": "Export backup · working",
+  "state": "working",
+  "platform": "android",
+  "theme": "dark",
+  "lang": "en",
+  "ts": 1.0,
+  "asm": [
+   "A13"
+  ],
+  "new": [
+   "showPassword",
+   "hidePassword",
+   "csvFormatEn"
+  ],
+  "flows": [
+   "F10: Export backup → Protect with password → Export → share sheet"
+  ]
+ },
+ {
+  "path": "ios/light/26_settings~backup-export__working",
+  "scr": "SCR-26",
+  "title": "Export backup · working",
+  "state": "working",
+  "platform": "ios",
+  "theme": "light",
+  "lang": "en",
+  "ts": 1.0,
+  "asm": [
+   "A13",
+   "A20"
+  ],
+  "new": [
+   "showPassword",
+   "hidePassword",
+   "csvFormatEn"
+  ],
+  "flows": [
+   "F10: Export backup → Protect with password → Export → share sheet"
+  ]
+ },
+ {
+  "path": "ios/dark/26_settings~backup-export__working",
+  "scr": "SCR-26",
+  "title": "Export backup · working",
+  "state": "working",
+  "platform": "ios",
+  "theme": "dark",
+  "lang": "en",
+  "ts": 1.0,
+  "asm": [
+   "A13",
+   "A20"
+  ],
+  "new": [
+   "showPassword",
+   "hidePassword",
+   "csvFormatEn"
+  ],
+  "flows": [
+   "F10: Export backup → Protect with password → Export → share sheet"
+  ]
+ },
+ {
+  "path": "android/light/26_settings~backup-export__text-200",
+  "scr": "SCR-26",
+  "title": "Export backup · working",
+  "state": "text-200",
+  "platform": "android",
+  "theme": "light",
+  "lang": "en",
+  "ts": 2.0,
+  "asm": [
+   "A13",
+   "A02"
+  ],
+  "new": [
+   "showPassword",
+   "hidePassword",
+   "csvFormatEn"
+  ],
+  "flows": [
+   "F10: Export backup → Protect with password → Export → share sheet"
+  ]
+ },
+ {
+  "path": "android/light/27_settings~restore-password__default",
+  "scr": "SCR-27",
+  "title": "Restore · password",
+  "state": "default",
+  "platform": "android",
+  "theme": "light",
+  "lang": "en",
+  "ts": 1.0,
+  "asm": [],
+  "new": [
+   "csvFormatEn",
+   "showPassword",
+   "hidePassword"
+  ],
+  "flows": [
+   "F10: Restore → file picker → this dialog → Confirm → “Data restored”"
+  ]
+ },
+ {
+  "path": "android/dark/27_settings~restore-password__default",
+  "scr": "SCR-27",
+  "title": "Restore · password",
+  "state": "default",
+  "platform": "android",
+  "theme": "dark",
+  "lang": "en",
+  "ts": 1.0,
+  "asm": [],
+  "new": [
+   "csvFormatEn",
+   "showPassword",
+   "hidePassword"
+  ],
+  "flows": [
+   "F10: Restore → file picker → this dialog → Confirm → “Data restored”"
+  ]
+ },
+ {
+  "path": "ios/light/27_settings~restore-password__default",
+  "scr": "SCR-27",
+  "title": "Restore · password",
+  "state": "default",
+  "platform": "ios",
+  "theme": "light",
+  "lang": "en",
+  "ts": 1.0,
+  "asm": [
+   "A20"
+  ],
+  "new": [
+   "csvFormatEn",
+   "showPassword",
+   "hidePassword"
+  ],
+  "flows": [
+   "F10: Restore → file picker → this dialog → Confirm → “Data restored”"
+  ]
+ },
+ {
+  "path": "ios/dark/27_settings~restore-password__default",
+  "scr": "SCR-27",
+  "title": "Restore · password",
+  "state": "default",
+  "platform": "ios",
+  "theme": "dark",
+  "lang": "en",
+  "ts": 1.0,
+  "asm": [
+   "A20"
+  ],
+  "new": [
+   "csvFormatEn",
+   "showPassword",
+   "hidePassword"
+  ],
+  "flows": [
+   "F10: Restore → file picker → this dialog → Confirm → “Data restored”"
+  ]
+ },
+ {
+  "path": "android/light/27_settings~restore-password__error",
+  "scr": "SCR-27",
+  "title": "Restore · wrong password",
+  "state": "error",
+  "platform": "android",
+  "theme": "light",
+  "lang": "en",
+  "ts": 1.0,
+  "asm": [],
+  "new": [
+   "csvFormatEn",
+   "showPassword",
+   "hidePassword"
+  ],
+  "flows": [
+   "F10: Restore → file picker → this dialog → Confirm → “Data restored”"
+  ]
+ },
+ {
+  "path": "android/dark/27_settings~restore-password__error",
+  "scr": "SCR-27",
+  "title": "Restore · wrong password",
+  "state": "error",
+  "platform": "android",
+  "theme": "dark",
+  "lang": "en",
+  "ts": 1.0,
+  "asm": [],
+  "new": [
+   "csvFormatEn",
+   "showPassword",
+   "hidePassword"
+  ],
+  "flows": [
+   "F10: Restore → file picker → this dialog → Confirm → “Data restored”"
+  ]
+ },
+ {
+  "path": "ios/light/27_settings~restore-password__error",
+  "scr": "SCR-27",
+  "title": "Restore · wrong password",
+  "state": "error",
+  "platform": "ios",
+  "theme": "light",
+  "lang": "en",
+  "ts": 1.0,
+  "asm": [
+   "A20"
+  ],
+  "new": [
+   "csvFormatEn",
+   "showPassword",
+   "hidePassword"
+  ],
+  "flows": [
+   "F10: Restore → file picker → this dialog → Confirm → “Data restored”"
+  ]
+ },
+ {
+  "path": "ios/dark/27_settings~restore-password__error",
+  "scr": "SCR-27",
+  "title": "Restore · wrong password",
+  "state": "error",
+  "platform": "ios",
+  "theme": "dark",
+  "lang": "en",
+  "ts": 1.0,
+  "asm": [
+   "A20"
+  ],
+  "new": [
+   "csvFormatEn",
+   "showPassword",
+   "hidePassword"
+  ],
+  "flows": [
+   "F10: Restore → file picker → this dialog → Confirm → “Data restored”"
+  ]
+ },
+ {
+  "path": "android/light/27_settings~restore-password__working",
+  "scr": "SCR-27",
+  "title": "Restore · working",
+  "state": "working",
+  "platform": "android",
+  "theme": "light",
+  "lang": "en",
+  "ts": 1.0,
+  "asm": [],
+  "new": [
+   "csvFormatEn",
+   "showPassword",
+   "hidePassword"
+  ],
+  "flows": [
+   "F10: Restore → file picker → this dialog → Confirm → “Data restored”"
+  ]
+ },
+ {
+  "path": "android/dark/27_settings~restore-password__working",
+  "scr": "SCR-27",
+  "title": "Restore · working",
+  "state": "working",
+  "platform": "android",
+  "theme": "dark",
+  "lang": "en",
+  "ts": 1.0,
+  "asm": [],
+  "new": [
+   "csvFormatEn",
+   "showPassword",
+   "hidePassword"
+  ],
+  "flows": [
+   "F10: Restore → file picker → this dialog → Confirm → “Data restored”"
+  ]
+ },
+ {
+  "path": "ios/light/27_settings~restore-password__working",
+  "scr": "SCR-27",
+  "title": "Restore · working",
+  "state": "working",
+  "platform": "ios",
+  "theme": "light",
+  "lang": "en",
+  "ts": 1.0,
+  "asm": [
+   "A20"
+  ],
+  "new": [
+   "csvFormatEn",
+   "showPassword",
+   "hidePassword"
+  ],
+  "flows": [
+   "F10: Restore → file picker → this dialog → Confirm → “Data restored”"
+  ]
+ },
+ {
+  "path": "ios/dark/27_settings~restore-password__working",
+  "scr": "SCR-27",
+  "title": "Restore · working",
+  "state": "working",
+  "platform": "ios",
+  "theme": "dark",
+  "lang": "en",
+  "ts": 1.0,
+  "asm": [
+   "A20"
+  ],
+  "new": [
+   "csvFormatEn",
+   "showPassword",
+   "hidePassword"
+  ],
+  "flows": [
+   "F10: Restore → file picker → this dialog → Confirm → “Data restored”"
+  ]
+ },
+ {
+  "path": "android/light/27_settings~restore__confirm",
+  "scr": "SCR-27",
+  "title": "Restore · confirm with switches note",
+  "state": "confirm",
+  "platform": "android",
+  "theme": "light",
+  "lang": "en",
+  "ts": 1.0,
+  "asm": [],
+  "new": [
+   "csvFormatEn",
+   "restoreSwitchesNote"
+  ],
+  "flows": []
+ },
+ {
+  "path": "android/dark/27_settings~restore__confirm",
+  "scr": "SCR-27",
+  "title": "Restore · confirm with switches note",
+  "state": "confirm",
+  "platform": "android",
+  "theme": "dark",
+  "lang": "en",
+  "ts": 1.0,
+  "asm": [],
+  "new": [
+   "csvFormatEn",
+   "restoreSwitchesNote"
+  ],
+  "flows": []
+ },
+ {
+  "path": "ios/light/27_settings~restore__confirm",
+  "scr": "SCR-27",
+  "title": "Restore · confirm with switches note",
+  "state": "confirm",
+  "platform": "ios",
+  "theme": "light",
+  "lang": "en",
+  "ts": 1.0,
+  "asm": [
+   "A20"
+  ],
+  "new": [
+   "csvFormatEn",
+   "restoreSwitchesNoteIos"
+  ],
+  "flows": []
+ },
+ {
+  "path": "ios/dark/27_settings~restore__confirm",
+  "scr": "SCR-27",
+  "title": "Restore · confirm with switches note",
+  "state": "confirm",
+  "platform": "ios",
+  "theme": "dark",
+  "lang": "en",
+  "ts": 1.0,
+  "asm": [
+   "A20"
+  ],
+  "new": [
+   "csvFormatEn",
+   "restoreSwitchesNoteIos"
+  ],
+  "flows": []
+ },
+ {
+  "path": "android/light/30_settings~reminder__explain",
+  "scr": "SCR-30",
+  "title": "Reminder · explain dialog",
+  "state": "explain",
+  "platform": "android",
+  "theme": "light",
+  "lang": "en",
+  "ts": 1.0,
+  "asm": [],
+  "new": [
+   "csvFormatEn"
+  ],
+  "flows": []
+ },
+ {
+  "path": "android/dark/30_settings~reminder__explain",
+  "scr": "SCR-30",
+  "title": "Reminder · explain dialog",
+  "state": "explain",
+  "platform": "android",
+  "theme": "dark",
+  "lang": "en",
+  "ts": 1.0,
+  "asm": [],
+  "new": [
+   "csvFormatEn"
+  ],
+  "flows": []
+ },
+ {
+  "path": "ios/light/30_settings~reminder__explain",
+  "scr": "SCR-30",
+  "title": "Reminder · explain dialog",
+  "state": "explain",
+  "platform": "ios",
+  "theme": "light",
+  "lang": "en",
+  "ts": 1.0,
+  "asm": [
+   "A20"
+  ],
+  "new": [
+   "csvFormatEn"
+  ],
+  "flows": []
+ },
+ {
+  "path": "ios/dark/30_settings~reminder__explain",
+  "scr": "SCR-30",
+  "title": "Reminder · explain dialog",
+  "state": "explain",
+  "platform": "ios",
+  "theme": "dark",
+  "lang": "en",
+  "ts": 1.0,
+  "asm": [
+   "A20"
+  ],
+  "new": [
+   "csvFormatEn"
+  ],
+  "flows": []
+ },
+ {
+  "path": "android/light/30_settings~reminder__vi",
+  "scr": "SCR-30",
+  "title": "Reminder · explain dialog",
+  "state": "vi",
+  "platform": "android",
+  "theme": "light",
+  "lang": "vi",
+  "ts": 1.0,
+  "asm": [
+   "A02"
+  ],
+  "new": [
+   "csvFormatVi"
+  ],
+  "flows": []
+ },
+ {
+  "path": "android/light/30_settings~reminder__permission",
+  "scr": "SCR-30",
+  "title": "Reminder · OS permission",
+  "state": "permission",
+  "platform": "android",
+  "theme": "light",
+  "lang": "en",
+  "ts": 1.0,
+  "asm": [],
+  "new": [
+   "csvFormatEn"
+  ],
+  "flows": []
+ },
+ {
+  "path": "android/dark/30_settings~reminder__permission",
+  "scr": "SCR-30",
+  "title": "Reminder · OS permission",
+  "state": "permission",
+  "platform": "android",
+  "theme": "dark",
+  "lang": "en",
+  "ts": 1.0,
+  "asm": [],
+  "new": [
+   "csvFormatEn"
+  ],
+  "flows": []
+ },
+ {
+  "path": "ios/light/30_settings~reminder__permission",
+  "scr": "SCR-30",
+  "title": "Reminder · OS permission",
+  "state": "permission",
+  "platform": "ios",
+  "theme": "light",
+  "lang": "en",
+  "ts": 1.0,
+  "asm": [
+   "A20"
+  ],
+  "new": [
+   "csvFormatEn"
+  ],
+  "flows": []
+ },
+ {
+  "path": "ios/dark/30_settings~reminder__permission",
+  "scr": "SCR-30",
+  "title": "Reminder · OS permission",
+  "state": "permission",
+  "platform": "ios",
+  "theme": "dark",
+  "lang": "en",
+  "ts": 1.0,
+  "asm": [
+   "A20"
+  ],
+  "new": [
+   "csvFormatEn"
+  ],
+  "flows": []
+ },
+ {
+  "path": "android/light/30_settings~reminder__denied",
+  "scr": "SCR-30",
+  "title": "Reminder · denied",
+  "state": "denied",
+  "platform": "android",
+  "theme": "light",
+  "lang": "en",
+  "ts": 1.0,
+  "asm": [],
+  "new": [
+   "csvFormatEn"
+  ],
+  "flows": [
+   "F12: switch → explain → Continue → OS prompt → Deny → this snackbar"
+  ]
+ },
+ {
+  "path": "android/dark/30_settings~reminder__denied",
+  "scr": "SCR-30",
+  "title": "Reminder · denied",
+  "state": "denied",
+  "platform": "android",
+  "theme": "dark",
+  "lang": "en",
+  "ts": 1.0,
+  "asm": [],
+  "new": [
+   "csvFormatEn"
+  ],
+  "flows": [
+   "F12: switch → explain → Continue → OS prompt → Deny → this snackbar"
+  ]
+ },
+ {
+  "path": "ios/light/30_settings~reminder__denied",
+  "scr": "SCR-30",
+  "title": "Reminder · denied",
+  "state": "denied",
+  "platform": "ios",
+  "theme": "light",
+  "lang": "en",
+  "ts": 1.0,
+  "asm": [
+   "A20"
+  ],
+  "new": [
+   "csvFormatEn"
+  ],
+  "flows": [
+   "F12: switch → explain → Continue → OS prompt → Deny → this snackbar"
+  ]
+ },
+ {
+  "path": "ios/dark/30_settings~reminder__denied",
+  "scr": "SCR-30",
+  "title": "Reminder · denied",
+  "state": "denied",
+  "platform": "ios",
+  "theme": "dark",
+  "lang": "en",
+  "ts": 1.0,
+  "asm": [
+   "A20"
+  ],
+  "new": [
+   "csvFormatEn"
+  ],
+  "flows": [
+   "F12: switch → explain → Continue → OS prompt → Deny → this snackbar"
+  ]
+ },
+ {
+  "path": "android/light/30_settings~reminder__denied-vi",
+  "scr": "SCR-30",
+  "title": "Reminder · denied",
+  "state": "denied-vi",
+  "platform": "android",
+  "theme": "light",
+  "lang": "vi",
+  "ts": 1.0,
+  "asm": [
+   "A02"
+  ],
+  "new": [
+   "csvFormatVi"
+  ],
+  "flows": [
+   "F12: switch → explain → Continue → OS prompt → Deny → this snackbar"
+  ]
+ },
+ {
+  "path": "android/light/30_settings~reminder__time-picker",
+  "scr": "SCR-30",
+  "title": "Reminder · time picker",
+  "state": "time-picker",
+  "platform": "android",
+  "theme": "light",
+  "lang": "en",
+  "ts": 1.0,
+  "asm": [
+   "A14"
+  ],
+  "new": [
+   "csvFormatEn"
+  ],
+  "flows": []
+ },
+ {
+  "path": "android/dark/30_settings~reminder__time-picker",
+  "scr": "SCR-30",
+  "title": "Reminder · time picker",
+  "state": "time-picker",
+  "platform": "android",
+  "theme": "dark",
+  "lang": "en",
+  "ts": 1.0,
+  "asm": [
+   "A14"
+  ],
+  "new": [
+   "csvFormatEn"
+  ],
+  "flows": []
+ },
+ {
+  "path": "ios/light/30_settings~reminder__time-picker",
+  "scr": "SCR-30",
+  "title": "Reminder · time picker",
+  "state": "time-picker",
+  "platform": "ios",
+  "theme": "light",
+  "lang": "en",
+  "ts": 1.0,
+  "asm": [
+   "A14",
+   "A20"
+  ],
+  "new": [
+   "csvFormatEn"
+  ],
+  "flows": []
+ },
+ {
+  "path": "ios/dark/30_settings~reminder__time-picker",
+  "scr": "SCR-30",
+  "title": "Reminder · time picker",
+  "state": "time-picker",
+  "platform": "ios",
+  "theme": "dark",
+  "lang": "en",
+  "ts": 1.0,
+  "asm": [
+   "A14",
+   "A20"
+  ],
+  "new": [
+   "csvFormatEn"
+  ],
+  "flows": []
+ },
+ {
+  "path": "android/light/30_settings~reminder__time-changed",
+  "scr": "SCR-30",
+  "title": "Reminder · time changed",
+  "state": "time-changed",
+  "platform": "android",
+  "theme": "light",
+  "lang": "en",
+  "ts": 1.0,
+  "asm": [],
+  "new": [
+   "csvFormatEn"
+  ],
+  "flows": [
+   "F12: Reminder time → picker → 21:30"
+  ]
+ },
+ {
+  "path": "android/dark/30_settings~reminder__time-changed",
+  "scr": "SCR-30",
+  "title": "Reminder · time changed",
+  "state": "time-changed",
+  "platform": "android",
+  "theme": "dark",
+  "lang": "en",
+  "ts": 1.0,
+  "asm": [],
+  "new": [
+   "csvFormatEn"
+  ],
+  "flows": [
+   "F12: Reminder time → picker → 21:30"
+  ]
+ },
+ {
+  "path": "ios/light/30_settings~reminder__time-changed",
+  "scr": "SCR-30",
+  "title": "Reminder · time changed",
+  "state": "time-changed",
+  "platform": "ios",
+  "theme": "light",
+  "lang": "en",
+  "ts": 1.0,
+  "asm": [
+   "A20"
+  ],
+  "new": [
+   "csvFormatEn"
+  ],
+  "flows": [
+   "F12: Reminder time → picker → 21:30"
+  ]
+ },
+ {
+  "path": "ios/dark/30_settings~reminder__time-changed",
+  "scr": "SCR-30",
+  "title": "Reminder · time changed",
+  "state": "time-changed",
+  "platform": "ios",
+  "theme": "dark",
+  "lang": "en",
+  "ts": 1.0,
+  "asm": [
+   "A20"
+  ],
+  "new": [
+   "csvFormatEn"
+  ],
+  "flows": [
+   "F12: Reminder time → picker → 21:30"
+  ]
+ },
+ {
+  "path": "android/light/31_settings~auto-backup__off",
+  "scr": "SCR-31",
+  "title": "Automatic backup · off",
+  "state": "off",
+  "platform": "android",
+  "theme": "light",
+  "lang": "en",
+  "ts": 1.0,
+  "asm": [
+   "A03"
+  ],
+  "new": [
+   "csvFormatEn"
+  ],
+  "flows": []
+ },
+ {
+  "path": "android/dark/31_settings~auto-backup__off",
+  "scr": "SCR-31",
+  "title": "Automatic backup · off",
+  "state": "off",
+  "platform": "android",
+  "theme": "dark",
+  "lang": "en",
+  "ts": 1.0,
+  "asm": [
+   "A03"
+  ],
+  "new": [
+   "csvFormatEn"
+  ],
+  "flows": []
+ },
+ {
+  "path": "android/light/31_settings~auto-backup__picker",
+  "scr": "SCR-31",
+  "title": "Automatic backup · picker",
+  "state": "picker",
+  "platform": "android",
+  "theme": "light",
+  "lang": "en",
+  "ts": 1.0,
+  "asm": [
+   "A03"
+  ],
+  "new": [
+   "csvFormatEn"
+  ],
+  "flows": [
+   "F11: switch → this picker (Drive) → password dialog"
+  ]
+ },
+ {
+  "path": "android/dark/31_settings~auto-backup__picker",
+  "scr": "SCR-31",
+  "title": "Automatic backup · picker",
+  "state": "picker",
+  "platform": "android",
+  "theme": "dark",
+  "lang": "en",
+  "ts": 1.0,
+  "asm": [
+   "A03"
+  ],
+  "new": [
+   "csvFormatEn"
+  ],
+  "flows": [
+   "F11: switch → this picker (Drive) → password dialog"
+  ]
+ },
+ {
+  "path": "android/light/31_settings~auto-backup__never-run",
+  "scr": "SCR-31",
+  "title": "Automatic backup · never run",
+  "state": "never-run",
+  "platform": "android",
+  "theme": "light",
+  "lang": "en",
+  "ts": 1.0,
+  "asm": [
+   "A03"
+  ],
+  "new": [
+   "csvFormatEn"
+  ],
+  "flows": []
+ },
+ {
+  "path": "android/dark/31_settings~auto-backup__never-run",
+  "scr": "SCR-31",
+  "title": "Automatic backup · never run",
+  "state": "never-run",
+  "platform": "android",
+  "theme": "dark",
+  "lang": "en",
+  "ts": 1.0,
+  "asm": [
+   "A03"
+  ],
+  "new": [
+   "csvFormatEn"
+  ],
+  "flows": []
+ },
+ {
+  "path": "android/light/31_settings~auto-backup__running",
+  "scr": "SCR-31",
+  "title": "Automatic backup · running",
+  "state": "running",
+  "platform": "android",
+  "theme": "light",
+  "lang": "en",
+  "ts": 1.0,
+  "asm": [
+   "A03"
+  ],
+  "new": [
+   "csvFormatEn"
+  ],
+  "flows": []
+ },
+ {
+  "path": "android/dark/31_settings~auto-backup__running",
+  "scr": "SCR-31",
+  "title": "Automatic backup · running",
+  "state": "running",
+  "platform": "android",
+  "theme": "dark",
+  "lang": "en",
+  "ts": 1.0,
+  "asm": [
+   "A03"
+  ],
+  "new": [
+   "csvFormatEn"
+  ],
+  "flows": []
+ },
+ {
+  "path": "android/light/31_settings~auto-backup__ok",
+  "scr": "SCR-31",
+  "title": "Automatic backup · ok",
+  "state": "ok",
+  "platform": "android",
+  "theme": "light",
+  "lang": "en",
+  "ts": 1.0,
+  "asm": [
+   "A03"
+  ],
+  "new": [
+   "csvFormatEn"
+  ],
+  "flows": []
+ },
+ {
+  "path": "android/dark/31_settings~auto-backup__ok",
+  "scr": "SCR-31",
+  "title": "Automatic backup · ok",
+  "state": "ok",
+  "platform": "android",
+  "theme": "dark",
+  "lang": "en",
+  "ts": 1.0,
+  "asm": [
+   "A03"
+  ],
+  "new": [
+   "csvFormatEn"
+  ],
+  "flows": []
+ },
+ {
+  "path": "android/light/31_settings~auto-backup__folder-error",
+  "scr": "SCR-31",
+  "title": "Automatic backup · folder error",
+  "state": "folder-error",
+  "platform": "android",
+  "theme": "light",
+  "lang": "en",
+  "ts": 1.0,
+  "asm": [
+   "A03"
+  ],
+  "new": [
+   "csvFormatEn"
+  ],
+  "flows": [
+   "F11: revoke access → this error → Choose folder again"
+  ]
+ },
+ {
+  "path": "android/dark/31_settings~auto-backup__folder-error",
+  "scr": "SCR-31",
+  "title": "Automatic backup · folder error",
+  "state": "folder-error",
+  "platform": "android",
+  "theme": "dark",
+  "lang": "en",
+  "ts": 1.0,
+  "asm": [
+   "A03"
+  ],
+  "new": [
+   "csvFormatEn"
+  ],
+  "flows": [
+   "F11: revoke access → this error → Choose folder again"
+  ]
+ },
+ {
+  "path": "android/light/31_settings~auto-backup__vi",
+  "scr": "SCR-31",
+  "title": "Automatic backup · folder error",
+  "state": "vi",
+  "platform": "android",
+  "theme": "light",
+  "lang": "vi",
+  "ts": 1.0,
+  "asm": [
+   "A02",
+   "A03"
+  ],
+  "new": [
+   "csvFormatVi"
+  ],
+  "flows": [
+   "F11: revoke access → this error → Choose folder again"
+  ]
+ },
+ {
+  "path": "android/light/31_settings~auto-backup__text-200",
+  "scr": "SCR-31",
+  "title": "Automatic backup · folder error",
+  "state": "text-200",
+  "platform": "android",
+  "theme": "light",
+  "lang": "en",
+  "ts": 2.0,
+  "asm": [
+   "A02",
+   "A03"
+  ],
+  "new": [
+   "csvFormatEn"
+  ],
+  "flows": [
+   "F11: revoke access → this error → Choose folder again"
+  ]
+ },
+ {
+  "path": "android/light/31_settings~auto-backup__other-error",
+  "scr": "SCR-31",
+  "title": "Automatic backup · other error",
+  "state": "other-error",
+  "platform": "android",
+  "theme": "light",
+  "lang": "en",
+  "ts": 1.0,
+  "asm": [
+   "A03"
+  ],
+  "new": [
+   "csvFormatEn"
+  ],
+  "flows": []
+ },
+ {
+  "path": "android/dark/31_settings~auto-backup__other-error",
+  "scr": "SCR-31",
+  "title": "Automatic backup · other error",
+  "state": "other-error",
+  "platform": "android",
+  "theme": "dark",
+  "lang": "en",
+  "ts": 1.0,
+  "asm": [
+   "A03"
+  ],
+  "new": [
+   "csvFormatEn"
+  ],
+  "flows": []
+ },
+ {
+  "path": "android/light/31_settings~auto-backup__busy",
+  "scr": "SCR-31",
+  "title": "Automatic backup · busy",
+  "state": "busy",
+  "platform": "android",
+  "theme": "light",
+  "lang": "en",
+  "ts": 1.0,
+  "asm": [
+   "A03"
+  ],
+  "new": [
+   "csvFormatEn"
+  ],
+  "flows": []
+ },
+ {
+  "path": "android/dark/31_settings~auto-backup__busy",
+  "scr": "SCR-31",
+  "title": "Automatic backup · busy",
+  "state": "busy",
+  "platform": "android",
+  "theme": "dark",
+  "lang": "en",
+  "ts": 1.0,
+  "asm": [
+   "A03"
+  ],
+  "new": [
+   "csvFormatEn"
+  ],
+  "flows": []
+ },
+ {
+  "path": "android/light/31_settings~auto-backup__turned-off",
+  "scr": "SCR-31",
+  "title": "Automatic backup · turned off",
+  "state": "turned-off",
+  "platform": "android",
+  "theme": "light",
+  "lang": "en",
+  "ts": 1.0,
+  "asm": [
+   "A03"
+  ],
+  "new": [
+   "csvFormatEn"
+  ],
+  "flows": []
+ },
+ {
+  "path": "android/dark/31_settings~auto-backup__turned-off",
+  "scr": "SCR-31",
+  "title": "Automatic backup · turned off",
+  "state": "turned-off",
+  "platform": "android",
+  "theme": "dark",
+  "lang": "en",
+  "ts": 1.0,
+  "asm": [
+   "A03"
+  ],
+  "new": [
+   "csvFormatEn"
+  ],
+  "flows": []
+ },
+ {
+  "path": "android/light/31_settings~auto-backup-password__default",
+  "scr": "SCR-31",
+  "title": "Automatic backup password",
+  "state": "default",
+  "platform": "android",
+  "theme": "light",
+  "lang": "en",
+  "ts": 1.0,
+  "asm": [],
+  "new": [
+   "csvFormatEn",
+   "showPassword",
+   "hidePassword"
+  ],
+  "flows": []
+ },
+ {
+  "path": "android/dark/31_settings~auto-backup-password__default",
+  "scr": "SCR-31",
+  "title": "Automatic backup password",
+  "state": "default",
+  "platform": "android",
+  "theme": "dark",
+  "lang": "en",
+  "ts": 1.0,
+  "asm": [],
+  "new": [
+   "csvFormatEn",
+   "showPassword",
+   "hidePassword"
+  ],
+  "flows": []
+ },
+ {
+  "path": "android/light/31_settings~auto-backup-password__vi",
+  "scr": "SCR-31",
+  "title": "Automatic backup password",
+  "state": "vi",
+  "platform": "android",
+  "theme": "light",
+  "lang": "vi",
+  "ts": 1.0,
+  "asm": [
+   "A02"
+  ],
+  "new": [
+   "csvFormatVi",
+   "showPassword",
+   "hidePassword"
+  ],
+  "flows": []
+ },
+ {
+  "path": "android/light/31_settings~auto-backup-password__error",
+  "scr": "SCR-31",
+  "title": "Automatic backup password · errors",
+  "state": "error",
+  "platform": "android",
+  "theme": "light",
+  "lang": "en",
+  "ts": 1.0,
+  "asm": [],
+  "new": [
+   "csvFormatEn",
+   "showPassword",
+   "hidePassword"
+  ],
+  "flows": []
+ },
+ {
+  "path": "android/dark/31_settings~auto-backup-password__error",
+  "scr": "SCR-31",
+  "title": "Automatic backup password · errors",
+  "state": "error",
+  "platform": "android",
+  "theme": "dark",
+  "lang": "en",
+  "ts": 1.0,
+  "asm": [],
+  "new": [
+   "csvFormatEn",
+   "showPassword",
+   "hidePassword"
+  ],
+  "flows": []
+ },
+ {
+  "path": "android/light/EXT01_ext-widget__default",
+  "scr": "EXT-01",
+  "title": "Home-screen widget · default",
+  "state": "default",
+  "platform": "android",
+  "theme": "light",
+  "lang": "en",
+  "ts": 1.0,
+  "asm": [
+   "A15",
+   "A19"
+  ],
+  "new": [],
+  "flows": [
+   "F2: widget Expense → (Lock → PIN) → New expense → amount → Choose category → saved → Home"
+  ]
+ },
+ {
+  "path": "android/dark/EXT01_ext-widget__default",
+  "scr": "EXT-01",
+  "title": "Home-screen widget · default",
+  "state": "default",
+  "platform": "android",
+  "theme": "dark",
+  "lang": "en",
+  "ts": 1.0,
+  "asm": [
+   "A15",
+   "A19"
+  ],
+  "new": [],
+  "flows": [
+   "F2: widget Expense → (Lock → PIN) → New expense → amount → Choose category → saved → Home"
+  ]
+ },
+ {
+  "path": "android/light/EXT01_ext-widget__spent",
+  "scr": "EXT-01",
+  "title": "Home-screen widget · spent",
+  "state": "spent",
+  "platform": "android",
+  "theme": "light",
+  "lang": "en",
+  "ts": 1.0,
+  "asm": [
+   "A15",
+   "A19"
+  ],
+  "new": [],
+  "flows": [
+   "F2: widget Expense → (Lock → PIN) → New expense → amount → Choose category → saved → Home"
+  ]
+ },
+ {
+  "path": "android/dark/EXT01_ext-widget__spent",
+  "scr": "EXT-01",
+  "title": "Home-screen widget · spent",
+  "state": "spent",
+  "platform": "android",
+  "theme": "dark",
+  "lang": "en",
+  "ts": 1.0,
+  "asm": [
+   "A15",
+   "A19"
+  ],
+  "new": [],
+  "flows": [
+   "F2: widget Expense → (Lock → PIN) → New expense → amount → Choose category → saved → Home"
+  ]
+ },
+ {
+  "path": "android/light/EXT01_ext-widget__budget",
+  "scr": "EXT-01",
+  "title": "Home-screen widget · budget",
+  "state": "budget",
+  "platform": "android",
+  "theme": "light",
+  "lang": "en",
+  "ts": 1.0,
+  "asm": [
+   "A15",
+   "A19"
+  ],
+  "new": [],
+  "flows": [
+   "F2: widget Expense → (Lock → PIN) → New expense → amount → Choose category → saved → Home"
+  ]
+ },
+ {
+  "path": "android/dark/EXT01_ext-widget__budget",
+  "scr": "EXT-01",
+  "title": "Home-screen widget · budget",
+  "state": "budget",
+  "platform": "android",
+  "theme": "dark",
+  "lang": "en",
+  "ts": 1.0,
+  "asm": [
+   "A15",
+   "A19"
+  ],
+  "new": [],
+  "flows": [
+   "F2: widget Expense → (Lock → PIN) → New expense → amount → Choose category → saved → Home"
+  ]
+ },
+ {
+  "path": "android/light/EXT01_ext-widget__vi",
+  "scr": "EXT-01",
+  "title": "Home-screen widget · budget",
+  "state": "vi",
+  "platform": "android",
+  "theme": "light",
+  "lang": "vi",
+  "ts": 1.0,
+  "asm": [
+   "A15",
+   "A19",
+   "A02"
+  ],
+  "new": [],
+  "flows": [
+   "F2: widget Expense → (Lock → PIN) → New expense → amount → Choose category → saved → Home"
+  ]
+ },
+ {
+  "path": "android/light/EXT01_ext-widget__locked",
+  "scr": "EXT-01",
+  "title": "Home-screen widget · locked",
+  "state": "locked",
+  "platform": "android",
+  "theme": "light",
+  "lang": "en",
+  "ts": 1.0,
+  "asm": [
+   "A15",
+   "A19"
+  ],
+  "new": [],
+  "flows": [
+   "F2: widget Expense → (Lock → PIN) → New expense → amount → Choose category → saved → Home"
+  ]
+ },
+ {
+  "path": "android/dark/EXT01_ext-widget__locked",
+  "scr": "EXT-01",
+  "title": "Home-screen widget · locked",
+  "state": "locked",
+  "platform": "android",
+  "theme": "dark",
+  "lang": "en",
+  "ts": 1.0,
+  "asm": [
+   "A15",
+   "A19"
+  ],
+  "new": [],
+  "flows": [
+   "F2: widget Expense → (Lock → PIN) → New expense → amount → Choose category → saved → Home"
+  ]
+ },
+ {
+  "path": "android/light/EXT01_ext-widget__stale",
+  "scr": "EXT-01",
+  "title": "Home-screen widget · stale",
+  "state": "stale",
+  "platform": "android",
+  "theme": "light",
+  "lang": "en",
+  "ts": 1.0,
+  "asm": [
+   "A15",
+   "A19"
+  ],
+  "new": [],
+  "flows": [
+   "F2: widget Expense → (Lock → PIN) → New expense → amount → Choose category → saved → Home"
+  ]
+ },
+ {
+  "path": "android/dark/EXT01_ext-widget__stale",
+  "scr": "EXT-01",
+  "title": "Home-screen widget · stale",
+  "state": "stale",
+  "platform": "android",
+  "theme": "dark",
+  "lang": "en",
+  "ts": 1.0,
+  "asm": [
+   "A15",
+   "A19"
+  ],
+  "new": [],
+  "flows": [
+   "F2: widget Expense → (Lock → PIN) → New expense → amount → Choose category → saved → Home"
+  ]
+ },
+ {
+  "path": "android/light/EXT01_ext-widget__4x2",
+  "scr": "EXT-01",
+  "title": "Home-screen widget · 4x2",
+  "state": "4x2",
+  "platform": "android",
+  "theme": "light",
+  "lang": "en",
+  "ts": 1.0,
+  "asm": [
+   "A19"
+  ],
+  "new": [],
+  "flows": [
+   "F2: widget Expense → (Lock → PIN) → New expense → amount → Choose category → saved → Home"
+  ]
+ },
+ {
+  "path": "android/dark/EXT01_ext-widget__4x2",
+  "scr": "EXT-01",
+  "title": "Home-screen widget · 4x2",
+  "state": "4x2",
+  "platform": "android",
+  "theme": "dark",
+  "lang": "en",
+  "ts": 1.0,
+  "asm": [
+   "A19"
+  ],
+  "new": [],
+  "flows": [
+   "F2: widget Expense → (Lock → PIN) → New expense → amount → Choose category → saved → Home"
+  ]
+ },
+ {
+  "path": "android/light/EXT01_ext-widget__picker",
+  "scr": "EXT-01",
+  "title": "Home-screen widget · picker",
+  "state": "picker",
+  "platform": "android",
+  "theme": "light",
+  "lang": "en",
+  "ts": 1.0,
+  "asm": [
+   "A19"
+  ],
+  "new": [],
+  "flows": []
+ },
+ {
+  "path": "android/dark/EXT01_ext-widget__picker",
+  "scr": "EXT-01",
+  "title": "Home-screen widget · picker",
+  "state": "picker",
+  "platform": "android",
+  "theme": "dark",
+  "lang": "en",
+  "ts": 1.0,
+  "asm": [
+   "A19"
+  ],
+  "new": [],
+  "flows": []
+ },
+ {
+  "path": "android/light/EXT02_ext-reminder__lockscreen",
+  "scr": "EXT-02",
+  "title": "Reminder notification · lockscreen",
+  "state": "lockscreen",
+  "platform": "android",
+  "theme": "light",
+  "lang": "en",
+  "ts": 1.0,
+  "asm": [
+   "A16",
+   "A19"
+  ],
+  "new": [],
+  "flows": [
+   "F2: notification → (Lock → PIN) → New expense"
+  ]
+ },
+ {
+  "path": "android/dark/EXT02_ext-reminder__lockscreen",
+  "scr": "EXT-02",
+  "title": "Reminder notification · lockscreen",
+  "state": "lockscreen",
+  "platform": "android",
+  "theme": "dark",
+  "lang": "en",
+  "ts": 1.0,
+  "asm": [
+   "A16",
+   "A19"
+  ],
+  "new": [],
+  "flows": [
+   "F2: notification → (Lock → PIN) → New expense"
+  ]
+ },
+ {
+  "path": "ios/light/EXT02_ext-reminder__lockscreen",
+  "scr": "EXT-02",
+  "title": "Reminder notification · lockscreen",
+  "state": "lockscreen",
+  "platform": "ios",
+  "theme": "light",
+  "lang": "en",
+  "ts": 1.0,
+  "asm": [
+   "A19",
+   "A20"
+  ],
+  "new": [],
+  "flows": [
+   "F2: notification → (Lock → PIN) → New expense"
+  ]
+ },
+ {
+  "path": "ios/dark/EXT02_ext-reminder__lockscreen",
+  "scr": "EXT-02",
+  "title": "Reminder notification · lockscreen",
+  "state": "lockscreen",
+  "platform": "ios",
+  "theme": "dark",
+  "lang": "en",
+  "ts": 1.0,
+  "asm": [
+   "A19",
+   "A20"
+  ],
+  "new": [],
+  "flows": [
+   "F2: notification → (Lock → PIN) → New expense"
+  ]
+ },
+ {
+  "path": "android/light/EXT02_ext-reminder__shade",
+  "scr": "EXT-02",
+  "title": "Reminder notification · shade",
+  "state": "shade",
+  "platform": "android",
+  "theme": "light",
+  "lang": "en",
+  "ts": 1.0,
+  "asm": [
+   "A16",
+   "A19"
+  ],
+  "new": [],
+  "flows": [
+   "F2: notification → (Lock → PIN) → New expense"
+  ]
+ },
+ {
+  "path": "android/dark/EXT02_ext-reminder__shade",
+  "scr": "EXT-02",
+  "title": "Reminder notification · shade",
+  "state": "shade",
+  "platform": "android",
+  "theme": "dark",
+  "lang": "en",
+  "ts": 1.0,
+  "asm": [
+   "A16",
+   "A19"
+  ],
+  "new": [],
+  "flows": [
+   "F2: notification → (Lock → PIN) → New expense"
+  ]
+ },
+ {
+  "path": "ios/light/EXT02_ext-reminder__shade",
+  "scr": "EXT-02",
+  "title": "Reminder notification · shade",
+  "state": "shade",
+  "platform": "ios",
+  "theme": "light",
+  "lang": "en",
+  "ts": 1.0,
+  "asm": [
+   "A19",
+   "A20"
+  ],
+  "new": [],
+  "flows": [
+   "F2: notification → (Lock → PIN) → New expense"
+  ]
+ },
+ {
+  "path": "ios/dark/EXT02_ext-reminder__shade",
+  "scr": "EXT-02",
+  "title": "Reminder notification · shade",
+  "state": "shade",
+  "platform": "ios",
+  "theme": "dark",
+  "lang": "en",
+  "ts": 1.0,
+  "asm": [
+   "A19",
+   "A20"
+  ],
+  "new": [],
+  "flows": [
+   "F2: notification → (Lock → PIN) → New expense"
+  ]
+ },
+ {
+  "path": "android/light/EXT03_ext-recents__default",
+  "scr": "EXT-03",
+  "title": "Recents · before",
+  "state": "default",
+  "platform": "android",
+  "theme": "light",
+  "lang": "en",
+  "ts": 1.0,
+  "asm": [
+   "A19"
+  ],
+  "new": [],
+  "flows": [
+   "F13: Hide content when switching apps → Recents blank"
+  ]
+ },
+ {
+  "path": "android/dark/EXT03_ext-recents__default",
+  "scr": "EXT-03",
+  "title": "Recents · before",
+  "state": "default",
+  "platform": "android",
+  "theme": "dark",
+  "lang": "en",
+  "ts": 1.0,
+  "asm": [
+   "A19"
+  ],
+  "new": [],
+  "flows": [
+   "F13: Hide content when switching apps → Recents blank"
+  ]
+ },
+ {
+  "path": "android/light/EXT03_ext-recents__hidden",
+  "scr": "EXT-03",
+  "title": "Recents · content hidden",
+  "state": "hidden",
+  "platform": "android",
+  "theme": "light",
+  "lang": "en",
+  "ts": 1.0,
+  "asm": [
+   "A17",
+   "A19"
+  ],
+  "new": [],
+  "flows": [
+   "F13: Hide content when switching apps → Recents blank"
+  ]
+ },
+ {
+  "path": "android/dark/EXT03_ext-recents__hidden",
+  "scr": "EXT-03",
+  "title": "Recents · content hidden",
+  "state": "hidden",
+  "platform": "android",
+  "theme": "dark",
+  "lang": "en",
+  "ts": 1.0,
+  "asm": [
+   "A17",
+   "A19"
+  ],
+  "new": [],
+  "flows": [
+   "F13: Hide content when switching apps → Recents blank"
+  ]
+ }
+]
