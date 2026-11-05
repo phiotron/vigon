@@ -33,7 +33,7 @@ Luồng nhanh nhất: Màn chính → chạm icon danh mục (hoặc −/+) → 
 ## Trạng thái
 | Phiên điều phối | Ngày | Phiên con đã mở | Kết quả |
 |---|---|---|---|
-| #1 Chuyển + gộp + product.md | 2026-11-04..05 | A product.md · B nền iOS + CI · C store & pháp lý · D gộp 2 nhánh (+2 phiên con phụ của D) · A/C làm lại theo bản gộp | Đã chuyển; đã gộp `integration/spec-1.1` + `feature/PLAN-001` vào main (a987ac1, 5227555, 06453cf), 352/352 test, APK build, CI Android + iOS xanh; product.md/store đang viết lại |
+| #1 Chuyển + gộp + product.md | 2026-11-04..05 | product.md · nền iOS + CI · store & pháp lý · gộp 2 nhánh (+2 phụ) · iOS mã hoá/iCloud · tài liệu D-020/021 | ✅ Xong: chuyển, gộp bản 1.2 + PLAN-001, 364 test, CI Android + iOS xanh, product.md v2 duyệt. Nhật ký: `memory/sessions/2026-11-05-A002-vigon.md` (repo xưởng) |
 | #2 Áp UI Hi-Fi + test 2 nền tảng | | D0 theme/arb → D1, D2, D3 song song → D4 thử máy | |
 | #3 Phát hành | | E ảnh store · F Android · G iOS | |
 
@@ -41,7 +41,7 @@ Kế hoạch đầy đủ 3 phiên: `notes/2026-11-04-ke-hoach-3-phien.md`.
 
 **Việc dở / bước tiếp:**
 - **2026-11-05: người dùng đã duyệt `product.md` v2 (e7c75a8)** → người dùng gửi Claude Design (kèm `design/current/screens/`), lưu link + export vào `design/hifi/<platform>/<theme>/` theo product.md §11.3 → mở phiên #2.
-- Đang chạy: iOS `ITSAppUsesNonExemptEncryption`=true + loại DB khỏi iCloud (code) · tài liệu D-020/D-021 + hướng dẫn khai mã hoá Pháp.
+- Đã xong: iOS `ITSAppUsesNonExemptEncryption`=true + DB loại khỏi iCloud (D-020/D-021, `8441b6a`, chưa thử iPhone thật). **Người dùng:** nộp khai báo mã hoá Pháp (ANSSI) theo `docs/RELEASE.md` — chặn nộp iOS.
 - iOS chưa có F-22/F-24/F-26 (D-019): quyết ở #2 làm tương đương (WidgetKit, chọn thư mục, che màn) hay để bản sau. Export compliance phải xem lại vì có AES-256-GCM (COMPLIANCE P-03).
 - Mọi tính năng 1.1/1.2 CHƯA thử trên máy Android thật (`docs/TESTING.md` M-1..M-7).
 - Người dùng: đăng ký Apple Developer (cá nhân), App ID `com.phiotron.vigon`, API key App Store Connect + chứng chỉ ký → GitHub Secrets của repo `phiotron/vigon`.
