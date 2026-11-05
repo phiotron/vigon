@@ -109,7 +109,9 @@ class _AutoBackupSectionState extends ConsumerState<AutoBackupSection>
                     ),
                   ],
                 ),
-                if (ios && iosFolderMayBeLocal(state.folderUri))
+                // iOS không phân biệt "Trên iPhone" với Google Drive/Dropbox:
+                // mọi thư mục không thuộc iCloud Drive đều có cảnh báo.
+                if (ios && state.folderInICloud != true)
                   VgHint(
                     l.autoBackupLocalFolderWarningIos,
                     icon: Symbols.warning_rounded,
@@ -170,12 +172,6 @@ class _PairButton {
 
   Widget outlined() => OutlinedButton(onPressed: onPressed, child: _label);
 }
-
-/// Thư mục iOS có thể chỉ nằm "Trên iPhone" (không vào sao lưu iCloud,
-/// D-021). Dịch vụ chưa báo cờ này: tạm coi mọi thư mục không thuộc iCloud
-/// Drive (`Mobile Documents`) là trên máy. D4 thay bằng cờ thật khi có.
-bool iosFolderMayBeLocal(String? uri) =>
-    uri != null && !uri.contains('Mobile Documents');
 
 String _lastText(BuildContext context, AppLocalizations l, AutoBackupState s) {
   final at = s.lastAt;

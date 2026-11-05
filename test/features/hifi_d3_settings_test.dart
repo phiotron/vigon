@@ -123,7 +123,21 @@ void main() {
         await _openSettings(tester);
         _tallScreen(tester);
         await settle(tester);
-        // Cờ nền tảng do D4 bật; khi có hàng thì phải là chữ iOS.
+        // D4 đã bật cờ iOS (D-022): các hàng hiện với chữ riêng iOS.
+        expect(
+          find.text(
+            'Ẩn nội dung trong màn chuyển app. '
+            'iPhone không cho app chặn chụp màn hình.',
+          ),
+          findsOneWidget,
+        );
+        expect(
+          find.text(
+            'iPhone không cho app chạy theo giờ, nên bản sao lưu được tạo '
+            'khi bạn mở Ví Gọn, mỗi ngày tối đa một lần.',
+          ),
+          findsOneWidget,
+        );
         expect(
           find.text(
             'Chặn chụp màn hình và ẩn nội dung trong danh sách app '

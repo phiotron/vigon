@@ -30,7 +30,7 @@ flutter test test/features/hifi_d3_settings_test.dart test/features/currency_pic
 flutter test test/features/backup_password_test.dart test/features/plan001_t5_test.dart test/features/g5_lock_test.dart test/app_test.dart test/features/g3_screens_test.dart test/features/g4_screens_test.dart test/features/g6_flows_test.dart test/features/g6_accessibility_test.dart test/features/plan001_t4_test.dart   # 49 đạt
 flutter test test/features/hifi_d3_settings_test.dart test/data/review_fixes_test.dart   # 18 đạt (sau khi thêm test quên PIN)
 ```
-- Test mới `test/features/hifi_d3_settings_test.dart` (12): thẻ/tiêu đề nhóm, giá trị phụ đề, CSV vi, chọn Chủ Nhật lưu
+- Test mới `test/features/hifi_d3_settings_test.dart` (11): thẻ/tiêu đề nhóm, giá trị phụ đề, CSV vi, chọn Chủ Nhật lưu
   DB, icon `backup`, Xóa = danger; pill A08 khi PIN bật; iOS không còn chữ Android; 200% sáng/tối không tràn; sheet tiền
   tệ (xem thêm/thu gọn, ghim ẩn khi tìm, không khớp, ✕ đóng); hộp xuất đang mã hóa (Hủy/ô tắt, nút quay) + trả nội dung
   mã hóa; lỗi thư mục đảo cặp nút + dải lỗi; hộp quên PIN 200%.
@@ -45,10 +45,10 @@ flutter test test/features/hifi_d3_settings_test.dart test/data/review_fixes_tes
    (~364–384), `merge_ios_gating_test.dart` (`_switch()` dòng 63). Đổi cơ học `SwitchListTile` → `SettingsSwitchRow`
    (`import 'package:vigon/src/ui/settings_rows.dart'`), `.value` giữ nguyên. Chi tiết: ghi chú chung
    `…/side-session-notes/local_405e294e-…/d3-to-d4-settings-finders.md`. D3 không sửa (file của D4).
-2. **Cảnh báo thư mục iOS:** D3 đang đoán bằng `iosFolderMayBeLocal(uri)` (URI không chứa `Mobile Documents`) trong
-   `auto_backup_section.dart`. D4 đang thêm `AutoBackupState.folderInICloud` (chưa commit lúc D3 xong) → khi commit, thay
-   điều kiện bằng `state.folderInICloud != true` và xoá hàm đoán (1 dòng, file `features/settings/` — D4 hoặc D5 sửa).
-3. Hàng iOS chỉ hiện khi D4 bật cờ trong `platform_features.dart`; test iOS của D3 chỉ kiểm "không còn chữ Android".
+2. ~~Cảnh báo thư mục iOS~~ — **đã xong** sau tin của D4: điều kiện là `ios && state.folderInICloud != true` (cờ D4 thêm
+   ở `6ed915c`; URI iOS là `ios-bookmark:<uuid>` nên không đoán theo đường dẫn được). Giới hạn: iOS không phân biệt
+   "Trên iPhone" với Google Drive/Dropbox → hai loại này cũng hiện cảnh báo (D4 đã ghi cho điều phối).
+3. D4 đã bật cờ iOS; test iOS của D3 kiểm có chữ `secureWindowNoteIos`, `autoBackupRunsOnOpenIos` và không còn chữ Android.
 
 ## Chỗ còn lệch mockup
 - SCR-13: ghi chú và thẻ ghim nằm trong danh sách cuộn (frame: cố định trên danh sách) — để chữ 200% + bàn phím không tràn.
