@@ -28,13 +28,15 @@ void main() {
     return null;
   }
 
-  test('Info.plist: tên, ngôn ngữ, chỉ dọc, không xin quyền, không mã hóa', () {
+  test('Info.plist: tên, ngôn ngữ, chỉ dọc, không xin quyền, khai mã hóa', () {
     final plist = read('ios/Runner/Info.plist');
     expect(valueOf(plist, 'CFBundleDisplayName'), '<string>Ví Gọn</string>');
     final locales = valueOf(plist, 'CFBundleLocalizations')!;
     expect(locales, contains('<string>vi</string>'));
     expect(locales, contains('<string>en</string>'));
-    expect(valueOf(plist, 'ITSAppUsesNonExemptEncryption'), '<false/>');
+    // F-21 mã hóa file sao lưu AES-256-GCM: khai có mã hóa không miễn trừ
+    // (người dùng quyết 2026-11-05, tự nộp khai báo Pháp).
+    expect(valueOf(plist, 'ITSAppUsesNonExemptEncryption'), '<true/>');
     final schemes = valueOf(plist, 'LSApplicationQueriesSchemes')!;
     expect(schemes, contains('<string>mailto</string>'));
     expect(schemes, contains('<string>https</string>'));
@@ -115,5 +117,31 @@ void main() {
   test('AppDelegate: đặt delegate thông báo để nhắc hiện khi app đang mở', () {
     final delegate = read('ios/Runner/AppDelegate.swift');
     expect(delegate, contains('UNUserNotificationCenter.current().delegate'));
+  });
+
+  test('AppDelegate: kênh loại cơ sở dữ liệu khỏi sao lưu iCloud', () {
+    final delegate = read('ios/Runner/AppDelegate.swift');
+    expect(delegate, contains('"vigon/backup_exclusion"'));
+    expect(delegate, contains('"excludeFromBackup"'));
+    expect(delegate, contains('isExcludedFromBackup = true'));
+    expect(delegate, contains('BackupExclusionChannel.register('));
+    // Plugin vẫn được đăng ký như cũ.
+    expect(
+      delegate,
+      contains(
+        'GeneratedPluginRegistrant.register(with: engineBridge.pluginRegistry)',
+      ),
+    );
+  });
+
+  test('ios.yml: CI kiểm cờ mã hóa và cờ loại khỏi sao lưu trên simulator', () {
+    final workflow = read('.github/workflows/ios.yml');
+    expect(
+      workflow,
+      contains(
+        'plutil -extract ITSAppUsesNonExemptEncryption raw ios/Runner/Info.plist)" = "true"',
+      ),
+    );
+    expect(workflow, contains('VigonBackupExclusion: excluded='));
   });
 }

@@ -61,7 +61,7 @@ jobs:
         run: |
           plutil -lint ios/Runner/Info.plist ios/Runner/PrivacyInfo.xcprivacy
           test "$(plutil -extract CFBundleDisplayName raw ios/Runner/Info.plist)" = "Ví Gọn"
-          test "$(plutil -extract ITSAppUsesNonExemptEncryption raw ios/Runner/Info.plist)" = "false"
+          test "$(plutil -extract ITSAppUsesNonExemptEncryption raw ios/Runner/Info.plist)" = "true"
           test "$(plutil -extract NSPrivacyTracking raw ios/Runner/PrivacyInfo.xcprivacy)" = "false"
           # Không xin quyền nào (D-002): không có khoá NS...UsageDescription.
           if grep -q "UsageDescription" ios/Runner/Info.plist; then echo "Info.plist có xin quyền"; exit 1; fi
@@ -108,6 +108,13 @@ jobs:
           xcrun simctl io "$UDID" screenshot ci-logs/launch.png
           # App phải còn sống sau 20 giây (không văng khi mở DB/secure storage).
           xcrun simctl spawn "$UDID" launchctl list | grep "$BUNDLE_ID"
+          # Cơ sở dữ liệu phải bị loại khỏi sao lưu iCloud/máy tính (AppDelegate.swift
+          # BackupExclusionChannel; ít nhất thư mục Documents + vigon.sqlite, không mục nào lỗi).
+          DATA=$(xcrun simctl get_app_container "$UDID" "$BUNDLE_ID" data)
+          ls -la "$DATA/Documents" | tee ci-logs/documents.txt
+          xcrun simctl spawn "$UDID" log show --last 3m --style compact \
+            --predicate 'eventMessage CONTAINS "VigonBackupExclusion"' | tee ci-logs/backup-exclusion.txt
+          grep -Eq "VigonBackupExclusion: excluded=([2-9]|[1-9][0-9]+) failed=0" ci-logs/backup-exclusion.txt
           xcrun simctl terminate "$UDID" "$BUNDLE_ID" || true
 
       # Chỉ khi chạy tay và chọn integration_test. Cả `flutter test -d <iOS>` (run 41809982864) lẫn

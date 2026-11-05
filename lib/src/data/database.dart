@@ -1,6 +1,9 @@
+import 'dart:async';
+
 import 'package:drift/drift.dart';
 import 'package:drift_flutter/drift_flutter.dart';
 
+import 'device_backup_exclusion.dart';
 import 'seed.dart';
 
 part 'database.g.dart';
@@ -103,8 +106,17 @@ class Settings extends Table {
   tables: [Accounts, Categories, RecurringRules, Entries, Settings],
 )
 class AppDatabase extends _$AppDatabase {
-  AppDatabase([QueryExecutor? executor])
-    : super(executor ?? driftDatabase(name: 'vigon'));
+  /// [afterOpen] chạy (không chờ) sau mỗi lần mở. Khi dùng file mặc định
+  /// ([executor] null) nó mặc định loại file khỏi sao lưu iCloud trên iOS.
+  AppDatabase([QueryExecutor? executor, Future<void> Function()? afterOpen])
+    : _afterOpen =
+          afterOpen ??
+          (executor == null
+              ? const DeviceBackupExclusion().excludeDatabase
+              : null),
+      super(executor ?? driftDatabase(name: databaseName));
+
+  final Future<void> Function()? _afterOpen;
 
   @override
   int get schemaVersion => currentSchemaVersion;
@@ -121,6 +133,10 @@ class AppDatabase extends _$AppDatabase {
     },
     beforeOpen: (details) async {
       await customStatement('PRAGMA foreign_keys = ON');
+      // Sau khi mở file mới chắc chắn tồn tại để iOS đặt cờ. Không chờ: lỗi
+      // hay chậm ở kênh nền tảng không được làm chậm hay hỏng việc mở app.
+      final afterOpen = _afterOpen;
+      if (afterOpen != null) unawaited(afterOpen().catchError((_) {}));
     },
   );
 }
