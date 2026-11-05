@@ -5,6 +5,9 @@ import 'seed.dart';
 
 part 'database.g.dart';
 
+/// Phiên bản schema hiện tại; file sao lưu có schemaVersion lớn hơn bị từ chối.
+const currentSchemaVersion = 2;
+
 /// Loại khoản ghi. Chuyển tiền không tính là thu hay chi (AC-19).
 enum EntryType { expense, income, transfer }
 
@@ -35,6 +38,13 @@ class Categories extends Table {
   TextColumn get icon => text()();
   IntColumn get color => integer()();
   IntColumn get sortOrder => integer().withDefault(const Constant(0))();
+
+  /// Hạn mức chi mỗi tháng của danh mục chi, đơn vị nhỏ nhất; null là chưa đặt
+  /// (AC-54). Thêm ở schema 2.
+  IntColumn get budget => integer().nullable().check(
+    // ignore: recursive_getters
+    budget.isBiggerThanValue(0),
+  )();
 }
 
 class RecurringRules extends Table {
@@ -97,13 +107,17 @@ class AppDatabase extends _$AppDatabase {
     : super(executor ?? driftDatabase(name: 'vigon'));
 
   @override
-  int get schemaVersion => 1;
+  int get schemaVersion => currentSchemaVersion;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
     onCreate: (m) async {
       await m.createAll();
       await seedDefaults(this);
+    },
+    onUpgrade: (m, from, to) async {
+      // 1 -> 2: hạn mức theo danh mục (AC-54); dữ liệu cũ giữ nguyên, hạn mức null.
+      if (from < 2) await m.addColumn(categories, categories.budget);
     },
     beforeOpen: (details) async {
       await customStatement('PRAGMA foreign_keys = ON');

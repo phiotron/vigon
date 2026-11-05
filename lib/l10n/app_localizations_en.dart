@@ -34,6 +34,47 @@ class AppLocalizationsEn extends AppLocalizations {
   String get languageSystem => 'System';
 
   @override
+  String get reminderSection => 'Reminder';
+
+  @override
+  String get reminderSwitch => 'Daily reminder';
+
+  @override
+  String get reminderSwitchNote =>
+      'One notification a day at the time you choose, with no figures in it';
+
+  @override
+  String get reminderTime => 'Reminder time';
+
+  @override
+  String get reminderExplainTitle => 'Turn on the reminder?';
+
+  @override
+  String get reminderExplainBody =>
+      'Ví Gọn will send one notification every day at the time you choose, to remind you to record your spending. The notification contains no figures.';
+
+  @override
+  String get reminderContinue => 'Continue';
+
+  @override
+  String get reminderDenied =>
+      'Notifications are not allowed. Turn on notifications for Ví Gọn in the system settings.';
+
+  @override
+  String get reminderOpenSettings => 'Open settings';
+
+  @override
+  String get reminderChannelName => 'Reminder';
+
+  @override
+  String get reminderChannelDescription =>
+      'A daily reminder to record your spending';
+
+  @override
+  String get reminderNotificationBody =>
+      'Have you recorded your spending today?';
+
+  @override
   String get emptyPeriod => 'Tap − to record your first expense';
 
   @override
@@ -162,6 +203,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get chooseCategory => 'Choose category';
 
   @override
+  String get otherCategories => 'More categories';
+
+  @override
   String get save => 'Save';
 
   @override
@@ -193,6 +237,32 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get undo => 'Undo';
+
+  @override
+  String get search => 'Search';
+
+  @override
+  String get searchHint => 'Note, category or amount';
+
+  @override
+  String get searchClose => 'Close search';
+
+  @override
+  String get searchAllTime => 'All time';
+
+  @override
+  String get searchNoMatch => 'No matching records';
+
+  @override
+  String searchTotal(int count, String total) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count records',
+      one: '1 record',
+    );
+    return '$_temp0 · total $total';
+  }
 
   @override
   String get keypadBackspace => 'Backspace';
@@ -286,6 +356,30 @@ class AppLocalizationsEn extends AppLocalizations {
   String get editAccount => 'Edit account';
 
   @override
+  String get archiveAccount => 'Hide account';
+
+  @override
+  String get deleteAccount => 'Delete account';
+
+  @override
+  String deleteAccountConfirm(String name) {
+    return 'Delete the account \"$name\"?';
+  }
+
+  @override
+  String get accountInUseHint =>
+      'This account has records, so it can only be hidden';
+
+  @override
+  String get accountLastOneHint => 'At least one account must remain';
+
+  @override
+  String get archivedAccounts => 'Hidden accounts';
+
+  @override
+  String get unarchiveAccount => 'Show again';
+
+  @override
   String get initialBalance => 'Starting balance';
 
   @override
@@ -294,6 +388,45 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get currencyNote =>
       'Changing the currency only changes the symbol; no exchange rate is applied. If the two currencies have a different number of decimals (for example VND and USD), amounts are multiplied or divided so the numbers you see stay the same; switching back may lose the fractional part.';
+
+  @override
+  String get currencySearchHint => 'Search by code or name';
+
+  @override
+  String get currencyNoMatch => 'No matching currency';
+
+  @override
+  String get csvColDate => 'date';
+
+  @override
+  String get csvColType => 'type';
+
+  @override
+  String get csvColAmount => 'amount';
+
+  @override
+  String get csvColCurrency => 'currency';
+
+  @override
+  String get csvColCategory => 'category';
+
+  @override
+  String get csvColAccount => 'account';
+
+  @override
+  String get csvColToAccount => 'to_account';
+
+  @override
+  String get csvColNote => 'note';
+
+  @override
+  String get csvTypeExpense => 'expense';
+
+  @override
+  String get csvTypeIncome => 'income';
+
+  @override
+  String get csvTypeTransfer => 'transfer';
 
   @override
   String get weekStart => 'First day of week';
@@ -327,6 +460,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get budgetRemove => 'Remove budget';
 
   @override
+  String get categoryBudget => 'Category monthly budget';
+
+  @override
+  String get categoryBudgetHint => 'Leave empty for none';
+
+  @override
   String get recurring => 'Repeating records';
 
   @override
@@ -347,11 +486,115 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get backupNote =>
-      'Backup files are not encrypted. Keep them somewhere safe.';
+      'You can protect the file with a password. Without one, the file is not encrypted.';
+
+  @override
+  String get backupSetPassword => 'Protect file with a password';
+
+  @override
+  String get backupPassword => 'Password';
+
+  @override
+  String get backupPasswordConfirm => 'Repeat password';
+
+  @override
+  String get backupPasswordWarning =>
+      'If you forget the password, this file cannot be opened.';
+
+  @override
+  String get backupPasswordTooShort => 'Password needs at least 6 characters';
+
+  @override
+  String get backupPasswordMismatch => 'Passwords do not match';
+
+  @override
+  String get backupExportAction => 'Export';
+
+  @override
+  String get backupEnterPasswordTitle => 'Password-protected file';
+
+  @override
+  String get backupEnterPasswordBody =>
+      'Enter the password you set when exporting this file.';
+
+  @override
+  String get backupOpen => 'Open';
+
+  @override
+  String get backupWrongPassword => 'Wrong password or the file is damaged';
+
+  @override
+  String get backupWorking => 'Working';
 
   @override
   String get backupReminder =>
       'Data is stored only on this phone. Export a backup regularly.';
+
+  @override
+  String get autoBackup => 'Automatic backup';
+
+  @override
+  String get autoBackupNote =>
+      'Ví Gọn only writes files to the folder you choose. Uploading to Google Drive or Dropbox is done by that app.';
+
+  @override
+  String autoBackupFolder(String name) {
+    return 'Folder: $name';
+  }
+
+  @override
+  String get autoBackupFolderUnknown => 'Chosen folder';
+
+  @override
+  String autoBackupLast(String time) {
+    return 'Last: $time';
+  }
+
+  @override
+  String get autoBackupNever => 'No backup yet';
+
+  @override
+  String get autoBackupErrorFolder =>
+      'Could not write to the folder. Choose the folder again';
+
+  @override
+  String get autoBackupErrorOther =>
+      'Backup failed. Try again with Back up now';
+
+  @override
+  String autoBackupFailedAt(String time, String error) {
+    return 'Attempt $time: $error';
+  }
+
+  @override
+  String get autoBackupBusy =>
+      'A backup is already running, try again in a moment';
+
+  @override
+  String get autoBackupNow => 'Back up now';
+
+  @override
+  String get autoBackupChooseFolder => 'Choose folder again';
+
+  @override
+  String get autoBackupDone => 'Backup saved';
+
+  @override
+  String get autoBackupOffDone =>
+      'Automatic backup is off. Files already written stay in the folder.';
+
+  @override
+  String get autoBackupPickFailed => 'Could not open the folder picker';
+
+  @override
+  String get autoBackupPasswordTitle => 'Automatic backup password';
+
+  @override
+  String get autoBackupPasswordWarning =>
+      'If you forget the password, the backup files cannot be opened; you need it to restore on another device.';
+
+  @override
+  String get autoBackupTurnOn => 'Turn on';
 
   @override
   String get restoreConfirm =>
@@ -418,6 +661,33 @@ class AppLocalizationsEn extends AppLocalizations {
   String pinProgress(int count) {
     return '$count of 4 digits entered';
   }
+
+  @override
+  String get secureWindow => 'Hide content when switching apps';
+
+  @override
+  String get secureWindowNote =>
+      'Blocks screenshots and hides content in the recent apps list';
+
+  @override
+  String get widgetShowAmounts => 'Show amounts on widget';
+
+  @override
+  String get widgetShowAmountsNote =>
+      'Anyone holding the phone can see this number on the home screen. While PIN lock is on, the widget always hides amounts.';
+
+  @override
+  String widgetSpentThisMonth(String spent) {
+    return 'Spent this month: $spent';
+  }
+
+  @override
+  String widgetSpentOfBudget(String spent, String budget) {
+    return 'Spent this month: $spent / $budget';
+  }
+
+  @override
+  String get widgetLockedByPin => 'Locked with PIN';
 
   @override
   String get about => 'About';

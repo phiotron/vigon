@@ -93,7 +93,7 @@ void main() {
     await settle(tester);
     await tester.tap(find.text('Ăn uống'));
     await settle(tester);
-    await tester.enterText(find.byType(TextField), 'Ăn ngoài');
+    await tester.enterText(find.byType(TextField).first, 'Ăn ngoài');
     await tester.tap(find.byKey(const ValueKey('icon-local_cafe')));
     await tester.tap(find.bySemanticsLabel('Màu 3'));
     await tester.tap(find.text('Lưu'));

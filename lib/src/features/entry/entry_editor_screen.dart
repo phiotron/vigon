@@ -11,6 +11,7 @@ import '../../data/money.dart';
 import '../../l10n_names.dart';
 import '../../providers.dart';
 import '../../ui/category_avatar.dart';
+import '../../ui/category_grid.dart';
 import '../../ui/format.dart';
 import '../../ui/messenger.dart';
 import 'keypad.dart';
@@ -188,12 +189,7 @@ class _EntryEditorScreenState extends ConsumerState<EntryEditorScreen> {
     final type = _type == EntryType.income
         ? CategoryType.income
         : CategoryType.expense;
-    return showModalBottomSheet<int>(
-      context: context,
-      showDragHandle: true,
-      isScrollControlled: true,
-      builder: (context) => _CategoryGrid(type: type, selectedId: _categoryId),
-    );
+    return showCategorySheet(context, type: type, selectedId: _categoryId);
   }
 
   Future<void> _pickRepeat() async {
@@ -285,9 +281,16 @@ class _EntryEditorScreenState extends ConsumerState<EntryEditorScreen> {
                   const <Category>[])
               .where((c) => c.id == _categoryId)
               .firstOrNull;
+    // Khoản cũ của tài khoản đã ẩn vẫn hiện đúng tên tài khoản đó (AC-44).
     final account =
-        accounts.where((a) => a.id == _accountId).firstOrNull ??
+        (ref.watch(allAccountsProvider).value ?? accounts)
+            .where((a) => a.id == _accountId)
+            .firstOrNull ??
         accounts.firstOrNull;
+    final pickable = [
+      ...accounts,
+      if (account != null && !accounts.any((a) => a.id == account.id)) account,
+    ];
     final title = _original != null
         ? l.editEntry
         : (isIncome ? l.newIncome : l.newExpense);
@@ -400,14 +403,14 @@ class _EntryEditorScreenState extends ConsumerState<EntryEditorScreen> {
                                     deleteButtonTooltipMessage: l.stopRepeat,
                                     onDeleted: _stopRepeat,
                                   ),
-                                if (account != null && accounts.length > 1)
+                                if (account != null && pickable.length > 1)
                                   ActionChip(
                                     avatar: const Icon(
                                       Icons.account_balance_wallet_outlined,
                                       size: 18,
                                     ),
                                     label: Text(accountLabel(l, account)),
-                                    onPressed: () => _pickAccount(accounts),
+                                    onPressed: () => _pickAccount(pickable),
                                   ),
                               ],
                             ),
@@ -435,69 +438,6 @@ class _EntryEditorScreenState extends ConsumerState<EntryEditorScreen> {
                 ],
               ),
             ),
-    );
-  }
-}
-
-class _CategoryGrid extends ConsumerWidget {
-  const _CategoryGrid({required this.type, required this.selectedId});
-
-  final CategoryType type;
-  final int? selectedId;
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final l = AppLocalizations.of(context);
-    final categories =
-        ref.watch(categoriesProvider(type)).value ?? const <Category>[];
-    return SafeArea(
-      child: Padding(
-        padding: const EdgeInsets.fromLTRB(8, 0, 8, 16),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(
-              l.chooseCategory,
-              style: Theme.of(context).textTheme.titleMedium,
-            ),
-            const SizedBox(height: 12),
-            Flexible(
-              child: GridView.extent(
-                shrinkWrap: true,
-                maxCrossAxisExtent: 96,
-                childAspectRatio: 0.8,
-                children: [
-                  for (final c in categories)
-                    InkWell(
-                      borderRadius: BorderRadius.circular(12),
-                      onTap: () => Navigator.pop(context, c.id),
-                      child: Semantics(
-                        button: true,
-                        selected: c.id == selectedId,
-                        label: categoryLabel(l, c),
-                        excludeSemantics: true,
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            CategoryAvatar(category: c),
-                            const SizedBox(height: 4),
-                            Text(
-                              categoryLabel(l, c),
-                              textAlign: TextAlign.center,
-                              maxLines: 2,
-                              overflow: TextOverflow.ellipsis,
-                              style: Theme.of(context).textTheme.bodySmall,
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
     );
   }
 }

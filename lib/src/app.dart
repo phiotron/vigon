@@ -15,9 +15,17 @@ import 'features/home/home_screen.dart';
 import 'features/lock/app_lock.dart';
 import 'features/lock/lock_screen.dart';
 import 'features/recurring/recurring_screen.dart';
+import 'features/reminder/reminder_providers.dart';
+import 'features/settings/secure_window.dart';
 import 'features/settings/settings_screen.dart';
+import 'features/widget/deep_link.dart';
+import 'features/widget/widget_sync.dart';
 import 'providers.dart';
 import 'ui/messenger.dart';
+
+/// Đường dẫn có `:id` mà id không phải số nguyên thì về màn chính, không ném lỗi.
+String? _idOrHome(BuildContext context, GoRouterState state) =>
+    int.tryParse(state.pathParameters['id'] ?? '') == null ? '/' : null;
 
 /// Mỗi lần gọi tạo router mới; test dùng để mỗi test bắt đầu ở màn chính.
 GoRouter createRouter() => GoRouter(
@@ -52,6 +60,7 @@ GoRouter createRouter() => GoRouter(
         ),
         GoRoute(
           path: 'transfer/:id',
+          redirect: _idOrHome,
           builder: (context, state) =>
               TransferScreen(entryId: int.parse(state.pathParameters['id']!)),
         ),
@@ -73,6 +82,7 @@ GoRouter createRouter() => GoRouter(
         ),
         GoRoute(
           path: 'entry/:id',
+          redirect: _idOrHome,
           builder: (context, state) => EntryEditorScreen(
             entryId: int.parse(state.pathParameters['id']!),
           ),
@@ -95,22 +105,32 @@ class VigonApp extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     ref.watch(startupProvider);
+    ref.watch(secureWindowSyncProvider);
+    ref.watch(widgetSyncProvider);
+    ref.watch(reminderSyncProvider);
     final themeMode = ref.watch(themeModeProvider).value ?? ThemeMode.system;
     final localeCode = ref.watch(localeCodeProvider).value;
     final lock = ref.watch(lockProvider);
+    final appRouter = router ?? _router;
     return MaterialApp.router(
       // Màn khóa phủ lên toàn app; phần bên dưới ẩn khỏi trình đọc màn hình (AC-32).
-      builder: (context, child) => AppLifecycleWatcher(
-        child: Stack(
-          children: [
-            Offstage(offstage: lock != AppLockState.unlocked, child: child),
-            if (lock != AppLockState.unlocked)
-              LockScreen(checking: lock == AppLockState.checking),
-          ],
+      builder: (context, child) => DeepLinkBinder(
+        router: appRouter,
+        child: ReminderTapBinder(
+          router: appRouter,
+          child: AppLifecycleWatcher(
+            child: Stack(
+              children: [
+                Offstage(offstage: lock != AppLockState.unlocked, child: child),
+                if (lock != AppLockState.unlocked)
+                  LockScreen(checking: lock == AppLockState.checking),
+              ],
+            ),
+          ),
         ),
       ),
       onGenerateTitle: (context) => AppLocalizations.of(context).appTitle,
-      routerConfig: router ?? _router,
+      routerConfig: appRouter,
       scaffoldMessengerKey: rootMessengerKey,
       themeMode: themeMode,
       theme: ThemeData(

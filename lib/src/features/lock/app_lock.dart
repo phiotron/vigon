@@ -1,8 +1,11 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../data/pin_service.dart';
 import '../../providers.dart';
+import '../settings/auto_backup_providers.dart';
 
 final secretStoreProvider = Provider<SecretStore>(
   (ref) => const SecureSecretStore(),
@@ -91,7 +94,11 @@ class _AppLifecycleWatcherState extends ConsumerState<AppLifecycleWatcher> {
   void initState() {
     super.initState();
     _listener = AppLifecycleListener(
-      onHide: () => ref.read(lockProvider.notifier).onHidden(),
+      onHide: () {
+        ref.read(lockProvider.notifier).onHidden();
+        // Sao lưu tự động (F-24): không chặn giao diện, không ném lỗi.
+        unawaited(ref.read(autoBackupServiceProvider).maybeRunDaily());
+      },
       onResume: () {
         ref.read(lockProvider.notifier).onResumed();
         ref.read(todayProvider.notifier).refresh();

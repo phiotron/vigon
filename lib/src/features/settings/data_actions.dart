@@ -9,12 +9,15 @@ import 'package:share_plus/share_plus.dart';
 
 import '../../../l10n/app_localizations.dart';
 import '../../data/backup.dart';
+import '../../data/backup_crypto.dart';
 import '../../data/money.dart';
 import '../../l10n_names.dart';
 import '../../providers.dart';
 import '../../ui/messenger.dart';
 import '../lock/app_lock.dart';
 import '../lock/pin_pad.dart';
+import 'auto_backup_providers.dart';
+import 'backup_password_dialogs.dart';
 
 String _stamp(DateTime d) =>
     '${d.year}${d.month.toString().padLeft(2, '0')}${d.day.toString().padLeft(2, '0')}'
@@ -30,11 +33,24 @@ Future<void> _shareFile(String name, String content, String mimeType) async {
   );
 }
 
-/// Xuất bản sao lưu `.vigon` (AC-28).
-Future<void> exportBackupFile(WidgetRef ref) async {
+/// Xuất bản sao lưu `.vigon`; hỏi có đặt mật khẩu không (AC-28, AC-55).
+Future<void> exportBackupFile(BuildContext context, WidgetRef ref) async {
+  final password = await showDialog<String>(
+    context: context,
+    builder: (_) => const BackupExportDialog(),
+  );
+  if (password == null || !context.mounted) return;
   final now = ref.read(clockProvider)();
-  final json = await exportBackup(ref.read(databaseProvider), now: now);
-  await _shareFile('vigon-${_stamp(now)}.vigon', json, 'application/json');
+  var content = await exportBackup(ref.read(databaseProvider), now: now);
+  if (!context.mounted) return;
+  if (password.isNotEmpty) {
+    final plain = content;
+    content = await runWithProgress(
+      context,
+      () => encryptBackupOffThread(plain, password),
+    );
+  }
+  await _shareFile('vigon-${_stamp(now)}.vigon', content, 'application/json');
 }
 
 /// Xuất CSV toàn bộ khoản (AC-30).
@@ -52,6 +68,22 @@ Future<void> exportCsvFile(BuildContext context, WidgetRef ref) async {
     entries: await db.select(db.entries).get(),
     currency: currency,
     decimalDigits: currencyDecimalDigits(currency),
+    format: CsvFormat.forLanguage(
+      l.localeName,
+      header: [
+        l.csvColDate,
+        l.csvColType,
+        l.csvColAmount,
+        l.csvColCurrency,
+        l.csvColCategory,
+        l.csvColAccount,
+        l.csvColToAccount,
+        l.csvColNote,
+      ],
+      expense: l.csvTypeExpense,
+      income: l.csvTypeIncome,
+      transfer: l.csvTypeTransfer,
+    ),
     categoryName: (id) =>
         categories[id] == null ? '' : categoryLabel(l, categories[id]!),
     accountName: (id) =>
@@ -69,12 +101,29 @@ Future<void> restoreFromFile(BuildContext context, WidgetRef ref) async {
   final l = AppLocalizations.of(context);
   final picked = await FilePicker.pickFile();
   if (picked == null || !context.mounted) return;
-  final String content;
+  String content;
   try {
     content = utf8.decode(await picked.readAsBytes());
   } catch (_) {
     showMessage(l.restoreFailed);
     return;
+  }
+  if (isEncryptedBackup(content)) {
+    // File có mật khẩu (AC-55): kiểm hình dạng, hỏi mật khẩu, rồi đi tiếp như file thường.
+    try {
+      checkEncryptedBackup(content);
+    } on BackupFormatException {
+      showMessage(l.restoreFailed);
+      return;
+    }
+    if (!context.mounted) return;
+    final envelope = content;
+    final plain = await showDialog<String>(
+      context: context,
+      builder: (_) => BackupUnlockDialog(envelope: envelope),
+    );
+    if (plain == null || !context.mounted) return;
+    content = plain;
   }
   try {
     validateBackup(content);
@@ -107,6 +156,10 @@ Future<bool> deleteEverything(BuildContext context, WidgetRef ref) async {
   await deleteAllData(ref.read(databaseProvider));
   await ref.read(pinServiceProvider).disable();
   ref.invalidate(pinEnabledProvider);
+  // Xóa hết thì cũng tắt sao lưu tự động (mật khẩu, quyền thư mục), để một
+  // bản sao lưu rỗng không đẩy dần các file tốt ra khỏi thư mục.
+  await ref.read(autoBackupServiceProvider).disable();
+  ref.invalidate(autoBackupStateProvider);
   await ref
       .read(settingsRepositoryProvider)
       .ensureCurrency(ref.read(deviceLocaleProvider));

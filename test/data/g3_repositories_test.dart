@@ -6,6 +6,7 @@ import 'package:vigon/src/data/category_repository.dart';
 import 'package:vigon/src/data/currency.dart';
 import 'package:vigon/src/data/database.dart';
 import 'package:vigon/src/data/entry_repository.dart';
+import 'package:vigon/src/data/money.dart';
 import 'package:vigon/src/data/period.dart';
 import 'package:vigon/src/data/settings_repository.dart';
 import 'package:vigon/src/data/summary.dart';
@@ -203,6 +204,66 @@ void main() {
           .toList();
       expect(amounts, [13, 1]);
     });
+
+    test(
+      'đổi VND sang KWD (0 sang 3 chữ số) giữ con số hiển thị (AC-53)',
+      () async {
+        await settings.ensureCurrency('vi_VN');
+        await expense(155);
+        await accounts.edit(1, name: 'Ví', initialBalance: -20);
+        await settings.setBudget(5000000);
+        await changeCurrency(db, 'KWD');
+        expect(await settings.watchCurrency().first, 'KWD');
+        // 155 đồng thành 155,000 dinar: số lưu nhân 1000.
+        expect((await db.select(db.entries).getSingle()).amount, 155000);
+        expect(
+          (await db.select(db.accounts).getSingle()).initialBalance,
+          -20000,
+        );
+        expect(await settings.readBudget(), 5000000000);
+        expect(
+          formatMoney(155000, currencyCode: 'KWD', locale: 'en'),
+          contains('155.000'),
+        );
+      },
+    );
+
+    test(
+      'đổi KWD sang USD (3 sang 2) và USD sang KWD (2 sang 3) (AC-53)',
+      () async {
+        await settings.ensureCurrency('en_US');
+        await changeCurrency(db, 'KWD');
+        await expense(12345); // 12,345 dinar
+        await changeCurrency(db, 'USD');
+        // Chia 10 và làm tròn: 1235 cent ($12.35).
+        expect((await db.select(db.entries).getSingle()).amount, 1235);
+        await changeCurrency(db, 'KWD');
+        expect((await db.select(db.entries).getSingle()).amount, 12350);
+      },
+    );
+
+    test('đổi VND sang KWD sang VND giữ nguyên số lớn (AC-53)', () async {
+      await settings.ensureCurrency('vi_VN');
+      await expense(1234567);
+      await changeCurrency(db, 'KWD');
+      await changeCurrency(db, 'VND');
+      expect((await db.select(db.entries).getSingle()).amount, 1234567);
+    });
+
+    test(
+      'đổi giữa hai tiền tệ cùng số chữ số không đổi số lưu (AC-53)',
+      () async {
+        await settings.ensureCurrency('vi_VN');
+        await expense(155);
+        await changeCurrency(db, 'JPY'); // 0 -> 0
+        expect((await db.select(db.entries).getSingle()).amount, 155);
+        await changeCurrency(db, 'USD'); // 0 -> 2
+        await changeCurrency(db, 'EUR'); // 2 -> 2
+        expect((await db.select(db.entries).getSingle()).amount, 15500);
+        await changeCurrency(db, 'JPY'); // 2 -> 0
+        expect((await db.select(db.entries).getSingle()).amount, 155);
+      },
+    );
   });
 
   test('ngày đầu tuần và ngày đầu tháng lưu được (AC-12)', () async {

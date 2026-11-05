@@ -34,6 +34,45 @@ class AppLocalizationsVi extends AppLocalizations {
   String get languageSystem => 'Theo máy';
 
   @override
+  String get reminderSection => 'Nhắc ghi chép';
+
+  @override
+  String get reminderSwitch => 'Nhắc ghi chép hằng ngày';
+
+  @override
+  String get reminderSwitchNote =>
+      'Mỗi ngày một thông báo vào giờ bạn chọn, không chứa số liệu';
+
+  @override
+  String get reminderTime => 'Giờ nhắc';
+
+  @override
+  String get reminderExplainTitle => 'Bật nhắc ghi chép?';
+
+  @override
+  String get reminderExplainBody =>
+      'Ví Gọn sẽ gửi một thông báo mỗi ngày vào giờ bạn chọn để nhắc ghi khoản. Thông báo không chứa số liệu.';
+
+  @override
+  String get reminderContinue => 'Tiếp tục';
+
+  @override
+  String get reminderDenied =>
+      'Chưa có quyền gửi thông báo. Hãy bật thông báo cho Ví Gọn trong cài đặt hệ thống.';
+
+  @override
+  String get reminderOpenSettings => 'Mở cài đặt';
+
+  @override
+  String get reminderChannelName => 'Nhắc ghi chép';
+
+  @override
+  String get reminderChannelDescription => 'Nhắc ghi chi tiêu mỗi ngày';
+
+  @override
+  String get reminderNotificationBody => 'Hôm nay bạn đã ghi chi tiêu chưa?';
+
+  @override
   String get emptyPeriod => 'Bấm − để ghi khoản chi đầu tiên';
 
   @override
@@ -162,6 +201,9 @@ class AppLocalizationsVi extends AppLocalizations {
   String get chooseCategory => 'Chọn danh mục';
 
   @override
+  String get otherCategories => 'Danh mục khác';
+
+  @override
   String get save => 'Lưu';
 
   @override
@@ -193,6 +235,26 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get undo => 'Hoàn tác';
+
+  @override
+  String get search => 'Tìm';
+
+  @override
+  String get searchHint => 'Ghi chú, danh mục hoặc số tiền';
+
+  @override
+  String get searchClose => 'Đóng tìm kiếm';
+
+  @override
+  String get searchAllTime => 'Tất cả thời gian';
+
+  @override
+  String get searchNoMatch => 'Không có khoản nào khớp';
+
+  @override
+  String searchTotal(int count, String total) {
+    return '$count khoản · tổng $total';
+  }
 
   @override
   String get keypadBackspace => 'Xóa lùi';
@@ -286,6 +348,29 @@ class AppLocalizationsVi extends AppLocalizations {
   String get editAccount => 'Sửa tài khoản';
 
   @override
+  String get archiveAccount => 'Ẩn tài khoản';
+
+  @override
+  String get deleteAccount => 'Xóa tài khoản';
+
+  @override
+  String deleteAccountConfirm(String name) {
+    return 'Xóa tài khoản \"$name\"?';
+  }
+
+  @override
+  String get accountInUseHint => 'Tài khoản đã có khoản, chỉ ẩn được';
+
+  @override
+  String get accountLastOneHint => 'Phải còn ít nhất một tài khoản';
+
+  @override
+  String get archivedAccounts => 'Tài khoản đã ẩn';
+
+  @override
+  String get unarchiveAccount => 'Hiện lại';
+
+  @override
   String get initialBalance => 'Số dư ban đầu';
 
   @override
@@ -294,6 +379,45 @@ class AppLocalizationsVi extends AppLocalizations {
   @override
   String get currencyNote =>
       'Đổi tiền tệ chỉ đổi ký hiệu, không quy đổi tỉ giá. Nếu hai tiền tệ có số chữ số thập phân khác nhau (ví dụ VND và USD), số tiền được nhân hoặc chia để giữ nguyên con số; đổi ngược lại có thể mất phần lẻ.';
+
+  @override
+  String get currencySearchHint => 'Tìm theo mã hoặc tên';
+
+  @override
+  String get currencyNoMatch => 'Không có tiền tệ nào khớp';
+
+  @override
+  String get csvColDate => 'Ngày';
+
+  @override
+  String get csvColType => 'Loại';
+
+  @override
+  String get csvColAmount => 'Số tiền';
+
+  @override
+  String get csvColCurrency => 'Tiền tệ';
+
+  @override
+  String get csvColCategory => 'Danh mục';
+
+  @override
+  String get csvColAccount => 'Tài khoản';
+
+  @override
+  String get csvColToAccount => 'Đến tài khoản';
+
+  @override
+  String get csvColNote => 'Ghi chú';
+
+  @override
+  String get csvTypeExpense => 'Chi';
+
+  @override
+  String get csvTypeIncome => 'Thu';
+
+  @override
+  String get csvTypeTransfer => 'Chuyển tiền';
 
   @override
   String get weekStart => 'Ngày đầu tuần';
@@ -327,6 +451,12 @@ class AppLocalizationsVi extends AppLocalizations {
   String get budgetRemove => 'Bỏ ngân sách';
 
   @override
+  String get categoryBudget => 'Ngân sách tháng của danh mục';
+
+  @override
+  String get categoryBudgetHint => 'Để trống nếu không đặt';
+
+  @override
   String get recurring => 'Khoản định kỳ';
 
   @override
@@ -346,11 +476,114 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get backupNote =>
-      'File sao lưu không được mã hóa. Hãy cất ở nơi an toàn.';
+      'Có thể đặt mật khẩu cho file. Không đặt thì file không được mã hóa.';
+
+  @override
+  String get backupSetPassword => 'Đặt mật khẩu cho file';
+
+  @override
+  String get backupPassword => 'Mật khẩu';
+
+  @override
+  String get backupPasswordConfirm => 'Nhập lại mật khẩu';
+
+  @override
+  String get backupPasswordWarning =>
+      'Quên mật khẩu thì không mở được file này.';
+
+  @override
+  String get backupPasswordTooShort => 'Mật khẩu tối thiểu 6 ký tự';
+
+  @override
+  String get backupPasswordMismatch => 'Hai mật khẩu không khớp';
+
+  @override
+  String get backupExportAction => 'Xuất';
+
+  @override
+  String get backupEnterPasswordTitle => 'File có mật khẩu';
+
+  @override
+  String get backupEnterPasswordBody =>
+      'Nhập mật khẩu đã đặt khi xuất file này.';
+
+  @override
+  String get backupOpen => 'Mở';
+
+  @override
+  String get backupWrongPassword => 'Sai mật khẩu hoặc file bị hỏng';
+
+  @override
+  String get backupWorking => 'Đang xử lý';
 
   @override
   String get backupReminder =>
       'Dữ liệu chỉ nằm trên máy này. Nên xuất bản sao lưu thường xuyên.';
+
+  @override
+  String get autoBackup => 'Sao lưu tự động';
+
+  @override
+  String get autoBackupNote =>
+      'Ví Gọn chỉ ghi file vào thư mục bạn chọn. Việc tải lên Google Drive hay Dropbox do app đó thực hiện.';
+
+  @override
+  String autoBackupFolder(String name) {
+    return 'Thư mục: $name';
+  }
+
+  @override
+  String get autoBackupFolderUnknown => 'Thư mục đã chọn';
+
+  @override
+  String autoBackupLast(String time) {
+    return 'Lần cuối: $time';
+  }
+
+  @override
+  String get autoBackupNever => 'Chưa sao lưu lần nào';
+
+  @override
+  String get autoBackupErrorFolder =>
+      'Không ghi được vào thư mục. Chọn lại thư mục';
+
+  @override
+  String get autoBackupErrorOther =>
+      'Sao lưu không thành công. Thử lại bằng Sao lưu ngay';
+
+  @override
+  String autoBackupFailedAt(String time, String error) {
+    return 'Lần thử $time: $error';
+  }
+
+  @override
+  String get autoBackupBusy => 'Đang sao lưu, thử lại sau giây lát';
+
+  @override
+  String get autoBackupNow => 'Sao lưu ngay';
+
+  @override
+  String get autoBackupChooseFolder => 'Chọn lại thư mục';
+
+  @override
+  String get autoBackupDone => 'Đã sao lưu';
+
+  @override
+  String get autoBackupOffDone =>
+      'Đã tắt sao lưu tự động. File đã ghi vẫn còn trong thư mục.';
+
+  @override
+  String get autoBackupPickFailed => 'Không mở được bộ chọn thư mục';
+
+  @override
+  String get autoBackupPasswordTitle => 'Mật khẩu sao lưu tự động';
+
+  @override
+  String get autoBackupPasswordWarning =>
+      'Quên mật khẩu thì không mở được các file sao lưu; bạn cần nhớ nó khi khôi phục trên máy khác.';
+
+  @override
+  String get autoBackupTurnOn => 'Bật';
 
   @override
   String get restoreConfirm =>
@@ -417,6 +650,33 @@ class AppLocalizationsVi extends AppLocalizations {
   String pinProgress(int count) {
     return 'Đã nhập $count trên 4 số';
   }
+
+  @override
+  String get secureWindow => 'Che nội dung khi chuyển app';
+
+  @override
+  String get secureWindowNote =>
+      'Chặn chụp màn hình và ẩn nội dung trong danh sách app gần đây';
+
+  @override
+  String get widgetShowAmounts => 'Hiện số tiền trên widget';
+
+  @override
+  String get widgetShowAmountsNote =>
+      'Ai cầm máy cũng nhìn thấy số này trên màn hình chờ. Khi đang bật khóa PIN, widget luôn ẩn số.';
+
+  @override
+  String widgetSpentThisMonth(String spent) {
+    return 'Tháng này đã chi $spent';
+  }
+
+  @override
+  String widgetSpentOfBudget(String spent, String budget) {
+    return 'Tháng này đã chi $spent / $budget';
+  }
+
+  @override
+  String get widgetLockedByPin => 'Đã khóa bằng PIN';
 
   @override
   String get about => 'Giới thiệu';

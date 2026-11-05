@@ -128,8 +128,10 @@ class _TransferScreenState extends ConsumerState<TransferScreen> {
     final currency = ref.watch(currencyProvider).value ?? 'VND';
     final digits = currencyDecimalDigits(currency);
     final accounts = ref.watch(accountsProvider).value ?? const <Account>[];
+    final all = ref.watch(allAccountsProvider).value ?? accounts;
     final value = evaluateToMinorUnits(_expression, decimalDigits: digits);
 
+    // Tài khoản đã ẩn chỉ hiện khi là tài khoản sẵn có của lần chuyển đang sửa (AC-44).
     Widget accountPicker(
       String label,
       int? selected,
@@ -141,6 +143,9 @@ class _TransferScreenState extends ConsumerState<TransferScreen> {
       items: [
         for (final a in accounts)
           DropdownMenuItem(value: a.id, child: Text(accountLabel(l, a))),
+        for (final a in all)
+          if (a.id == selected && !accounts.any((v) => v.id == a.id))
+            DropdownMenuItem(value: a.id, child: Text(accountLabel(l, a))),
       ],
       onChanged: onChanged,
     );
@@ -157,7 +162,7 @@ class _TransferScreenState extends ConsumerState<TransferScreen> {
             ),
         ],
       ),
-      body: accounts.length < 2
+      body: accounts.length < 2 && _original == null
           ? const SizedBox.shrink()
           : SafeArea(
               child: Column(

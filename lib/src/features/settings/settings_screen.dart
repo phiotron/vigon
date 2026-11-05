@@ -1,15 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:intl/intl.dart';
 
 import '../../../l10n/app_localizations.dart';
 import '../../data/currency.dart';
 import '../../providers.dart';
 import '../../ui/format.dart';
 import '../lock/app_lock.dart';
+import 'auto_backup_section.dart';
 import 'budget_dialog.dart';
+import 'currency_picker.dart';
 import 'data_actions.dart';
+import 'reminder_section.dart';
+import 'secure_window.dart';
+import 'widget_section.dart';
 
 /// Cài đặt (AC-12, AC-21, AC-35, AC-36 và các mục G4–G6).
 class SettingsScreen extends ConsumerWidget {
@@ -145,6 +149,15 @@ class SettingsScreen extends ConsumerWidget {
             onChanged: (on) =>
                 on ? setupPin(context, ref) : disablePin(context, ref),
           ),
+          SwitchListTile(
+            secondary: const Icon(Icons.visibility_off_outlined),
+            title: Text(l.secureWindow),
+            subtitle: Text(l.secureWindowNote),
+            value: ref.watch(secureWindowEnabledProvider).value ?? false,
+            onChanged: repo.setSecureWindow,
+          ),
+          const WidgetAmountsSwitch(),
+          ReminderSection(header: header(l.reminderSection)),
           header(l.dataSection),
           Padding(
             padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
@@ -154,7 +167,7 @@ class SettingsScreen extends ConsumerWidget {
             leading: const Icon(Icons.upload_file),
             title: Text(l.backup),
             subtitle: Text(l.backupNote),
-            onTap: () => exportBackupFile(ref),
+            onTap: () => exportBackupFile(context, ref),
           ),
           ListTile(
             leading: const Icon(Icons.settings_backup_restore),
@@ -166,6 +179,7 @@ class SettingsScreen extends ConsumerWidget {
             title: Text(l.exportCsv),
             onTap: () => exportCsvFile(context, ref),
           ),
+          const AutoBackupSection(),
           ListTile(
             leading: Icon(
               Icons.delete_forever_outlined,
@@ -189,39 +203,14 @@ class SettingsScreen extends ConsumerWidget {
     );
   }
 
-  static String _currencyLabel(String code) {
-    final symbol = NumberFormat.simpleCurrency(name: code).currencySymbol;
-    return symbol == code ? code : '$code · $symbol';
-  }
+  static String _currencyLabel(String code) => currencyCodeLabel(code);
 
   Future<void> _pickCurrency(
     BuildContext context,
     WidgetRef ref,
     String current,
   ) async {
-    final l = AppLocalizations.of(context);
-    final picked = await showDialog<String>(
-      context: context,
-      builder: (context) => SimpleDialog(
-        title: Text(l.currency),
-        children: [
-          Padding(
-            padding: const EdgeInsets.fromLTRB(24, 0, 24, 8),
-            child: Text(l.currencyNote),
-          ),
-          for (final code in supportedCurrencies)
-            SimpleDialogOption(
-              onPressed: () => Navigator.pop(context, code),
-              child: Row(
-                children: [
-                  Expanded(child: Text(_currencyLabel(code))),
-                  if (code == current) const Icon(Icons.check),
-                ],
-              ),
-            ),
-        ],
-      ),
-    );
+    final picked = await showCurrencyPicker(context, current);
     if (picked != null && picked != current) {
       await changeCurrency(ref.read(databaseProvider), picked);
     }

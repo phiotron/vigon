@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../l10n/app_localizations.dart';
-import '../../data/calculator.dart';
 import '../../data/database.dart';
 import '../../data/money.dart';
 import '../../data/recurring_repository.dart';
@@ -12,7 +10,7 @@ import '../../providers.dart';
 import '../../ui/category_avatar.dart';
 import '../../ui/format.dart';
 import '../entry/entry_editor_screen.dart' show repeatLabel;
-import '../entry/keypad.dart' show minorUnitsToInput;
+import 'rule_dialog.dart';
 
 /// Danh sách chuỗi định kỳ: dừng, chạy lại, sửa số tiền (AC-25).
 class RecurringScreen extends ConsumerWidget {
@@ -80,87 +78,33 @@ class RecurringScreen extends ConsumerWidget {
     final digits = currencyDecimalDigits(
       ref.read(currencyProvider).value ?? 'VND',
     );
-    final saved = await showDialog<(int, String?)>(
+    final categories = switch (rule.type) {
+      EntryType.transfer => const <Category>[],
+      EntryType.income =>
+        ref.read(categoriesProvider(CategoryType.income)).value,
+      EntryType.expense =>
+        ref.read(categoriesProvider(CategoryType.expense)).value,
+    };
+    final saved = await showDialog<RuleEdit>(
       context: context,
-      builder: (context) => _RuleDialog(rule: rule, digits: digits),
+      builder: (context) => RuleDialog(
+        rule: rule,
+        digits: digits,
+        categories: categories ?? const <Category>[],
+        accounts: ref.read(accountsProvider).value ?? const <Account>[],
+      ),
     );
     if (saved != null) {
       await ref
           .read(recurringRepositoryProvider)
-          .edit(rule.id, amount: saved.$1, note: saved.$2);
+          .edit(
+            rule.id,
+            amount: saved.amount,
+            note: saved.note,
+            frequency: saved.frequency,
+            categoryId: saved.categoryId,
+            accountId: saved.accountId,
+          );
     }
-  }
-}
-
-/// Hộp thoại tự giữ ô nhập để giải phóng đúng lúc, sau hiệu ứng đóng.
-class _RuleDialog extends StatefulWidget {
-  const _RuleDialog({required this.rule, required this.digits});
-
-  final RecurringRule rule;
-  final int digits;
-
-  @override
-  State<_RuleDialog> createState() => _RuleDialogState();
-}
-
-class _RuleDialogState extends State<_RuleDialog> {
-  late final _amount = TextEditingController(
-    text: minorUnitsToInput(widget.rule.amount, widget.digits),
-  );
-  late final _note = TextEditingController(text: widget.rule.note ?? '');
-  String? _error;
-
-  @override
-  void dispose() {
-    _amount.dispose();
-    _note.dispose();
-    super.dispose();
-  }
-
-  void _save() {
-    final l = AppLocalizations.of(context);
-    final v = evaluateToMinorUnits(
-      _amount.text.trim().replaceAll(',', '.'),
-      decimalDigits: widget.digits,
-    );
-    if (v == null || v <= 0) {
-      setState(() => _error = l.amountMustBePositive);
-      return;
-    }
-    final n = _note.text.trim();
-    Navigator.pop(context, (v, n.isEmpty ? null : n));
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final l = AppLocalizations.of(context);
-    return AlertDialog(
-      title: Text(l.recurring),
-      content: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          TextField(
-            controller: _amount,
-            keyboardType: const TextInputType.numberWithOptions(decimal: true),
-            inputFormatters: [
-              FilteringTextInputFormatter.allow(RegExp(r'[0-9.,]')),
-            ],
-            decoration: InputDecoration(errorText: _error),
-          ),
-          TextField(
-            controller: _note,
-            maxLength: 200,
-            decoration: InputDecoration(hintText: l.noteHint),
-          ),
-        ],
-      ),
-      actions: [
-        TextButton(
-          onPressed: () => Navigator.pop(context),
-          child: Text(l.cancel),
-        ),
-        FilledButton(onPressed: _save, child: Text(l.save)),
-      ],
-    );
   }
 }

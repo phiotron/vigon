@@ -146,6 +146,78 @@ abstract class AppLocalizations {
   /// **'System'**
   String get languageSystem;
 
+  /// No description provided for @reminderSection.
+  ///
+  /// In en, this message translates to:
+  /// **'Reminder'**
+  String get reminderSection;
+
+  /// No description provided for @reminderSwitch.
+  ///
+  /// In en, this message translates to:
+  /// **'Daily reminder'**
+  String get reminderSwitch;
+
+  /// No description provided for @reminderSwitchNote.
+  ///
+  /// In en, this message translates to:
+  /// **'One notification a day at the time you choose, with no figures in it'**
+  String get reminderSwitchNote;
+
+  /// No description provided for @reminderTime.
+  ///
+  /// In en, this message translates to:
+  /// **'Reminder time'**
+  String get reminderTime;
+
+  /// No description provided for @reminderExplainTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Turn on the reminder?'**
+  String get reminderExplainTitle;
+
+  /// No description provided for @reminderExplainBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Ví Gọn will send one notification every day at the time you choose, to remind you to record your spending. The notification contains no figures.'**
+  String get reminderExplainBody;
+
+  /// No description provided for @reminderContinue.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue'**
+  String get reminderContinue;
+
+  /// No description provided for @reminderDenied.
+  ///
+  /// In en, this message translates to:
+  /// **'Notifications are not allowed. Turn on notifications for Ví Gọn in the system settings.'**
+  String get reminderDenied;
+
+  /// No description provided for @reminderOpenSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Open settings'**
+  String get reminderOpenSettings;
+
+  /// No description provided for @reminderChannelName.
+  ///
+  /// In en, this message translates to:
+  /// **'Reminder'**
+  String get reminderChannelName;
+
+  /// No description provided for @reminderChannelDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'A daily reminder to record your spending'**
+  String get reminderChannelDescription;
+
+  /// No description provided for @reminderNotificationBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Have you recorded your spending today?'**
+  String get reminderNotificationBody;
+
   /// No description provided for @emptyPeriod.
   ///
   /// In en, this message translates to:
@@ -386,6 +458,12 @@ abstract class AppLocalizations {
   /// **'Choose category'**
   String get chooseCategory;
 
+  /// No description provided for @otherCategories.
+  ///
+  /// In en, this message translates to:
+  /// **'More categories'**
+  String get otherCategories;
+
   /// No description provided for @save.
   ///
   /// In en, this message translates to:
@@ -451,6 +529,42 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Undo'**
   String get undo;
+
+  /// No description provided for @search.
+  ///
+  /// In en, this message translates to:
+  /// **'Search'**
+  String get search;
+
+  /// No description provided for @searchHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Note, category or amount'**
+  String get searchHint;
+
+  /// No description provided for @searchClose.
+  ///
+  /// In en, this message translates to:
+  /// **'Close search'**
+  String get searchClose;
+
+  /// No description provided for @searchAllTime.
+  ///
+  /// In en, this message translates to:
+  /// **'All time'**
+  String get searchAllTime;
+
+  /// No description provided for @searchNoMatch.
+  ///
+  /// In en, this message translates to:
+  /// **'No matching records'**
+  String get searchNoMatch;
+
+  /// No description provided for @searchTotal.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, one{1 record} other{{count} records}} · total {total}'**
+  String searchTotal(int count, String total);
 
   /// No description provided for @keypadBackspace.
   ///
@@ -626,6 +740,48 @@ abstract class AppLocalizations {
   /// **'Edit account'**
   String get editAccount;
 
+  /// No description provided for @archiveAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Hide account'**
+  String get archiveAccount;
+
+  /// No description provided for @deleteAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete account'**
+  String get deleteAccount;
+
+  /// No description provided for @deleteAccountConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete the account \"{name}\"?'**
+  String deleteAccountConfirm(String name);
+
+  /// No description provided for @accountInUseHint.
+  ///
+  /// In en, this message translates to:
+  /// **'This account has records, so it can only be hidden'**
+  String get accountInUseHint;
+
+  /// No description provided for @accountLastOneHint.
+  ///
+  /// In en, this message translates to:
+  /// **'At least one account must remain'**
+  String get accountLastOneHint;
+
+  /// No description provided for @archivedAccounts.
+  ///
+  /// In en, this message translates to:
+  /// **'Hidden accounts'**
+  String get archivedAccounts;
+
+  /// No description provided for @unarchiveAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Show again'**
+  String get unarchiveAccount;
+
   /// No description provided for @initialBalance.
   ///
   /// In en, this message translates to:
@@ -643,6 +799,84 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Changing the currency only changes the symbol; no exchange rate is applied. If the two currencies have a different number of decimals (for example VND and USD), amounts are multiplied or divided so the numbers you see stay the same; switching back may lose the fractional part.'**
   String get currencyNote;
+
+  /// No description provided for @currencySearchHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Search by code or name'**
+  String get currencySearchHint;
+
+  /// No description provided for @currencyNoMatch.
+  ///
+  /// In en, this message translates to:
+  /// **'No matching currency'**
+  String get currencyNoMatch;
+
+  /// No description provided for @csvColDate.
+  ///
+  /// In en, this message translates to:
+  /// **'date'**
+  String get csvColDate;
+
+  /// No description provided for @csvColType.
+  ///
+  /// In en, this message translates to:
+  /// **'type'**
+  String get csvColType;
+
+  /// No description provided for @csvColAmount.
+  ///
+  /// In en, this message translates to:
+  /// **'amount'**
+  String get csvColAmount;
+
+  /// No description provided for @csvColCurrency.
+  ///
+  /// In en, this message translates to:
+  /// **'currency'**
+  String get csvColCurrency;
+
+  /// No description provided for @csvColCategory.
+  ///
+  /// In en, this message translates to:
+  /// **'category'**
+  String get csvColCategory;
+
+  /// No description provided for @csvColAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'account'**
+  String get csvColAccount;
+
+  /// No description provided for @csvColToAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'to_account'**
+  String get csvColToAccount;
+
+  /// No description provided for @csvColNote.
+  ///
+  /// In en, this message translates to:
+  /// **'note'**
+  String get csvColNote;
+
+  /// No description provided for @csvTypeExpense.
+  ///
+  /// In en, this message translates to:
+  /// **'expense'**
+  String get csvTypeExpense;
+
+  /// No description provided for @csvTypeIncome.
+  ///
+  /// In en, this message translates to:
+  /// **'income'**
+  String get csvTypeIncome;
+
+  /// No description provided for @csvTypeTransfer.
+  ///
+  /// In en, this message translates to:
+  /// **'transfer'**
+  String get csvTypeTransfer;
 
   /// No description provided for @weekStart.
   ///
@@ -698,6 +932,18 @@ abstract class AppLocalizations {
   /// **'Remove budget'**
   String get budgetRemove;
 
+  /// No description provided for @categoryBudget.
+  ///
+  /// In en, this message translates to:
+  /// **'Category monthly budget'**
+  String get categoryBudget;
+
+  /// No description provided for @categoryBudgetHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Leave empty for none'**
+  String get categoryBudgetHint;
+
   /// No description provided for @recurring.
   ///
   /// In en, this message translates to:
@@ -737,14 +983,194 @@ abstract class AppLocalizations {
   /// No description provided for @backupNote.
   ///
   /// In en, this message translates to:
-  /// **'Backup files are not encrypted. Keep them somewhere safe.'**
+  /// **'You can protect the file with a password. Without one, the file is not encrypted.'**
   String get backupNote;
+
+  /// No description provided for @backupSetPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Protect file with a password'**
+  String get backupSetPassword;
+
+  /// No description provided for @backupPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Password'**
+  String get backupPassword;
+
+  /// No description provided for @backupPasswordConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Repeat password'**
+  String get backupPasswordConfirm;
+
+  /// No description provided for @backupPasswordWarning.
+  ///
+  /// In en, this message translates to:
+  /// **'If you forget the password, this file cannot be opened.'**
+  String get backupPasswordWarning;
+
+  /// No description provided for @backupPasswordTooShort.
+  ///
+  /// In en, this message translates to:
+  /// **'Password needs at least 6 characters'**
+  String get backupPasswordTooShort;
+
+  /// No description provided for @backupPasswordMismatch.
+  ///
+  /// In en, this message translates to:
+  /// **'Passwords do not match'**
+  String get backupPasswordMismatch;
+
+  /// No description provided for @backupExportAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Export'**
+  String get backupExportAction;
+
+  /// No description provided for @backupEnterPasswordTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Password-protected file'**
+  String get backupEnterPasswordTitle;
+
+  /// No description provided for @backupEnterPasswordBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter the password you set when exporting this file.'**
+  String get backupEnterPasswordBody;
+
+  /// No description provided for @backupOpen.
+  ///
+  /// In en, this message translates to:
+  /// **'Open'**
+  String get backupOpen;
+
+  /// No description provided for @backupWrongPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Wrong password or the file is damaged'**
+  String get backupWrongPassword;
+
+  /// No description provided for @backupWorking.
+  ///
+  /// In en, this message translates to:
+  /// **'Working'**
+  String get backupWorking;
 
   /// No description provided for @backupReminder.
   ///
   /// In en, this message translates to:
   /// **'Data is stored only on this phone. Export a backup regularly.'**
   String get backupReminder;
+
+  /// No description provided for @autoBackup.
+  ///
+  /// In en, this message translates to:
+  /// **'Automatic backup'**
+  String get autoBackup;
+
+  /// No description provided for @autoBackupNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Ví Gọn only writes files to the folder you choose. Uploading to Google Drive or Dropbox is done by that app.'**
+  String get autoBackupNote;
+
+  /// No description provided for @autoBackupFolder.
+  ///
+  /// In en, this message translates to:
+  /// **'Folder: {name}'**
+  String autoBackupFolder(String name);
+
+  /// No description provided for @autoBackupFolderUnknown.
+  ///
+  /// In en, this message translates to:
+  /// **'Chosen folder'**
+  String get autoBackupFolderUnknown;
+
+  /// No description provided for @autoBackupLast.
+  ///
+  /// In en, this message translates to:
+  /// **'Last: {time}'**
+  String autoBackupLast(String time);
+
+  /// No description provided for @autoBackupNever.
+  ///
+  /// In en, this message translates to:
+  /// **'No backup yet'**
+  String get autoBackupNever;
+
+  /// No description provided for @autoBackupErrorFolder.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not write to the folder. Choose the folder again'**
+  String get autoBackupErrorFolder;
+
+  /// No description provided for @autoBackupErrorOther.
+  ///
+  /// In en, this message translates to:
+  /// **'Backup failed. Try again with Back up now'**
+  String get autoBackupErrorOther;
+
+  /// No description provided for @autoBackupFailedAt.
+  ///
+  /// In en, this message translates to:
+  /// **'Attempt {time}: {error}'**
+  String autoBackupFailedAt(String time, String error);
+
+  /// No description provided for @autoBackupBusy.
+  ///
+  /// In en, this message translates to:
+  /// **'A backup is already running, try again in a moment'**
+  String get autoBackupBusy;
+
+  /// No description provided for @autoBackupNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Back up now'**
+  String get autoBackupNow;
+
+  /// No description provided for @autoBackupChooseFolder.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose folder again'**
+  String get autoBackupChooseFolder;
+
+  /// No description provided for @autoBackupDone.
+  ///
+  /// In en, this message translates to:
+  /// **'Backup saved'**
+  String get autoBackupDone;
+
+  /// No description provided for @autoBackupOffDone.
+  ///
+  /// In en, this message translates to:
+  /// **'Automatic backup is off. Files already written stay in the folder.'**
+  String get autoBackupOffDone;
+
+  /// No description provided for @autoBackupPickFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not open the folder picker'**
+  String get autoBackupPickFailed;
+
+  /// No description provided for @autoBackupPasswordTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Automatic backup password'**
+  String get autoBackupPasswordTitle;
+
+  /// No description provided for @autoBackupPasswordWarning.
+  ///
+  /// In en, this message translates to:
+  /// **'If you forget the password, the backup files cannot be opened; you need it to restore on another device.'**
+  String get autoBackupPasswordWarning;
+
+  /// No description provided for @autoBackupTurnOn.
+  ///
+  /// In en, this message translates to:
+  /// **'Turn on'**
+  String get autoBackupTurnOn;
 
   /// No description provided for @restoreConfirm.
   ///
@@ -859,6 +1285,48 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'{count} of 4 digits entered'**
   String pinProgress(int count);
+
+  /// No description provided for @secureWindow.
+  ///
+  /// In en, this message translates to:
+  /// **'Hide content when switching apps'**
+  String get secureWindow;
+
+  /// No description provided for @secureWindowNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Blocks screenshots and hides content in the recent apps list'**
+  String get secureWindowNote;
+
+  /// No description provided for @widgetShowAmounts.
+  ///
+  /// In en, this message translates to:
+  /// **'Show amounts on widget'**
+  String get widgetShowAmounts;
+
+  /// No description provided for @widgetShowAmountsNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Anyone holding the phone can see this number on the home screen. While PIN lock is on, the widget always hides amounts.'**
+  String get widgetShowAmountsNote;
+
+  /// No description provided for @widgetSpentThisMonth.
+  ///
+  /// In en, this message translates to:
+  /// **'Spent this month: {spent}'**
+  String widgetSpentThisMonth(String spent);
+
+  /// No description provided for @widgetSpentOfBudget.
+  ///
+  /// In en, this message translates to:
+  /// **'Spent this month: {spent} / {budget}'**
+  String widgetSpentOfBudget(String spent, String budget);
+
+  /// No description provided for @widgetLockedByPin.
+  ///
+  /// In en, this message translates to:
+  /// **'Locked with PIN'**
+  String get widgetLockedByPin;
 
   /// No description provided for @about.
   ///

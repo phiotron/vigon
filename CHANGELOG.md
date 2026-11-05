@@ -1,5 +1,25 @@
 # CHANGELOG — Ví Gọn (A002-vigon)
 
+## [1.2 (chưa phát hành)] — 2026-11-04
+Trên nhánh `integration/spec-1.1`, chưa gộp vào nhánh chính. `versionName` trong `pubspec.yaml` vẫn là 1.0.0+1 (chưa đánh số). 294 test tự động đạt (`flutter test` 2026-11-04, sau khi sửa lỗi kiểm chứng độc lập); APK release bản 1.2 đã build (64,7 MB, quyền: POST_NOTIFICATIONS, RECEIVE_BOOT_COMPLETED); chưa thử trên máy thật (CHƯA kiểm chứng).
+
+### Thêm
+- **Sao lưu tự động (F-24, AC-58 tới AC-60):** Cài đặt → Dữ liệu → "Sao lưu tự động": chọn một thư mục bằng bộ chọn thư mục của Android (Storage Access Framework; có thể nằm trong Google Drive, Dropbox, thẻ nhớ hoặc bộ nhớ máy) và đặt mật khẩu (từ 6 ký tự, nhập hai lần). Mật khẩu chỉ ở bộ nhớ an toàn của Android. Khi app ra nền, tối đa một lần mỗi ngày và chỉ khi dữ liệu đã đổi, app ghi `vigon-auto-AAAAMMDD-GGPP.vigon` (luôn mã hóa AES-256-GCM, không bao giờ bản rõ), giữ 7 file gần nhất, không đụng file khác. Nút "Sao lưu ngay" và "Chọn lại thư mục"; hiện giờ và kết quả lần gần nhất; lỗi quyền hoặc thư mục mất được báo rõ. Tắt thì xóa mật khẩu và quyền thư mục, giữ file đã ghi. Việc tải lên đám mây do app Drive hay Dropbox làm, Ví Gọn không dùng mạng.
+- **Nhắc ghi chép hằng ngày (F-25, AC-61, AC-62):** Cài đặt → "Nhắc ghi chép hằng ngày" (mặc định tắt) và "Giờ nhắc" (mặc định 20:00). Bật thì giải thích trước rồi mới xin quyền thông báo (Android 13 trở lên); bị từ chối thì công tắc về tắt và có nút mở cài đặt hệ thống. Thông báo "Ví Gọn: Hôm nay bạn đã ghi chi tiêu chưa?" mỗi ngày, không chứa số liệu; chạm vào mở màn Nhập khoản chi (qua màn khóa PIN nếu đang bật). Lịch không chính xác theo phút; được đặt lại khi mở app và sau khi khởi động lại máy.
+- **Widget màn hình chính (F-26, AC-63, AC-64):** widget "Ví Gọn" (cỡ tối thiểu 2×2; một hàng cao cắt mất nút khi có dòng trạng thái) với hai nút "Chi" và "Thu" mở thẳng màn Nhập khoản chi hoặc thu (qua màn khóa PIN nếu đang bật; TalkBack đọc "Thêm khoản chi", "Thêm khoản thu"). Mặc định không hiện số tiền. Công tắc "Hiện số tiền trên widget" (kèm cảnh báo) thêm dòng "Tháng này đã chi X" (kèm "/ hạn mức" nếu có ngân sách tháng); khi khóa PIN bật, widget không hiện số mà ghi "Đã khóa bằng PIN".
+- Test: `auto_backup_test`, `auto_backup_ui_test`, `f25_reminder_test`, `f26_widget_test`; `manifest_test` cập nhật theo danh sách quyền cho phép; AC-58 tới AC-64 trong `docs/TESTING.md` (kèm bước kiểm tay M-1 tới M-7). Tài liệu: `ui-spec.md`, `docs/BACKLOG.md`.
+
+### Quyền (thêm vào manifest)
+- `POST_NOTIFICATIONS` (nhắc ghi chép, xin lúc người dùng bật công tắc) và `RECEIVE_BOOT_COMPLETED` (đặt lại lịch nhắc sau khi khởi động lại máy). Không thêm quyền nào khác: không `INTERNET`, không `SCHEDULE_EXACT_ALARM`, không quyền bộ nhớ (SAF và widget không cần quyền). `VIBRATE` do thư viện thông báo tự thêm đã được gỡ khỏi manifest. Chưa kiểm bằng `aapt2` trên APK release bản 1.2 (CHƯA kiểm chứng).
+
+### Giới hạn đã biết
+- Widget không tự tính số của tháng mới khi app chưa mở (chỉ Dart tính được số): qua hết kỳ tháng thì số cũ bị bỏ và widget ghi "Mở app để cập nhật" tới lần mở app kế tiếp. Việc bỏ số dùng báo thức không chính xác và cập nhật 30 phút của hệ thống nên có thể chậm; chưa thử trên launcher thật.
+- Công tắc "Hiện số tiền trên widget" và công tắc nhắc ghi chép là cài đặt theo máy: không đi theo file sao lưu, khôi phục xong cả hai về tắt (giờ nhắc vẫn đi theo file). Thư mục, mật khẩu và trạng thái sao lưu tự động cũng không đi theo file sao lưu, khôi phục sang máy khác thì phải bật lại. (Ghi theo mã trong cây làm việc, chưa commit, chưa chạy lại cả bộ test.)
+- Mã hóa PBKDF2 của sao lưu tự động bắt đầu lúc app ra nền; hệ thống có thể đóng băng app đang ẩn nên một lần sao lưu có thể dang dở tới lần sau.
+- Đổi múi giờ lúc app đang đóng thì lịch nhắc lệch tới lần mở app kế tiếp.
+- Giờ nhắc không chính xác theo phút (cố ý, để khỏi cần quyền báo thức chính xác).
+- Ngoài phạm vi (ghi ở BACKLOG "Ý tưởng"): đồng bộ hai chiều giữa nhiều máy (cần khóa OAuth do người dùng tạo), widget có số tiền khi PIN bật.
+
 ## [Chưa phát hành]
 - Khởi tạo từ template (2026-11-03)
 - SPEC, BACKLOG, COMPLIANCE lập xong; SPEC duyệt (2026-11-03)
@@ -16,4 +36,5 @@
 - Chuẩn bị ký bản phát hành: `build.gradle.kts` đọc `android/key.properties` (ngoài repo), build `appbundle` bị chặn khi thiếu khóa; `docs/RELEASE.md` điền đủ kèm hướng dẫn tạo khóa cho người dùng (2026-11-04)
 - Khôi phục sao lưu kiểm file trước khi hỏi xác nhận; cảnh báo đổi tiền tệ rõ hơn; nút lọc tài khoản đọc tên tài khoản; thêm test Khoảng tùy chọn và kiểm file sao lưu (118 test) (2026-11-04)
 - Chốt logo hai thẻ xếp chồng (D-009): icon launcher Android thích ứng + PNG cho máy cũ, icon Play Store 512×512; thay icon Flutter mặc định (2026-11-04)
+- Bản 1.1 (trên nhánh `integration/spec-1.1`): ẩn/hiện/xóa tài khoản, tìm kiếm khoản, sửa tần suất/danh mục/tài khoản khoản định kỳ, ô "Danh mục khác", CSV theo ngôn ngữ, đủ 156 mã tiền tệ ISO có ô tìm, ngân sách theo danh mục (schema 2), mã hóa file sao lưu bằng mật khẩu, che nội dung ở màn đa nhiệm, icon đơn sắc; 6 lỗi sửa sau kiểm chứng độc lập; 221 test (2026-11-04)
 - Tài liệu: ARCHITECTURE, RUNBOOK, PROMPTS điền lần đầu; D-006, D-007; RETROSPECTIVE nháp (2026-11-03)

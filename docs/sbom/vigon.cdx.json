@@ -1,10 +1,10 @@
 {
  "bomFormat": "CycloneDX",
  "specVersion": "1.5",
- "serialNumber": "urn:uuid:1b6e1039-f09f-4051-bc81-2e8027e7aaf9",
+ "serialNumber": "urn:uuid:94c624de-b5a1-4c17-9a10-f8f97b1302cf",
  "version": 1,
  "metadata": {
-  "timestamp": "2026-11-03T08:49:09Z",
+  "timestamp": "2026-11-04T06:51:45Z",
   "tools": [
    {
     "name": "tool/make_sbom.py"
@@ -168,6 +168,20 @@
     {
      "license": {
       "id": "BSD-3-Clause"
+     }
+    }
+   ]
+  },
+  {
+   "type": "library",
+   "bom-ref": "pkg:pub/cryptography@2.9.0",
+   "name": "cryptography",
+   "version": "2.9.0",
+   "purl": "pkg:pub/cryptography@2.9.0",
+   "licenses": [
+    {
+     "license": {
+      "id": "Apache-2.0"
      }
     }
    ]
@@ -426,6 +440,76 @@
   },
   {
    "type": "library",
+   "bom-ref": "pkg:pub/flutter_local_notifications@22.3.3",
+   "name": "flutter_local_notifications",
+   "version": "22.3.3",
+   "purl": "pkg:pub/flutter_local_notifications@22.3.3",
+   "licenses": [
+    {
+     "license": {
+      "id": "BSD-3-Clause"
+     }
+    }
+   ]
+  },
+  {
+   "type": "library",
+   "bom-ref": "pkg:pub/flutter_local_notifications_linux@8.0.2",
+   "name": "flutter_local_notifications_linux",
+   "version": "8.0.2",
+   "purl": "pkg:pub/flutter_local_notifications_linux@8.0.2",
+   "licenses": [
+    {
+     "license": {
+      "id": "BSD-3-Clause"
+     }
+    }
+   ]
+  },
+  {
+   "type": "library",
+   "bom-ref": "pkg:pub/flutter_local_notifications_platform_interface@12.2.0",
+   "name": "flutter_local_notifications_platform_interface",
+   "version": "12.2.0",
+   "purl": "pkg:pub/flutter_local_notifications_platform_interface@12.2.0",
+   "licenses": [
+    {
+     "license": {
+      "id": "BSD-3-Clause"
+     }
+    }
+   ]
+  },
+  {
+   "type": "library",
+   "bom-ref": "pkg:pub/flutter_local_notifications_web@1.0.0",
+   "name": "flutter_local_notifications_web",
+   "version": "1.0.0",
+   "purl": "pkg:pub/flutter_local_notifications_web@1.0.0",
+   "licenses": [
+    {
+     "license": {
+      "id": "BSD-3-Clause"
+     }
+    }
+   ]
+  },
+  {
+   "type": "library",
+   "bom-ref": "pkg:pub/flutter_local_notifications_windows@3.1.1",
+   "name": "flutter_local_notifications_windows",
+   "version": "3.1.1",
+   "purl": "pkg:pub/flutter_local_notifications_windows@3.1.1",
+   "licenses": [
+    {
+     "license": {
+      "id": "BSD-3-Clause"
+     }
+    }
+   ]
+  },
+  {
+   "type": "library",
    "bom-ref": "pkg:pub/flutter_localizations@0.0.0",
    "name": "flutter_localizations",
    "version": "0.0.0",
@@ -546,6 +630,20 @@
     {
      "license": {
       "id": "BSD-3-Clause"
+     }
+    }
+   ]
+  },
+  {
+   "type": "library",
+   "bom-ref": "pkg:pub/flutter_timezone@5.1.1",
+   "name": "flutter_timezone",
+   "version": "5.1.1",
+   "purl": "pkg:pub/flutter_timezone@5.1.1",
+   "licenses": [
+    {
+     "license": {
+      "id": "Apache-2.0"
      }
     }
    ]
@@ -1266,6 +1364,20 @@
   },
   {
    "type": "library",
+   "bom-ref": "pkg:pub/timezone@0.11.2",
+   "name": "timezone",
+   "version": "0.11.2",
+   "purl": "pkg:pub/timezone@0.11.2",
+   "licenses": [
+    {
+     "license": {
+      "id": "BSD-2-Clause"
+     }
+    }
+   ]
+  },
+  {
+   "type": "library",
    "bom-ref": "pkg:pub/typed_data@1.4.0",
    "name": "typed_data",
    "version": "1.4.0",
@@ -1582,6 +1694,16 @@
    "dependsOn": []
   },
   {
+   "ref": "pkg:pub/cryptography@2.9.0",
+   "dependsOn": [
+    "pkg:pub/collection@1.19.1",
+    "pkg:pub/crypto@3.0.8",
+    "pkg:pub/ffi@2.2.0",
+    "pkg:pub/meta@1.18.3",
+    "pkg:pub/typed_data@1.4.0"
+   ]
+  },
+  {
    "ref": "pkg:pub/cupertino_icons@1.0.9",
    "dependsOn": []
   },
@@ -1738,6 +1860,57 @@
    ]
   },
   {
+   "ref": "pkg:pub/flutter_local_notifications@22.3.3",
+   "dependsOn": [
+    "pkg:pub/clock@1.1.3",
+    "pkg:pub/flutter@0.0.0",
+    "pkg:pub/flutter_local_notifications_linux@8.0.2",
+    "pkg:pub/flutter_local_notifications_windows@3.1.1",
+    "pkg:pub/flutter_local_notifications_web@1.0.0",
+    "pkg:pub/flutter_local_notifications_platform_interface@12.2.0",
+    "pkg:pub/timezone@0.11.2"
+   ]
+  },
+  {
+   "ref": "pkg:pub/flutter_local_notifications_linux@8.0.2",
+   "dependsOn": [
+    "pkg:pub/dbus@0.8.0",
+    "pkg:pub/ffi@2.2.0",
+    "pkg:pub/flutter@0.0.0",
+    "pkg:pub/flutter_local_notifications_platform_interface@12.2.0",
+    "pkg:pub/path@1.9.1",
+    "pkg:pub/xdg_directories@1.1.0"
+   ]
+  },
+  {
+   "ref": "pkg:pub/flutter_local_notifications_platform_interface@12.2.0",
+   "dependsOn": [
+    "pkg:pub/plugin_platform_interface@2.1.8",
+    "pkg:pub/timezone@0.11.2"
+   ]
+  },
+  {
+   "ref": "pkg:pub/flutter_local_notifications_web@1.0.0",
+   "dependsOn": [
+    "pkg:pub/collection@1.19.1",
+    "pkg:pub/flutter@0.0.0",
+    "pkg:pub/flutter_local_notifications_platform_interface@12.2.0",
+    "pkg:pub/timezone@0.11.2",
+    "pkg:pub/web@1.1.2"
+   ]
+  },
+  {
+   "ref": "pkg:pub/flutter_local_notifications_windows@3.1.1",
+   "dependsOn": [
+    "pkg:pub/flutter@0.0.0",
+    "pkg:pub/ffi@2.2.0",
+    "pkg:pub/flutter_local_notifications_platform_interface@12.2.0",
+    "pkg:pub/meta@1.18.3",
+    "pkg:pub/timezone@0.11.2",
+    "pkg:pub/xml@7.0.1"
+   ]
+  },
+  {
    "ref": "pkg:pub/flutter_localizations@0.0.0",
    "dependsOn": [
     "pkg:pub/flutter@0.0.0",
@@ -1825,6 +1998,15 @@
     "pkg:pub/collection@1.19.1",
     "pkg:pub/meta@1.18.3",
     "pkg:pub/stream_channel@2.1.4"
+   ]
+  },
+  {
+   "ref": "pkg:pub/flutter_timezone@5.1.1",
+   "dependsOn": [
+    "pkg:pub/equatable@3.0.0",
+    "pkg:pub/flutter@0.0.0",
+    "pkg:pub/flutter_web_plugins@0.0.0",
+    "pkg:pub/meta@1.18.3"
    ]
   },
   {
@@ -2258,6 +2440,13 @@
     "pkg:pub/stream_channel@2.1.4",
     "pkg:pub/string_scanner@1.4.1",
     "pkg:pub/term_glyph@1.2.2"
+   ]
+  },
+  {
+   "ref": "pkg:pub/timezone@0.11.2",
+   "dependsOn": [
+    "pkg:pub/http@1.6.0",
+    "pkg:pub/path@1.9.1"
    ]
   },
   {
