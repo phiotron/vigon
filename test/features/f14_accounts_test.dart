@@ -40,23 +40,32 @@ void main() {
     );
     await openAccounts(tester);
     // Chưa ẩn gì thì chưa có mục "Tài khoản đã ẩn".
-    expect(find.text('Tài khoản đã ẩn'), findsNothing);
+    expect(find.textContaining('Tài khoản đã ẩn'), findsNothing);
     await tester.tap(find.text('Thẻ'));
     await settle(tester);
     await tester.tap(find.text('Ẩn tài khoản'));
     await settle(tester);
-    // Không còn trong danh sách; mục đã ẩn thu gọn mặc định.
-    expect(find.text('Tài khoản đã ẩn'), findsOneWidget);
+    // Không còn trong danh sách; mục đã ẩn có đếm, thu gọn mặc định (A10).
+    expect(find.text('Tài khoản đã ẩn (1)'), findsOneWidget);
     expect(find.text('Thẻ'), findsNothing);
     expect(find.text('Hiện lại'), findsNothing);
-    await tester.tap(find.text('Tài khoản đã ẩn'));
+    await tester.tap(find.text('Tài khoản đã ẩn (1)'));
     await settle(tester);
     expect(find.text('Thẻ'), findsOneWidget);
     // Số dư tài khoản ẩn vẫn đúng: 50.000 - 20.000.
     expect(findPlainText('30.000 ₫'), findsOneWidget);
+    // Chạm hàng ẩn mở bảng Sửa: "Hiện lại" thay "Ẩn tài khoản" (SCR-18).
+    await tester.tap(find.text('Thẻ'));
+    await settle(tester);
+    expect(find.text('Sửa tài khoản'), findsOneWidget);
+    expect(find.text('Ẩn tài khoản'), findsNothing);
+    expect(find.text('Hiện lại'), findsNWidgets(2));
+    await tester.tapAt(const Offset(10, 10)); // đóng bảng
+    await settle(tester);
+    // Nút "Hiện lại" trên hàng.
     await tester.tap(find.text('Hiện lại'));
     await settle(tester);
-    expect(find.text('Tài khoản đã ẩn'), findsNothing);
+    expect(find.textContaining('Tài khoản đã ẩn'), findsNothing);
     expect(find.text('Thẻ'), findsOneWidget);
     await disposeApp(tester, db);
   });

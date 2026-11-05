@@ -14,6 +14,7 @@ import '../../providers.dart';
 import '../../ui/choice_sheet.dart';
 import '../../ui/format.dart';
 import 'account_manage.dart';
+import '../categories/sheet_footer.dart';
 import '../../ui/tokens.g.dart';
 import '../settings/budget_dialog.dart' show currencySymbol;
 
@@ -39,6 +40,7 @@ class AccountsScreen extends ConsumerWidget {
       money(context, currency, balances[a.id] ?? a.initialBalance),
       style: VgType.bodyMd.copyWith(
         color: Theme.of(context).colorScheme.onSurface,
+        fontWeight: FontWeight.w600,
         fontFeatures: const [FontFeature.tabularFigures()],
       ),
     );
@@ -64,7 +66,12 @@ class AccountsScreen extends ConsumerWidget {
                 width: 40,
                 child: Center(child: Icon(accountIcon(a))),
               ),
-              title: Text(accountLabel(l, a)),
+              // Tên dài thì cắt một dòng; số dư không bao giờ cắt (SCR-17).
+              title: Text(
+                accountLabel(l, a),
+                maxLines: large ? null : 1,
+                overflow: large ? null : TextOverflow.ellipsis,
+              ),
               subtitle: large ? balance(a) : null,
               trailing: large ? null : balance(a),
               onTap: () => showAccountEditor(context, account: a),
@@ -72,10 +79,11 @@ class AccountsScreen extends ConsumerWidget {
           const ArchivedAccountsSection(),
         ],
       ),
-      floatingActionButton: FloatingActionButton(
-        tooltip: l.addAccount,
+      // SCR-17: nút nổi có chữ "Thêm tài khoản".
+      floatingActionButton: FloatingActionButton.extended(
         onPressed: () => showAccountEditor(context),
-        child: const Icon(Symbols.add_rounded),
+        icon: const Icon(Symbols.add_rounded),
+        label: Text(l.addAccount, style: VgType.labelLg),
       ),
     );
   }
@@ -165,87 +173,85 @@ class _AccountEditorState extends ConsumerState<_AccountEditor> {
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context);
     final currency = ref.watch(currencyProvider).value ?? 'VND';
+    final account = widget.account;
     return SafeArea(
-      child: SingleChildScrollView(
-        padding: const EdgeInsets.only(bottom: VgSpace.s6),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            SheetHeader(widget.account == null ? l.addAccount : l.editAccount),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(
-                VgSpace.s6,
-                VgSpace.s2,
-                VgSpace.s6,
-                0,
-              ),
-              child: TextField(
-                controller: _name,
-                maxLength: 50,
-                autofocus: widget.account == null,
-                decoration: InputDecoration(
-                  labelText: l.name,
-                  errorText: _nameError,
-                ),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(
-                VgSpace.s6,
-                VgSpace.s3,
-                VgSpace.s6,
-                0,
-              ),
-              child: TextField(
-                controller: _balance,
-                keyboardType: const TextInputType.numberWithOptions(
-                  decimal: true,
-                  signed: true,
-                ),
-                inputFormatters: [
-                  FilteringTextInputFormatter.allow(RegExp(r'[0-9.,\-]')),
-                ],
-                style: const TextStyle(
-                  fontFeatures: [FontFeature.tabularFigures()],
-                ),
-                decoration: InputDecoration(
-                  labelText: l.initialBalance,
-                  suffixText: currencySymbol(currency),
-                  helperText: l.initialBalanceHelper,
-                  helperMaxLines: 3,
-                  errorText: _balanceError,
-                ),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(
-                VgSpace.s4,
-                VgSpace.s6,
-                VgSpace.s4,
-                0,
-              ),
-              child: Align(
-                alignment: Alignment.centerRight,
-                child: FilledButton(
-                  style: FilledButton.styleFrom(
-                    minimumSize: const Size(VgSize.tapMin, VgSize.tapMin),
-                    padding: const EdgeInsets.symmetric(horizontal: VgSpace.s6),
-                    textStyle: VgType.labelLg.copyWith(
-                      fontFamily: vgFontFamily,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Flexible(
+            child: SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  SheetHeader(account == null ? l.addAccount : l.editAccount),
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(
+                      VgSpace.s4,
+                      VgSpace.s2,
+                      VgSpace.s4,
+                      0,
                     ),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(VgRadius.lg),
+                    child: TextField(
+                      controller: _name,
+                      maxLength: 50,
+                      autofocus: account == null,
+                      decoration: InputDecoration(
+                        labelText: l.name,
+                        errorText: _nameError,
+                      ),
                     ),
                   ),
-                  onPressed: _save,
-                  child: Text(l.save),
-                ),
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(
+                      VgSpace.s4,
+                      VgSpace.s2,
+                      VgSpace.s4,
+                      0,
+                    ),
+                    child: TextField(
+                      controller: _balance,
+                      keyboardType: const TextInputType.numberWithOptions(
+                        decimal: true,
+                        signed: true,
+                      ),
+                      inputFormatters: [
+                        FilteringTextInputFormatter.allow(
+                          RegExp(r'[0-9.,\-]'),
+                        ),
+                      ],
+                      style: const TextStyle(
+                        fontFeatures: [FontFeature.tabularFigures()],
+                      ),
+                      decoration: InputDecoration(
+                        labelText: l.initialBalance,
+                        suffixText: currencySymbol(currency),
+                        helperText: l.initialBalanceHelper,
+                        helperMaxLines: 3,
+                        errorText: _balanceError,
+                        errorMaxLines: 3,
+                      ),
+                    ),
+                  ),
+                  // Vùng quản lý chỉ có khi sửa (SCR-18).
+                  if (account != null) AccountRemoveSection(account: account),
+                  const SizedBox(height: VgSpace.s2),
+                ],
               ),
             ),
-            if (widget.account != null)
-              AccountRemoveSection(account: widget.account!),
-          ],
-        ),
+          ),
+          // Lưu: nút lớn cả hàng, ghim đáy, trên bàn phím (SCR-18).
+          SheetFooter(
+            border: false,
+            children: [
+              FilledButton(
+                style: sheetFilledButtonStyle(),
+                onPressed: _save,
+                child: Text(l.save),
+              ),
+            ],
+          ),
+        ],
       ),
     );
   }

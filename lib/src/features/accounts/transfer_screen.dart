@@ -307,13 +307,17 @@ class _TransferScreenState extends ConsumerState<TransferScreen> {
                       ),
                     ),
                   ),
-                  Keypad(
-                    decimalDigits: digits,
-                    onKey: _onKey,
-                    saveLabel: l.save,
-                    saveColor: scheme.primary,
-                    saveForeground: scheme.onPrimary,
-                    onSave: () => _save(accounts),
+                  // Thanh thông báo luôn nằm trên bàn phím số + Lưu (6.7,
+                  // CHANGELOG "inverse-surface").
+                  SnackBarClearance(
+                    child: Keypad(
+                      decimalDigits: digits,
+                      onKey: _onKey,
+                      saveLabel: l.save,
+                      saveColor: scheme.primary,
+                      saveForeground: scheme.onPrimary,
+                      onSave: () => _save(accounts),
+                    ),
                   ),
                 ],
               ),
