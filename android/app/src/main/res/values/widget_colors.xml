@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- Màu cố định của widget (token v2 widget-*, design/hifi/tokens): giống nhau ở nền sáng và
+     tối, không theo chủ đề app hay màu động Android 12. -->
 <resources>
-    <color name="widget_background">#0E5244</color>
-    <color name="widget_text">#F7FAF8</color>
-    <color name="widget_expense_bg">#C62828</color>
-    <color name="widget_income_bg">#2E7D32</color>
-    <color name="widget_button_text">#FFFFFF</color>
+    <color name="widget_surface">#0E5244</color>
+    <color name="widget_ink">#F7FAF8</color>
+    <color name="widget_expense">#C62828</color>
+    <color name="widget_income">#2E7D32</color>
+    <color name="on_widget_action">#FFFFFF</color>
 </resources>

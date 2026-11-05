@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- radius-widget (token v2): góc widget khi launcher không áp góc hệ thống. -->
+    <dimen name="vigon_widget_radius">20dp</dimen>
+    <!-- radius-md: góc hai nút Chi/Thu. -->
+    <dimen name="vigon_widget_button_radius">12dp</dimen>
+</resources>

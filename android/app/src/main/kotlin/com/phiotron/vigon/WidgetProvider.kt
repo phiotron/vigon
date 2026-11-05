@@ -7,6 +7,9 @@ import android.appwidget.AppWidgetProvider
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
+import android.os.Build
+import android.os.Bundle
+import android.util.SizeF
 import android.view.View
 import android.widget.RemoteViews
 import io.flutter.embedding.engine.FlutterEngine
@@ -25,7 +28,17 @@ import io.flutter.plugin.common.MethodChannel
  */
 class VigonWidgetProvider : AppWidgetProvider() {
     override fun onUpdate(context: Context, manager: AppWidgetManager, appWidgetIds: IntArray) {
-        for (id in appWidgetIds) manager.updateAppWidget(id, build(context))
+        for (id in appWidgetIds) manager.updateAppWidget(id, build(context, manager, id))
+    }
+
+    // Android dưới 12: đổi cỡ thì chọn lại bố cục 2×2 (nút dọc) hay 4×2 (nút ngang).
+    override fun onAppWidgetOptionsChanged(
+        context: Context,
+        manager: AppWidgetManager,
+        appWidgetId: Int,
+        newOptions: Bundle,
+    ) {
+        manager.updateAppWidget(appWidgetId, build(context, manager, appWidgetId))
     }
 
     override fun onReceive(context: Context, intent: Intent) {
@@ -47,8 +60,38 @@ class VigonWidgetProvider : AppWidgetProvider() {
         private const val ACTION_EXPIRE = "com.phiotron.vigon.WIDGET_EXPIRE"
         const val CHANNEL = "vigon/widget"
 
-        private fun build(context: Context): RemoteViews {
-            val views = RemoteViews(context.packageName, R.layout.vigon_widget)
+        /** Bề rộng (dp) từ đó dùng bố cục 4×2: hai nút cạnh nhau, chữ một dòng (EXT-01). */
+        private const val WIDE_MIN_DP = 250
+
+        /**
+         * Android 12+: giao cả hai bố cục, launcher tự chọn theo cỡ. Bản cũ hơn: chọn theo bề rộng
+         * tối thiểu hiện tại của widget.
+         */
+        private fun build(context: Context, manager: AppWidgetManager, id: Int): RemoteViews {
+            val state = readState(context)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                return RemoteViews(
+                    mapOf(
+                        SizeF(110f, 110f) to views(context, R.layout.vigon_widget, state),
+                        SizeF(WIDE_MIN_DP.toFloat(), 110f) to
+                            views(context, R.layout.vigon_widget_wide, state),
+                    ),
+                )
+            }
+            val minWidth = manager.getAppWidgetOptions(id)
+                .getInt(AppWidgetManager.OPTION_APPWIDGET_MIN_WIDTH, 0)
+            val layout = if (minWidth >= WIDE_MIN_DP) R.layout.vigon_widget_wide else R.layout.vigon_widget
+            return views(context, layout, state)
+        }
+
+        /** Nội dung hàng trên: [line] null = mặc định (logo + "Ví Gọn"). */
+        private data class State(val line: String?, val locked: Boolean, val stale: Boolean)
+
+        /**
+         * Đọc bộ nhớ widget, bỏ số đã hết kỳ. Dòng số tiền luôn có hạn dùng; dòng không có hạn
+         * dùng là "Đã khóa bằng PIN" (Dart không bao giờ gửi số mà thiếu hạn, D-016).
+         */
+        private fun readState(context: Context): State {
             val prefs = context.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
             var line = prefs.getString(KEY_LINE, null)
             val validUntil = prefs.getLong(KEY_VALID_UNTIL, 0L)
@@ -67,14 +110,36 @@ class VigonWidgetProvider : AppWidgetProvider() {
                 cancelExpiry(context)
             }
 
-            if (!line.isNullOrEmpty()) {
-                views.setTextViewText(R.id.widget_status, line)
-                views.setViewVisibility(R.id.widget_status, View.VISIBLE)
-            } else if (prefs.getBoolean(KEY_STALE, false)) {
-                views.setTextViewText(R.id.widget_status, context.getString(R.string.widget_stale))
-                views.setViewVisibility(R.id.widget_status, View.VISIBLE)
-            } else {
+            return when {
+                !line.isNullOrEmpty() -> State(line, locked = validUntil <= 0L, stale = false)
+                prefs.getBoolean(KEY_STALE, false) ->
+                    State(context.getString(R.string.widget_stale), locked = false, stale = true)
+                else -> State(null, locked = false, stale = false)
+            }
+        }
+
+        private fun views(context: Context, layout: Int, state: State): RemoteViews {
+            val views = RemoteViews(context.packageName, layout)
+            if (state.line == null) {
+                views.setImageViewResource(R.id.widget_icon, R.mipmap.ic_launcher)
+                views.setViewVisibility(R.id.widget_icon, View.VISIBLE)
+                views.setViewVisibility(R.id.widget_brand, View.VISIBLE)
                 views.setViewVisibility(R.id.widget_status, View.GONE)
+            } else {
+                val icon = when {
+                    state.locked -> R.drawable.ic_widget_lock
+                    state.stale -> R.drawable.ic_widget_update
+                    else -> 0
+                }
+                if (icon != 0) {
+                    views.setImageViewResource(R.id.widget_icon, icon)
+                    views.setViewVisibility(R.id.widget_icon, View.VISIBLE)
+                } else {
+                    views.setViewVisibility(R.id.widget_icon, View.GONE)
+                }
+                views.setViewVisibility(R.id.widget_brand, View.GONE)
+                views.setTextViewText(R.id.widget_status, state.line)
+                views.setViewVisibility(R.id.widget_status, View.VISIBLE)
             }
             views.setOnClickPendingIntent(
                 R.id.widget_expense,
@@ -125,7 +190,7 @@ class VigonWidgetProvider : AppWidgetProvider() {
         fun refreshAll(context: Context) {
             val manager = AppWidgetManager.getInstance(context)
             val ids = manager.getAppWidgetIds(ComponentName(context, VigonWidgetProvider::class.java))
-            for (id in ids) manager.updateAppWidget(id, build(context))
+            for (id in ids) manager.updateAppWidget(id, build(context, manager, id))
         }
 
         /**
