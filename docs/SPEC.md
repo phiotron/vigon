@@ -55,7 +55,11 @@ Quy ước kiểm chứng (áp dụng cho mọi mục 3, 3b, 3c): **[T]** = test
 - AC-20: Màn chính lọc được theo một tài khoản hoặc tất cả tài khoản. [T]
 
 ### F-07 · Tiền tệ và định dạng
-- AC-21: Lần mở đầu tự chọn tiền tệ theo vùng của máy (Việt Nam → VND); đổi được trong Cài đặt từ danh sách mã ISO 4217. Bản đầu chỉ dùng MỘT tiền tệ cho toàn app, không quy đổi. [T]
+- AC-21: Lần mở đầu tự chọn tiền tệ theo vùng của máy (Việt Nam → VND); đổi được trong Cài đặt từ danh sách mã ISO 4217. App dùng MỘT tiền tệ cho toàn bộ dữ liệu. ~~Không quy đổi~~ — viết lại 2026-11-05 theo D-025: đổi sang tiền tệ khác thì **luôn quy đổi mọi số tiền** (khoản thu chi và chuyển tiền, khoản định kỳ, số dư ban đầu tài khoản, hạn mức danh mục, ngân sách tháng) theo tỉ giá "1 tiền cũ = X tiền mới", trong MỘT giao dịch: làm tròn half-up tới đơn vị nhỏ nhất của tiền mới, số phải > 0 thì tối thiểu 1 đơn vị, có số nào vượt 10^12 thì báo lỗi và không đổi gì; lỗi giữa chừng thì không đổi gì. Chọn lại đúng tiền tệ đang dùng thì không làm gì. [T: `test/data/currency_conversion_test.dart`]
+- AC-70 (D-025): Chọn tiền tệ khác → hộp "Quy đổi sang X?" hiện "Đang tải tỉ giá…" rồi: tỉ giá hai chiều ("1 VND = 0,0000385 USD", "1 USD = 25.974 VND"), ngày cập nhật và dòng ghi công nguồn "Rates By Exchange Rate API" (chạm mở exchangerate-api.com), ví dụ một số tiền trước → sau (khoản mới nhất, không có thì ngân sách), cảnh báo làm tròn, không hoàn tác tự động, gợi ý xuất sao lưu trước; nút "Hủy" (không đổi gì, kể cả khi đang tải) và "Quy đổi"; "Dùng tỉ giá khác" chuyển sang ô nhập tay. Xong thì báo "Đã quy đổi mọi số tiền sang X"; màn, widget cập nhật theo. [T: `test/features/currency_conversion_flow_test.dart`]
+- AC-71 (D-025): Mất mạng, hết giờ chờ, dịch vụ lỗi hoặc nguồn không có tỉ giá cho cặp đó → hộp báo rõ lý do ("Không tải được tỉ giá" / "Không có tỉ giá từ A sang B") và ô "1 A = ? B" để nhập tay (đổi chiều được; điền sẵn tỉ giá gần nhất đã tải hoặc đã nhập, kèm ngày, nếu có); "Thử lại" (khi lỗi mạng/dịch vụ), "Tiếp tục" sang hộp xác nhận, hoặc "Hủy". Tỉ giá ≤ 0 hoặc sai → báo lỗi dưới ô. [T]
+- AC-72 (D-025): Mạng chỉ dùng cho việc tải bảng tỉ giá công khai qua HTTPS (`GET https://open.er-api.com/v6/latest/USD`, URL cố định, không gửi dữ liệu người dùng hay tiền tệ đang dùng), chỉ khi người dùng đổi tiền tệ; không SDK, không analytics; nguồn miễn phí, không khóa API, ghi công đúng điều khoản. [T: `test/manifest_test.dart`, `test/data/exchange_rate_source_test.dart`]
+- Hộp xác nhận, ô nhập tay đạt S-50 ở chữ 200%, sáng/tối (test trợ năng trong `currency_conversion_flow_test.dart`); gọi mạng thật trên máy thật: [M] CHƯA kiểm.
 - AC-22: Số tiền hiển thị theo định dạng của ngôn ngữ đang dùng (vi: `1.250.000 ₫`; en: `$1,250.00`); tiền lưu dạng số nguyên theo đơn vị nhỏ nhất, không dùng số thực. [T]
 
 ### F-08 · Khoản định kỳ
@@ -89,10 +93,10 @@ Quy ước kiểm chứng (áp dụng cho mọi mục 3, 3b, 3c): **[T]** = test
 ### F-13 · Quyền riêng tư và thông tin pháp lý trong app
 - AC-41: Màn "Giới thiệu" có: phiên bản, liên kết chính sách quyền riêng tư, kênh báo lỗi bảo mật (email), danh sách giấy phép nguồn mở (màn license của Flutter). [M]
 - AC-42: Mục "Xóa toàn bộ dữ liệu" trong Cài đặt xóa hết dữ liệu trong app sau xác nhận hai bước; mở lại app thì như mới cài. [T]
-- AC-43: App không có quyền INTERNET trong manifest của bản phát hành và không gửi dữ liệu đi đâu. [T: kiểm manifest đã build]
+- AC-43: ~~App không có quyền INTERNET trong manifest của bản phát hành~~ (sửa 2026-11-05 theo D-025): manifest bản phát hành chỉ có `INTERNET` (để tải tỉ giá, AC-72) và hai quyền nhắc ghi chép; app không gửi dữ liệu người dùng đi đâu. [T: kiểm manifest nguồn và manifest release đã gộp]
 
 ## 3b. Bản 1.1: bổ sung chức năng (F-14..F-23)
-Người dùng duyệt làm ngày 2026-11-04. Bổ sung cho mục 3, không thay thế. Ràng buộc giữ nguyên: không mạng, không xin thêm quyền thiết bị (mục 5, D-002), chỉ màn dọc, mọi chữ trong `.arb` (vi và en). Quyết định kỹ thuật: D-012 (mã hóa file sao lưu), D-013 (schema 2, tài khoản ẩn, lịch khi đổi tần suất).
+Người dùng duyệt làm ngày 2026-11-04. Bổ sung cho mục 3, không thay thế. Ràng buộc giữ nguyên: không mạng (từ D-025 ngày 2026-11-05: trừ việc tải tỉ giá khi đổi tiền tệ), không xin thêm quyền thiết bị (mục 5, D-002), chỉ màn dọc, mọi chữ trong `.arb` (vi và en). Quyết định kỹ thuật: D-012 (mã hóa file sao lưu), D-013 (schema 2, tài khoản ẩn, lịch khi đổi tần suất).
 
 ### F-14 · Quản lý tài khoản: ẩn, hiện, xóa
 Trước bản 1.1 chỉ thêm và sửa được tài khoản. Cột `archived` đã có sẵn trong bảng `accounts` (và trong file sao lưu).
@@ -118,7 +122,7 @@ Trước bản 1.1 chỉ sửa được số tiền và ghi chú.
 - AC-52: Tiêu đề cột và tên loại khoản (chi/thu/chuyển tiền) trong file CSV theo ngôn ngữ đang dùng của app (vi hoặc en). Tiếng Việt: dùng dấu `;` ngăn cột và dấu `,` thập phân (Excel vùng Việt đọc đúng); tiếng Anh: dấu `,` ngăn cột và `.` thập phân. Vẫn UTF-8 có BOM và vẫn chặn chèn công thức. [T]
 
 ### F-19 · Đủ tiền tệ ISO 4217
-- AC-53: Danh sách tiền tệ trong Cài đặt có đủ các mã ISO 4217 đang dùng (khoảng 150 mã), có **ô tìm** theo mã hoặc tên; số chữ số thập phân theo đúng ISO (0, 2 hoặc 3 chữ số, ví dụ JPY 0, USD 2, KWD 3). Đổi giữa các tiền tệ có số chữ số khác nhau vẫn giữ đúng con số hiển thị (D-005). [T]
+- AC-53: Danh sách tiền tệ trong Cài đặt có đủ các mã ISO 4217 đang dùng (khoảng 150 mã), có **ô tìm** theo mã hoặc tên; số chữ số thập phân theo đúng ISO (0, 2 hoặc 3 chữ số, ví dụ JPY 0, USD 2, KWD 3). ~~Đổi giữa các tiền tệ có số chữ số khác nhau vẫn giữ đúng con số hiển thị (D-005).~~ Từ D-025: đổi tiền tệ là quy đổi theo tỉ giá (AC-21), làm tròn theo số chữ số của tiền mới. [T]
 
 ### F-20 · Ngân sách theo danh mục
 - AC-54: Mỗi danh mục chi có thể đặt **hạn mức tháng riêng** (trong bảng sửa danh mục, ô "Ngân sách tháng của danh mục", để trống là không đặt). Ở màn "Các khoản", dòng danh mục có hạn mức hiện thanh tiến độ nhỏ và chữ "Vượt X" (kèm màu và chữ, không chỉ màu) khi chi trong tháng hiện tại vượt hạn mức. Ngân sách tổng hiện có (AC-26) giữ nguyên và độc lập. [T]
@@ -177,7 +181,7 @@ Thay cho "đồng bộ Google Drive/Dropbox qua API" (cần mạng, đăng nhậ
 
 Vẫn ngoài phạm vi:
 - Tài khoản người dùng, đăng nhập, máy chủ, đồng bộ đám mây.
-- Nhiều tiền tệ cùng lúc và quy đổi tỉ giá.
+- Nhiều tiền tệ cùng lúc (mỗi tài khoản một tiền tệ). (Quy đổi tỉ giá khi ĐỔI tiền tệ của app đã làm theo D-025, AC-21, AC-70..AC-72.)
 - Mở khóa bằng vân tay hoặc khuôn mặt.
 - Quảng cáo, mua trong app, gói Pro, analytics, báo crash bằng SDK.
 - Đọc tin nhắn ngân hàng, quét hóa đơn, AI.
@@ -187,21 +191,21 @@ Các mục còn hiệu lực từ bản 1.1, 1.2 và lần gộp (cần người
 |-----|-----------------|
 | Đồng bộ (kể cả đồng bộ hai chiều giữa nhiều máy) qua Google Drive, Dropbox bằng API | Cần mạng, đăng nhập OAuth và khóa API/ID khách (do người dùng tạo trong Google Cloud, Dropbox App Console); trái D-002; kéo theo quyền INTERNET, khai Data safety khác, chính sách quyền riêng tư viết lại, nhiều mục COMPLIANCE. F-24 chỉ sao lưu một chiều vào thư mục đã chọn |
 | Widget hiện số tiền khi đang bật PIN | Làm lộ số liệu ngoài màn khóa, vô hiệu khóa PIN (D-016) |
-| Nhiều tiền tệ kèm quy đổi tỉ giá | Tỉ giá cần nguồn dữ liệu (mạng) hoặc người dùng tự nhập; thay đổi lớn mô hình dữ liệu (mỗi tài khoản một tiền tệ) |
+| Nhiều tiền tệ cùng lúc | Thay đổi lớn mô hình dữ liệu (mỗi tài khoản một tiền tệ). Nguồn tỉ giá đã có từ D-025 |
 | Gói Pro hoặc nguồn thu khác | Thanh toán trong app (Play Billing, StoreKit), COMPLIANCE C-01/C-02/T-01, thuế |
 ## 5. Ràng buộc mobile
 - Hệ điều hành: Android; minSdk theo mặc định của phiên bản Flutter được ghim (D-003); targetSdk theo yêu cầu Google Play hiện hành (COMPLIANCE P-06). iOS: xem mục "iOS" ngay dưới.
 - Giao diện: theo bộ thiết kế đã duyệt `design/current/screens/` và `design/current/ui-spec.md` (token, chữ Be Vietnam Pro, icon Material Symbols Rounded), giống nhau trên hai nền tảng, chỉ khác ở chỗ hệ điều hành quyết định (D-010).
-- Offline: toàn bộ app chạy không cần mạng; không có tính năng nào gọi mạng. Dữ liệu ghi xuống bộ nhớ máy ngay khi bấm Lưu.
+- Offline: toàn bộ app chạy không cần mạng; ~~không có tính năng nào gọi mạng~~ — từ D-025 (2026-11-05) chỉ một việc dùng mạng: tải bảng tỉ giá khi người dùng đổi tiền tệ (AC-72); không có mạng thì nhập tỉ giá tay (AC-71). Dữ liệu ghi xuống bộ nhớ máy ngay khi bấm Lưu.
 - Quyền thiết bị:
-  - Android: chỉ hai quyền, cả hai phục vụ nhắc ghi chép F-25 (D-015): `POST_NOTIFICATIONS` (chỉ xin khi người dùng bật công tắc "Nhắc ghi chép", sau lời giải thích; hộp thoại hệ thống chỉ có từ Android 13) và `RECEIVE_BOOT_COMPLETED` (đặt lại lịch nhắc sau khi khởi động lại máy, không hộp thoại). KHÔNG `INTERNET`, KHÔNG `SCHEDULE_EXACT_ALARM`/`USE_EXACT_ALARM`, KHÔNG quyền bộ nhớ: sao lưu/khôi phục dùng bảng chia sẻ và trình chọn file của hệ điều hành, sao lưu tự động dùng Storage Access Framework; widget không cần quyền. Kiểm bằng `test/manifest_test.dart` (AC-43) và `aapt2 dump permissions` bản release.
+  - Android: `INTERNET` (D-025, chỉ tải tỉ giá khi đổi tiền tệ; quyền thường, không hộp thoại) và hai quyền phục vụ nhắc ghi chép F-25 (D-015): `POST_NOTIFICATIONS` (chỉ xin khi người dùng bật công tắc "Nhắc ghi chép", sau lời giải thích; hộp thoại hệ thống chỉ có từ Android 13) và `RECEIVE_BOOT_COMPLETED` (đặt lại lịch nhắc sau khi khởi động lại máy, không hộp thoại). KHÔNG `ACCESS_NETWORK_STATE`, KHÔNG cleartext HTTP, KHÔNG `SCHEDULE_EXACT_ALARM`/`USE_EXACT_ALARM`, KHÔNG quyền bộ nhớ: sao lưu/khôi phục dùng bảng chia sẻ và trình chọn file của hệ điều hành, sao lưu tự động dùng Storage Access Framework; widget không cần quyền. Kiểm bằng `test/manifest_test.dart` (AC-43) và `aapt2 dump permissions` bản release.
   - iOS: không có khóa `NS…UsageDescription`; chỉ xin quyền thông báo (hộp thoại của iOS) khi người dùng bật nhắc ghi chép, sau lời giải thích (AC-61). Chọn file khôi phục và chọn thư mục sao lưu tự động dùng trình chọn hệ thống (app Tệp), không cần quyền; widget (App Group) và lớp che F-22 cũng không cần quyền.
 - Màn hình: chiều rộng nhỏ nhất 360 dp; chỉ màn hình dọc.
 - Hiệu năng/pin: không có service hay job chạy nền liên tục. Thông báo nhắc do hệ điều hành đặt lịch (F-25); sao lưu tự động tối đa một lần mỗi ngày, chạy lúc app ra nền trên Android, khi mở/quay lại app trên iOS (F-24). Ngưỡng ở 5b.
 
 ### iOS (thêm 2026-11-04 theo PLAN-001; cập nhật khi gộp 2026-11-05 theo D-019, rồi theo D-022 cùng ngày)
 - Cùng codebase Flutter, cùng tính năng và AC như Android, **trừ F-23 icon đơn sắc** (chỉ Android) và phần chạy khác nhau của F-22, F-24, F-26 ở dưới. iOS tối thiểu **16.0** (D-024; trước là 15.0), chỉ iPhone, chỉ dọc. Build trên cloud có máy macOS vì máy phát triển là Windows (D-011; `.github/workflows/ios.yml`, `release-ios.yml`); yêu cầu App Store P-01 tới P-05 trong `docs/COMPLIANCE.md`.
-- Tương ứng nền tảng khi đọc AC: TalkBack ↔ VoiceOver (AC-39); Android Keystore ↔ Keychain (AC-33); AC-43 trên iOS nghĩa là không có mã gọi mạng (iOS không có quyền INTERNET). Keychain giữ PIN sau khi gỡ app: khi cài lại với dữ liệu mới, app tự xóa PIN cũ (D-017).
+- Tương ứng nền tảng khi đọc AC: TalkBack ↔ VoiceOver (AC-39); Android Keystore ↔ Keychain (AC-33); AC-43 trên iOS nghĩa là mã gọi mạng duy nhất là tải tỉ giá (AC-72), chỉ HTTPS theo ATS mặc định (iOS không có quyền INTERNET). Keychain giữ PIN sau khi gỡ app: khi cài lại với dữ liệu mới, app tự xóa PIN cũ (D-017).
 - **Tính năng gốc nền tảng (D-022, thay phần iOS của D-019):** F-22, F-24, F-26 có trên cả hai nền tảng, cài khác nhau — F-22: Android `FLAG_SECURE` ↔ iOS lớp phủ khi rời app (không chặn chụp màn hình); F-24: Android SAF, chạy lúc ra nền ↔ iOS bộ chọn thư mục app Tệp + bookmark, chạy khi mở/quay lại app; F-26: Android AppWidget ↔ iOS WidgetKit + App Group. AC và cách kiểm iOS ở gạch "iOS (D-022)" dưới từng F. Kênh native dùng chung giao thức (`vigon/secure`, `vigon/widget`, `vigon/deeplink`, `vigon/backup_folder`; iOS: `ios/Runner/VigonNative.swift`) nên Dart không phân nhánh. Cờ nền tảng: `lib/src/platform_features.dart`; test `test/features/merge_ios_gating_test.dart` (iOS có đủ ba mục). **F-23 icon đơn sắc chỉ Android**: AC-57 không áp dụng iOS.
 - **F-25 nhắc ghi chép chạy cả iOS** (thông báo cục bộ, xin quyền khi bật công tắc). F-21 mã hóa file sao lưu tay cũng chạy cả iOS.
 - Kiểm chứng: AC ghi [M] áp dụng cho iOS phải thử trên iPhone thật (TestFlight) trước khi phát hành iOS. Khi chưa có iPhone, chỉ có iOS Simulator của GitHub Actions: biên bản ghi rõ phần nào mới thử trên simulator. Widget iOS cần App Group `group.com.phiotron.vigon` do người dùng tạo trên Apple Developer (từng bước ở `notes/2026-11-05-d4-ios-features-widget.md`); chưa có thì simulator CI chỉ xác nhận extension được nạp và vẽ được.

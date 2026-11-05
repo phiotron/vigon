@@ -64,7 +64,8 @@ Cùng đường dẫn chính sách phải điền vào `lib/src/app_info.dart` (
   `money,finance,income,ledger,private,wallet,cash,bills,savings,vigon,vi gon,manager,daily,widget` — 95 ký tự
   (2026-11-05, D-022: `diary` → `widget` vì iPhone nay có widget)
 - **Promotional Text** (≤ 170, đổi được không cần duyệt lại):
-  `Log a purchase in three taps. No account, no ads, no internet connection: your income and spending stay on your iPhone, under your control.` — 139 ký tự
+  `Log a purchase in three taps. No account, no ads, no tracking: your income and spending stay on your iPhone, under your control.` — 128 ký tự
+  (2026-11-05, D-025: bỏ "no internet connection" vì đổi tiền tệ có tải tỉ giá qua mạng)
 
 **Description** (≤ 4.000):
 
@@ -87,13 +88,13 @@ STAY ORGANIZED
 • Add, edit and reorder your own categories.
 • Recurring records (rent, bills, subscriptions) are added automatically when due.
 • Monthly budget with a progress bar and an over-budget warning, plus an optional budget for each category.
-• All ISO currencies, with search.
+• All ISO currencies, with search. Changing currency converts every amount using a downloaded exchange rate (or one you enter).
 
 DAILY REMINDER
 • Optional, off by default: one notification a day at the time you choose, created on your iPhone and containing no figures. The app asks for notification permission only when you turn it on.
 
 PRIVATE BY DESIGN
-• No sign-up, no ads, no tracking, no analytics. Ví Gọn has no server and never connects to the internet, so the developer never receives your data.
+• No sign-up, no ads, no tracking, no analytics. Ví Gọn has no server and never sends your data anywhere: it goes online only to download a public exchange rate table when you change currency. The developer never receives your data.
 • Your records are stored only in the app on your iPhone. They are left out of iCloud and computer backups of your iPhone, so to move to a new phone, export a backup file and restore it there.
 • Optional 4-digit PIN lock. It keeps others out of the app but does not encrypt your data. If you forget the PIN, the only way back in is to delete the app's data.
 • Optional "hide content when switching apps": covers your figures in the app switcher. (iPhone does not let apps block screenshots.)
@@ -120,7 +121,8 @@ Free. No in-app purchases.
 - **Keywords** (≤ 100): `quản lý tiền,ngân sách,tài chính,ví tiền,tiết kiệm,thu nhập,hóa đơn,tiền mặt,vi gon,money,budget` — 96 ký tự
   (121 byte UTF-8). Hiện Apple đếm theo ký tự; nếu App Store Connect báo quá dài thì bỏ `tiền mặt,` rồi `money,`.
 - **Promotional Text** (≤ 170):
-  `Ghi một khoản chi chỉ trong ba chạm. Không tài khoản, không quảng cáo, không kết nối Internet: thu chi của bạn nằm trên iPhone và do bạn quản lý.` — 145 ký tự
+  `Ghi một khoản chi chỉ trong ba chạm. Không tài khoản, không quảng cáo, không theo dõi: thu chi của bạn nằm trên iPhone và do bạn quản lý.` — 137 ký tự
+  (2026-11-05, D-025: bỏ "không kết nối Internet")
 
 **Description** (≤ 4.000):
 
@@ -143,13 +145,13 @@ QUẢN LÝ GỌN GÀNG
 • Danh mục tự thêm, sửa, sắp xếp.
 • Khoản định kỳ (tiền nhà, tiền điện, đăng ký hằng tháng) tự được ghi khi tới hạn.
 • Ngân sách tháng có thanh tiến độ và cảnh báo khi vượt, thêm ngân sách riêng cho từng danh mục nếu muốn.
-• Đủ các loại tiền tệ theo chuẩn ISO, có ô tìm.
+• Đủ các loại tiền tệ theo chuẩn ISO, có ô tìm. Đổi tiền tệ thì mọi số tiền được quy đổi theo tỉ giá tải về (hoặc tỉ giá bạn tự nhập).
 
 NHẮC GHI CHÉP
 • Tùy chọn, mặc định tắt: mỗi ngày một thông báo vào giờ bạn chọn, tạo ngay trên iPhone và không chứa số liệu. App chỉ xin quyền thông báo khi bạn bật tính năng này.
 
 RIÊNG TƯ
-• Không đăng ký, không quảng cáo, không theo dõi, không công cụ phân tích. Ví Gọn không có máy chủ và không bao giờ kết nối Internet, nên nhà phát triển không nhận dữ liệu của bạn.
+• Không đăng ký, không quảng cáo, không theo dõi, không công cụ phân tích. Ví Gọn không có máy chủ và không gửi dữ liệu của bạn đi đâu: app chỉ dùng mạng để tải bảng tỉ giá công khai khi bạn đổi tiền tệ. Nhà phát triển không nhận dữ liệu của bạn.
 • Dữ liệu chỉ lưu trong app trên iPhone của bạn và không nằm trong bản sao lưu iCloud hay sao lưu iPhone bằng máy tính; khi đổi máy, hãy tự xuất file sao lưu rồi khôi phục trên máy mới.
 • Khóa bằng mã PIN 4 số (tùy chọn). PIN chỉ ngăn người khác mở app, không mã hóa dữ liệu. Quên mã PIN thì chỉ có cách xóa dữ liệu trong app.
 • Tùy chọn che nội dung khi chuyển app: che số liệu trong màn chuyển app. (iPhone không cho app chặn chụp màn hình.)
@@ -168,7 +170,8 @@ Miễn phí. Không mua trong app.
 
 - **What's New** (dùng cho TestFlight / bản sau): `Bản đầu tiên: ghi khoản nhanh, tìm kiếm, biểu đồ theo danh mục, tài khoản và chuyển tiền, khoản định kỳ, ngân sách tháng và theo danh mục, nhắc ghi chép hằng ngày, widget, sao lưu có mật khẩu và sao lưu tự động, xuất CSV, khóa PIN.`
 
-Điểm khác bản Play có chủ đích: "VoiceOver" thay "TalkBack"; iOS không có khái niệm "quyền Internet" nên viết "không kết nối Internet";
+Điểm khác bản Play có chủ đích: "VoiceOver" thay "TalkBack"; ~~iOS không có khái niệm "quyền Internet" nên viết "không kết nối Internet"~~
+(D-025: cả hai bản nay cùng viết "chỉ dùng mạng để tải bảng tỉ giá công khai khi đổi tiền tệ");
 nêu rõ dữ liệu không nằm trong sao lưu iPhone và đổi máy phải tự xuất file (D-021: DB iOS loại khỏi sao lưu, giống Android
 `allowBackup=false` — xem `docs/legal/privacy-policy.md` mục 2).
 Theo D-022 (2026-11-05) bản App Store CÓ widget, sao lưu tự động, che nội dung; chỉ **icon đơn sắc** (F-23) là của riêng Android nên
@@ -189,7 +192,7 @@ Trả lời đề xuất (mọi câu theo tần suất chọn **None**, mọi c�
 | Truy cập web không giới hạn (trình duyệt trong app) | No | Không có WebView; nút chính sách mở Safari bên ngoài |
 | Quảng cáo | No | Không có |
 | Kiểm soát trong app (parental controls, xác minh tuổi) | No | Không có; không cần cho nội dung 4+ |
-| Khả năng (capabilities) khác hỏi trong bảng | No | Không tài khoản, không mạng, không vị trí, không camera |
+| Khả năng (capabilities) khác hỏi trong bảng | No | Không tài khoản, không vị trí, không camera; mạng chỉ để tải bảng tỉ giá công khai (D-025), không có nội dung web |
 Kết quả dự kiến: **4+** ở mọi vùng (Việt Nam theo thang riêng của Apple cho VN — dự kiến mức thấp nhất). Không chọn "Made for Kids".
 Kiểm lại câu chữ thật của bảng hỏi trong App Store Connect khi điền; ghi kết quả vào COMPLIANCE P-05.
 
@@ -198,7 +201,12 @@ Kiểm lại câu chữ thật của bảng hỏi trong App Store Connect khi đ
   Nhãn hiện ra: **Data Not Collected**.
 - Lý do (định nghĩa của Apple: "thu thập" = dữ liệu được truyền ra khỏi máy để nhà phát triển hoặc đối tác truy cập lâu hơn
   thời gian phục vụ yêu cầu tức thời):
-  - Không có máy chủ, không có mã gọi mạng trong `lib/` (không gói `http`, `dio`, `HttpClient`, WebView — kiểm 2026-11-04).
+  - Không có máy chủ. ~~Không có mã gọi mạng~~ — từ D-025 (2026-11-05) có đúng MỘT chỗ gọi mạng: `lib/src/data/exchange_rate.dart`
+    (`dart:io HttpClient`, không gói `http`/`dio`, không WebView), chỉ `GET https://open.er-api.com/v6/latest/USD` khi người dùng đổi
+    tiền tệ. URL cố định, giống nhau cho mọi người dùng; không gửi dữ liệu người dùng, không gửi tiền tệ đang dùng; kết quả là dữ liệu
+    công khai đi VÀO máy. Nhà cung cấp (ExchangeRate-API) thấy IP như mọi kết nối mạng; đó không phải dữ liệu app thu thập để nhà phát
+    triển hay "đối tác" truy cập, và ExchangeRate-API không phải SDK/mã bên thứ ba đặt trong app → **đề xuất vẫn "Data Not Collected"**.
+    ĐIỂM NGƯỜI DÙNG CẦN DUYỆT (cùng câu hỏi với Data safety ở `store/listing.md`). `test/manifest_test.dart` canh chỉ một file tạo `HttpClient`.
   - Không SDK bên thứ ba thu dữ liệu: các gói dùng (`drift`/SQLite, `flutter_secure_storage`, `share_plus`, `file_picker`,
     `path_provider`, `package_info_plus`, `url_launcher`, `fl_chart`, `crypto`, `cryptography`, `flutter_local_notifications`,
     `timezone`, `flutter_timezone`, `material_symbols_icons`) chỉ chạy trên máy (SBOM `docs/sbom/vigon.cdx.json`).
@@ -225,7 +233,11 @@ Kiểm lại câu chữ thật của bảng hỏi trong App Store Connect khi đ
   `cryptography_flutter` trong `pubspec.lock`), tức **không** gọi mã hoá của iOS (CryptoKit/CommonCrypto). Trên iPhone người dùng bật
   được tính năng này (Cài đặt → Xuất bản sao lưu → "Protect file with a password"). Sao lưu tự động (D-022, có cả trên iOS) dùng cùng
   `backup_crypto.dart` (AES-GCM, luôn có mật khẩu) → cùng loại mã hoá, **không đổi** câu trả lời bảng hỏi hay khai báo ANSSI.
-- Không có mã gọi mạng; không TLS do app tự làm. Băm PIN SHA-256 (gói `crypto`) chỉ để xác thực. Keychain là của iOS.
+- ~~Không có mã gọi mạng; không TLS do app tự làm.~~ Từ D-025 (2026-11-05): app gọi HTTPS (một GET bảng tỉ giá) bằng `dart:io HttpClient`.
+  Lưu ý: TLS của `dart:io` là **BoringSSL đóng trong engine Flutter**, KHÔNG phải mã hoá của iOS (khác câu "HTTPS do hệ điều hành" trong
+  D-025). Vẫn là thuật toán chuẩn → câu trả lời bảng hỏi Apple **không đổi** (đã chọn "standard encryption … instead of, or in addition
+  to … Apple's operating system"); nhưng **bản khai ANSSI nên nêu thêm chức năng TLS (HTTPS client, chỉ tải dữ liệu công khai)** bên cạnh
+  AES-256-GCM — phiên điều phối báo người dùng trước khi nộp. Băm PIN SHA-256 (gói `crypto`) chỉ để xác thực. Keychain là của iOS.
 
 **Bảng của Apple** ([Export compliance documentation for encryption](https://developer.apple.com/help/app-store-connect/reference/app-information/export-compliance-documentation-for-encryption/), đọc 2026-11-05):
 | Loại mã hoá | Tài liệu Apple yêu cầu | Ví Gọn |
@@ -262,12 +274,12 @@ sau không — KHÔNG tự bỏ (trái D-020).
 - Liên hệ: họ tên + email `phamphuongphuongnd@gmail.com` + số điện thoại của người dùng (chỉ Apple thấy).
 - Notes (dán nguyên, tiếng Anh):
   ```
-  Ví Gọn is a fully offline personal expense tracker. There is no account, no server and no network access; all data stays on the device.
+  Ví Gọn is an offline-first personal expense tracker. There is no account and no server; all data stays on the device. The only network request is an HTTPS GET of a public exchange rate table (open.er-api.com) made when the user changes currency in Settings > Currency, so the amounts can be converted; no user data is sent. Without a connection the user can type the rate manually.
   To try it: tap − or + on the home screen, type an amount, choose a category, Save.
   PIN lock: Settings > Lock with PIN (4 digits, entered twice). The PIN only hides the app UI; data is not encrypted, and the app says so.
   Backup: Settings > Export backup opens the iOS share sheet (Save to Files); you can optionally turn on "Protect file with a password", which encrypts the file on the device (AES-256-GCM). Settings > Restore from backup opens the Files picker for a .vigon file.
   Daily reminder (off by default): Settings > Daily reminder shows a short explanation, then the iOS notification permission prompt. The notification is scheduled locally on the device and contains no figures.
-  Automatic backup (off by default): Settings > Automatic backup asks you to pick a folder in the Files app (for example iCloud Drive) and set a password. Because iOS does not run apps on a schedule, the encrypted backup is written when the app is opened, at most once a day and only if data changed; "Back up now" writes one immediately. The app itself makes no network connection.
+  Automatic backup (off by default): Settings > Automatic backup asks you to pick a folder in the Files app (for example iCloud Drive) and set a password. Because iOS does not run apps on a schedule, the encrypted backup is written when the app is opened, at most once a day and only if data changed; "Back up now" writes one immediately. The app itself makes no network connection for this.
   Home screen widget: add "Ví Gọn" from the widget gallery. Its Expense and Income buttons open the entry screen. Amounts appear only if Settings > "Show amounts on widget" is on and the PIN lock is off.
   Hide content when switching apps: Settings > Hide content when switching apps covers the app's content in the app switcher. It does not block screenshots.
   The app is free, has no in-app purchases and no ads.

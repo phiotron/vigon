@@ -19,7 +19,7 @@ Closed test cũng là dịp **thử tay các AC [M] của bản 1.2 trên nhiề
 | 1 | Tạo tài khoản Play Console **cá nhân** (phí một lần 25 USD), xác minh danh tính, xác minh có thiết bị Android | Người dùng | Xác minh danh tính có thể mất vài ngày → làm đầu tiên |
 | 2 | Đăng chính sách quyền riêng tư lên web, lấy URL | Người dùng | Play bắt khai Privacy policy + Data safety trước khi gửi duyệt bất kỳ track nào. Nội dung: `docs/legal/privacy-policy.md` |
 | 3 | Tạo upload keystore ngoài repo, `android/key.properties` | Người dùng | `docs/RELEASE.md` mục "Ký ứng dụng" |
-| 4 | Build `flutter build appbundle` từ `main` đã gộp (bản hiện tại `1.0.0+1`); trước khi tải lên chạy `aapt2 dump permissions` trên APK/AAB: đúng `POST_NOTIFICATIONS` + `RECEIVE_BOOT_COMPLETED`, không `INTERNET` | Người dùng hoặc phiên điều phối (sau khi có khoá) | Mỗi lần đẩy build mới tăng số sau `+` |
+| 4 | Build `flutter build appbundle` từ `main` đã gộp (bản hiện tại `1.0.0+1`); trước khi tải lên chạy `aapt2 dump permissions` trên APK/AAB: đúng `INTERNET` (D-025, chỉ tải tỉ giá) + `POST_NOTIFICATIONS` + `RECEIVE_BOOT_COMPLETED` | Người dùng hoặc phiên điều phối (sau khi có khoá) | Mỗi lần đẩy build mới tăng số sau `+` |
 | 5 | Tạo app trong Play Console: tên `Ví Gọn: Ghi Thu Chi`, ngôn ngữ mặc định vi-VN (thêm en-US), App, Free | Người dùng | Nội dung: `store/listing.md` |
 | 6 | Điền đủ App content (privacy policy, ads, app access, content rating, target audience, data safety, financial features…) | Người dùng | Trả lời sẵn ở `store/listing.md` |
 | 7 | Store listing tối thiểu: mô tả ngắn/dài, icon 512, ảnh bìa 1024×500, ≥ 2 ảnh điện thoại | Người dùng | Ảnh cũ trong `store/screenshots/` là UI trước PLAN-001 — dùng tạm được cho closed test, hoặc chụp nhanh 2–4 ảnh UI mới; bộ ảnh chính thức chụp ở phiên #3 |
@@ -56,14 +56,14 @@ Nguồn tester gợi ý: người thân, đồng nghiệp, bạn bè dùng Andro
 
 ## Mẫu tin nhắn (người dùng tự gửi; Claude không gửi)
 **Lời mời (vi):**
-> Chào bạn, mình đang làm app ghi chép thu chi "Ví Gọn" (miễn phí, không quảng cáo, chạy hoàn toàn offline). Google bắt app mới
+> Chào bạn, mình đang làm app ghi chép thu chi "Ví Gọn" (miễn phí, không quảng cáo, ghi chép không cần mạng). Google bắt app mới
 > phải có ít nhất 12 người thử trong 14 ngày liền mới được phát hành. Bạn giúp mình nhé:
 > 1) Vào link [link nhóm] bấm tham gia; 2) mở [link opt-in] bằng đúng Gmail trên điện thoại Android, bấm "Become a tester";
 > 3) cài app từ Google Play. Bạn chỉ cần **giữ tham gia và giữ app trên máy ít nhất 16 ngày (tới [ngày])**, mở app ghi vài khoản
 > mỗi tuần. App không gửi dữ liệu nào đi. Góp ý gửi mình qua [email/Zalo] hoặc nút "Gửi phản hồi" trên trang Play. Cảm ơn bạn!
 
 **Invite (en):**
-> Hi! I'm building "Ví Gọn", a free, ad-free, fully offline expense tracker. Google requires new apps to be tested by at least
+> Hi! I'm building "Ví Gọn", a free, ad-free expense tracker that works offline. Google requires new apps to be tested by at least
 > 12 people for 14 days in a row before release. Could you help? 1) Join [group link]; 2) open [opt-in link] with the Google
 > account on your Android phone and tap "Become a tester"; 3) install from Google Play. Please **stay in the test and keep the
 > app installed for at least 16 days (until [date])** and log a few records each week. The app sends no data anywhere.
@@ -109,7 +109,7 @@ Form bằng tiếng Anh; câu hỏi có thể đổi. **Thay mọi `[...]` bằn
 - **Who is the intended audience of your app?**
   `Adults and teenagers (13+) in Vietnam and worldwide who want a quick, private way to track personal or family spending, in Vietnamese or English.`
 - **Describe how your app provides value to users.**
-  `Ví Gọn records an expense in three taps and shows spending by category with a chart, budgets and recurring records. It works fully offline with no account and no data collection, so financial data never leaves the phone.`
+  `Ví Gọn records an expense in three taps and shows spending by category with a chart, budgets and recurring records. It works offline with no account and no data collection, so financial data never leaves the phone (the only network use is downloading a public exchange rate table when the user changes currency).`
 - **How many installs do you expect in your first year?** → chọn mức thấp, thực tế (ví dụ "0–10K").
 - **What changes did you make to your app based on what you learned during closed testing?**
   `[liệt kê thay đổi thật, ví dụ: redesigned the home screen and entry keypad (build [k]); fixed [lỗi] reported by testers; clarified the PIN warning text].`

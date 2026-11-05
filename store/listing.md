@@ -17,7 +17,7 @@ Không sao chép tên, icon, mô tả hay ảnh của app khác (SPEC mục 7). 
 - en: Log spending in seconds. Daily reminder, widget. Your data stays on your phone. (79 chars)
 
 ## Mô tả đầy đủ (≤ 4.000 ký tự)
-Viết lại 2026-11-05 theo bản đã gộp (F-01..F-26, mọi mục đều có trên Android). Số ký tự: vi 2724, en 2828 (giới hạn 4.000; đếm bằng script, tính cả dấu `**`).
+Viết lại 2026-11-05 theo bản đã gộp (F-01..F-26, mọi mục đều có trên Android). Số ký tự: vi 2859, en 2974 (đếm lại 2026-11-05 sau D-025; giới hạn 4.000; đếm bằng script, tính cả dấu `**`).
 
 ### Tiếng Việt
 Ví Gọn giúp bạn ghi chép thu chi hằng ngày thật nhanh và biết tiền của mình đi đâu.
@@ -38,13 +38,13 @@ Ví Gọn giúp bạn ghi chép thu chi hằng ngày thật nhanh và biết ti�
 • Danh mục tự thêm, sửa, sắp xếp.
 • Khoản định kỳ (tiền nhà, tiền điện, đăng ký hằng tháng) tự được ghi khi tới hạn.
 • Ngân sách tháng có thanh tiến độ và cảnh báo khi vượt, thêm ngân sách riêng cho từng danh mục nếu muốn.
-• Đủ các loại tiền tệ theo chuẩn ISO, có ô tìm.
+• Đủ các loại tiền tệ theo chuẩn ISO, có ô tìm. Đổi tiền tệ thì mọi số tiền được quy đổi theo tỉ giá tải về (hoặc tỉ giá bạn tự nhập).
 
 **Nhắc ghi chép**
 • Tùy chọn, mặc định tắt: mỗi ngày một thông báo vào giờ bạn chọn, tạo ngay trên máy và không chứa số liệu. App chỉ xin quyền thông báo khi bạn bật tính năng này.
 
 **Riêng tư**
-• Không đăng ký, không quảng cáo, không theo dõi, không công cụ phân tích. Ví Gọn không có quyền Internet nên không thể gửi dữ liệu đi. Dữ liệu chỉ lưu trên điện thoại của bạn và app tắt sao lưu đám mây tự động của Android.
+• Không đăng ký, không quảng cáo, không theo dõi, không công cụ phân tích. Ví Gọn không gửi dữ liệu của bạn đi đâu: app chỉ dùng mạng để tải bảng tỉ giá công khai khi bạn đổi tiền tệ. Dữ liệu chỉ lưu trên điện thoại của bạn và app tắt sao lưu đám mây tự động của Android.
 • Khóa bằng mã PIN 4 số (tùy chọn). PIN chỉ ngăn người khác mở app, không mã hóa dữ liệu. Quên mã PIN thì chỉ có cách xóa dữ liệu trong app.
 • Tùy chọn che nội dung khi chuyển app: chặn chụp màn hình và ẩn ảnh xem trước trong danh sách ứng dụng gần đây.
 • Widget mặc định không hiện số tiền. Bạn có thể bật hiện số đã chi trong tháng; khi khóa PIN đang bật, widget luôn ẩn số.
@@ -79,13 +79,13 @@ Ví Gọn is a fast personal income and expense tracker that shows where your mo
 • Add, edit and reorder your own categories.
 • Recurring records (rent, bills, subscriptions) are added automatically when due.
 • Monthly budget with a progress bar and an over-budget warning, plus an optional budget for each category.
-• All ISO currencies, with search.
+• All ISO currencies, with search. Changing currency converts every amount using a downloaded exchange rate (or one you enter).
 
 **Daily reminder**
 • Optional, off by default: one notification a day at the time you choose, created on your phone and containing no figures. The app asks for notification permission only when you turn it on.
 
 **Private by design**
-• No sign-up, no ads, no tracking, no analytics. Ví Gọn has no Internet permission, so it cannot send your data anywhere. Your data stays on your phone, and the app turns off Android's automatic cloud backup.
+• No sign-up, no ads, no tracking, no analytics. Ví Gọn never sends your data anywhere: it goes online only to download a public exchange rate table when you change currency. Your data stays on your phone, and the app turns off Android's automatic cloud backup.
 • Optional 4-digit PIN lock. It keeps others out of the app but does not encrypt your data. If you forget the PIN, the only way back in is to delete the app's data.
 • Optional "hide content when switching apps": blocks screenshots and hides the preview in the recent apps list.
 • The widget shows no amounts by default. You can choose to show what you spent this month; while the PIN lock is on, the widget always hides amounts.
@@ -136,7 +136,13 @@ Nhắc ghi chép, mật khẩu file sao lưu, tìm kiếm, ẩn tài khoản, ng
 ## Data safety (khai trong Play Console)
 Đi theo đúng thứ tự form:
 1. "Does your app collect or share any of the required user data types?" → **No**.
-   (Play định nghĩa "collect" = truyền dữ liệu ra khỏi máy. App không có quyền INTERNET, không SDK → không truyền gì.
+   (Play định nghĩa "collect" = truyền dữ liệu ra khỏi máy. Không SDK. Từ D-025 (2026-11-05) app có quyền INTERNET nhưng chỉ dùng cho
+   MỘT yêu cầu: `GET https://open.er-api.com/v6/latest/USD` khi người dùng đổi tiền tệ — URL cố định, không query/body/cookie, giống nhau
+   cho mọi người dùng, không chứa loại dữ liệu nào trong danh sách của Play (không vị trí, không thông tin tài chính, không ID). Nhà cung
+   cấp chỉ thấy IP như mọi kết nối mạng; app không đọc, không gửi IP như dữ liệu và không dùng nó để suy ra vị trí → **đề xuất vẫn "No"**.
+   ĐÂY LÀ ĐIỂM NGƯỜI DÙNG CẦN DUYỆT: nếu muốn thận trọng tuyệt đối thì khai thêm "Approximate location — Collected, shared with
+   ExchangeRate-API, ephemeral, purpose App functionality", nhưng khai vậy là sai thực tế (app không dùng vị trí) và làm trang store
+   kém rõ ràng.
    Bản 1.2: sao lưu tự động chỉ ghi file mã hóa vào thư mục người dùng chọn — do người dùng và hệ thống Android quản lý, nhà phát triển không nhận được.
    Về "chia sẻ" (Play tính cả chuyển dữ liệu cho app khác trên máy): file sao lưu/CSV qua bảng chia sẻ và sao lưu tự động vào thư mục
    Drive/Dropbox đều do **người dùng chủ động bật và chọn đích**, app giải thích trước ("Ví Gọn chỉ ghi file vào thư mục bạn chọn…") —
@@ -144,18 +150,19 @@ Nhắc ghi chép, mật khẩu file sao lưu, tìm kiếm, ẩn tài khoản, ng
    khoá không rời máy. Đây là đánh giá theo định nghĩa của Play; đọc lại hướng dẫn Data safety ngày điền.)
 2. Vì trả lời No, Play bỏ qua các câu về loại dữ liệu, mã hoá khi truyền, yêu cầu xoá. Trang store sẽ hiện
    "No data collected" và "No data shared with third parties".
-3. Nếu bản Play Console đang dùng vẫn hỏi thêm: mã hoá khi truyền → không áp dụng (không truyền); xoá dữ liệu → người dùng tự xoá
+3. Nếu bản Play Console đang dùng vẫn hỏi thêm: mã hoá khi truyền → **có** (yêu cầu tỉ giá duy nhất đi qua HTTPS; không truyền dữ liệu người dùng); xoá dữ liệu → người dùng tự xoá
    trong app (Cài đặt → Xóa toàn bộ dữ liệu) hoặc gỡ app.
-- Quyền của app (đúng `AndroidManifest.xml` và manifest đã gộp của bản release trong `build/app/intermediates/merged_manifests/release/`, kiểm 2026-11-05): đúng **2 quyền**, cả hai chỉ phục vụ Nhắc ghi chép:
+- Quyền của app (đúng `AndroidManifest.xml` và manifest đã gộp của bản release trong `build/app/intermediates/merged_manifests/release/`, kiểm lại 2026-11-05 sau D-025): **3 quyền** —
+  `INTERNET` (D-025, quyền thường, tự cấp khi cài; chỉ để tải bảng tỉ giá khi người dùng đổi tiền tệ) và 2 quyền chỉ phục vụ Nhắc ghi chép:
   `POST_NOTIFICATIONS` — quyền chạy (runtime) trên Android 13+, **chỉ xin sau lời giải thích khi người dùng bật** Nhắc ghi chép; từ chối thì app vẫn dùng bình thường.
   `RECEIVE_BOOT_COMPLETED` — quyền thường, **Android tự cấp khi cài, không hộp thoại**; chỉ để đặt lại lịch nhắc sau khi khởi động lại máy, không đọc dữ liệu nào. (Bản nháp trước ghi "đều tùy chọn" là sai với quyền này.)
-  Ngoài ra chỉ có quyền nội bộ `com.phiotron.vigon.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION` (AndroidX tự thêm). Không `INTERNET`, không `SCHEDULE_EXACT_ALARM`, không quyền bộ nhớ (thư mục sao lưu chọn qua Storage Access Framework). Plugin thông báo tự thêm `VIBRATE`, manifest đã gỡ (`tools:node="remove"`). Trang Play sẽ liệt kê 2 quyền này — khớp mô tả.
+  Ngoài ra chỉ có quyền nội bộ `com.phiotron.vigon.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION` (AndroidX tự thêm). Không `ACCESS_NETWORK_STATE`, không `SCHEDULE_EXACT_ALARM`, không quyền bộ nhớ (thư mục sao lưu chọn qua Storage Access Framework). Plugin thông báo tự thêm `VIBRATE`, manifest đã gỡ (`tools:node="remove"`). Trang Play sẽ liệt kê các quyền này (Internet hiện dưới nhóm "Khác"/"Network") — khớp mô tả.
 - Widget: số tiền trên widget chỉ nằm trong bộ nhớ riêng của app và màn hình chờ, mặc định không hiện, luôn ẩn khi khóa PIN bật.
 - Thông báo nhắc: cục bộ (`flutter_local_notifications`), không Firebase/FCM, không push từ máy chủ, nội dung cố định "Hôm nay bạn đã ghi chi tiêu chưa?" — không phải dữ liệu thu thập.
 - Trạng thái kiểm chứng (2026-11-04, vẫn đúng 2026-11-05): sao lưu tự động, thông báo thật, widget và quyền khi chạy thật **CHƯA kiểm chứng** trên máy thật (AC `[M]` trong `docs/SPEC.md` mục 3c; bước thử M-1..M-7 trong `docs/TESTING.md`). Phải kiểm bản APK/AAB phát hành (danh sách quyền sau khi gộp manifest) trước khi khai Data safety và nộp.
-- Đối chiếu nguồn: `docs/SECURITY.md` (bản đồ dữ liệu), SBOM `docs/sbom/vigon.cdx.json`, `aapt2 dump permissions` (không có INTERNET).
+- Đối chiếu nguồn: `docs/SECURITY.md` (bản đồ dữ liệu, mục NETWORK), SBOM `docs/sbom/vigon.cdx.json`, `aapt2 dump permissions` (INTERNET + 2 quyền nhắc), `test/manifest_test.dart` (chỉ `lib/src/data/exchange_rate.dart` tạo `HttpClient`).
 - Hành động do người dùng chủ động (chọn đích trong bảng chia sẻ để gửi file sao lưu/CSV, chọn thư mục sao lưu tự động) không tính là app thu thập/chia sẻ.
-- Sai lệch phải sửa ngay: thêm SDK crash/analytics, đồng bộ đám mây, quyền INTERNET → khai lại trước khi phát hành bản đó.
+- Sai lệch phải sửa ngay: thêm SDK crash/analytics, đồng bộ đám mây, bất kỳ yêu cầu mạng nào khác ngoài tải bảng tỉ giá (hoặc gửi kèm dữ liệu người dùng / tiền tệ đang dùng) → khai lại trước khi phát hành bản đó.
 
 ## Tài khoản nhà phát triển cá nhân — điều cần biết
 - **Tên hiển thị trên Play** = tên nhà phát triển người dùng đặt khi tạo tài khoản (đã xác minh danh tính). Chính sách quyền riêng tư
