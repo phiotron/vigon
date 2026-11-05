@@ -13,6 +13,7 @@ import 'package:vigon/src/features/widget/deep_link.dart';
 import 'package:vigon/src/features/widget/home_widget_bridge.dart';
 import 'package:vigon/src/features/widget/widget_content.dart';
 import 'package:vigon/src/features/widget/widget_sync.dart';
+import 'package:vigon/src/ui/settings_rows.dart';
 
 import '../helpers.dart';
 
@@ -361,7 +362,7 @@ void main() {
       await tester.tap(find.byTooltip('Cài đặt'));
       await settle(tester);
       final toggle = find.widgetWithText(
-        SwitchListTile,
+        SettingsSwitchRow,
         'Hiện số tiền trên widget',
       );
       await tester.scrollUntilVisible(
@@ -371,7 +372,7 @@ void main() {
       );
       await tester.ensureVisible(toggle);
       await settle(tester);
-      expect(tester.widget<SwitchListTile>(toggle).value, isFalse);
+      expect(tester.widget<SettingsSwitchRow>(toggle).value, isFalse);
       expect(
         find.text(
           'Ai cầm máy cũng nhìn thấy số này trên màn hình chờ. '
@@ -379,9 +380,11 @@ void main() {
         ),
         findsOneWidget,
       );
-      await tester.tap(toggle);
+      await tester.tap(
+        find.descendant(of: toggle, matching: find.byType(Switch)),
+      );
       await settle(tester);
-      expect(tester.widget<SwitchListTile>(toggle).value, isTrue);
+      expect(tester.widget<SettingsSwitchRow>(toggle).value, isTrue);
       expect(
         await tester.runAsync(
           () => SettingsRepository(db).watchWidgetShowAmounts().first,
@@ -389,7 +392,9 @@ void main() {
         isTrue,
       );
       expect(bridge.last, startsWith('show:Tháng này đã chi'));
-      await tester.tap(toggle);
+      await tester.tap(
+        find.descendant(of: toggle, matching: find.byType(Switch)),
+      );
       await settle(tester);
       expect(bridge.last, 'clear');
       await disposeApp(tester, db);

@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:vigon/src/data/settings_repository.dart';
 import 'package:vigon/src/features/settings/secure_window.dart';
+import 'package:vigon/src/ui/settings_rows.dart';
 
 import '../helpers.dart';
 
@@ -75,7 +76,7 @@ void main() {
     await tester.tap(find.byTooltip('Cài đặt'));
     await settle(tester);
     final toggle = find.widgetWithText(
-      SwitchListTile,
+      SettingsSwitchRow,
       'Che nội dung khi chuyển app',
     );
     await tester.scrollUntilVisible(
@@ -85,20 +86,24 @@ void main() {
     );
     await tester.ensureVisible(toggle);
     await settle(tester);
-    expect(tester.widget<SwitchListTile>(toggle).value, isFalse);
+    expect(tester.widget<SettingsSwitchRow>(toggle).value, isFalse);
 
-    await tester.tap(toggle);
+    await tester.tap(
+      find.descendant(of: toggle, matching: find.byType(Switch)),
+    );
     await settle(tester);
-    expect(tester.widget<SwitchListTile>(toggle).value, isTrue);
+    expect(tester.widget<SettingsSwitchRow>(toggle).value, isTrue);
     expect(calls.last, ('setSecure', true));
     expect(
       await tester.runAsync(() => SettingsRepository(db).readSecureWindow()),
       isTrue,
     );
 
-    await tester.tap(toggle);
+    await tester.tap(
+      find.descendant(of: toggle, matching: find.byType(Switch)),
+    );
     await settle(tester);
-    expect(tester.widget<SwitchListTile>(toggle).value, isFalse);
+    expect(tester.widget<SettingsSwitchRow>(toggle).value, isFalse);
     expect(calls.last, ('setSecure', false));
     await disposeApp(tester, db);
   });
