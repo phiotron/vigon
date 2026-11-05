@@ -13,7 +13,7 @@ import '../../ui/format.dart';
 import '../../ui/tokens.g.dart';
 import '../entry/entry_editor_screen.dart' show repeatLabel;
 import '../settings/budget_dialog.dart' show currencySymbol;
-import 'rule_dialog.dart';
+import 'rule_sheet.dart';
 
 /// Danh sách chuỗi định kỳ: dừng, chạy lại, sửa số tiền (AC-25).
 class RecurringScreen extends ConsumerWidget {
@@ -78,15 +78,14 @@ class RecurringScreen extends ConsumerWidget {
       EntryType.expense =>
         ref.read(categoriesProvider(CategoryType.expense)).value,
     };
-    final saved = await showDialog<RuleEdit>(
-      context: context,
-      builder: (context) => RuleDialog(
-        rule: rule,
-        digits: currencyDecimalDigits(currency),
-        symbol: currencySymbol(currency),
-        categories: categories ?? const <Category>[],
-        accounts: ref.read(accountsProvider).value ?? const <Account>[],
-      ),
+    // 7.2 → bảng toàn màn SCR-21.
+    final saved = await showRuleSheet(
+      context,
+      rule: rule,
+      digits: currencyDecimalDigits(currency),
+      symbol: currencySymbol(currency),
+      categories: categories ?? const <Category>[],
+      accounts: ref.read(accountsProvider).value ?? const <Account>[],
     );
     if (saved != null) {
       await ref

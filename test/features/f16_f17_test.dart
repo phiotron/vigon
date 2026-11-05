@@ -65,10 +65,14 @@ void main() {
 
       await tester.tap(find.textContaining('Nhà cửa'));
       await settle(tester);
-      await tester.tap(find.byKey(const Key('rule-frequency')));
+      // SCR-21: tần suất là nhóm chip; đổi thì hiện gợi ý bắt đầu lại (A12).
+      expect(find.textContaining('Bắt đầu lại'), findsNothing);
+      await tester.tap(find.byKey(const ValueKey('rule-frequency-weekly')));
       await settle(tester);
-      await tester.tap(find.text('Hằng tuần').last);
-      await settle(tester);
+      expect(
+        find.textContaining('Bắt đầu lại từ lần đến hạn kế tiếp'),
+        findsOneWidget,
+      );
       await tester.tap(find.byKey(const Key('rule-category')));
       await settle(tester);
       await tester.tap(find.text('Hóa đơn').last);
