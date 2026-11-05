@@ -7,7 +7,7 @@
 >   → **có trong sao lưu iCloud/máy tính** nếu người dùng bật; PIN qua `flutter_secure_storage` 11.2.0 mặc định
 >   (Android: khoá của Android Keystore; iOS: Keychain, `accessibility = unlocked`, `synchronizable = false`); file xuất ghi vào
 >   thư mục tạm (`getTemporaryDirectory`) rồi mở share sheet (`share_plus`); khôi phục qua `file_picker`.
->   Nếu code đổi (ví dụ loại DB khỏi sao lưu iCloud) thì sửa mục 2 cho khớp.
+>   (Câu "không đặt cờ loại khỏi sao lưu" là trạng thái 2026-11-04; đã đổi theo D-021 — xem ghi chú 2026-11-05 cuối danh sách.)
 > - Cập nhật 2026-11-05 (gộp bản 1.2 với giao diện/iOS của PLAN-001): **app tự xoá PIN cũ khi cài lại với dữ liệu mới** (D-017:
 >   mã cài đặt `pin_install_id` trong bộ nhớ an toàn phải khớp `pinInstallId` trong bảng settings, lệch thì xoá PIN; `lib/src/data/pin_service.dart`,
 >   `clearIfReinstalled`) → đã sửa mục 2 và mục 7 (bỏ câu "app có thể hỏi PIN cũ"). PIN đặt trước bản có mã này thì giữ nguyên, nhưng bản
@@ -23,6 +23,17 @@
 >   (iOS không xin quyền lúc khởi tạo, chỉ khi bật công tắc; nội dung thông báo cố định trong `.arb`); `backup_crypto.dart` (AES-256-GCM +
 >   PBKDF2, Dart thuần); `pin_service.dart` `clearIfReinstalled` được gọi ở `app_lock.dart`; DB iOS vẫn trong Documents, chưa loại khỏi
 >   sao lưu iCloud → mục 2 giữ nguyên. Ngày hiệu lực để trống tới khi đăng; bỏ "Lịch sử thay đổi" vì đây là bản đăng đầu tiên.
+> - **Cập nhật 2026-11-05 theo D-021** (người dùng quyết: DB iOS loại khỏi sao lưu hệ thống, giống Android `allowBackup=false`): mục 2
+>   (bỏ ý "dữ liệu có trong sao lưu iPhone nếu bạn bật" → cả hai nền tảng không vào sao lưu Google/iCloud/máy tính, đổi máy thì tự xuất
+>   file `.vigon`; viết lại câu khôi phục iPhone từ sao lưu: app bắt đầu trống, PIN cũ bị xoá theo D-017) và mục 7 (bỏ "bản sao lưu
+>   iPhone/iCloud"). Code do phiên iOS làm song song (đặt cờ `isExcludedFromBackup` cho file DB mỗi lần mở, kênh `vigon/backup_exclusion`;
+>   lúc viết CHƯA commit) → **trước khi đăng: kiểm code đã vào `main` và log CI simulator báo đã đặt cờ**; nếu không thì không đăng bản này.
+>   Mục PIN: Keychain mặc định `accessibility = unlocked` (không ThisDeviceOnly) nên mục PIN có thể vẫn đi theo bản sao lưu mã hoá
+>   của iPhone — vì vậy câu viết "nếu mục mã PIN được khôi phục theo, app cũng xoá nó" (dựa trên D-017, chưa thử trên máy thật).
+>   Cố ý KHÔNG hứa "chuyển máy trực tiếp không mang dữ liệu theo": Android 12+ ở máy một số hãng vẫn chuyển dữ liệu máy-sang-máy (D2D) dù
+>   `allowBackup=false` (developer.android.com, Behavior changes Android 12 → Backup and restore); app chưa có `dataExtractionRules`.
+>   Với iOS chưa kiểm cờ loại sao lưu có áp cho Quick Start. Câu chính sách chỉ nói về bản sao lưu (đám mây / máy tính).
+>   D-020 (mã hoá, khai Pháp) không đổi chính sách: mục 3 đã nói AES-256-GCM.
 > - Không phải tư vấn pháp lý; luật sư nên đọc lại trước khi mở bán (COMPLIANCE D-07, D-09).
 > - Thay `[Tên nhà phát triển]` bằng **đúng tên hiển thị trên Google Play và App Store** (tài khoản cá nhân → họ tên thật), điền ngày hiệu lực.
 > - **Nơi đăng (gợi ý, người dùng tự đăng):**
@@ -50,9 +61,11 @@ Ví Gọn không có máy chủ, không có tài khoản người dùng, không 
 **2. Dữ liệu nằm trên điện thoại của bạn**
 Những gì bạn nhập (khoản thu, khoản chi, danh mục, tài khoản, ghi chú, ngân sách, khoản định kỳ, cài đặt) chỉ được lưu trong vùng lưu trữ riêng của app trên điện thoại. App khác không đọc được vùng này.
 - **Android:** app tắt tính năng sao lưu tự động của chính Android (`allowBackup=false`), nên dữ liệu không tự được đưa lên đám mây.
-- **iPhone:** như mọi app khác, dữ liệu của Ví Gọn nằm trong bản sao lưu iPhone nếu bạn bật Sao lưu iCloud hoặc sao lưu iPhone bằng máy tính. Bản sao lưu đó do Apple và bạn quản lý theo chính sách của Apple; nhà phát triển không truy cập được.
+- **iPhone:** app loại dữ liệu của mình khỏi bản sao lưu iCloud và sao lưu iPhone bằng máy tính, nên dữ liệu không được đưa lên đám mây hay vào bản sao lưu của máy.
 
-Nếu bạn bật khóa bằng mã PIN, app chỉ lưu một giá trị băm có muối của mã PIN, không lưu mã PIN gốc. Trên Android, giá trị này nằm trong bộ nhớ an toàn được bảo vệ bằng Android Keystore. Trên iPhone, nó nằm trong Keychain của máy, không đồng bộ qua iCloud Keychain. iOS có thể giữ mục Keychain này cả sau khi bạn gỡ app; khi bạn cài lại và app bắt đầu với dữ liệu trống, app tự nhận ra điều đó và xóa mã PIN cũ, nên bạn không bị khóa bằng mã PIN của lần cài trước. Nếu bạn khôi phục iPhone từ bản sao lưu iCloud hoặc máy tính, dữ liệu của app và mã PIN có thể được khôi phục cùng nhau; khi đó app vẫn hỏi mã PIN bạn đã đặt.
+Vì vậy trên cả hai nền tảng, đừng trông vào bản sao lưu của điện thoại để giữ dữ liệu Ví Gọn: khi bạn cài lại app hoặc khôi phục điện thoại từ bản sao lưu, dữ liệu của app không được khôi phục theo. Muốn mang dữ liệu sang máy khác, hãy tự xuất file sao lưu `.vigon` (mục 3) rồi chọn "Khôi phục từ bản sao lưu" trên máy mới.
+
+Nếu bạn bật khóa bằng mã PIN, app chỉ lưu một giá trị băm có muối của mã PIN, không lưu mã PIN gốc. Trên Android, giá trị này nằm trong bộ nhớ an toàn được bảo vệ bằng Android Keystore. Trên iPhone, nó nằm trong Keychain của máy, không đồng bộ qua iCloud Keychain. iOS có thể giữ mục Keychain này cả sau khi bạn gỡ app; khi bạn cài lại và app bắt đầu với dữ liệu trống, app tự nhận ra điều đó và xóa mã PIN cũ, nên bạn không bị khóa bằng mã PIN của lần cài trước. Khi bạn khôi phục iPhone từ bản sao lưu iCloud hoặc máy tính, Ví Gọn bắt đầu với dữ liệu trống (vì dữ liệu không nằm trong bản sao lưu); nếu mục mã PIN trong Keychain được khôi phục theo, app cũng tự xóa nó như trên.
 
 **Widget màn hình chính (chỉ Android).** Nếu bạn thêm widget, widget luôn có hai nút "Chi" và "Thu" để mở nhanh màn nhập khoản. Mặc định widget không hiện số tiền nào. Chỉ khi bạn tự bật "Hiện số tiền trên widget" VÀ không dùng khóa PIN thì widget mới hiện số đã chi trong tháng (và hạn mức nếu bạn đã đặt ngân sách tháng). Khi khóa PIN đang bật, widget luôn ẩn số tiền. Số liệu này chỉ nằm trong bộ nhớ riêng của app và trên màn hình chờ của bạn; không gửi đi đâu, và bị xóa khi bạn tắt công tắc hoặc bật PIN. Khi công tắc đang bật, ai cầm máy của bạn cũng có thể thấy số trên màn hình chờ.
 
@@ -73,7 +86,7 @@ Màn "Giới thiệu" có thể mở trình duyệt (để xem chính sách này
 Khi bạn tải app qua Google Play hoặc App Store, Google hoặc Apple có thể thu thập thông tin về việc cài đặt và sự cố app theo chính sách của họ và cài đặt trên máy bạn (ví dụ tùy chọn chia sẻ dữ liệu phân tích với nhà phát triển trên iPhone). Nhà phát triển chỉ thấy số liệu tổng hợp, ẩn danh trong Play Console và App Store Connect và không thể dùng chúng để nhận ra bạn.
 
 **7. Quyền của bạn**
-Vì dữ liệu chỉ nằm trên máy bạn, bạn tự thực hiện mọi quyền ngay trong app: xem và sửa từng khoản; xuất toàn bộ dữ liệu ra file (sao lưu hoặc CSV); xóa toàn bộ dữ liệu (cả mã PIN) trong Cài đặt → "Xóa toàn bộ dữ liệu"; hoặc gỡ app. Gỡ app sẽ xóa dữ liệu trên máy, trừ các file bạn đã tự xuất, các file sao lưu tự động trong thư mục bạn chọn (Android) và bản sao lưu iPhone/iCloud bạn đã tạo trước đó. Trên iPhone, iOS có thể giữ lại mục mã PIN trong Keychain sau khi gỡ app; app tự xóa mục này khi được cài lại với dữ liệu mới (mục 2).
+Vì dữ liệu chỉ nằm trên máy bạn, bạn tự thực hiện mọi quyền ngay trong app: xem và sửa từng khoản; xuất toàn bộ dữ liệu ra file (sao lưu hoặc CSV); xóa toàn bộ dữ liệu (cả mã PIN) trong Cài đặt → "Xóa toàn bộ dữ liệu"; hoặc gỡ app. Gỡ app sẽ xóa dữ liệu trên máy, trừ các file bạn đã tự xuất và các file sao lưu tự động trong thư mục bạn chọn (Android). Trên iPhone, iOS có thể giữ lại mục mã PIN trong Keychain sau khi gỡ app; app tự xóa mục này khi được cài lại với dữ liệu mới (mục 2).
 
 **8. Trẻ em**
 Ví Gọn không nhắm tới trẻ em và không thu thập dữ liệu của bất kỳ ai, kể cả trẻ em.
@@ -103,9 +116,11 @@ Ví Gọn has no server, no user accounts, no ads, and no third-party analytics,
 **2. Your data stays on your phone**
 What you enter (income, expenses, categories, accounts, notes, budget, recurring records, settings) is stored only in the app's private storage on your phone. Other apps cannot read it.
 - **Android:** the app turns off Android's own automatic backup (`allowBackup=false`), so your data is not uploaded to the cloud on its own.
-- **iPhone:** like any other app, Ví Gọn's data is included in your iPhone backup if you turn on iCloud Backup or back up your iPhone to a computer. Those backups are managed by Apple and you under Apple's policies; the developer cannot access them.
+- **iPhone:** the app excludes its data from iCloud Backup and from iPhone backups made on a computer, so your data is not uploaded to the cloud or included in your phone's backups.
 
-If you turn on the PIN lock, the app stores only a salted hash of your PIN, never the PIN itself. On Android it is kept in secure storage protected by the Android Keystore. On iPhone it is kept in the device Keychain and is not synced through iCloud Keychain. iOS may keep this Keychain item even after you delete the app; when you reinstall and the app starts with empty data, it detects this and deletes the old PIN, so you are not locked out by the PIN from a previous install. If you restore your iPhone from an iCloud or computer backup, the app's data and the PIN may be restored together; in that case the app still asks for the PIN you set.
+So on both platforms, do not rely on your phone's backups to keep your Ví Gọn data: when you reinstall the app or restore your phone from a backup, the app's data is not restored with it. To move your data to another phone, export a `.vigon` backup file yourself (section 3) and choose "Restore from backup" on the new phone.
+
+If you turn on the PIN lock, the app stores only a salted hash of your PIN, never the PIN itself. On Android it is kept in secure storage protected by the Android Keystore. On iPhone it is kept in the device Keychain and is not synced through iCloud Keychain. iOS may keep this Keychain item even after you delete the app; when you reinstall and the app starts with empty data, it detects this and deletes the old PIN, so you are not locked out by the PIN from a previous install. When you restore your iPhone from an iCloud or computer backup, Ví Gọn starts with empty data (because its data is not in the backup); if the PIN Keychain item is restored as well, the app deletes it in the same way.
 
 **Home screen widget (Android only).** If you add the widget, it always offers two buttons for quick entry of an expense or an income. By default the widget shows no amounts. Only if you turn on "Show amounts on widget" AND do not use the PIN lock does the widget show how much you spent this month (and your limit, if you set a monthly budget). While the PIN lock is on, the widget always hides amounts. These figures live only in the app's private storage and on your home screen; they are not sent anywhere and are erased when you turn the switch off or turn the PIN on. While the switch is on, anyone holding your phone can see the figures on the home screen.
 
@@ -126,7 +141,7 @@ The "About" screen can open your browser (to show this policy) or your email app
 When you install the app from Google Play or the App Store, Google or Apple may collect information about installs and app crashes under their own policies and your device settings (for example, the option on iPhone to share analytics with app developers). The developer sees only aggregated, anonymous figures in Play Console and App Store Connect and cannot use them to identify you.
 
 **7. Your rights**
-Because your data is only on your phone, you exercise every right directly in the app: view and edit each record; export all data to a file (backup or CSV); delete all data (including the PIN) in Settings → "Delete all data"; or uninstall the app. Uninstalling removes the data on the phone, except files you have exported yourself, automatic backup files in the folder you chose (Android), and iPhone/iCloud backups you made earlier. On iPhone, iOS may keep the PIN Keychain item after you delete the app; the app deletes it when it is reinstalled with fresh data (section 2).
+Because your data is only on your phone, you exercise every right directly in the app: view and edit each record; export all data to a file (backup or CSV); delete all data (including the PIN) in Settings → "Delete all data"; or uninstall the app. Uninstalling removes the data on the phone, except files you have exported yourself and automatic backup files in the folder you chose (Android). On iPhone, iOS may keep the PIN Keychain item after you delete the app; the app deletes it when it is reinstalled with fresh data (section 2).
 
 **8. Children**
 Ví Gọn is not directed at children and does not collect data from anyone, including children.

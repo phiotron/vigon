@@ -10,12 +10,16 @@ Không sao chép tên, icon, mô tả hay ảnh của app khác (SPEC mục 7).
 
 Project iOS trên `main` sau gộp (đối chiếu lại 2026-11-05, commit `a00bec8`): **chỉ iPhone** (`TARGETED_DEVICE_FAMILY = 1`),
 **chỉ màn dọc**, tên hiển thị `Ví Gọn`, min iOS 15.0, `CFBundleLocalizations` en + vi, `FlutterDeepLinkingEnabled = false`,
-`LSApplicationQueriesSchemes` chỉ `mailto`, `https`, `ITSAppUsesNonExemptEncryption = false` (**cần đổi — xem mục Export compliance**),
+`LSApplicationQueriesSchemes` chỉ `mailto`, `https`, `ITSAppUsesNonExemptEncryption = false` (**phải đổi thành `true` theo D-020**
+— phiên code iOS sửa `Info.plist` + test + CI; xem mục Export compliance), DB **chưa** loại khỏi sao lưu iCloud (**phải loại theo D-021**, phiên code iOS),
 `ios/Runner/PrivacyInfo.xcprivacy` (không tracking, không thu thập; required-reason API FileTimestamp `C617.1`, DiskSpace `E174.1`),
 không khoá `NS…UsageDescription`, không `UIFileSharingEnabled`; icon `AppIcon` đủ cỡ, bản 1024×1024 RGB không alpha (PLAN-001).
 Tính năng theo nền tảng (`lib/src/platform_features.dart`, D-019): iOS **có** nhắc ghi chép (thông báo cục bộ, xin quyền khi bật),
 mật khẩu file sao lưu, tìm kiếm, ẩn tài khoản, ngân sách theo danh mục, tiền tệ ISO; iOS **không có** widget, sao lưu tự động,
 che nội dung đa nhiệm, icon đơn sắc. Nếu `ios/` hoặc danh sách này đổi, sửa lại "Mô tả", "Ảnh chụp", "Export compliance", "App Privacy".
+Cập nhật 2026-11-05 (phiên con "Tài liệu theo quyết định mã hoá + iCloud"): mô tả, phân phối, App Privacy, Export compliance viết theo
+**D-020** (khai có mã hoá chuẩn, vẫn bán ở Pháp, người dùng nộp khai báo cho ANSSI) và **D-021** (DB iOS không vào sao lưu iCloud/máy tính).
+Các câu này chỉ đúng khi code iOS đã làm xong hai quyết định — **đối chiếu `ios/Runner/Info.plist` và code loại DB khỏi sao lưu trước khi dán**.
 
 ## Tra trùng tên (2026-11-04)
 - Tìm "Ví Gọn" / "Vi Gon" trên web (apps.apple.com, Google Play): **không thấy app nào trùng tên**. Các app gần tên nhất
@@ -33,7 +37,7 @@ che nội dung đa nhiệm, icon đơn sắc. Nếu `ios/` hoặc danh sách nà
 | Ngôn ngữ chính | English (U.S.). Thêm bản địa hoá Vietnamese. App chưa có ngôn ngữ nào khác. |
 | Danh mục chính | **Finance** · Danh mục phụ: **Productivity** |
 | Giá | Miễn phí. Không In-App Purchase, không thuê bao, không quảng cáo. |
-| Phân phối | Mọi quốc gia/vùng trừ **Trung Quốc đại lục** (app cần số đăng ký ICP mới được bán ở đó; COMPLIANCE nhóm C chưa mở) và **Nga** (nhóm C). Nhóm D theo COMPLIANCE M-01 khi chốt. Nếu chọn phương án 1 ở mục Export compliance mà chưa nộp khai báo mã hoá cho Pháp: **bỏ cả Pháp** ở bản 1. |
+| Phân phối | Mọi quốc gia/vùng trừ **Trung Quốc đại lục** (app cần số đăng ký ICP mới được bán ở đó; COMPLIANCE nhóm C chưa mở) và **Nga** (nhóm C). Nhóm D theo COMPLIANCE M-01 khi chốt. **Có Pháp ngay bản 1** (D-020) → trước khi nộp App Review phải đã tải khai báo mã hoá Pháp lên App Store Connect (mục Export compliance; các bước ở `docs/RELEASE.md`). Apple khuyên đặt Availability và điền Description **trước** khi tải tài liệu mã hoá. |
 | Thiết bị | Chỉ iPhone. Không bật "iPhone and iPad Apps on Apple Silicon Macs" và "Apple Vision Pro" (chưa thử). |
 | Copyright | `© 2026 <họ tên người đăng ký Apple Developer>` |
 | Tên người bán (Seller) | Tài khoản **cá nhân** → App Store hiện **họ tên thật** của người đăng ký. Chính sách quyền riêng tư phải ghi đúng tên này (xem `docs/legal/privacy-policy.md`). |
@@ -83,7 +87,7 @@ DAILY REMINDER
 
 PRIVATE BY DESIGN
 • No sign-up, no ads, no tracking, no analytics. Ví Gọn has no server and never connects to the internet, so the developer never receives your data.
-• Your records are stored only in the app on your iPhone. If you use iPhone backup (iCloud or a computer), it includes the app's data like any other app.
+• Your records are stored only in the app on your iPhone. They are left out of iCloud and computer backups of your iPhone, so to move to a new phone, export a backup file and restore it there.
 • Optional 4-digit PIN lock. It keeps others out of the app but does not encrypt your data. If you forget the PIN, the only way back in is to delete the app's data.
 • Export a backup file and restore it on a new phone; export CSV for Numbers, Excel or Google Sheets. You can protect a backup file with a password (AES-256 encryption); if you forget the password, the file cannot be opened. Without a password the file is not encrypted, so keep it somewhere safe.
 
@@ -133,7 +137,7 @@ NHẮC GHI CHÉP
 
 RIÊNG TƯ
 • Không đăng ký, không quảng cáo, không theo dõi, không công cụ phân tích. Ví Gọn không có máy chủ và không bao giờ kết nối Internet, nên nhà phát triển không nhận dữ liệu của bạn.
-• Dữ liệu chỉ lưu trong app trên iPhone của bạn. Nếu bạn dùng sao lưu iPhone (iCloud hoặc máy tính), bản sao lưu đó chứa dữ liệu của app như mọi app khác.
+• Dữ liệu chỉ lưu trong app trên iPhone của bạn và không nằm trong bản sao lưu iCloud hay sao lưu iPhone bằng máy tính; khi đổi máy, hãy tự xuất file sao lưu rồi khôi phục trên máy mới.
 • Khóa bằng mã PIN 4 số (tùy chọn). PIN chỉ ngăn người khác mở app, không mã hóa dữ liệu. Quên mã PIN thì chỉ có cách xóa dữ liệu trong app.
 • Tự xuất file sao lưu và khôi phục khi đổi máy; xuất CSV để mở bằng Numbers, Excel hoặc Google Sheets. Có thể đặt mật khẩu cho file sao lưu (mã hóa AES-256); quên mật khẩu thì không mở được file. Không đặt mật khẩu thì file không được mã hóa, hãy cất ở nơi an toàn.
 
@@ -147,7 +151,8 @@ Miễn phí. Không mua trong app.
 - **What's New** (dùng cho TestFlight / bản sau): `Bản đầu tiên: ghi khoản nhanh, tìm kiếm, biểu đồ theo danh mục, tài khoản và chuyển tiền, khoản định kỳ, ngân sách tháng và theo danh mục, nhắc ghi chép hằng ngày, sao lưu có mật khẩu, xuất CSV, khóa PIN.`
 
 Điểm khác bản Play có chủ đích: "VoiceOver" thay "TalkBack"; iOS không có khái niệm "quyền Internet" nên viết "không kết nối Internet";
-nêu rõ sao lưu iPhone có chứa dữ liệu (Android tắt `allowBackup`, iOS thì không — xem `docs/legal/privacy-policy.md` mục 2).
+nêu rõ dữ liệu không nằm trong sao lưu iPhone và đổi máy phải tự xuất file (D-021: DB iOS loại khỏi sao lưu, giống Android
+`allowBackup=false` — xem `docs/legal/privacy-policy.md` mục 2).
 Bản App Store KHÔNG có các mục chỉ-Android (D-019): widget, sao lưu tự động vào thư mục, che nội dung ở màn ứng dụng gần đây, icon
 đơn sắc. Mô tả ngắn của Play nhắc "widget" nên không dùng lại cho App Store. Khi có bản iOS của các tính năng này (việc riêng, SPEC
 mục 4) thì mới thêm vào đây.
@@ -178,45 +183,51 @@ Kiểm lại câu chữ thật của bảng hỏi trong App Store Connect khi đ
     `timezone`, `flutter_timezone`, `material_symbols_icons`) chỉ chạy trên máy (SBOM `docs/sbom/vigon.cdx.json`).
   - Nhắc ghi chép (bản 1.2) là thông báo cục bộ do iOS lên lịch trên máy, không qua máy chủ, không push (APNs), không chứa số liệu.
   - File sao lưu/CSV chỉ rời máy khi người dùng tự chọn đích trong share sheet; nhà phát triển không nhận.
-  - Sao lưu iCloud của iPhone do Apple và người dùng kiểm soát, nhà phát triển không truy cập → không tính là "thu thập".
+  - DB của app được loại khỏi sao lưu iCloud/máy tính (D-021), nên dữ liệu không rời máy qua đường sao lưu của iOS. (Kể cả khi có,
+    sao lưu iCloud do Apple và người dùng kiểm soát, nhà phát triển không truy cập → cũng không tính là "thu thập".)
+  - Mã hoá file sao lưu (AES-256-GCM, D-020) chạy trên máy, khoá suy ra từ mật khẩu người dùng nhập, không gửi đi → không ảnh hưởng nhãn.
   - Không theo dõi (tracking) → không cần App Tracking Transparency.
 - `ios/Runner/PrivacyInfo.xcprivacy` khớp: `NSPrivacyTracking = false`, `NSPrivacyTrackingDomains` rỗng,
   `NSPrivacyCollectedDataTypes` rỗng (đã kiểm 2026-11-04); các plugin tự kèm manifest riêng.
 - Nếu sau này thêm SDK báo crash, analytics, đồng bộ đám mây → nhãn này SAI, phải khai lại trước khi nộp bản đó.
 
-## Export compliance (mã hoá) — kết luận 2026-11-05: phải khai "có mã hoá chuẩn ngoài iOS"
+## Export compliance (mã hoá) — D-020 (người dùng quyết 2026-11-05): khai "có mã hoá chuẩn ngoài iOS", vẫn bán ở Pháp
 **Sự thật trong code (kiểm 2026-11-05):**
-- `lib/src/data/backup_crypto.dart`: file sao lưu có mật khẩu (F-21, D-012) dùng **AES-256-GCM** + khoá từ **PBKDF2-HMAC-SHA256**
-  qua gói Dart `cryptography` 2.9.0 — bản **Dart thuần** (không có `cryptography_flutter` trong `pubspec.lock`), tức **không** gọi
-  mã hoá của iOS (CryptoKit/CommonCrypto). Trên iPhone, người dùng bật được tính năng này (Cài đặt → Xuất bản sao lưu →
-  "Protect file with a password"). Sao lưu tự động (cũng AES-GCM) chỉ có trên Android.
+- `lib/src/data/backup_crypto.dart`: file sao lưu có mật khẩu (F-21, D-012) dùng **AES-256-GCM** (nonce 12 byte) + khoá từ
+  **PBKDF2-HMAC-SHA256** (100.000 vòng, muối 16 byte) qua gói Dart `cryptography` 2.9.0 — bản **Dart thuần** (không có
+  `cryptography_flutter` trong `pubspec.lock`), tức **không** gọi mã hoá của iOS (CryptoKit/CommonCrypto). Trên iPhone người dùng bật
+  được tính năng này (Cài đặt → Xuất bản sao lưu → "Protect file with a password"). Sao lưu tự động (cũng AES-GCM) chỉ có trên Android.
 - Không có mã gọi mạng; không TLS do app tự làm. Băm PIN SHA-256 (gói `crypto`) chỉ để xác thực. Keychain là của iOS.
 
-**Áp vào bảng của Apple** ("Export compliance documentation for encryption", App Store Connect Help):
+**Bảng của Apple** ([Export compliance documentation for encryption](https://developer.apple.com/help/app-store-connect/reference/app-information/export-compliance-documentation-for-encryption/), đọc 2026-11-05):
 | Loại mã hoá | Tài liệu Apple yêu cầu | Ví Gọn |
 |---|---|---|
-| Chỉ mã hoá có sẵn trong hệ điều hành Apple | Không cần | Không đúng nữa (AES-GCM tự cài bằng Dart) |
+| Chỉ mã hoá có sẵn trong hệ điều hành Apple | Không cần | Không đúng (AES-GCM tự cài bằng Dart) |
 | Thuật toán chuẩn quốc tế, **không** lấy từ iOS | **Khai báo mã hoá của Pháp** (chỉ khi phân phối ở Pháp); không cần CCATS của Mỹ | **Đúng trường hợp này** |
 | Thuật toán tự chế / không chuẩn | CCATS + khai báo Pháp | Không |
 
-**Kết luận:** giá trị hiện tại `ITSAppUsesNonExemptEncryption = false` **có khả năng không còn đúng** — app nay tự cài
-mã hoá chuẩn (AES) để mã hoá dữ liệu, không chỉ xác thực, nên không thuộc các ngoại lệ "chỉ xác thực / chỉ dùng mã hoá của iOS".
-Câu trả lời đúng trong bảng hỏi App Store Connect: **"Standard encryption algorithms instead of, or in addition to, using or
-accessing the encryption within Apple's operating system"**. Về luật Mỹ, phần mềm đại chúng dùng mã hoá chuẩn thường thuộc
-diện mass market (5D992.c), không cần giấy phép — người dùng/luật sư xác nhận, Claude không khẳng định thay.
+**Đã quyết (D-020):**
+1. `ios/Runner/Info.plist`: `ITSAppUsesNonExemptEncryption` = **`true`** (phiên code iOS đổi, kèm test `plan001_t6_ios_config_test`
+   và bước plutil của `.github/workflows/ios.yml` đang kiểm `false`). Đối chiếu file thật trước khi nộp.
+2. Bảng hỏi App Store Connect (App Information → App Encryption Documentation → "+", hoặc nút Manage cạnh build thiếu thông tin):
+   - Loại thuật toán: **"Standard encryption algorithms instead of, or in addition to, using or accessing the encryption within
+     Apple's operating system"** (KHÔNG chọn "proprietary / not accepted as standard", KHÔNG chọn "only Apple's operating system").
+   - Có phân phối ở Pháp không: **Có** → tải lên **khai báo mã hoá của Pháp** (bản khai đã nộp ANSSI + biên nhận/xác nhận của ANSSI,
+     gộp một PDF) khi được hỏi "Choose File".
+   - Câu chữ bảng hỏi đổi theo thời gian: đọc lại ngày nộp; nếu xuất hiện câu khác (ví dụ về miễn trừ của Mỹ) thì dừng, ghi câu hỏi
+     nguyên văn vào `notes/` và hỏi phiên điều phối, không đoán.
+3. **Availability có Pháp ngay bản 1.** Người dùng tự nộp khai báo cho ANSSI — từng bước ở `docs/RELEASE.md` mục "Khai báo mã hoá
+   cho Pháp". ANSSI xử lý khoảng **1 tháng** từ khi hồ sơ đủ → **nộp sớm**, không đợi build iOS.
+4. Apple duyệt tài liệu "khoảng 2 ngày làm việc" nếu đủ thông tin, rồi cấp một **giá trị khoá** (hiện cạnh tài liệu đã duyệt) → phiên
+   code thêm `ITSEncryptionExportComplianceCode` = giá trị đó vào `Info.plist` để các build sau không bị hỏi lại
+   ([Determine and upload app encryption documentation](https://developer.apple.com/help/app-store-connect/manage-app-information/determine-and-upload-app-encryption-documentation)).
+   Phải xong **trước** khi gửi App Review hoặc TestFlight App Review (tester ngoài); tester nội bộ TestFlight không cần Beta Review.
+5. Mỹ: phần mềm đại chúng dùng mã hoá chuẩn thường thuộc diện mass market (ECCN 5D992.c), không cần CCATS theo bảng trên —
+   người dùng/luật sư xác nhận, Claude không khẳng định thay. Apple nhắc người nộp chịu trách nhiệm nếu khai sai.
 
-**Đề xuất — người dùng chọn một (CHƯA sửa `Info.plist`, ngoài phạm vi phiên này):**
-1. **Khuyên dùng — giữ tính năng, khai đúng:** phiên code đổi `ITSAppUsesNonExemptEncryption` thành `true` (và sửa test
-   `plan001_t6_ios_config_test` + bước plutil trong `ios.yml` đang kiểm giá trị `false`). Khi nộp: trả lời bảng hỏi như trên.
-   Bản 1 **tạm bỏ Pháp** khỏi Availability (khỏi phải nộp khai báo cho ANSSI); muốn bán ở Pháp thì nộp khai báo rồi tải lên
-   App Store Connect, Apple cấp mã `ITSEncryptionExportComplianceCode` để thêm vào `Info.plist`.
-2. **Đổi code để chỉ dùng mã hoá của iOS:** chuyển AES-GCM sang CryptoKit (ví dụ thêm `cryptography_flutter`, hoặc kênh Swift)
-   — phải kiểm PBKDF2 cũng chạy bằng API của Apple, file `.vigon` vẫn đọc được chéo Android ↔ iOS, và chạy lại test. Khi đó giữ
-   `false` là đúng. Tốn việc code + thử trên CI; không khuyên cho bản 1.
-3. **Ẩn mật khẩu file sao lưu trên iOS** (như các tính năng chỉ-Android): giữ `false`, nhưng mất một tính năng riêng tư — không khuyên.
-
-Câu chữ bảng hỏi và bảng tài liệu của Apple đổi theo thời gian: phiên điều phối #3 đọc lại ngày nộp, ghi kết quả vào COMPLIANCE P-03.
-Đã sửa câu cũ ở bản nháp 2026-11-04 ("không phải khai báo cho Pháp vì không dùng mã hoá ngoài hệ điều hành") — không còn đúng.
+Phương án đã loại (chi tiết D-020): chuyển AES sang CryptoKit để giữ `false`; ẩn mật khẩu file sao lưu trên iOS; bỏ Pháp ở bản 1.
+**Dự phòng** nếu tới ngày nộp iOS mà ANSSI chưa xong: phiên điều phối hỏi người dùng có tạm bỏ Pháp khỏi Availability rồi thêm lại
+sau không — KHÔNG tự bỏ (trái D-020).
 
 ## Thông tin cho App Review (App Review Information)
 - Sign-in required: **No** (không có tài khoản).
