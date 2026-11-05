@@ -96,6 +96,7 @@ Flutter 3.47.8 ở `C:/src/flutter`, **chưa có trong PATH**. Git Bash: `export
 - **D-005** Tiền số nguyên, ngày dạng chữ, cài đặt trong DB. · **D-006** Sao lưu `.vigon` JSON có mã băm, khôi phục thay toàn bộ trong 1 giao dịch.
 - **D-007** PIN băm có muối trong bộ nhớ an toàn, màn khoá phủ lên app. · **D-008** Liên hệ ở `app_info.dart`; bố cục co theo cỡ chữ; test a11y tự động.
 - **D-009** Logo "hai thẻ xếp chồng".
+- **D-024** iOS tối thiểu 16.0 (widget cần iOS 16).
 - **D-022** iOS có đủ F-22/F-24/F-26 ngay bản 1 (thay phần iOS của D-019). **D-023** UI = Hi-Fi P1 + P2 theo CHANGELOG token v2; Ideas để sau.
 - **D-010..D-019** (sau gộp): D-010 UI từ token · D-011 iOS build cloud (CI dùng `ios.yml`) · D-012..D-016 của bản 1.1/1.2 · D-017 mã cài đặt PIN/phát hiện cài lại iOS · D-018 giữ chọn danh mục = lưu luôn · D-019 gộp nhánh, tính năng 1.2 chỉ Android trên iOS ẩn.
 - **2026-11-05** Gộp cả hai nhánh song song vào main; gỡ hook pre-commit cũ (chặn nhầm chữ "password"). Nhánh/worktree cũ giữ nguyên.

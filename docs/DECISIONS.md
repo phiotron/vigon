@@ -2,6 +2,12 @@
 
 Mỗi quyết định một mục, mới nhất ở trên cùng.
 
+## D-024 · iOS tối thiểu 16.0 (cả app, không chỉ widget) · 2026-11-05
+- Bối cảnh: Widget iOS (D-022, WidgetKit + AppIntents) cần iOS 16; app nhận từ iOS 15 nên trên iOS 15 mục widget trong Cài đặt hiện mà không có tác dụng (rủi ro App Review 2.1, S-31). D6 phát hiện.
+- Quyết định: Người dùng chọn nâng `IPHONEOS_DEPLOYMENT_TARGET` của Runner lên 16.0 (extension vốn 16.0); không thêm kênh native kiểm phiên bản.
+- Lý do / phương án đã loại: Giữ iOS 15 và ẩn mục widget khi < 16 (loại: thêm code + test cho một nhóm máy rất nhỏ năm 2026 — iPhone 6s/7/SE đời 1).
+- Hệ quả cần nhớ: iPhone kẹt ở iOS 15 không cài được app. Store/RELEASE ghi "iOS 16.0 trở lên"; câu "widget cần iOS 16" trong tài liệu không còn cần.
+
 ## D-023 · Giao diện bản 1 = Hi-Fi P1 + làm mới P2 theo component; Ideas để sau · 2026-11-05
 - Bối cảnh: Claude Design giao mockup Hi-Fi P1 (`design/hifi/`, 231 frame, link ở `design/LINKS.md`): các màn 1.1/1.2 chưa từng có bản vẽ + EXT-01/02/03, token v2 (giữ tên/giá trị v1, thêm 14 token), component sheet. product.md §11.1 có xin P2 (làm mới mọi màn ✅) và P3 (đề xuất iOS) nhưng chưa vẽ; thay vào đó `design/hifi/tokens/CHANGELOG.md` mục "Existing ✅ screens that change visibly" liệt kê màn cũ đổi vì component mới.
 - Quyết định: Phiên điều phối #2 áp **P1 đầy đủ + P2 đúng theo bảng CHANGELOG** (màn cũ đổi qua component dùng chung, không vẽ thêm). Giả định A01–A22 (`design/hifi/assumptions.html`) coi là đã duyệt, trừ chỗ trái SPEC/D-018. `design/hifi/ideas.html` không làm ở bản 1. Nguồn token chuyển sang `design/hifi/tokens/tokens.json`; `design/current/` giữ làm lịch sử.
