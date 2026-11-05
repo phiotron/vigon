@@ -102,9 +102,12 @@ Ví Gọn is a fast personal income and expense tracker that shows where your mo
 Free. No in-app purchases.
 
 Khác bản App Store có chủ đích: Android tắt sao lưu hệ thống (`allowBackup=false`) — app không tự sao lưu lên đám mây của Google (sao lưu tự động của app chỉ ghi vào thư mục người dùng chọn);
-iOS thì dữ liệu nằm trong sao lưu iPhone nếu người dùng bật (xem `store/app-store.md`). TalkBack ↔ VoiceOver.
-Widget, sao lưu tự động, che nội dung ở màn ứng dụng gần đây và icon đơn sắc **chỉ có trên Android** (D-019): có trong bản Play, KHÔNG có trong bản App Store.
-Nhắc ghi chép, mật khẩu file sao lưu, tìm kiếm, ẩn tài khoản, ngân sách theo danh mục, đủ tiền tệ ISO có ở cả hai. Mô tả ngắn của Play nhắc "widget" nên không dùng lại cho App Store.
+iOS cũng loại dữ liệu khỏi sao lưu iCloud/máy tính (D-021), mô tả App Store nói rõ điều này. TalkBack ↔ VoiceOver.
+Theo D-022 (2026-11-05, thay phần iOS của D-019) widget, sao lưu tự động và che nội dung có ở **cả hai** store, nhưng cách chạy khác nhau nên chữ khác nhau:
+che nội dung — Android chặn chụp màn hình + ẩn ảnh xem trước; iPhone chỉ che ở màn chuyển app, không chặn chụp màn hình;
+sao lưu tự động — Android chạy tối đa mỗi ngày một lần khi dữ liệu đổi; iPhone chạy khi mở app (iPhone không cho app chạy theo giờ), thư mục chọn trong app Tệp;
+widget — iPhone cần iOS 16 trở lên. Chỉ **icon đơn sắc** (F-23) là của riêng Android.
+Nhắc ghi chép, mật khẩu file sao lưu, tìm kiếm, ẩn tài khoản, ngân sách theo danh mục, đủ tiền tệ ISO cũng có ở cả hai.
 
 ## Ghi chú phát hành (Play "Release notes", ≤ 500 ký tự mỗi ngôn ngữ)
 - vi (231): `Bản đầu tiên: ghi khoản nhanh, tìm kiếm, biểu đồ theo danh mục, tài khoản và chuyển tiền, khoản định kỳ, ngân sách tháng và theo danh mục, nhắc ghi chép hằng ngày, widget, sao lưu có mật khẩu và sao lưu tự động, xuất CSV, khóa PIN.`
@@ -167,6 +170,6 @@ Nhắc ghi chép, mật khẩu file sao lưu, tìm kiếm, ẩn tài khoản, ng
 ## Đồ hoạ store
 - Icon 512×512: `store/brand/icon-512.png` (D-009).
 - Ảnh bìa (feature graphic) 1024×500: CHƯA có PNG trong repo — người dùng xuất từ canvas Design (xem `store/brand/README.md`).
-- Ảnh chụp màn hình: quy cách và kịch bản ở `store/screenshots-spec.md`; **chụp lại ở phiên điều phối #3 với UI mới** (bộ Play có thêm ảnh widget và Cài đặt → Sao lưu tự động).
+- Ảnh chụp màn hình: quy cách và kịch bản ở `store/screenshots-spec.md`; **chụp lại ở phiên điều phối #3 với UI mới** (ảnh widget và Cài đặt → Sao lưu tự động nay dùng cho cả hai store, D-022).
   Ảnh hiện có trong `store/screenshots/` (6 ảnh 1080×2160, chụp 2026-11-03 trên Galaxy A13, bản release, dữ liệu MẪU) là
   ảnh UI cũ, chỉ giữ làm tham khảo bố cục; có thể dùng tạm cho trang closed test (closed test không bắt ảnh đẹp).

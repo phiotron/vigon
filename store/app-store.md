@@ -3,20 +3,25 @@
 Bản nháp để dán vào App Store Connect ở phiên điều phối #3. Người dùng duyệt tên và nội dung trước khi nộp.
 Nội dung phải khớp với Play (`store/listing.md`) và với code; không hứa điều code không làm. Viết 2026-11-04; cập nhật 2026-11-05
 sau khi gộp bản 1.2 với giao diện/iOS (D-019): thêm tính năng 1.1/1.2 **có trên iPhone** (tìm kiếm, ẩn tài khoản, ngân sách theo
-danh mục, đủ tiền tệ ISO, nhắc ghi chép hằng ngày, đặt mật khẩu cho file sao lưu). **Widget màn hình chính, sao lưu tự động vào thư
-mục, che nội dung ở màn đa nhiệm và icon đơn sắc chỉ có trên Android** (trên iOS mục cài đặt bị ẩn) → KHÔNG đưa vào mô tả, ảnh chụp
-hay Review Notes của App Store (App Review 2.3.1, 2.3.10: không mô tả tính năng không có, không nhắc nền tảng khác trong metadata).
+danh mục, đủ tiền tệ ISO, nhắc ghi chép hằng ngày, đặt mật khẩu cho file sao lưu). ~~Widget, sao lưu tự động, che nội dung chỉ có
+trên Android~~ → **thay bằng D-022 (2026-11-05): iOS có đủ widget màn hình chính (iOS 16+), sao lưu tự động vào thư mục chọn trong app
+Tệp, che nội dung ở màn chuyển app** — đã đưa vào mô tả, What's New, Review Notes, App Privacy và quy cách ảnh (phiên con D6).
+Chỉ **icon đơn sắc (F-23)** vẫn chỉ Android → không nhắc. Không nhắc nền tảng khác trong metadata (App Review 2.3.1, 2.3.10).
 Không sao chép tên, icon, mô tả hay ảnh của app khác (SPEC mục 7).
 
 Project iOS trên `main` sau gộp (đối chiếu lại 2026-11-05, commit `a00bec8`): **chỉ iPhone** (`TARGETED_DEVICE_FAMILY = 1`),
 **chỉ màn dọc**, tên hiển thị `Ví Gọn`, min iOS 15.0, `CFBundleLocalizations` en + vi, `FlutterDeepLinkingEnabled = false`,
 `LSApplicationQueriesSchemes` chỉ `mailto`, `https`, `ITSAppUsesNonExemptEncryption = true` (**D-020**, commit `8441b6a`; xem mục Export compliance),
 DB loại khỏi sao lưu iCloud/máy tính (**D-021**, commit `8441b6a`; CI iOS chưa xác nhận lúc ghi),
-`ios/Runner/PrivacyInfo.xcprivacy` (không tracking, không thu thập; required-reason API FileTimestamp `C617.1`, DiskSpace `E174.1`),
+`ios/Runner/PrivacyInfo.xcprivacy` (không tracking, không thu thập; required-reason API FileTimestamp `C617.1`, DiskSpace `E174.1`,
+UserDefaults `CA92.1` + `1C8F.1` — thêm ở D4 cho bookmark thư mục và App Group),
 không khoá `NS…UsageDescription`, không `UIFileSharingEnabled`; icon `AppIcon` đủ cỡ, bản 1024×1024 RGB không alpha (PLAN-001).
-Tính năng theo nền tảng (`lib/src/platform_features.dart`, D-019): iOS **có** nhắc ghi chép (thông báo cục bộ, xin quyền khi bật),
-mật khẩu file sao lưu, tìm kiếm, ẩn tài khoản, ngân sách theo danh mục, tiền tệ ISO; iOS **không có** widget, sao lưu tự động,
-che nội dung đa nhiệm, icon đơn sắc. Nếu `ios/` hoặc danh sách này đổi, sửa lại "Mô tả", "Ảnh chụp", "Export compliance", "App Privacy".
+Widget extension `VigonWidgetExtension` (`com.phiotron.vigon.VigonWidget`, min **iOS 16.0**, App Group `group.com.phiotron.vigon`) có
+`PrivacyInfo.xcprivacy` riêng (không tracking, không thu thập; UserDefaults `1C8F.1`) — D4, commit `6ed915c` (kiểm lại 2026-11-05).
+Tính năng theo nền tảng (`lib/src/platform_features.dart`, D-022 thay phần iOS của D-019): iOS **có** nhắc ghi chép (thông báo cục bộ,
+xin quyền khi bật), mật khẩu file sao lưu, tìm kiếm, ẩn tài khoản, ngân sách theo danh mục, tiền tệ ISO, **widget (iOS 16+), sao lưu
+tự động, che nội dung ở màn chuyển app**; iOS **không có** icon đơn sắc. Nếu `ios/` hoặc danh sách này đổi, sửa lại "Mô tả", "Ảnh chụp",
+"Export compliance", "App Privacy".
 Cập nhật 2026-11-05 (phiên con "Tài liệu theo quyết định mã hoá + iCloud"): mô tả, phân phối, App Privacy, Export compliance viết theo
 **D-020** (khai có mã hoá chuẩn, vẫn bán ở Pháp, người dùng nộp khai báo cho ANSSI) và **D-021** (DB iOS không vào sao lưu iCloud/máy tính).
 Code đã có ở commit `8441b6a` — trước khi dán vẫn **đối chiếu `ios/Runner/Info.plist` và CI iOS xanh** (bước kiểm log `VigonBackupExclusion`).
@@ -56,7 +61,8 @@ Cùng đường dẫn chính sách phải điền vào `lib/src/app_info.dart` (
 - **Name** (≤ 30): `Ví Gọn: Expense Tracker` — 23 ký tự
 - **Subtitle** (≤ 30): `Offline budget & spending log` — 29 ký tự
 - **Keywords** (≤ 100, dấu phẩy không cách; không lặp chữ trong Name/Subtitle vì Apple đã đánh chỉ mục các chữ đó):
-  `money,finance,income,ledger,private,wallet,cash,bills,savings,vigon,vi gon,manager,daily,diary` — 94 ký tự
+  `money,finance,income,ledger,private,wallet,cash,bills,savings,vigon,vi gon,manager,daily,widget` — 95 ký tự
+  (2026-11-05, D-022: `diary` → `widget` vì iPhone nay có widget)
 - **Promotional Text** (≤ 170, đổi được không cần duyệt lại):
   `Log a purchase in three taps. No account, no ads, no internet connection: your income and spending stay on your iPhone, under your control.` — 139 ký tự
 
@@ -69,6 +75,7 @@ QUICK ENTRY
 • Tap − or +, type the amount on a keypad with built-in math (add, subtract, multiply, divide), pick a category. Three taps at most.
 • Edit or delete records; undo a delete right away.
 • Search records by note, category or amount.
+• Home screen widget with two big buttons to add an expense or an income (iOS 16 or later).
 
 SEE YOUR SPENDING
 • Donut chart by category, with income, expenses and balance.
@@ -89,7 +96,12 @@ PRIVATE BY DESIGN
 • No sign-up, no ads, no tracking, no analytics. Ví Gọn has no server and never connects to the internet, so the developer never receives your data.
 • Your records are stored only in the app on your iPhone. They are left out of iCloud and computer backups of your iPhone, so to move to a new phone, export a backup file and restore it there.
 • Optional 4-digit PIN lock. It keeps others out of the app but does not encrypt your data. If you forget the PIN, the only way back in is to delete the app's data.
+• Optional "hide content when switching apps": covers your figures in the app switcher. (iPhone does not let apps block screenshots.)
+• The widget shows no amounts by default. You can choose to show what you spent this month; while the PIN lock is on, the widget always hides amounts.
+
+BACKUP
 • Export a backup file and restore it on a new phone; export CSV for Numbers, Excel or Google Sheets. You can protect a backup file with a password (AES-256 encryption); if you forget the password, the file cannot be opened. Without a password the file is not encrypted, so keep it somewhere safe.
+• Optional automatic backup (off by default): choose a folder in the Files app, for example in iCloud Drive. When you open Ví Gọn, it writes an encrypted backup there at most once a day if your data has changed, keeping the 7 most recent files. The password stays in your iPhone's Keychain; if you forget it, nobody can recover the files, including the developer.
 
 EASY TO USE
 • Vietnamese and English, light and dark themes.
@@ -100,7 +112,7 @@ Free. No in-app purchases.
 
 - **What's New in This Version**: App Store Connect **không cho nhập** ở phiên bản đầu tiên (1.0). Dùng câu dưới cho
   TestFlight "What to Test" và giữ cho bản 1.0.1:
-  `First release: quick entry, search, category chart, accounts and transfers, recurring records, monthly and per-category budgets, daily reminder, password-protected backup, CSV export, PIN lock.`
+  `First release: quick entry, search, category chart, accounts and transfers, recurring records, monthly and per-category budgets, daily reminder, home screen widget, password-protected and automatic backup, CSV export, PIN lock.`
 
 ## Vietnamese — localization phụ
 - **Name** (≤ 30): `Ví Gọn: Ghi Thu Chi` — 19 ký tự
@@ -119,6 +131,7 @@ GHI NHANH
 • Chạm − hoặc +, nhập số tiền bằng bàn phím có phép tính (cộng, trừ, nhân, chia), chọn danh mục là xong, tối đa 3 lần chạm.
 • Sửa hoặc xóa khoản đã ghi; xóa nhầm thì hoàn tác ngay.
 • Tìm khoản theo ghi chú, danh mục hoặc số tiền.
+• Widget màn hình chính với hai nút lớn "Chi" và "Thu" để mở ngay màn nhập khoản (iOS 16 trở lên).
 
 NHÌN RÕ CHI TIÊU
 • Biểu đồ vòng theo danh mục, tổng thu, tổng chi và số dư.
@@ -139,7 +152,12 @@ RIÊNG TƯ
 • Không đăng ký, không quảng cáo, không theo dõi, không công cụ phân tích. Ví Gọn không có máy chủ và không bao giờ kết nối Internet, nên nhà phát triển không nhận dữ liệu của bạn.
 • Dữ liệu chỉ lưu trong app trên iPhone của bạn và không nằm trong bản sao lưu iCloud hay sao lưu iPhone bằng máy tính; khi đổi máy, hãy tự xuất file sao lưu rồi khôi phục trên máy mới.
 • Khóa bằng mã PIN 4 số (tùy chọn). PIN chỉ ngăn người khác mở app, không mã hóa dữ liệu. Quên mã PIN thì chỉ có cách xóa dữ liệu trong app.
+• Tùy chọn che nội dung khi chuyển app: che số liệu trong màn chuyển app. (iPhone không cho app chặn chụp màn hình.)
+• Widget mặc định không hiện số tiền. Bạn có thể bật hiện số đã chi trong tháng; khi khóa PIN đang bật, widget luôn ẩn số.
+
+SAO LƯU
 • Tự xuất file sao lưu và khôi phục khi đổi máy; xuất CSV để mở bằng Numbers, Excel hoặc Google Sheets. Có thể đặt mật khẩu cho file sao lưu (mã hóa AES-256); quên mật khẩu thì không mở được file. Không đặt mật khẩu thì file không được mã hóa, hãy cất ở nơi an toàn.
+• Sao lưu tự động (tùy chọn, mặc định tắt): chọn một thư mục trong app Tệp, ví dụ trong iCloud Drive. Khi bạn mở Ví Gọn, app ghi một file sao lưu đã mã hóa vào đó, mỗi ngày tối đa một lần nếu dữ liệu có thay đổi, giữ 7 file gần nhất. Mật khẩu nằm trong Keychain của iPhone; quên mật khẩu thì không ai lấy lại được file, kể cả nhà phát triển.
 
 DỄ DÙNG
 • Tiếng Việt và tiếng Anh, giao diện sáng và tối.
@@ -148,14 +166,17 @@ DỄ DÙNG
 Miễn phí. Không mua trong app.
 ```
 
-- **What's New** (dùng cho TestFlight / bản sau): `Bản đầu tiên: ghi khoản nhanh, tìm kiếm, biểu đồ theo danh mục, tài khoản và chuyển tiền, khoản định kỳ, ngân sách tháng và theo danh mục, nhắc ghi chép hằng ngày, sao lưu có mật khẩu, xuất CSV, khóa PIN.`
+- **What's New** (dùng cho TestFlight / bản sau): `Bản đầu tiên: ghi khoản nhanh, tìm kiếm, biểu đồ theo danh mục, tài khoản và chuyển tiền, khoản định kỳ, ngân sách tháng và theo danh mục, nhắc ghi chép hằng ngày, widget, sao lưu có mật khẩu và sao lưu tự động, xuất CSV, khóa PIN.`
 
 Điểm khác bản Play có chủ đích: "VoiceOver" thay "TalkBack"; iOS không có khái niệm "quyền Internet" nên viết "không kết nối Internet";
 nêu rõ dữ liệu không nằm trong sao lưu iPhone và đổi máy phải tự xuất file (D-021: DB iOS loại khỏi sao lưu, giống Android
 `allowBackup=false` — xem `docs/legal/privacy-policy.md` mục 2).
-Bản App Store KHÔNG có các mục chỉ-Android (D-019): widget, sao lưu tự động vào thư mục, che nội dung ở màn ứng dụng gần đây, icon
-đơn sắc. Mô tả ngắn của Play nhắc "widget" nên không dùng lại cho App Store. Khi có bản iOS của các tính năng này (việc riêng, SPEC
-mục 4) thì mới thêm vào đây.
+Theo D-022 (2026-11-05) bản App Store CÓ widget, sao lưu tự động, che nội dung; chỉ **icon đơn sắc** (F-23) là của riêng Android nên
+không nhắc. Khác bản Play có chủ đích ở ba tính năng này, theo đúng chữ trong app (`*Ios` trong `.arb`):
+che nội dung — iPhone chỉ che ở màn chuyển app, **không** viết "chặn chụp màn hình" (`secureWindowNoteIos`);
+sao lưu tự động — chọn thư mục trong app Tệp, chạy **khi mở app**, mỗi ngày tối đa một lần (`autoBackupNoteIos`, `autoBackupRunsOnOpenIos`),
+không hứa chạy nền theo giờ; widget — ghi "iOS 16 trở lên" vì app hỗ trợ từ iOS 15 nhưng extension cần iOS 16 (S-31: không để người
+dùng iOS 15 tưởng có widget). Mật khẩu sao lưu tự động: "Keychain" (Play: "kho khóa an toàn").
 
 ## Age Rating (bảng câu hỏi mới của Apple, từ 2025: 4+, 9+, 13+, 16+, 18+)
 Trả lời đề xuất (mọi câu theo tần suất chọn **None**, mọi câu có/không chọn **No**):
@@ -186,9 +207,15 @@ Kiểm lại câu chữ thật của bảng hỏi trong App Store Connect khi đ
   - DB của app được loại khỏi sao lưu iCloud/máy tính (D-021), nên dữ liệu không rời máy qua đường sao lưu của iOS. (Kể cả khi có,
     sao lưu iCloud do Apple và người dùng kiểm soát, nhà phát triển không truy cập → cũng không tính là "thu thập".)
   - Mã hoá file sao lưu (AES-256-GCM, D-020) chạy trên máy, khoá suy ra từ mật khẩu người dùng nhập, không gửi đi → không ảnh hưởng nhãn.
+  - Sao lưu tự động (D-022): app chỉ ghi file **đã mã hoá** vào thư mục **người dùng tự chọn** trong app Tệp. Nếu thư mục nằm trên
+    iCloud Drive/Google Drive…, việc tải lên do Apple/nhà cung cấp đó làm theo lựa chọn của người dùng; app không gọi mạng, nhà phát
+    triển không truy cập được → không tính là "thu thập". Mật khẩu ở Keychain, không rời máy.
+  - Widget (D-022, D-016): extension đọc **một chuỗi đã định dạng** trong App Group `group.com.phiotron.vigon` (UserDefaults dùng chung
+    giữa app và extension, chỉ trên máy); mặc định không có số, PIN bật thì không bao giờ có số. Không truyền đi → không ảnh hưởng nhãn.
+  - Che nội dung (F-22): lớp phủ native, không lưu hay gửi gì.
   - Không theo dõi (tracking) → không cần App Tracking Transparency.
-- `ios/Runner/PrivacyInfo.xcprivacy` khớp: `NSPrivacyTracking = false`, `NSPrivacyTrackingDomains` rỗng,
-  `NSPrivacyCollectedDataTypes` rỗng (đã kiểm 2026-11-04); các plugin tự kèm manifest riêng.
+- `ios/Runner/PrivacyInfo.xcprivacy` và `ios/VigonWidget/PrivacyInfo.xcprivacy` khớp: `NSPrivacyTracking = false`,
+  `NSPrivacyTrackingDomains` rỗng, `NSPrivacyCollectedDataTypes` rỗng (kiểm 2026-11-04; widget kiểm 2026-11-05); các plugin tự kèm manifest riêng.
 - Nếu sau này thêm SDK báo crash, analytics, đồng bộ đám mây → nhãn này SAI, phải khai lại trước khi nộp bản đó.
 
 ## Export compliance (mã hoá) — D-020 (người dùng quyết 2026-11-05): khai "có mã hoá chuẩn ngoài iOS", vẫn bán ở Pháp
@@ -196,7 +223,8 @@ Kiểm lại câu chữ thật của bảng hỏi trong App Store Connect khi đ
 - `lib/src/data/backup_crypto.dart`: file sao lưu có mật khẩu (F-21, D-012) dùng **AES-256-GCM** (nonce 12 byte) + khoá từ
   **PBKDF2-HMAC-SHA256** (100.000 vòng, muối 16 byte) qua gói Dart `cryptography` 2.9.0 — bản **Dart thuần** (không có
   `cryptography_flutter` trong `pubspec.lock`), tức **không** gọi mã hoá của iOS (CryptoKit/CommonCrypto). Trên iPhone người dùng bật
-  được tính năng này (Cài đặt → Xuất bản sao lưu → "Protect file with a password"). Sao lưu tự động (cũng AES-GCM) chỉ có trên Android.
+  được tính năng này (Cài đặt → Xuất bản sao lưu → "Protect file with a password"). Sao lưu tự động (D-022, có cả trên iOS) dùng cùng
+  `backup_crypto.dart` (AES-GCM, luôn có mật khẩu) → cùng loại mã hoá, **không đổi** câu trả lời bảng hỏi hay khai báo ANSSI.
 - Không có mã gọi mạng; không TLS do app tự làm. Băm PIN SHA-256 (gói `crypto`) chỉ để xác thực. Keychain là của iOS.
 
 **Bảng của Apple** ([Export compliance documentation for encryption](https://developer.apple.com/help/app-store-connect/reference/app-information/export-compliance-documentation-for-encryption/), đọc 2026-11-05):
@@ -239,12 +267,18 @@ sau không — KHÔNG tự bỏ (trái D-020).
   PIN lock: Settings > Lock with PIN (4 digits, entered twice). The PIN only hides the app UI; data is not encrypted, and the app says so.
   Backup: Settings > Export backup opens the iOS share sheet (Save to Files); you can optionally turn on "Protect file with a password", which encrypts the file on the device (AES-256-GCM). Settings > Restore from backup opens the Files picker for a .vigon file.
   Daily reminder (off by default): Settings > Daily reminder shows a short explanation, then the iOS notification permission prompt. The notification is scheduled locally on the device and contains no figures.
+  Automatic backup (off by default): Settings > Automatic backup asks you to pick a folder in the Files app (for example iCloud Drive) and set a password. Because iOS does not run apps on a schedule, the encrypted backup is written when the app is opened, at most once a day and only if data changed; "Back up now" writes one immediately. The app itself makes no network connection.
+  Home screen widget (iOS 16 or later): add "Ví Gọn" from the widget gallery. Its Expense and Income buttons open the entry screen. Amounts appear only if Settings > "Show amounts on widget" is on and the PIN lock is off.
+  Hide content when switching apps: Settings > Hide content when switching apps covers the app's content in the app switcher. It does not block screenshots.
   The app is free, has no in-app purchases and no ads.
   ```
+  (Chữ "Settings > …" khớp nhãn tiếng Anh trong app: `autoBackup`, `autoBackupNow`, `widgetShowAmounts`, `secureWindow` trong `app_en.arb`;
+  tên widget trong thư viện widget là `widgetPickerName` = "Ví Gọn". Đối chiếu lại đường đi menu trên bản TestFlight trước khi dán.)
 
 ## Ảnh chụp và icon
 - Kích thước, số lượng, kịch bản dữ liệu mẫu: `store/screenshots-spec.md`. Chụp ở phiên điều phối #3 với UI mới.
-  Ảnh iPhone KHÔNG được có widget, mục Sao lưu tự động hay công tắc che nội dung (chỉ Android, D-019).
+  Theo D-022 ảnh iPhone **được** có widget, mục Sao lưu tự động, công tắc che nội dung (UI thật của bản iOS); không có icon đơn sắc
+  hay chữ "Android"/"Google Play".
 - Icon App Store 1024×1024: **đã có** sau gộp PLAN-001 — `ios/Runner/Assets.xcassets/AppIcon.appiconset/Icon-App-1024x1024@1x.png`
   vẽ từ vector logo D-009 (`tool/render_ios_icon.py`), 1024×1024, RGB 8-bit **không alpha** (kiểm header PNG 2026-11-05), không bo góc.
   Xcode lấy icon này khi archive; App Store Connect không cần tải riêng.

@@ -27,22 +27,23 @@ Kiểm lại bảng kích thước của Google/Apple ngày chụp (đổi theo 
 Thứ tự ảnh: 3 ảnh đầu hiện ngay trong kết quả tìm kiếm → đặt 3 ảnh mạnh nhất (màn chính, nhập nhanh, riêng tư) lên đầu.
 
 ## 2. Bộ ảnh (mỗi ngôn ngữ một bộ; cập nhật 2026-11-05 theo bản đã gộp F-01..F-26)
-Ảnh 1–7 chung hai store (chụp riêng trên từng nền tảng). Ảnh 8 khác nhau theo nền tảng vì widget chỉ có trên Android (D-019).
+Ảnh 1–8 chung hai store (chụp riêng trên từng nền tảng). Cập nhật 2026-11-05 theo D-022: iPhone nay có widget (iOS 16+), sao lưu tự động,
+che nội dung → ảnh 8 widget dùng cho cả hai; ảnh "chữ cỡ lớn" trước đây dành riêng cho App Store thành ảnh tuỳ chọn.
 | # | Màn | Trạng thái cần dựng | Chú thích vi | Chú thích en |
 |---|---|---|---|---|
 | 1 | Màn chính, giao diện sáng | Kỳ "Tháng 11/2026", biểu đồ vòng đủ 8 danh mục, thanh ngân sách ~87% | Biết tiền đi đâu | See where your money goes |
 | 2 | Nhập khoản | Loại Chi, bàn phím đang có phép tính `45.000+30.000`, danh mục Ăn uống đang chọn, nút Lưu thấy rõ | Ghi một khoản trong 3 chạm | Log it in three taps |
-| 3 | Cài đặt, nhóm Bảo mật + Dữ liệu | Thấy "Khóa bằng mã PIN", "Nhắc ghi chép" (Android: bật, 20:00; iPhone trên simulator CI có thể để tắt vì không chạm được hộp thoại quyền), "Xuất bản sao lưu", "Xuất CSV". Android thấy thêm "Che nội dung khi chuyển app" và "Sao lưu tự động"; **iPhone không có hai mục này** (bị ẩn) — đúng | Dữ liệu chỉ ở trên máy bạn | Your data stays on your phone |
+| 3 | Cài đặt, nhóm Bảo mật + Dữ liệu | Thấy "Khóa bằng mã PIN", "Nhắc ghi chép" (Android: bật, 20:00; iPhone trên simulator CI có thể để tắt vì không chạm được hộp thoại quyền), "Xuất bản sao lưu", "Xuất CSV", "Che nội dung khi chuyển app", "Sao lưu tự động" (cả hai nền tảng, D-022; dòng chú thích dưới công tắc khác nhau theo nền tảng — chụp đúng chữ thật) | Dữ liệu chỉ ở trên máy bạn | Your data stays on your phone |
 | 4 | Các khoản | Gom theo danh mục, có phần trăm, ≥ 6 dòng; dòng Ăn uống có thanh hạn mức danh mục và chữ "Vượt 420.000" (F-20) | Ngân sách cho từng danh mục | A budget for every category |
 | 5 | Khoản định kỳ | 3 chuỗi: Tiền nhà (tháng), Internet (tháng), Học phí (tháng) | Khoản định kỳ tự ghi | Recurring bills, added for you |
 | 6 | Tài khoản + chuyển tiền | 3 tài khoản: Tiền mặt, Ngân hàng, Thẻ tín dụng; có 1 khoản chuyển | Nhiều ví, chuyển qua lại | Cash, bank and card in one place |
 | 7 | Màn chính, giao diện tối | Như ảnh 1 | Giao diện sáng và tối | Light and dark themes |
-| 8 — **chỉ Play** | Màn hình chính của Android có widget Ví Gọn 2×2 | Nút "Chi"/"Thu"; bật "Hiện số tiền trên widget", PIN tắt → dòng "Tháng này đã chi 12.980.000 / 15.000.000". Hình nền trơn, **không có icon app khác** trên màn hình (nhãn hiệu người khác) | Ghi khoản ngay từ màn hình chính | Add a record from your home screen |
-| 8 — **chỉ App Store** | Màn chính cỡ chữ lớn | Cỡ chữ hệ thống lớn, không bị cắt chữ | Dễ đọc với chữ cỡ lớn | Built for large text |
+| 8 | Màn hình chính của máy có widget Ví Gọn (Android 2×2; iPhone widget nhỏ hoặc vừa, iOS 16+) | Nút "Chi"/"Thu"; bật "Hiện số tiền trên widget", PIN tắt → dòng "Tháng này đã chi 12.980.000 / 15.000.000". Hình nền trơn, **không có icon app khác** trên màn hình (nhãn hiệu người khác). iPhone: widget đọc số qua App Group — trên simulator CI chưa ký App Group thì widget có thể không có số → chụp qua TestFlight hoặc chụp trạng thái mặc định (chỉ hai nút) | Ghi khoản ngay từ màn hình chính | Add a record from your home screen |
 
-Tuỳ chọn thêm (chỉ khi bỏ bớt ảnh khác, Play tối đa 8): Cài đặt → Sao lưu tự động (**chỉ Play**); màn tìm kiếm khoản (cả hai).
+Tuỳ chọn thêm (chỉ khi bỏ bớt ảnh khác, Play tối đa 8): Cài đặt → Sao lưu tự động (cả hai); màn tìm kiếm khoản (cả hai); màn chính cỡ chữ lớn
+("Dễ đọc với chữ cỡ lớn" / "Built for large text", App Store cho tới 10 ảnh nên có thể thêm làm ảnh 9).
 Không chụp thông báo nhắc trên màn khoá (simulator CI không chạm được hộp thoại quyền; Android cần adb — hỏi trước).
-Bộ ảnh iPhone **không được** có widget, Sao lưu tự động, công tắc che nội dung, hay chữ "Android"/"Google Play" (App Review 2.3.3, 2.3.10);
+Bộ ảnh iPhone **không được** có icon đơn sắc (chỉ Android) hay chữ "Android"/"Google Play" (App Review 2.3.3, 2.3.10);
 bộ Play không có chữ "iPhone"/"App Store".
 Chú thích (nếu dùng) đặt trong dải màu nền thương hiệu `#0E5244`, chữ
 Be Vietnam Pro 700 trắng, phía trên ảnh màn hình; không thêm khung máy của hãng (tránh dùng hình iPhone/Android có thương hiệu),
@@ -81,7 +82,7 @@ Tài khoản: Tiền mặt 2.150.000 · Ngân hàng 14.870.000 · Thẻ tín d�
 Total spent 2,604.75 · balance 1,595.25 · monthly budget **3,000.00** (~87%). Accounts: Cash, Bank, Credit card; one transfer.
 Nhập khoản ảnh 2 (en): `12.50+8.75`, category Food.
 
-Cài đặt cho ảnh: Nhắc ghi chép bật lúc 20:00 trên Android (trên iPhone chỉ bật nếu cấp được quyền thông báo, không thì để tắt); khoá PIN **tắt** khi chụp ảnh 8 Play (để widget hiện số), bật lại cũng được cho ảnh 3.
+Cài đặt cho ảnh: Nhắc ghi chép bật lúc 20:00 trên Android (trên iPhone chỉ bật nếu cấp được quyền thông báo, không thì để tắt); khoá PIN **tắt** khi chụp ảnh 8 (để widget hiện số), bật lại cũng được cho ảnh 3.
 Kiểm trước khi chụp: không thông báo, không tên người thật, không email, giờ trên thanh trạng thái 9:41, pin đầy, sóng đầy.
 
 ## 4. Cách chụp (vì máy làm việc là Windows, không có iPhone)

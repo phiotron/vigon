@@ -8,7 +8,8 @@ Phiên bản của tài liệu này:
 - **1.1** (duyệt 2026-11-04): F-14..F-23, AC-44..AC-57 (mục 3b). Trước đây là file riêng `docs/SPEC-1.1.md`.
 - **1.2** (duyệt 2026-11-04): F-24..F-26, AC-58..AC-64 (mục 3c). Trước đây là file riêng `docs/SPEC-1.2.md`.
 - **iOS + giao diện theo thiết kế** (duyệt 2026-11-04, PLAN-001, D-010, D-011): mục 5.
-- **Gộp** (2026-11-05, D-019): hai file bổ sung trên gộp vào đây (đã xóa), số F/AC giữ nguyên; tính năng 1.1/1.2 trên iOS theo mục 5 "iOS" (đoạn "Tính năng chỉ có trên Android").
+- **Gộp** (2026-11-05, D-019): hai file bổ sung trên gộp vào đây (đã xóa), số F/AC giữ nguyên; tính năng 1.1/1.2 trên iOS theo mục 5 "iOS".
+- **D-022** (người dùng quyết 2026-11-05): F-22, F-24, F-26 có bản iOS ngay bản 1 (thay phần iOS của D-019) → thêm gạch "iOS (D-022)" dưới mỗi F, AC Android giữ nguyên chữ; F-23 vẫn chỉ Android. Mục 5 "iOS" đoạn "Tính năng gốc nền tảng".
 
 ## 1. Vấn đề cần giải quyết
 Người muốn biết tiền đi đâu mỗi tháng thường bỏ ghi chép vì app quá nhiều bước, đòi tài khoản hoặc gửi dữ liệu lên mạng. Họ đang ghi vào sổ, ghi chú điện thoại hoặc bảng tính, rồi không tổng hợp được. Ví Gọn ghi một khoản chi trong vài giây và cho xem ngay chi tiêu theo danh mục. Chức năng tương đương Monefy, nhưng tên, biểu tượng, icon danh mục và giao diện do mình tự thiết kế.
@@ -127,23 +128,29 @@ Trước bản 1.1 chỉ sửa được số tiền và ghi chú.
 - AC-55: Khi **Xuất bản sao lưu** có lựa chọn "Đặt mật khẩu cho file" (tùy chọn, mặc định tắt; nhập mật khẩu hai lần, tối thiểu 6 ký tự; cảnh báo "Quên mật khẩu thì không mở được file này"). Có mật khẩu: file `.vigon` được mã hóa (khóa suy ra từ mật khẩu bằng PBKDF2-HMAC-SHA256 nhiều vòng và muối ngẫu nhiên, mã hóa AES-256-GCM); không mật khẩu: như cũ. Khôi phục: nhận ra file mã hóa, hỏi mật khẩu; sai mật khẩu hoặc file bị sửa thì báo "Sai mật khẩu hoặc file bị hỏng", không đụng dữ liệu hiện có. File sao lưu cũ không mã hóa vẫn khôi phục được. [T]
 - Mật khẩu không được lưu ở đâu cả. Không thêm quyền, không dùng mạng. Chạy cả Android và iOS (Dart thuần).
 
-### F-22 · Che nội dung ở màn đa nhiệm (chỉ Android, D-019)
+### F-22 · Che nội dung ở màn đa nhiệm (Android và iOS, D-022)
 - AC-56: Mục Bảo mật trong Cài đặt có công tắc **"Che nội dung khi chuyển app"**. Bật: Android chặn chụp màn hình và hiện màn trống trong danh sách app gần đây (cờ `FLAG_SECURE` của cửa sổ). Mặc định tắt. Lưu trong bảng `settings`, áp dụng ngay khi mở app lần sau và khi đổi công tắc. [T cho phần lưu và công tắc; M cho hiệu ứng thật trên máy]
-- iOS: chưa có bản tương đương; công tắc bị ẩn trên iOS (mục 5 "iOS").
+- iOS (D-022): cùng công tắc, cùng cách lưu. Bật: khi app rời trạng thái hoạt động (`sceneWillResignActive` / `sceneDidEnterBackground`: mở màn chuyển app, về màn hình chính, kéo Trung tâm điều khiển, có hộp thoại hệ thống) app phủ lớp che (màu nền `surface` sáng/tối + logo) lên nội dung; quay lại (`sceneDidBecomeActive`) thì gỡ. **iPhone không cho app chặn chụp màn hình** → không hứa điều đó; chú thích dưới công tắc trên iOS là `secureWindowNoteIos` ("Ẩn nội dung trong màn chuyển app. iPhone không cho app chặn chụp màn hình."). Mã: `ios/Runner/VigonNative.swift` (kênh `vigon/secure`, cùng giao thức Android). [T cho cấu hình và kênh: `test/hifi_d4_ios_config_test.dart`, `test/features/secure_window_test.dart`; M trên iPhone (TestFlight): ảnh trong màn chuyển app chỉ thấy lớp che, gỡ ngay khi quay lại, sáng/tối đúng màu]
 
 ### F-23 · Biểu tượng đơn sắc (chỉ Android)
 - AC-57: Icon thích ứng có lớp `<monochrome>` để Android 13 trở lên tô màu theo giao diện hình nền. Hình đơn sắc là cùng logo "hai thẻ xếp chồng" (D-009), một màu. [M]
 
 ## 3c. Bản 1.2: sao lưu tự động, nhắc ghi chép, widget (F-24..F-26)
-Người dùng yêu cầu làm ngày 2026-11-04 ba mục trước đó để ngoài phạm vi của bản 1.1. Bổ sung cho mục 3 và 3b. Mỗi mục được thiết kế để **không phá lời hứa riêng tư của app**: không SDK bên thứ ba, không quyền INTERNET, nhà phát triển vẫn không nhận dữ liệu nào. Quyết định kỹ thuật: D-014 (F-24), D-015 (F-25), D-016 (F-26); trên iOS: D-019.
+Người dùng yêu cầu làm ngày 2026-11-04 ba mục trước đó để ngoài phạm vi của bản 1.1. Bổ sung cho mục 3 và 3b. Mỗi mục được thiết kế để **không phá lời hứa riêng tư của app**: không SDK bên thứ ba, không quyền INTERNET, nhà phát triển vẫn không nhận dữ liệu nào. Quyết định kỹ thuật: D-014 (F-24), D-015 (F-25), D-016 (F-26); trên iOS: D-019 (F-25), D-022 (F-22, F-24, F-26).
 
-### F-24 · Sao lưu tự động vào thư mục người dùng chọn (chỉ Android, D-019)
-Thay cho "đồng bộ Google Drive/Dropbox qua API" (cần mạng, đăng nhập, khóa API; không làm). Dùng **Storage Access Framework** của Android: người dùng chọn một thư mục (trong Google Drive, Dropbox, thẻ nhớ hoặc bộ nhớ máy); các app đó tự tải lên đám mây, Ví Gọn chỉ ghi file vào thư mục đã chọn. Không thêm quyền nào, không mạng, không đăng nhập. Trên iOS mục này bị ẩn (mục 5 "iOS").
+### F-24 · Sao lưu tự động vào thư mục người dùng chọn (Android và iOS, D-022)
+Thay cho "đồng bộ Google Drive/Dropbox qua API" (cần mạng, đăng nhập, khóa API; không làm). Dùng **Storage Access Framework** của Android: người dùng chọn một thư mục (trong Google Drive, Dropbox, thẻ nhớ hoặc bộ nhớ máy); các app đó tự tải lên đám mây, Ví Gọn chỉ ghi file vào thư mục đã chọn. Không thêm quyền nào, không mạng, không đăng nhập. iOS: cùng ý, dùng bộ chọn thư mục của app Tệp — gạch "iOS (D-022)" dưới AC-60.
 - AC-58: Cài đặt → Dữ liệu có mục **"Sao lưu tự động"**: bật thì hỏi (1) chọn thư mục bằng bộ chọn thư mục của hệ thống, (2) đặt mật khẩu sao lưu (tối thiểu 6 ký tự, nhập hai lần, cảnh báo "Quên mật khẩu thì không mở được các file sao lưu; bạn cần nhớ nó khi khôi phục trên máy khác"). Mật khẩu được lưu trong bộ nhớ an toàn của Android (Keystore, `flutter_secure_storage` đã có) để app mã hóa được khi chạy nền; **không bao giờ** ghi mật khẩu vào file, log, cơ sở dữ liệu hay file sao lưu. File luôn được mã hóa theo F-21 (AES-256-GCM), KHÔNG bao giờ ghi bản rõ ra thư mục. Mặc định tắt. [T]
 - AC-59: Khi bật, app tự sao lưu tối đa **một lần mỗi ngày**, vào lúc app ra nền, và chỉ khi dữ liệu đã đổi kể từ lần sao lưu trước. File tên `vigon-auto-AAAAMMDD-GGPP.vigon`. Giữ tối đa **7 file tự động gần nhất** trong thư mục; xóa file `vigon-auto-*` cũ hơn (không đụng file khác trong thư mục, không đụng file sao lưu tay). [T]
 - AC-60: Nút **"Sao lưu ngay"** chạy ngay và báo kết quả; hiện thời gian và kết quả lần tự sao lưu gần nhất ("Lần cuối: 3 thg 11, 18:30"; nếu lỗi: "Không ghi được vào thư mục. Chọn lại thư mục"). Quyền ghi bị thu hồi hoặc thư mục bị xóa thì báo lỗi rõ ràng, không crash và không dừng im lặng; có nút "Chọn lại thư mục". Tắt "Sao lưu tự động" thì xóa mật khẩu khỏi Keystore và bỏ quyền thư mục, không xóa các file đã ghi. [T]
 - Khôi phục: bộ chọn file hiện có đã mở được file `.vigon` mã hóa (F-21), hỏi mật khẩu như thường lệ. [T]
 - Chú thích trong app: "Ví Gọn chỉ ghi file vào thư mục bạn chọn. Việc tải lên Google Drive hay Dropbox do app đó thực hiện." [T]
+- iOS (D-022):
+  - AC-58 trên iOS: chọn thư mục bằng bộ chọn của app Tệp (`UIDocumentPickerViewController`, loại thư mục; vd iCloud Drive, Google Drive, "Trên iPhone"). App giữ quyền bằng security-scoped bookmark trong UserDefaults của app; Dart chỉ giữ mã `ios-bookmark:<uuid>` trong SecretStore như URI của Android. Mật khẩu trong **Keychain** (Keystore ↔ Keychain), cùng luật "không bao giờ ghi vào file, log, cơ sở dữ liệu"; file luôn mã hóa. Chú thích trong app: `autoBackupNoteIos` ("…thư mục bạn chọn trong app Tệp, ví dụ trong iCloud Drive."). [T]
+  - AC-59 trên iOS — **khác lịch**: iOS không đảm bảo cho app chạy nền theo giờ, nên sao lưu chạy **khi mở app và khi quay lại app** (không chạy lúc ra nền vì iOS có thể dừng app giữa chừng), vẫn tối đa một lần mỗi ngày lịch và chỉ khi dữ liệu đổi; tên file và luật giữ 7 file như Android. Chú thích: `autoBackupRunsOnOpenIos` ("…bản sao lưu được tạo khi bạn mở Ví Gọn, mỗi ngày tối đa một lần."). [T: `test/data/hifi_d4_auto_backup_ios_test.dart` "iOS: chạy khi mở app, KHÔNG chạy lúc ra nền", "iOS: tối đa một lần mỗi ngày…"]
+  - Cảnh báo thư mục: thư mục không nằm trên iCloud Drive (`AutoBackupState.folderInICloud != true`) thì hiện `autoBackupLocalFolderWarningIos` ("Thư mục này có thể chỉ nằm trên iPhone…"), vì dữ liệu app không nằm trong sao lưu iPhone (D-021) và iOS không phân biệt được "Trên iPhone" với Google Drive/Dropbox. [T]
+  - AC-60 trên iOS: bookmark mất hoặc bị thu hồi, thư mục bị xóa → cùng trạng thái lỗi và nút "Chọn lại thư mục" như Android; tắt thì xóa mật khẩu khỏi Keychain và xóa bookmark (`releaseFolder`), không xóa file đã ghi. [T: cùng file test, "lỗi thư mục iOS (bookmark mất / bị thu hồi)…"]
+  - [M] trên iPhone (TestFlight): bộ chọn thư mục mở được; ghi file thật vào iCloud Drive và Google Drive; file iCloud chưa tải về vẫn được đếm/dọn đúng 7 file; bookmark còn hiệu lực sau khi khởi động lại máy; thu hồi quyền/xóa thư mục → báo lỗi, không crash; file ghi trên iPhone khôi phục được trên Android và ngược lại.
 
 ### F-25 · Nhắc ghi chép hằng ngày (Android và iOS)
 - AC-61: Cài đặt có mục **"Nhắc ghi chép"** (công tắc, mặc định tắt) và **giờ nhắc** (mặc định 20:00, chọn bằng bộ chọn giờ của hệ thống). Bật công tắc thì trước tiên hiện một lời giải thích ngắn ("Ví Gọn sẽ gửi một thông báo mỗi ngày vào giờ bạn chọn để nhắc ghi khoản. Thông báo không chứa số liệu.") rồi mới xin quyền thông báo của hệ điều hành (Android 13 trở lên; iOS: hộp thoại cho phép thông báo của iOS) đúng lúc này; bị từ chối thì công tắc về tắt và hiện hướng dẫn mở cài đặt hệ thống. Không xin quyền ở chỗ nào khác. [T cho logic; M cho thông báo thật]
@@ -151,16 +158,22 @@ Thay cho "đồng bộ Google Drive/Dropbox qua API" (cần mạng, đăng nhậ
 - Quyền thêm vào manifest Android được phép đúng: `POST_NOTIFICATIONS` và `RECEIVE_BOOT_COMPLETED`; không quyền nào khác (kể cả `INTERNET`). Test `manifest_test` (AC-43) cập nhật thành danh sách cho phép đó. [T]
 - iOS (D-019): thông báo cục bộ của iOS qua `flutter_local_notifications` (Darwin); lịch lặp hằng ngày do iOS giữ nên không cần tín hiệu khởi động lại; không cần khóa nào trong `Info.plist`. Thông báo thật, chạm thông báo và hộp thoại quyền của iOS: [M] trên iPhone (simulator CI chỉ thay thế tạm, mục 5 "iOS").
 
-### F-26 · Widget màn hình chính (chỉ Android, D-019)
+### F-26 · Widget màn hình chính (Android và iOS 16+, D-022)
 - AC-63: Widget Android "Ví Gọn" (thêm được từ danh sách widget của launcher), cỡ tối thiểu 2×2 (đã đổi từ 2×1 ngày 2026-11-04 vì một hàng cao cắt mất nút khi có dòng trạng thái), có hai nút lớn **"Chi"** và **"Thu"**: chạm mở app ngay màn Nhập khoản chi hoặc thu mới (`/entry/new?type=expense` hoặc `income`); nếu bật khóa PIN thì app vẫn hiện màn khóa trước rồi mới vào. Trình đọc màn hình đọc "Thêm khoản chi" và "Thêm khoản thu". [T cho phần liên kết sâu vào đúng màn; M cho giao diện widget]
 - AC-64: Widget **mặc định không hiện số tiền nào**. Công tắc **"Hiện số tiền trên widget"** trong Cài đặt (mặc định tắt, kèm cảnh báo "Ai cầm máy cũng nhìn thấy số này trên màn hình chờ"). Khi bật VÀ không bật khóa PIN: widget hiện thêm dòng "Tháng này đã chi X" (X theo kỳ tháng hiện tại và mọi tài khoản, đúng định dạng tiền như trong app), và "/ hạn mức" nếu đã đặt ngân sách tháng. **Khi khóa PIN đang bật, widget luôn KHÔNG hiện số tiền** dù công tắc bật, mà hiện "Đã khóa bằng PIN"; công tắc hiển thị cảnh báo giải thích điều này. Widget cập nhật khi dữ liệu đổi, khi đổi công tắc, khi bật/tắt PIN, và khi sang ngày mới. Số liệu cho widget chỉ lưu trong bộ nhớ riêng của app (không lộ ra ngoài), chỉ chứa chuỗi đã định dạng khi được phép hiện; khi tắt công tắc hoặc bật PIN thì xóa sạch. [T cho quy tắc hiện/ẩn và nội dung ghi; M cho hiển thị]
-- Không thêm quyền nào. Không mạng. Trên iOS mục cài đặt widget bị ẩn (mục 5 "iOS").
+- Không thêm quyền nào. Không mạng.
+- iOS (D-022):
+  - Widget WidgetKit "Ví Gọn" (`widgetPickerName`, extension `VigonWidgetExtension`), **cần iOS 16 trở lên** (app hỗ trợ từ iOS 15.0; máy iOS 15 không có widget, mục cài đặt vẫn hiện nhưng không có gì để thêm). Hai cỡ: nhỏ và vừa; màu theo token `widget-*` giống Android, chữ chép từ `.arb`.
+  - AC-63 trên iOS: cỡ vừa có hai nút mở `vigon://open/entry/new?type=expense|income` → cùng route và cùng kênh `vigon/deeplink` như Android (Dart chỉ nhận hai route, màn khóa PIN vẫn hiện trước). Cỡ nhỏ: iOS 17+ hai nút qua App Intent (mở app, route để trong App Group, app lấy trong 60 giây); iOS 16 cỡ nhỏ không có nút riêng, chạm cả widget → màn Nhập khoản chi. VoiceOver đọc "Thêm khoản chi" / "Thêm khoản thu". [T cho cấu hình URL scheme và chữ; M cho mở đúng màn — CI không tự kiểm được vì `simctl openurl` hiện hộp xác nhận]
+  - AC-64 trên iOS: chuỗi đã định dạng nằm trong **App Group** `group.com.phiotron.vigon` (UserDefaults dùng chung chỉ giữa app và extension, trên máy) thay cho bộ nhớ riêng của app; luật PIN D-016 giữ nguyên (PIN bật → "Đã khóa bằng PIN", không bao giờ có số); tắt công tắc hoặc bật PIN → lệnh `clear` xóa khóa. Khác Android: số có hạn dùng tới hết kỳ tháng; quá hạn mà app chưa mở thì widget tự xóa số và hiện "Mở app để cập nhật" (`widgetStale`). [T: `test/hifi_d4_ios_config_test.dart` (App Group, "D-016: clear XÓA chuỗi", chữ EN/VI, màu), `test/features/f26_widget_test.dart`]
+  - [M] trên iPhone (TestFlight, cần App Group thật do người dùng tạo trên Apple Developer): thêm widget từ thư viện widget; widget đọc đúng số app ghi khi công tắc bật + PIN tắt; bật PIN → hiện khóa, không số; nút mở đúng màn (app đang chạy và app đã tắt, cả khi qua màn PIN); nút widget nhỏ trên iOS 17; VoiceOver; sáng/tối.
 
 ## 4. Ngoài phạm vi (cố ý KHÔNG làm)
 Đã đưa vào phạm vi (giữ dòng gạch để biết lịch sử):
-- ~~Bản iOS~~: vào phạm vi ngày 2026-11-04 theo PLAN-001 (người dùng duyệt), xem mục 5 "iOS" và D-011; một số tính năng chỉ có trên Android (D-019).
-- ~~Ngân sách theo từng danh mục~~: bản 1.1 (F-20). ~~Nhắc nhở bằng thông báo~~: bản 1.2 (F-25). ~~Widget màn hình chính~~: bản 1.2 (F-26, chỉ Android).
-- ~~Sao lưu lên Google Drive, Dropbox~~: chỉ làm dạng sao lưu một chiều vào thư mục người dùng chọn (F-24, chỉ Android); đồng bộ qua API vẫn ngoài phạm vi (bảng dưới).
+- ~~Bản iOS~~: vào phạm vi ngày 2026-11-04 theo PLAN-001 (người dùng duyệt), xem mục 5 "iOS" và D-011; chỉ icon đơn sắc (F-23) là riêng Android (D-022).
+- ~~Ngân sách theo từng danh mục~~: bản 1.1 (F-20). ~~Nhắc nhở bằng thông báo~~: bản 1.2 (F-25). ~~Widget màn hình chính~~: bản 1.2 (F-26; iOS 16+ theo D-022).
+- ~~Sao lưu lên Google Drive, Dropbox~~: chỉ làm dạng sao lưu một chiều vào thư mục người dùng chọn (F-24, Android và iOS); đồng bộ qua API vẫn ngoài phạm vi (bảng dưới).
+- ~~Bản iOS của widget, sao lưu tự động, che nội dung ở màn đa nhiệm~~ (trước để việc riêng theo D-019): làm ngay bản 1 theo D-022 (2026-11-05) — WidgetKit + App Group, bộ chọn thư mục app Tệp + bookmark, lớp phủ native.
 
 Vẫn ngoài phạm vi:
 - Tài khoản người dùng, đăng nhập, máy chủ, đồng bộ đám mây.
@@ -176,24 +189,22 @@ Các mục còn hiệu lực từ bản 1.1, 1.2 và lần gộp (cần người
 | Widget hiện số tiền khi đang bật PIN | Làm lộ số liệu ngoài màn khóa, vô hiệu khóa PIN (D-016) |
 | Nhiều tiền tệ kèm quy đổi tỉ giá | Tỉ giá cần nguồn dữ liệu (mạng) hoặc người dùng tự nhập; thay đổi lớn mô hình dữ liệu (mỗi tài khoản một tiền tệ) |
 | Gói Pro hoặc nguồn thu khác | Thanh toán trong app (Play Billing, StoreKit), COMPLIANCE C-01/C-02/T-01, thuế |
-| Bản iOS của widget (WidgetKit + App Group), sao lưu tự động (chọn thư mục bằng UIDocumentPicker + security-scoped bookmark) và che nội dung ở màn đa nhiệm | Cần mã Swift, app extension, ký App Group, không thử được trên máy Windows; để thành việc riêng (D-019) |
-
 ## 5. Ràng buộc mobile
 - Hệ điều hành: Android; minSdk theo mặc định của phiên bản Flutter được ghim (D-003); targetSdk theo yêu cầu Google Play hiện hành (COMPLIANCE P-06). iOS: xem mục "iOS" ngay dưới.
 - Giao diện: theo bộ thiết kế đã duyệt `design/current/screens/` và `design/current/ui-spec.md` (token, chữ Be Vietnam Pro, icon Material Symbols Rounded), giống nhau trên hai nền tảng, chỉ khác ở chỗ hệ điều hành quyết định (D-010).
 - Offline: toàn bộ app chạy không cần mạng; không có tính năng nào gọi mạng. Dữ liệu ghi xuống bộ nhớ máy ngay khi bấm Lưu.
 - Quyền thiết bị:
   - Android: chỉ hai quyền, cả hai phục vụ nhắc ghi chép F-25 (D-015): `POST_NOTIFICATIONS` (chỉ xin khi người dùng bật công tắc "Nhắc ghi chép", sau lời giải thích; hộp thoại hệ thống chỉ có từ Android 13) và `RECEIVE_BOOT_COMPLETED` (đặt lại lịch nhắc sau khi khởi động lại máy, không hộp thoại). KHÔNG `INTERNET`, KHÔNG `SCHEDULE_EXACT_ALARM`/`USE_EXACT_ALARM`, KHÔNG quyền bộ nhớ: sao lưu/khôi phục dùng bảng chia sẻ và trình chọn file của hệ điều hành, sao lưu tự động dùng Storage Access Framework; widget không cần quyền. Kiểm bằng `test/manifest_test.dart` (AC-43) và `aapt2 dump permissions` bản release.
-  - iOS: không có khóa `NS…UsageDescription`; chỉ xin quyền thông báo (hộp thoại của iOS) khi người dùng bật nhắc ghi chép, sau lời giải thích (AC-61). Chọn file khôi phục dùng trình chọn hệ thống, không cần quyền.
+  - iOS: không có khóa `NS…UsageDescription`; chỉ xin quyền thông báo (hộp thoại của iOS) khi người dùng bật nhắc ghi chép, sau lời giải thích (AC-61). Chọn file khôi phục và chọn thư mục sao lưu tự động dùng trình chọn hệ thống (app Tệp), không cần quyền; widget (App Group) và lớp che F-22 cũng không cần quyền.
 - Màn hình: chiều rộng nhỏ nhất 360 dp; chỉ màn hình dọc.
-- Hiệu năng/pin: không có service hay job chạy nền liên tục. Thông báo nhắc do hệ điều hành đặt lịch (F-25); sao lưu tự động chạy lúc app ra nền, tối đa một lần mỗi ngày (F-24, Android). Ngưỡng ở 5b.
+- Hiệu năng/pin: không có service hay job chạy nền liên tục. Thông báo nhắc do hệ điều hành đặt lịch (F-25); sao lưu tự động tối đa một lần mỗi ngày, chạy lúc app ra nền trên Android, khi mở/quay lại app trên iOS (F-24). Ngưỡng ở 5b.
 
-### iOS (thêm 2026-11-04 theo PLAN-001; cập nhật khi gộp 2026-11-05 theo D-019)
-- Cùng codebase Flutter, cùng tính năng và AC như Android, **trừ các tính năng chỉ có trên Android ở dưới**. iOS tối thiểu 15.0, chỉ iPhone, chỉ dọc. Build trên cloud có máy macOS vì máy phát triển là Windows (D-011; `.github/workflows/ios.yml`, `release-ios.yml`); yêu cầu App Store P-01 tới P-05 trong `docs/COMPLIANCE.md`.
+### iOS (thêm 2026-11-04 theo PLAN-001; cập nhật khi gộp 2026-11-05 theo D-019, rồi theo D-022 cùng ngày)
+- Cùng codebase Flutter, cùng tính năng và AC như Android, **trừ F-23 icon đơn sắc** (chỉ Android) và phần chạy khác nhau của F-22, F-24, F-26 ở dưới. iOS tối thiểu 15.0, chỉ iPhone, chỉ dọc. Build trên cloud có máy macOS vì máy phát triển là Windows (D-011; `.github/workflows/ios.yml`, `release-ios.yml`); yêu cầu App Store P-01 tới P-05 trong `docs/COMPLIANCE.md`.
 - Tương ứng nền tảng khi đọc AC: TalkBack ↔ VoiceOver (AC-39); Android Keystore ↔ Keychain (AC-33); AC-43 trên iOS nghĩa là không có mã gọi mạng (iOS không có quyền INTERNET). Keychain giữ PIN sau khi gỡ app: khi cài lại với dữ liệu mới, app tự xóa PIN cũ (D-017).
-- **Tính năng chỉ có trên Android (D-019):** F-22 che nội dung ở màn đa nhiệm (`FLAG_SECURE`), F-23 icon đơn sắc, F-24 sao lưu tự động (SAF), F-26 widget (AppWidget). Trên iOS các mục cài đặt tương ứng **bị ẩn** (`lib/src/platform_features.dart`; test `test/features/merge_ios_gating_test.dart`), không hiện mục mà không làm gì (App Review 2.1). AC-56, AC-57, AC-58..AC-60, AC-63, AC-64 chỉ kiểm trên Android. Muốn có bản iOS phải mở việc riêng (mục 4).
+- **Tính năng gốc nền tảng (D-022, thay phần iOS của D-019):** F-22, F-24, F-26 có trên cả hai nền tảng, cài khác nhau — F-22: Android `FLAG_SECURE` ↔ iOS lớp phủ khi rời app (không chặn chụp màn hình); F-24: Android SAF, chạy lúc ra nền ↔ iOS bộ chọn thư mục app Tệp + bookmark, chạy khi mở/quay lại app; F-26: Android AppWidget ↔ iOS WidgetKit + App Group, cần iOS 16+. AC và cách kiểm iOS ở gạch "iOS (D-022)" dưới từng F. Kênh native dùng chung giao thức (`vigon/secure`, `vigon/widget`, `vigon/deeplink`, `vigon/backup_folder`; iOS: `ios/Runner/VigonNative.swift`) nên Dart không phân nhánh. Cờ nền tảng: `lib/src/platform_features.dart`; test `test/features/merge_ios_gating_test.dart` (iOS có đủ ba mục). **F-23 icon đơn sắc chỉ Android**: AC-57 không áp dụng iOS.
 - **F-25 nhắc ghi chép chạy cả iOS** (thông báo cục bộ, xin quyền khi bật công tắc). F-21 mã hóa file sao lưu tay cũng chạy cả iOS.
-- Kiểm chứng: AC ghi [M] áp dụng cho iOS phải thử trên iPhone thật (TestFlight) trước khi phát hành iOS. Khi chưa có iPhone, chỉ có iOS Simulator của GitHub Actions: biên bản ghi rõ phần nào mới thử trên simulator.
+- Kiểm chứng: AC ghi [M] áp dụng cho iOS phải thử trên iPhone thật (TestFlight) trước khi phát hành iOS. Khi chưa có iPhone, chỉ có iOS Simulator của GitHub Actions: biên bản ghi rõ phần nào mới thử trên simulator. Widget iOS cần App Group `group.com.phiotron.vigon` do người dùng tạo trên Apple Developer (từng bước ở `notes/2026-11-05-d4-ios-features-widget.md`); chưa có thì simulator CI chỉ xác nhận extension được nạp và vẽ được.
 
 ## 5b. Yêu cầu phi chức năng
 Ngưỡng dưới đây là đề xuất của Claude, người dùng chỉnh khi duyệt. Máy đo chuẩn: Galaxy A13 (SM-A135F, Android 14), chốt ở G1.
@@ -208,16 +219,17 @@ Ngưỡng dưới đây là đề xuất của Claude, người dùng chỉnh kh
 Đã điền mục 1 của `docs/COMPLIANCE.md`: Việt Nam và toàn cầu (nhóm A và B, chưa mở nhóm C), miễn phí, không tài khoản, không SDK, dữ liệu chỉ nằm trên máy. Các mục cần xây tính năng đã thành F-11, F-12 (accessibility, ngôn ngữ), F-13 (chính sách, xóa dữ liệu, kênh báo lỗ hổng, giấy phép nguồn mở).
 
 ## 6. Dữ liệu
-- Lưu ở đâu: cơ sở dữ liệu SQLite trong bộ nhớ riêng của app trên máy. Không có máy chủ, không đồng bộ. Sao lưu: người dùng tự xuất file (F-10), hoặc bật sao lưu tự động vào thư mục mình chọn (F-24, chỉ Android). Cấu hình sao lưu tự động (thư mục, mật khẩu, kết quả lần chạy) nằm trong bộ nhớ an toàn (Keystore), không trong bảng `settings`, nên không đi theo file sao lưu (D-014).
+- Lưu ở đâu: cơ sở dữ liệu SQLite trong bộ nhớ riêng của app trên máy. Không có máy chủ, không đồng bộ. Sao lưu: người dùng tự xuất file (F-10), hoặc bật sao lưu tự động vào thư mục mình chọn (F-24, Android và iOS). Cấu hình sao lưu tự động (thư mục, mật khẩu, kết quả lần chạy) nằm trong bộ nhớ an toàn (Keystore trên Android, Keychain trên iOS; bookmark thư mục iOS trong UserDefaults của app), không trong bảng `settings`, nên không đi theo file sao lưu (D-014).
 - Dữ liệu nhạy cảm: thói quen chi tiêu và thu nhập (tài chính cá nhân). Bảo vệ bằng bộ nhớ riêng của app, khóa PIN tùy chọn, và:
-  - Android tắt sao lưu hệ thống (`allowBackup=false`) để dữ liệu không tự lên đám mây mà người dùng không biết. iOS: cơ sở dữ liệu nằm trong sao lưu iPhone/iCloud nếu người dùng bật (như mọi app; chính sách quyền riêng tư mục 2).
-  - File sao lưu tay `.vigon` (F-10) **có thể mã hóa** bằng mật khẩu (F-21, AES-256-GCM, khóa từ PBKDF2, D-012); không đặt mật khẩu thì là JSON không mã hóa và app nói rõ điều đó. File sao lưu tự động (F-24) **luôn mã hóa**; mật khẩu nằm trong Keystore, không bao giờ vào file, log hay cơ sở dữ liệu.
-  - Thông báo nhắc (F-25) không chứa số liệu. Widget (F-26) mặc định không hiện số; chỉ hiện khi người dùng bật VÀ PIN tắt, chuỗi số nằm trong bộ nhớ riêng của app.
+  - Android tắt sao lưu hệ thống (`allowBackup=false`) để dữ liệu không tự lên đám mây mà người dùng không biết. iOS: cơ sở dữ liệu được loại khỏi sao lưu iCloud/máy tính (`isExcludedFromBackup`, D-021; chính sách quyền riêng tư mục 2).
+  - File sao lưu tay `.vigon` (F-10) **có thể mã hóa** bằng mật khẩu (F-21, AES-256-GCM, khóa từ PBKDF2, D-012); không đặt mật khẩu thì là JSON không mã hóa và app nói rõ điều đó. File sao lưu tự động (F-24) **luôn mã hóa**; mật khẩu nằm trong Keystore (Android) / Keychain (iOS), không bao giờ vào file, log hay cơ sở dữ liệu.
+  - Thông báo nhắc (F-25) không chứa số liệu. Widget (F-26) mặc định không hiện số; chỉ hiện khi người dùng bật VÀ PIN tắt, chuỗi số nằm trong bộ nhớ riêng của app (iOS: App Group chỉ dùng chung với extension widget, trên máy).
+  - Che nội dung (F-22) tùy chọn: Android chặn chụp màn hình + ẩn ảnh màn gần đây; iOS chỉ che ảnh ở màn chuyển app.
 - Thu thập dữ liệu: nhà phát triển KHÔNG thu thập gì (kể cả bản 1.2: thông báo cục bộ, thư mục sao lưu do người dùng chọn, widget không gửi gì đi). Data safety khai "không thu thập, không chia sẻ"; App Store khai "Data Not Collected". Vẫn cần chính sách quyền riêng tư công khai (Play và App Store yêu cầu, và để giải thích dữ liệu nằm trên máy).
 
 ## 7. Rủi ro và điều chưa biết
 - Pháp lý: chức năng giống Monefy là được, nhưng tên, icon, giao diện, mô tả store không được sao chép; rà lại trước khi phát hành.
-- Mất dữ liệu: không có đám mây nên mất máy là mất dữ liệu nếu người dùng chưa xuất file. Giảm rủi ro: xuất sao lưu tay trong Cài đặt; trên Android bật sao lưu tự động vào thư mục của Drive/Dropbox (F-24). Trên iOS chưa có sao lưu tự động của app, chỉ có sao lưu tay và sao lưu iPhone/iCloud của hệ thống.
+- Mất dữ liệu: không có đám mây nên mất máy là mất dữ liệu nếu người dùng chưa xuất file. Giảm rủi ro: xuất sao lưu tay trong Cài đặt; bật sao lưu tự động (F-24) vào thư mục của Google Drive/Dropbox (Android) hoặc iCloud Drive/Google Drive (iOS). Dữ liệu app không nằm trong sao lưu hệ thống trên cả hai nền tảng (D-021), nên nếu thư mục sao lưu tự động chỉ nằm trên máy thì mất máy là mất cả file; iOS cảnh báo khi thư mục không ở iCloud Drive. Trên iOS sao lưu tự động chỉ chạy khi mở app → người ít mở app có bản sao lưu cũ hơn.
 - Quên PIN là mất quyền vào dữ liệu (AC-34); phải nói rõ khi bật khóa. Quên mật khẩu file sao lưu là không mở được file (F-21, F-24).
 - Máy phát triển là Windows: không build hay thử iOS cục bộ, mọi lỗi riêng iOS chỉ lộ trên CI hoặc TestFlight (D-011). Chưa có iPhone thật.
 - Tài khoản Google Play cá nhân mới cần closed test 12 người trong 14 ngày (COMPLIANCE P-09).
@@ -225,7 +237,7 @@ Ngưỡng dưới đây là đề xuất của Claude, người dùng chỉnh kh
 - Bán ở EU: CRA áp dụng cho app kể cả miễn phí nếu là hoạt động thương mại; chưa rõ app miễn phí của cá nhân có thuộc phạm vi không, cần luật sư xác nhận trước khi mở bán ở EU.
 
 ## 8. Tiêu chí hoàn thành bản 1 (Android + iOS)
-- F-01 tới F-26 đạt toàn bộ AC áp dụng cho từng nền tảng (mục 5 "iOS": F-22, F-23, F-24, F-26 chỉ Android).
+- F-01 tới F-26 đạt toàn bộ AC áp dụng cho từng nền tảng (mục 5 "iOS": F-23 chỉ Android; F-22, F-24, F-26 trên iOS theo gạch "iOS (D-022)" của từng F).
 - Android: biên bản [M] trên ít nhất một máy Android thật. iOS: biên bản [M] trên iPhone thật (TestFlight) cho các AC áp dụng iOS trước khi phát hành iOS; CI iOS (`ios.yml`) xanh trên nhánh `main`.
 - `flutter analyze` không lỗi, `flutter test` đạt.
 - `docs/COMPLIANCE.md` không còn dòng "chưa" ở các mục áp dụng cho Android, iOS (P-01 tới P-05) và các thị trường mở bán.
