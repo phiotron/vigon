@@ -10,16 +10,25 @@
 - **Người dùng mục tiêu:** người đi làm, sinh viên, người giữ tiền chi tiêu gia đình; Việt Nam và quốc tế (vi/en).
 - **Kiếm tiền:** miễn phí bản 1 (không quảng cáo, không IAP).
 - **Nền tảng:** Android + iOS (iOS thêm 2026-11-04, build + test trên GitHub Actions macOS runner — theo fact xưởng `may-windows-build-ios`) · **Stack:** Flutter 3.47.8, Riverpod 3, go_router, drift/SQLite.
+- **Thiết kế Hi-Fi (nguồn UI hiện hành):** `design/hifi/` (frame `<android|ios>/<light|dark>/<NN>_<slug>__<state>.html|png`,
+  `_frames.json`, `assumptions.html`, token v2 `tokens/`, component `design-system/`) — link `design/LINKS.md`.
 - **Tài liệu tham chiếu:** `docs/SPEC.md` (F-01..F-26 đã hợp nhất — nguồn sự thật về hành vi), `docs/DECISIONS.md`, `docs/ARCHITECTURE.md`,
   `docs/TESTING.md`, `docs/SECURITY.md`, `docs/COMPLIANCE.md`, `docs/RELEASE.md`, `docs/legal/`; thiết kế hiện tại `design/current/`
   (`ui-spec.md` + bộ màn `screens/`); store `store/`; thuật ngữ `CONTEXT.md` (khi có); mô tả gửi Claude Design `product.md` (khi có).
+
+## Tiêu chuẩn áp dụng (`playbook/STANDARDS.md`)
+- **Khác đối thủ ở đâu (S-30):** ghi một khoản ≤ 3 chạm từ màn chính (vòng icon danh mục, chọn = lưu D-018); hoàn toàn
+  offline, không tài khoản, không quảng cáo/SDK, không quyền mạng; sao lưu mã hoá bằng mật khẩu; song ngữ vi/en.
+- **Mục A:** bắt buộc toàn bộ (S-10…S-71).
+- **Mục B được bật:** **S-89** (tự mã hoá file sao lưu AES-256-GCM → D-020, khai báo ANSSI). Không S-80..S-88.
+- **Thị trường:** toàn cầu (gồm EU, Pháp), trừ Trung Quốc đại lục.
 
 ## Tính năng (đã code xong — F-01..F-26, sau khi gộp 2026-11-05)
 1. **Bản 1.0 (F-01..F-13):** ghi khoản nhanh (bàn phím có phép tính, sửa/xoá có hoàn tác); màn chính biểu đồ tròn + vòng icon danh mục, chọn/vuốt kỳ; danh mục, tài khoản, chuyển tiền, tiền tệ; khoản định kỳ; ngân sách tháng; sao lưu `.vigon`/CSV; khoá PIN; giao diện/ngôn ngữ/a11y; pháp lý trong app.
 2. **Bản 1.1 (F-14..F-23):** ẩn/hiện/xoá tài khoản · tìm kiếm khoản · sửa đủ chuỗi định kỳ · ô "Danh mục khác" ở màn chính · CSV theo ngôn ngữ · đủ tiền tệ ISO 4217 có tìm · ngân sách theo danh mục · mã hoá file sao lưu bằng mật khẩu · che nội dung đa nhiệm · icon đơn sắc.
 3. **Bản 1.2 (F-24..F-26):** sao lưu tự động hằng ngày (mã hoá, giữ 7 file) · nhắc ghi chép hằng ngày · widget màn hình chính Chi/Thu.
 4. **Giao diện:** theo bộ thiết kế đã duyệt `design/current/screens/` (S01–S16, token, Be Vietnam Pro, Material Symbols) — PLAN-001.
-5. **Chỉ Android, iOS ẩn mục (D-019):** sao lưu tự động (F-24), widget (F-26), che đa nhiệm (F-22), icon đơn sắc (F-23). Nhắc ghi chép có trên iOS nhưng CHƯA thử thông báo thật.
+5. **Hiện chỉ Android, iOS ẩn mục (D-019) — đang làm bản iOS ở #2 (D-022):** sao lưu tự động (F-24), widget (F-26), che đa nhiệm (F-22), icon đơn sắc (F-23). Nhắc ghi chép có trên iOS nhưng CHƯA thử thông báo thật.
 
 ## Màn hình & luồng chính
 Màn chính `/` (+ khoá PIN phủ) · Ghi/sửa khoản `/entry/new?type=&category=`, `/entry/:id` · Các khoản `/entries` (tìm kiếm, hạn mức danh mục) ·
@@ -33,13 +42,15 @@ Luồng nhanh nhất: Màn chính → chạm icon danh mục (hoặc −/+) → 
 | Phiên điều phối | Ngày | Phiên con đã mở | Kết quả |
 |---|---|---|---|
 | #1 Nhận app + gộp + product.md | 2026-11-04..05 | product.md · nền iOS + CI · store & pháp lý · gộp 2 nhánh (+2 phụ) · iOS mã hoá/iCloud · tài liệu D-020/021 | ✅ Xong: nhận app, gộp bản 1.2 + PLAN-001, 364 test, CI Android + iOS xanh, product.md v2 duyệt. Nhật ký: `memory/sessions/2026-11-05-A002-vigon.md` (repo xưởng) |
-| #2 Áp UI Hi-Fi + test 2 nền tảng | | D0 theme/arb → D1, D2, D3 song song → D4 thử máy | |
+| #2 Áp UI Hi-Fi + iOS đủ tính năng + test 2 nền tảng | 2026-11-05.. | D0 token/component/chữ → D1 màn chính+nhập, D2 danh mục/tài khoản/định kỳ, D3 cài đặt/sao lưu/khoá, D4 iOS F-22/24/26 + widget Android song song → D5 so mockup + thử máy | 🔨 Đang làm. Mockup Hi-Fi P1 `6eb81fa`; phạm vi D-022, D-023 |
 | #3 Phát hành | | E ảnh store · F Android · G iOS | |
 
 Kế hoạch đầy đủ 3 phiên: `notes/2026-11-04-ke-hoach-3-phien.md`.
 
 **Việc dở / bước tiếp:**
-- **2026-11-05: người dùng đã duyệt `product.md` v2 (e7c75a8)** → người dùng gửi Claude Design (kèm `design/current/screens/`), lưu link + export vào `design/hifi/<platform>/<theme>/` theo product.md §11.3 → mở phiên #2.
+- **2026-11-05: đã có mockup Hi-Fi P1** (`design/hifi/`, link `design/LINKS.md`; PNG + zip chỉ ở máy, không vào git) → phiên #2
+  đang chạy: P1 + P2 theo `design/hifi/tokens/CHANGELOG.md` (D-023), iOS làm F-22/F-24/F-26 (D-022).
+- Người dùng: tạo App Group `group.com.phiotron.vigon` (khi có Apple Developer) để widget iOS chạy thật.
 - Đã xong: iOS `ITSAppUsesNonExemptEncryption`=true + DB loại khỏi iCloud (D-020/D-021, `8441b6a`, chưa thử iPhone thật). **Người dùng:** nộp khai báo mã hoá Pháp (ANSSI) theo `docs/RELEASE.md` — chặn nộp iOS.
 - iOS chưa có F-22/F-24/F-26 (D-019): quyết ở #2 làm tương đương (WidgetKit, chọn thư mục, che màn) hay để bản sau. Export compliance phải xem lại vì có AES-256-GCM (COMPLIANCE P-03).
 - Mọi tính năng 1.1/1.2 CHƯA thử trên máy Android thật (`docs/TESTING.md` M-1..M-7).
@@ -85,6 +96,7 @@ Flutter 3.47.8 ở `C:/src/flutter`, **chưa có trong PATH**. Git Bash: `export
 - **D-005** Tiền số nguyên, ngày dạng chữ, cài đặt trong DB. · **D-006** Sao lưu `.vigon` JSON có mã băm, khôi phục thay toàn bộ trong 1 giao dịch.
 - **D-007** PIN băm có muối trong bộ nhớ an toàn, màn khoá phủ lên app. · **D-008** Liên hệ ở `app_info.dart`; bố cục co theo cỡ chữ; test a11y tự động.
 - **D-009** Logo "hai thẻ xếp chồng".
+- **D-022** iOS có đủ F-22/F-24/F-26 ngay bản 1 (thay phần iOS của D-019). **D-023** UI = Hi-Fi P1 + P2 theo CHANGELOG token v2; Ideas để sau.
 - **D-010..D-019** (sau gộp): D-010 UI từ token · D-011 iOS build cloud (CI dùng `ios.yml`) · D-012..D-016 của bản 1.1/1.2 · D-017 mã cài đặt PIN/phát hiện cài lại iOS · D-018 giữ chọn danh mục = lưu luôn · D-019 gộp nhánh, tính năng 1.2 chỉ Android trên iOS ẩn.
 - **2026-11-05** Gộp cả hai nhánh song song vào main; gỡ hook pre-commit cũ (chặn nhầm chữ "password"). Nhánh/worktree cũ giữ nguyên.
 - **2026-11-04** Nhận app đã code sẵn vào xưởng, mã `A002-vigon`; giữ repo `phiotron/vigon`; giữ worktree cũ trong `.claude/worktrees/` (bị gitignore).
