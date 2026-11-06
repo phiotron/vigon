@@ -142,7 +142,7 @@ void main() {
       expect(await old.select(old.accounts).get(), hasLength(1));
 
       final version = await old.customSelect('PRAGMA user_version').getSingle();
-      expect(version.read<int>('user_version'), 2);
+      expect(version.read<int>('user_version'), currentSchemaVersion);
       await CategoryRepository(old).setBudget(1, 123);
       final c1 = await (old.select(
         old.categories,
@@ -155,8 +155,8 @@ void main() {
       );
     });
 
-    test('cơ sở dữ liệu mới tạo đã có schema 2 và cột budget', () async {
-      expect(db.schemaVersion, 2);
+    test('cơ sở dữ liệu mới tạo đã có schema hiện tại và cột budget', () async {
+      expect(db.schemaVersion, currentSchemaVersion);
       final cols = await db
           .customSelect("SELECT name FROM pragma_table_info('categories')")
           .get();
@@ -179,7 +179,7 @@ void main() {
       await CategoryRepository(db).setBudget(3, 250000);
       final json = await exportBackup(db, now: now);
       final root = jsonDecode(json) as Map<String, dynamic>;
-      expect(root['schemaVersion'], 2);
+      expect(root['schemaVersion'], currentSchemaVersion);
       expect((root['version'], root['format']), (1, 'vigon-backup'));
 
       final other = AppDatabase(NativeDatabase.memory());
@@ -217,7 +217,10 @@ void main() {
       'schemaVersion cao hơn bản hiện tại bị từ chối, thiếu thì chấp nhận',
       () async {
         final json = await exportBackup(db, now: now);
-        final future = rewrite(json, (r) => r['schemaVersion'] = 3);
+        final future = rewrite(
+          json,
+          (r) => r['schemaVersion'] = currentSchemaVersion + 1,
+        );
         await expectLater(
           importBackup(db, future),
           throwsA(isA<BackupFormatException>()),

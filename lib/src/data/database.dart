@@ -9,7 +9,8 @@ import 'seed.dart';
 part 'database.g.dart';
 
 /// Phiên bản schema hiện tại; file sao lưu có schemaVersion lớn hơn bị từ chối.
-const currentSchemaVersion = 2;
+/// 3: thêm cột số tiền chính xác `*Micro` (D-029), khoản cho phép 0.
+const currentSchemaVersion = 3;
 
 /// Loại khoản ghi. Chuyển tiền không tính là thu hay chi (AC-19).
 enum EntryType { expense, income, transfer }
@@ -29,6 +30,10 @@ class Accounts extends Table {
 
   /// Số dư ban đầu, đơn vị nhỏ nhất của tiền tệ; có thể âm (thẻ tín dụng).
   IntColumn get initialBalance => integer().withDefault(const Constant(0))();
+
+  /// Số dư ban đầu chính xác, phần triệu đơn vị chính (D-029); null là đúng
+  /// bằng [initialBalance]. Thêm ở schema 3.
+  IntColumn get initialBalanceMicro => integer().nullable()();
   IntColumn get sortOrder => integer().withDefault(const Constant(0))();
   BoolColumn get archived => boolean().withDefault(const Constant(false))();
 }
@@ -48,13 +53,23 @@ class Categories extends Table {
     // ignore: recursive_getters
     budget.isBiggerThanValue(0),
   )();
+
+  /// Hạn mức chính xác, phần triệu đơn vị chính (D-029); null là đúng bằng
+  /// [budget]. Thêm ở schema 3.
+  IntColumn get budgetMicro => integer().nullable()();
 }
 
 class RecurringRules extends Table {
   IntColumn get id => integer().autoIncrement()();
   IntColumn get type => intEnum<EntryType>()();
+
+  /// Đơn vị nhỏ nhất, ≥ 0 (0 chỉ có thể do quy đổi tiền tệ, D-029).
   // ignore: recursive_getters
-  IntColumn get amount => integer().check(amount.isBiggerThanValue(0))();
+  IntColumn get amount => integer().check(amount.isBiggerOrEqualValue(0))();
+
+  /// Số tiền chính xác, phần triệu đơn vị chính (D-029); null là đúng bằng
+  /// [amount]. Thêm ở schema 3.
+  IntColumn get amountMicro => integer().nullable()();
   IntColumn get categoryId =>
       integer().nullable().references(Categories, #id)();
   IntColumn get accountId => integer().references(Accounts, #id)();
@@ -74,9 +89,14 @@ class Entries extends Table {
   IntColumn get id => integer().autoIncrement()();
   IntColumn get type => intEnum<EntryType>()();
 
-  /// Đơn vị nhỏ nhất của tiền tệ, luôn > 0 (AC-05, D-005).
+  /// Đơn vị nhỏ nhất của tiền tệ (D-005). Người dùng gõ phải > 0 (AC-05); 0
+  /// chỉ có thể do quy đổi tiền tệ làm tròn một số rất nhỏ (D-029).
   // ignore: recursive_getters
-  IntColumn get amount => integer().check(amount.isBiggerThanValue(0))();
+  IntColumn get amount => integer().check(amount.isBiggerOrEqualValue(0))();
+
+  /// Số tiền chính xác, phần triệu đơn vị chính (D-029); null là đúng bằng
+  /// [amount]. Thêm ở schema 3.
+  IntColumn get amountMicro => integer().nullable()();
   IntColumn get categoryId =>
       integer().nullable().references(Categories, #id)();
   IntColumn get accountId => integer().references(Accounts, #id)();
@@ -130,6 +150,26 @@ class AppDatabase extends _$AppDatabase {
     onUpgrade: (m, from, to) async {
       // 1 -> 2: hạn mức theo danh mục (AC-54); dữ liệu cũ giữ nguyên, hạn mức null.
       if (from < 2) await m.addColumn(categories, categories.budget);
+      // 2 -> 3: số tiền chính xác (D-029). Dựng lại `entries`/`recurring_rules`
+      // để nới CHECK amount > 0 thành >= 0; dữ liệu và khóa ngoại giữ nguyên.
+      if (from < 3) {
+        // `alterTable` tự tắt/bật lại khóa ngoại khi dựng lại bảng.
+        await m.addColumn(accounts, accounts.initialBalanceMicro);
+        await m.addColumn(categories, categories.budgetMicro);
+        await m.alterTable(
+          TableMigration(
+            recurringRules,
+            newColumns: [recurringRules.amountMicro],
+          ),
+        );
+        await m.alterTable(
+          TableMigration(entries, newColumns: [entries.amountMicro]),
+        );
+        final broken = await customSelect('PRAGMA foreign_key_check').get();
+        if (broken.isNotEmpty) {
+          throw StateError('foreign_key_check after v3 migration: $broken');
+        }
+      }
     },
     beforeOpen: (details) async {
       await customStatement('PRAGMA foreign_keys = ON');

@@ -59,9 +59,10 @@ void main() {
       expect(entry.date, '2026-11-03');
     });
 
-    test('từ chối số tiền 0 hoặc âm (AC-05)', () async {
-      await expectLater(insertEntry(0), throwsA(isA<SqliteException>()));
+    test('từ chối số tiền âm; 0 được (khoản quy đổi về 0, D-029)', () async {
       await expectLater(insertEntry(-1), throwsA(isA<SqliteException>()));
+      final id = await insertEntry(0);
+      expect(id, isPositive);
     });
 
     test('từ chối tài khoản không tồn tại (khóa ngoại bật)', () async {

@@ -54,6 +54,16 @@ class $AccountsTable extends Accounts with TableInfo<$AccountsTable, Account> {
     requiredDuringInsert: false,
     defaultValue: const Constant(0),
   );
+  static const VerificationMeta _initialBalanceMicroMeta =
+      const VerificationMeta('initialBalanceMicro');
+  @override
+  late final GeneratedColumn<int> initialBalanceMicro = GeneratedColumn<int>(
+    'initial_balance_micro',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
   static const VerificationMeta _sortOrderMeta = const VerificationMeta(
     'sortOrder',
   );
@@ -87,6 +97,7 @@ class $AccountsTable extends Accounts with TableInfo<$AccountsTable, Account> {
     nameKey,
     name,
     initialBalance,
+    initialBalanceMicro,
     sortOrder,
     archived,
   ];
@@ -123,6 +134,15 @@ class $AccountsTable extends Accounts with TableInfo<$AccountsTable, Account> {
         initialBalance.isAcceptableOrUnknown(
           data['initial_balance']!,
           _initialBalanceMeta,
+        ),
+      );
+    }
+    if (data.containsKey('initial_balance_micro')) {
+      context.handle(
+        _initialBalanceMicroMeta,
+        initialBalanceMicro.isAcceptableOrUnknown(
+          data['initial_balance_micro']!,
+          _initialBalanceMicroMeta,
         ),
       );
     }
@@ -163,6 +183,10 @@ class $AccountsTable extends Accounts with TableInfo<$AccountsTable, Account> {
         DriftSqlType.int,
         data['${effectivePrefix}initial_balance'],
       )!,
+      initialBalanceMicro: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}initial_balance_micro'],
+      ),
       sortOrder: attachedDatabase.typeMapping.read(
         DriftSqlType.int,
         data['${effectivePrefix}sort_order'],
@@ -189,6 +213,10 @@ class Account extends DataClass implements Insertable<Account> {
 
   /// Số dư ban đầu, đơn vị nhỏ nhất của tiền tệ; có thể âm (thẻ tín dụng).
   final int initialBalance;
+
+  /// Số dư ban đầu chính xác, phần triệu đơn vị chính (D-029); null là đúng
+  /// bằng [initialBalance]. Thêm ở schema 3.
+  final int? initialBalanceMicro;
   final int sortOrder;
   final bool archived;
   const Account({
@@ -196,6 +224,7 @@ class Account extends DataClass implements Insertable<Account> {
     this.nameKey,
     this.name,
     required this.initialBalance,
+    this.initialBalanceMicro,
     required this.sortOrder,
     required this.archived,
   });
@@ -210,6 +239,9 @@ class Account extends DataClass implements Insertable<Account> {
       map['name'] = Variable<String>(name);
     }
     map['initial_balance'] = Variable<int>(initialBalance);
+    if (!nullToAbsent || initialBalanceMicro != null) {
+      map['initial_balance_micro'] = Variable<int>(initialBalanceMicro);
+    }
     map['sort_order'] = Variable<int>(sortOrder);
     map['archived'] = Variable<bool>(archived);
     return map;
@@ -223,6 +255,9 @@ class Account extends DataClass implements Insertable<Account> {
           : Value(nameKey),
       name: name == null && nullToAbsent ? const Value.absent() : Value(name),
       initialBalance: Value(initialBalance),
+      initialBalanceMicro: initialBalanceMicro == null && nullToAbsent
+          ? const Value.absent()
+          : Value(initialBalanceMicro),
       sortOrder: Value(sortOrder),
       archived: Value(archived),
     );
@@ -238,6 +273,9 @@ class Account extends DataClass implements Insertable<Account> {
       nameKey: serializer.fromJson<String?>(json['nameKey']),
       name: serializer.fromJson<String?>(json['name']),
       initialBalance: serializer.fromJson<int>(json['initialBalance']),
+      initialBalanceMicro: serializer.fromJson<int?>(
+        json['initialBalanceMicro'],
+      ),
       sortOrder: serializer.fromJson<int>(json['sortOrder']),
       archived: serializer.fromJson<bool>(json['archived']),
     );
@@ -250,6 +288,7 @@ class Account extends DataClass implements Insertable<Account> {
       'nameKey': serializer.toJson<String?>(nameKey),
       'name': serializer.toJson<String?>(name),
       'initialBalance': serializer.toJson<int>(initialBalance),
+      'initialBalanceMicro': serializer.toJson<int?>(initialBalanceMicro),
       'sortOrder': serializer.toJson<int>(sortOrder),
       'archived': serializer.toJson<bool>(archived),
     };
@@ -260,6 +299,7 @@ class Account extends DataClass implements Insertable<Account> {
     Value<String?> nameKey = const Value.absent(),
     Value<String?> name = const Value.absent(),
     int? initialBalance,
+    Value<int?> initialBalanceMicro = const Value.absent(),
     int? sortOrder,
     bool? archived,
   }) => Account(
@@ -267,6 +307,9 @@ class Account extends DataClass implements Insertable<Account> {
     nameKey: nameKey.present ? nameKey.value : this.nameKey,
     name: name.present ? name.value : this.name,
     initialBalance: initialBalance ?? this.initialBalance,
+    initialBalanceMicro: initialBalanceMicro.present
+        ? initialBalanceMicro.value
+        : this.initialBalanceMicro,
     sortOrder: sortOrder ?? this.sortOrder,
     archived: archived ?? this.archived,
   );
@@ -278,6 +321,9 @@ class Account extends DataClass implements Insertable<Account> {
       initialBalance: data.initialBalance.present
           ? data.initialBalance.value
           : this.initialBalance,
+      initialBalanceMicro: data.initialBalanceMicro.present
+          ? data.initialBalanceMicro.value
+          : this.initialBalanceMicro,
       sortOrder: data.sortOrder.present ? data.sortOrder.value : this.sortOrder,
       archived: data.archived.present ? data.archived.value : this.archived,
     );
@@ -290,6 +336,7 @@ class Account extends DataClass implements Insertable<Account> {
           ..write('nameKey: $nameKey, ')
           ..write('name: $name, ')
           ..write('initialBalance: $initialBalance, ')
+          ..write('initialBalanceMicro: $initialBalanceMicro, ')
           ..write('sortOrder: $sortOrder, ')
           ..write('archived: $archived')
           ..write(')'))
@@ -297,8 +344,15 @@ class Account extends DataClass implements Insertable<Account> {
   }
 
   @override
-  int get hashCode =>
-      Object.hash(id, nameKey, name, initialBalance, sortOrder, archived);
+  int get hashCode => Object.hash(
+    id,
+    nameKey,
+    name,
+    initialBalance,
+    initialBalanceMicro,
+    sortOrder,
+    archived,
+  );
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -307,6 +361,7 @@ class Account extends DataClass implements Insertable<Account> {
           other.nameKey == this.nameKey &&
           other.name == this.name &&
           other.initialBalance == this.initialBalance &&
+          other.initialBalanceMicro == this.initialBalanceMicro &&
           other.sortOrder == this.sortOrder &&
           other.archived == this.archived);
 }
@@ -316,6 +371,7 @@ class AccountsCompanion extends UpdateCompanion<Account> {
   final Value<String?> nameKey;
   final Value<String?> name;
   final Value<int> initialBalance;
+  final Value<int?> initialBalanceMicro;
   final Value<int> sortOrder;
   final Value<bool> archived;
   const AccountsCompanion({
@@ -323,6 +379,7 @@ class AccountsCompanion extends UpdateCompanion<Account> {
     this.nameKey = const Value.absent(),
     this.name = const Value.absent(),
     this.initialBalance = const Value.absent(),
+    this.initialBalanceMicro = const Value.absent(),
     this.sortOrder = const Value.absent(),
     this.archived = const Value.absent(),
   });
@@ -331,6 +388,7 @@ class AccountsCompanion extends UpdateCompanion<Account> {
     this.nameKey = const Value.absent(),
     this.name = const Value.absent(),
     this.initialBalance = const Value.absent(),
+    this.initialBalanceMicro = const Value.absent(),
     this.sortOrder = const Value.absent(),
     this.archived = const Value.absent(),
   });
@@ -339,6 +397,7 @@ class AccountsCompanion extends UpdateCompanion<Account> {
     Expression<String>? nameKey,
     Expression<String>? name,
     Expression<int>? initialBalance,
+    Expression<int>? initialBalanceMicro,
     Expression<int>? sortOrder,
     Expression<bool>? archived,
   }) {
@@ -347,6 +406,8 @@ class AccountsCompanion extends UpdateCompanion<Account> {
       if (nameKey != null) 'name_key': nameKey,
       if (name != null) 'name': name,
       if (initialBalance != null) 'initial_balance': initialBalance,
+      if (initialBalanceMicro != null)
+        'initial_balance_micro': initialBalanceMicro,
       if (sortOrder != null) 'sort_order': sortOrder,
       if (archived != null) 'archived': archived,
     });
@@ -357,6 +418,7 @@ class AccountsCompanion extends UpdateCompanion<Account> {
     Value<String?>? nameKey,
     Value<String?>? name,
     Value<int>? initialBalance,
+    Value<int?>? initialBalanceMicro,
     Value<int>? sortOrder,
     Value<bool>? archived,
   }) {
@@ -365,6 +427,7 @@ class AccountsCompanion extends UpdateCompanion<Account> {
       nameKey: nameKey ?? this.nameKey,
       name: name ?? this.name,
       initialBalance: initialBalance ?? this.initialBalance,
+      initialBalanceMicro: initialBalanceMicro ?? this.initialBalanceMicro,
       sortOrder: sortOrder ?? this.sortOrder,
       archived: archived ?? this.archived,
     );
@@ -385,6 +448,9 @@ class AccountsCompanion extends UpdateCompanion<Account> {
     if (initialBalance.present) {
       map['initial_balance'] = Variable<int>(initialBalance.value);
     }
+    if (initialBalanceMicro.present) {
+      map['initial_balance_micro'] = Variable<int>(initialBalanceMicro.value);
+    }
     if (sortOrder.present) {
       map['sort_order'] = Variable<int>(sortOrder.value);
     }
@@ -401,6 +467,7 @@ class AccountsCompanion extends UpdateCompanion<Account> {
           ..write('nameKey: $nameKey, ')
           ..write('name: $name, ')
           ..write('initialBalance: $initialBalance, ')
+          ..write('initialBalanceMicro: $initialBalanceMicro, ')
           ..write('sortOrder: $sortOrder, ')
           ..write('archived: $archived')
           ..write(')'))
@@ -497,6 +564,17 @@ class $CategoriesTable extends Categories
     type: DriftSqlType.int,
     requiredDuringInsert: false,
   );
+  static const VerificationMeta _budgetMicroMeta = const VerificationMeta(
+    'budgetMicro',
+  );
+  @override
+  late final GeneratedColumn<int> budgetMicro = GeneratedColumn<int>(
+    'budget_micro',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
   @override
   List<GeneratedColumn> get $columns => [
     id,
@@ -507,6 +585,7 @@ class $CategoriesTable extends Categories
     color,
     sortOrder,
     budget,
+    budgetMicro,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -563,6 +642,15 @@ class $CategoriesTable extends Categories
         budget.isAcceptableOrUnknown(data['budget']!, _budgetMeta),
       );
     }
+    if (data.containsKey('budget_micro')) {
+      context.handle(
+        _budgetMicroMeta,
+        budgetMicro.isAcceptableOrUnknown(
+          data['budget_micro']!,
+          _budgetMicroMeta,
+        ),
+      );
+    }
     return context;
   }
 
@@ -606,6 +694,10 @@ class $CategoriesTable extends Categories
         DriftSqlType.int,
         data['${effectivePrefix}budget'],
       ),
+      budgetMicro: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}budget_micro'],
+      ),
     );
   }
 
@@ -630,6 +722,10 @@ class Category extends DataClass implements Insertable<Category> {
   /// Hạn mức chi mỗi tháng của danh mục chi, đơn vị nhỏ nhất; null là chưa đặt
   /// (AC-54). Thêm ở schema 2.
   final int? budget;
+
+  /// Hạn mức chính xác, phần triệu đơn vị chính (D-029); null là đúng bằng
+  /// [budget]. Thêm ở schema 3.
+  final int? budgetMicro;
   const Category({
     required this.id,
     required this.type,
@@ -639,6 +735,7 @@ class Category extends DataClass implements Insertable<Category> {
     required this.color,
     required this.sortOrder,
     this.budget,
+    this.budgetMicro,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -659,6 +756,9 @@ class Category extends DataClass implements Insertable<Category> {
     if (!nullToAbsent || budget != null) {
       map['budget'] = Variable<int>(budget);
     }
+    if (!nullToAbsent || budgetMicro != null) {
+      map['budget_micro'] = Variable<int>(budgetMicro);
+    }
     return map;
   }
 
@@ -676,6 +776,9 @@ class Category extends DataClass implements Insertable<Category> {
       budget: budget == null && nullToAbsent
           ? const Value.absent()
           : Value(budget),
+      budgetMicro: budgetMicro == null && nullToAbsent
+          ? const Value.absent()
+          : Value(budgetMicro),
     );
   }
 
@@ -695,6 +798,7 @@ class Category extends DataClass implements Insertable<Category> {
       color: serializer.fromJson<int>(json['color']),
       sortOrder: serializer.fromJson<int>(json['sortOrder']),
       budget: serializer.fromJson<int?>(json['budget']),
+      budgetMicro: serializer.fromJson<int?>(json['budgetMicro']),
     );
   }
   @override
@@ -711,6 +815,7 @@ class Category extends DataClass implements Insertable<Category> {
       'color': serializer.toJson<int>(color),
       'sortOrder': serializer.toJson<int>(sortOrder),
       'budget': serializer.toJson<int?>(budget),
+      'budgetMicro': serializer.toJson<int?>(budgetMicro),
     };
   }
 
@@ -723,6 +828,7 @@ class Category extends DataClass implements Insertable<Category> {
     int? color,
     int? sortOrder,
     Value<int?> budget = const Value.absent(),
+    Value<int?> budgetMicro = const Value.absent(),
   }) => Category(
     id: id ?? this.id,
     type: type ?? this.type,
@@ -732,6 +838,7 @@ class Category extends DataClass implements Insertable<Category> {
     color: color ?? this.color,
     sortOrder: sortOrder ?? this.sortOrder,
     budget: budget.present ? budget.value : this.budget,
+    budgetMicro: budgetMicro.present ? budgetMicro.value : this.budgetMicro,
   );
   Category copyWithCompanion(CategoriesCompanion data) {
     return Category(
@@ -743,6 +850,9 @@ class Category extends DataClass implements Insertable<Category> {
       color: data.color.present ? data.color.value : this.color,
       sortOrder: data.sortOrder.present ? data.sortOrder.value : this.sortOrder,
       budget: data.budget.present ? data.budget.value : this.budget,
+      budgetMicro: data.budgetMicro.present
+          ? data.budgetMicro.value
+          : this.budgetMicro,
     );
   }
 
@@ -756,14 +866,24 @@ class Category extends DataClass implements Insertable<Category> {
           ..write('icon: $icon, ')
           ..write('color: $color, ')
           ..write('sortOrder: $sortOrder, ')
-          ..write('budget: $budget')
+          ..write('budget: $budget, ')
+          ..write('budgetMicro: $budgetMicro')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode =>
-      Object.hash(id, type, nameKey, name, icon, color, sortOrder, budget);
+  int get hashCode => Object.hash(
+    id,
+    type,
+    nameKey,
+    name,
+    icon,
+    color,
+    sortOrder,
+    budget,
+    budgetMicro,
+  );
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -775,7 +895,8 @@ class Category extends DataClass implements Insertable<Category> {
           other.icon == this.icon &&
           other.color == this.color &&
           other.sortOrder == this.sortOrder &&
-          other.budget == this.budget);
+          other.budget == this.budget &&
+          other.budgetMicro == this.budgetMicro);
 }
 
 class CategoriesCompanion extends UpdateCompanion<Category> {
@@ -787,6 +908,7 @@ class CategoriesCompanion extends UpdateCompanion<Category> {
   final Value<int> color;
   final Value<int> sortOrder;
   final Value<int?> budget;
+  final Value<int?> budgetMicro;
   const CategoriesCompanion({
     this.id = const Value.absent(),
     this.type = const Value.absent(),
@@ -796,6 +918,7 @@ class CategoriesCompanion extends UpdateCompanion<Category> {
     this.color = const Value.absent(),
     this.sortOrder = const Value.absent(),
     this.budget = const Value.absent(),
+    this.budgetMicro = const Value.absent(),
   });
   CategoriesCompanion.insert({
     this.id = const Value.absent(),
@@ -806,6 +929,7 @@ class CategoriesCompanion extends UpdateCompanion<Category> {
     required int color,
     this.sortOrder = const Value.absent(),
     this.budget = const Value.absent(),
+    this.budgetMicro = const Value.absent(),
   }) : type = Value(type),
        icon = Value(icon),
        color = Value(color);
@@ -818,6 +942,7 @@ class CategoriesCompanion extends UpdateCompanion<Category> {
     Expression<int>? color,
     Expression<int>? sortOrder,
     Expression<int>? budget,
+    Expression<int>? budgetMicro,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
@@ -828,6 +953,7 @@ class CategoriesCompanion extends UpdateCompanion<Category> {
       if (color != null) 'color': color,
       if (sortOrder != null) 'sort_order': sortOrder,
       if (budget != null) 'budget': budget,
+      if (budgetMicro != null) 'budget_micro': budgetMicro,
     });
   }
 
@@ -840,6 +966,7 @@ class CategoriesCompanion extends UpdateCompanion<Category> {
     Value<int>? color,
     Value<int>? sortOrder,
     Value<int?>? budget,
+    Value<int?>? budgetMicro,
   }) {
     return CategoriesCompanion(
       id: id ?? this.id,
@@ -850,6 +977,7 @@ class CategoriesCompanion extends UpdateCompanion<Category> {
       color: color ?? this.color,
       sortOrder: sortOrder ?? this.sortOrder,
       budget: budget ?? this.budget,
+      budgetMicro: budgetMicro ?? this.budgetMicro,
     );
   }
 
@@ -882,6 +1010,9 @@ class CategoriesCompanion extends UpdateCompanion<Category> {
     if (budget.present) {
       map['budget'] = Variable<int>(budget.value);
     }
+    if (budgetMicro.present) {
+      map['budget_micro'] = Variable<int>(budgetMicro.value);
+    }
     return map;
   }
 
@@ -895,7 +1026,8 @@ class CategoriesCompanion extends UpdateCompanion<Category> {
           ..write('icon: $icon, ')
           ..write('color: $color, ')
           ..write('sortOrder: $sortOrder, ')
-          ..write('budget: $budget')
+          ..write('budget: $budget, ')
+          ..write('budgetMicro: $budgetMicro')
           ..write(')'))
         .toString();
   }
@@ -935,9 +1067,20 @@ class $RecurringRulesTable extends RecurringRules
     'amount',
     aliasedName,
     false,
-    check: () => ComparableExpr(amount).isBiggerThanValue(0),
+    check: () => ComparableExpr(amount).isBiggerOrEqualValue(0),
     type: DriftSqlType.int,
     requiredDuringInsert: true,
+  );
+  static const VerificationMeta _amountMicroMeta = const VerificationMeta(
+    'amountMicro',
+  );
+  @override
+  late final GeneratedColumn<int> amountMicro = GeneratedColumn<int>(
+    'amount_micro',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
   );
   static const VerificationMeta _categoryIdMeta = const VerificationMeta(
     'categoryId',
@@ -1052,6 +1195,7 @@ class $RecurringRulesTable extends RecurringRules
     id,
     type,
     amount,
+    amountMicro,
     categoryId,
     accountId,
     toAccountId,
@@ -1083,6 +1227,15 @@ class $RecurringRulesTable extends RecurringRules
       );
     } else if (isInserting) {
       context.missing(_amountMeta);
+    }
+    if (data.containsKey('amount_micro')) {
+      context.handle(
+        _amountMicroMeta,
+        amountMicro.isAcceptableOrUnknown(
+          data['amount_micro']!,
+          _amountMicroMeta,
+        ),
+      );
     }
     if (data.containsKey('category_id')) {
       context.handle(
@@ -1159,6 +1312,10 @@ class $RecurringRulesTable extends RecurringRules
         DriftSqlType.int,
         data['${effectivePrefix}amount'],
       )!,
+      amountMicro: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}amount_micro'],
+      ),
       categoryId: attachedDatabase.typeMapping.read(
         DriftSqlType.int,
         data['${effectivePrefix}category_id'],
@@ -1210,7 +1367,13 @@ class $RecurringRulesTable extends RecurringRules
 class RecurringRule extends DataClass implements Insertable<RecurringRule> {
   final int id;
   final EntryType type;
+
+  /// Đơn vị nhỏ nhất, ≥ 0 (0 chỉ có thể do quy đổi tiền tệ, D-029).
   final int amount;
+
+  /// Số tiền chính xác, phần triệu đơn vị chính (D-029); null là đúng bằng
+  /// [amount]. Thêm ở schema 3.
+  final int? amountMicro;
   final int? categoryId;
   final int accountId;
   final int? toAccountId;
@@ -1225,6 +1388,7 @@ class RecurringRule extends DataClass implements Insertable<RecurringRule> {
     required this.id,
     required this.type,
     required this.amount,
+    this.amountMicro,
     this.categoryId,
     required this.accountId,
     this.toAccountId,
@@ -1244,6 +1408,9 @@ class RecurringRule extends DataClass implements Insertable<RecurringRule> {
       );
     }
     map['amount'] = Variable<int>(amount);
+    if (!nullToAbsent || amountMicro != null) {
+      map['amount_micro'] = Variable<int>(amountMicro);
+    }
     if (!nullToAbsent || categoryId != null) {
       map['category_id'] = Variable<int>(categoryId);
     }
@@ -1272,6 +1439,9 @@ class RecurringRule extends DataClass implements Insertable<RecurringRule> {
       id: Value(id),
       type: Value(type),
       amount: Value(amount),
+      amountMicro: amountMicro == null && nullToAbsent
+          ? const Value.absent()
+          : Value(amountMicro),
       categoryId: categoryId == null && nullToAbsent
           ? const Value.absent()
           : Value(categoryId),
@@ -1300,6 +1470,7 @@ class RecurringRule extends DataClass implements Insertable<RecurringRule> {
         serializer.fromJson<int>(json['type']),
       ),
       amount: serializer.fromJson<int>(json['amount']),
+      amountMicro: serializer.fromJson<int?>(json['amountMicro']),
       categoryId: serializer.fromJson<int?>(json['categoryId']),
       accountId: serializer.fromJson<int>(json['accountId']),
       toAccountId: serializer.fromJson<int?>(json['toAccountId']),
@@ -1323,6 +1494,7 @@ class RecurringRule extends DataClass implements Insertable<RecurringRule> {
         $RecurringRulesTable.$convertertype.toJson(type),
       ),
       'amount': serializer.toJson<int>(amount),
+      'amountMicro': serializer.toJson<int?>(amountMicro),
       'categoryId': serializer.toJson<int?>(categoryId),
       'accountId': serializer.toJson<int>(accountId),
       'toAccountId': serializer.toJson<int?>(toAccountId),
@@ -1340,6 +1512,7 @@ class RecurringRule extends DataClass implements Insertable<RecurringRule> {
     int? id,
     EntryType? type,
     int? amount,
+    Value<int?> amountMicro = const Value.absent(),
     Value<int?> categoryId = const Value.absent(),
     int? accountId,
     Value<int?> toAccountId = const Value.absent(),
@@ -1352,6 +1525,7 @@ class RecurringRule extends DataClass implements Insertable<RecurringRule> {
     id: id ?? this.id,
     type: type ?? this.type,
     amount: amount ?? this.amount,
+    amountMicro: amountMicro.present ? amountMicro.value : this.amountMicro,
     categoryId: categoryId.present ? categoryId.value : this.categoryId,
     accountId: accountId ?? this.accountId,
     toAccountId: toAccountId.present ? toAccountId.value : this.toAccountId,
@@ -1368,6 +1542,9 @@ class RecurringRule extends DataClass implements Insertable<RecurringRule> {
       id: data.id.present ? data.id.value : this.id,
       type: data.type.present ? data.type.value : this.type,
       amount: data.amount.present ? data.amount.value : this.amount,
+      amountMicro: data.amountMicro.present
+          ? data.amountMicro.value
+          : this.amountMicro,
       categoryId: data.categoryId.present
           ? data.categoryId.value
           : this.categoryId,
@@ -1391,6 +1568,7 @@ class RecurringRule extends DataClass implements Insertable<RecurringRule> {
           ..write('id: $id, ')
           ..write('type: $type, ')
           ..write('amount: $amount, ')
+          ..write('amountMicro: $amountMicro, ')
           ..write('categoryId: $categoryId, ')
           ..write('accountId: $accountId, ')
           ..write('toAccountId: $toAccountId, ')
@@ -1408,6 +1586,7 @@ class RecurringRule extends DataClass implements Insertable<RecurringRule> {
     id,
     type,
     amount,
+    amountMicro,
     categoryId,
     accountId,
     toAccountId,
@@ -1424,6 +1603,7 @@ class RecurringRule extends DataClass implements Insertable<RecurringRule> {
           other.id == this.id &&
           other.type == this.type &&
           other.amount == this.amount &&
+          other.amountMicro == this.amountMicro &&
           other.categoryId == this.categoryId &&
           other.accountId == this.accountId &&
           other.toAccountId == this.toAccountId &&
@@ -1438,6 +1618,7 @@ class RecurringRulesCompanion extends UpdateCompanion<RecurringRule> {
   final Value<int> id;
   final Value<EntryType> type;
   final Value<int> amount;
+  final Value<int?> amountMicro;
   final Value<int?> categoryId;
   final Value<int> accountId;
   final Value<int?> toAccountId;
@@ -1450,6 +1631,7 @@ class RecurringRulesCompanion extends UpdateCompanion<RecurringRule> {
     this.id = const Value.absent(),
     this.type = const Value.absent(),
     this.amount = const Value.absent(),
+    this.amountMicro = const Value.absent(),
     this.categoryId = const Value.absent(),
     this.accountId = const Value.absent(),
     this.toAccountId = const Value.absent(),
@@ -1463,6 +1645,7 @@ class RecurringRulesCompanion extends UpdateCompanion<RecurringRule> {
     this.id = const Value.absent(),
     required EntryType type,
     required int amount,
+    this.amountMicro = const Value.absent(),
     this.categoryId = const Value.absent(),
     required int accountId,
     this.toAccountId = const Value.absent(),
@@ -1480,6 +1663,7 @@ class RecurringRulesCompanion extends UpdateCompanion<RecurringRule> {
     Expression<int>? id,
     Expression<int>? type,
     Expression<int>? amount,
+    Expression<int>? amountMicro,
     Expression<int>? categoryId,
     Expression<int>? accountId,
     Expression<int>? toAccountId,
@@ -1493,6 +1677,7 @@ class RecurringRulesCompanion extends UpdateCompanion<RecurringRule> {
       if (id != null) 'id': id,
       if (type != null) 'type': type,
       if (amount != null) 'amount': amount,
+      if (amountMicro != null) 'amount_micro': amountMicro,
       if (categoryId != null) 'category_id': categoryId,
       if (accountId != null) 'account_id': accountId,
       if (toAccountId != null) 'to_account_id': toAccountId,
@@ -1508,6 +1693,7 @@ class RecurringRulesCompanion extends UpdateCompanion<RecurringRule> {
     Value<int>? id,
     Value<EntryType>? type,
     Value<int>? amount,
+    Value<int?>? amountMicro,
     Value<int?>? categoryId,
     Value<int>? accountId,
     Value<int?>? toAccountId,
@@ -1521,6 +1707,7 @@ class RecurringRulesCompanion extends UpdateCompanion<RecurringRule> {
       id: id ?? this.id,
       type: type ?? this.type,
       amount: amount ?? this.amount,
+      amountMicro: amountMicro ?? this.amountMicro,
       categoryId: categoryId ?? this.categoryId,
       accountId: accountId ?? this.accountId,
       toAccountId: toAccountId ?? this.toAccountId,
@@ -1545,6 +1732,9 @@ class RecurringRulesCompanion extends UpdateCompanion<RecurringRule> {
     }
     if (amount.present) {
       map['amount'] = Variable<int>(amount.value);
+    }
+    if (amountMicro.present) {
+      map['amount_micro'] = Variable<int>(amountMicro.value);
     }
     if (categoryId.present) {
       map['category_id'] = Variable<int>(categoryId.value);
@@ -1581,6 +1771,7 @@ class RecurringRulesCompanion extends UpdateCompanion<RecurringRule> {
           ..write('id: $id, ')
           ..write('type: $type, ')
           ..write('amount: $amount, ')
+          ..write('amountMicro: $amountMicro, ')
           ..write('categoryId: $categoryId, ')
           ..write('accountId: $accountId, ')
           ..write('toAccountId: $toAccountId, ')
@@ -1627,9 +1818,20 @@ class $EntriesTable extends Entries with TableInfo<$EntriesTable, Entry> {
     'amount',
     aliasedName,
     false,
-    check: () => ComparableExpr(amount).isBiggerThanValue(0),
+    check: () => ComparableExpr(amount).isBiggerOrEqualValue(0),
     type: DriftSqlType.int,
     requiredDuringInsert: true,
+  );
+  static const VerificationMeta _amountMicroMeta = const VerificationMeta(
+    'amountMicro',
+  );
+  @override
+  late final GeneratedColumn<int> amountMicro = GeneratedColumn<int>(
+    'amount_micro',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
   );
   static const VerificationMeta _categoryIdMeta = const VerificationMeta(
     'categoryId',
@@ -1727,6 +1929,7 @@ class $EntriesTable extends Entries with TableInfo<$EntriesTable, Entry> {
     id,
     type,
     amount,
+    amountMicro,
     categoryId,
     accountId,
     toAccountId,
@@ -1757,6 +1960,15 @@ class $EntriesTable extends Entries with TableInfo<$EntriesTable, Entry> {
       );
     } else if (isInserting) {
       context.missing(_amountMeta);
+    }
+    if (data.containsKey('amount_micro')) {
+      context.handle(
+        _amountMicroMeta,
+        amountMicro.isAcceptableOrUnknown(
+          data['amount_micro']!,
+          _amountMicroMeta,
+        ),
+      );
     }
     if (data.containsKey('category_id')) {
       context.handle(
@@ -1833,6 +2045,10 @@ class $EntriesTable extends Entries with TableInfo<$EntriesTable, Entry> {
         DriftSqlType.int,
         data['${effectivePrefix}amount'],
       )!,
+      amountMicro: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}amount_micro'],
+      ),
       categoryId: attachedDatabase.typeMapping.read(
         DriftSqlType.int,
         data['${effectivePrefix}category_id'],
@@ -1877,8 +2093,13 @@ class Entry extends DataClass implements Insertable<Entry> {
   final int id;
   final EntryType type;
 
-  /// Đơn vị nhỏ nhất của tiền tệ, luôn > 0 (AC-05, D-005).
+  /// Đơn vị nhỏ nhất của tiền tệ (D-005). Người dùng gõ phải > 0 (AC-05); 0
+  /// chỉ có thể do quy đổi tiền tệ làm tròn một số rất nhỏ (D-029).
   final int amount;
+
+  /// Số tiền chính xác, phần triệu đơn vị chính (D-029); null là đúng bằng
+  /// [amount]. Thêm ở schema 3.
+  final int? amountMicro;
   final int? categoryId;
   final int accountId;
 
@@ -1894,6 +2115,7 @@ class Entry extends DataClass implements Insertable<Entry> {
     required this.id,
     required this.type,
     required this.amount,
+    this.amountMicro,
     this.categoryId,
     required this.accountId,
     this.toAccountId,
@@ -1910,6 +2132,9 @@ class Entry extends DataClass implements Insertable<Entry> {
       map['type'] = Variable<int>($EntriesTable.$convertertype.toSql(type));
     }
     map['amount'] = Variable<int>(amount);
+    if (!nullToAbsent || amountMicro != null) {
+      map['amount_micro'] = Variable<int>(amountMicro);
+    }
     if (!nullToAbsent || categoryId != null) {
       map['category_id'] = Variable<int>(categoryId);
     }
@@ -1933,6 +2158,9 @@ class Entry extends DataClass implements Insertable<Entry> {
       id: Value(id),
       type: Value(type),
       amount: Value(amount),
+      amountMicro: amountMicro == null && nullToAbsent
+          ? const Value.absent()
+          : Value(amountMicro),
       categoryId: categoryId == null && nullToAbsent
           ? const Value.absent()
           : Value(categoryId),
@@ -1960,6 +2188,7 @@ class Entry extends DataClass implements Insertable<Entry> {
         serializer.fromJson<int>(json['type']),
       ),
       amount: serializer.fromJson<int>(json['amount']),
+      amountMicro: serializer.fromJson<int?>(json['amountMicro']),
       categoryId: serializer.fromJson<int?>(json['categoryId']),
       accountId: serializer.fromJson<int>(json['accountId']),
       toAccountId: serializer.fromJson<int?>(json['toAccountId']),
@@ -1976,6 +2205,7 @@ class Entry extends DataClass implements Insertable<Entry> {
       'id': serializer.toJson<int>(id),
       'type': serializer.toJson<int>($EntriesTable.$convertertype.toJson(type)),
       'amount': serializer.toJson<int>(amount),
+      'amountMicro': serializer.toJson<int?>(amountMicro),
       'categoryId': serializer.toJson<int?>(categoryId),
       'accountId': serializer.toJson<int>(accountId),
       'toAccountId': serializer.toJson<int?>(toAccountId),
@@ -1990,6 +2220,7 @@ class Entry extends DataClass implements Insertable<Entry> {
     int? id,
     EntryType? type,
     int? amount,
+    Value<int?> amountMicro = const Value.absent(),
     Value<int?> categoryId = const Value.absent(),
     int? accountId,
     Value<int?> toAccountId = const Value.absent(),
@@ -2001,6 +2232,7 @@ class Entry extends DataClass implements Insertable<Entry> {
     id: id ?? this.id,
     type: type ?? this.type,
     amount: amount ?? this.amount,
+    amountMicro: amountMicro.present ? amountMicro.value : this.amountMicro,
     categoryId: categoryId.present ? categoryId.value : this.categoryId,
     accountId: accountId ?? this.accountId,
     toAccountId: toAccountId.present ? toAccountId.value : this.toAccountId,
@@ -2016,6 +2248,9 @@ class Entry extends DataClass implements Insertable<Entry> {
       id: data.id.present ? data.id.value : this.id,
       type: data.type.present ? data.type.value : this.type,
       amount: data.amount.present ? data.amount.value : this.amount,
+      amountMicro: data.amountMicro.present
+          ? data.amountMicro.value
+          : this.amountMicro,
       categoryId: data.categoryId.present
           ? data.categoryId.value
           : this.categoryId,
@@ -2038,6 +2273,7 @@ class Entry extends DataClass implements Insertable<Entry> {
           ..write('id: $id, ')
           ..write('type: $type, ')
           ..write('amount: $amount, ')
+          ..write('amountMicro: $amountMicro, ')
           ..write('categoryId: $categoryId, ')
           ..write('accountId: $accountId, ')
           ..write('toAccountId: $toAccountId, ')
@@ -2054,6 +2290,7 @@ class Entry extends DataClass implements Insertable<Entry> {
     id,
     type,
     amount,
+    amountMicro,
     categoryId,
     accountId,
     toAccountId,
@@ -2069,6 +2306,7 @@ class Entry extends DataClass implements Insertable<Entry> {
           other.id == this.id &&
           other.type == this.type &&
           other.amount == this.amount &&
+          other.amountMicro == this.amountMicro &&
           other.categoryId == this.categoryId &&
           other.accountId == this.accountId &&
           other.toAccountId == this.toAccountId &&
@@ -2082,6 +2320,7 @@ class EntriesCompanion extends UpdateCompanion<Entry> {
   final Value<int> id;
   final Value<EntryType> type;
   final Value<int> amount;
+  final Value<int?> amountMicro;
   final Value<int?> categoryId;
   final Value<int> accountId;
   final Value<int?> toAccountId;
@@ -2093,6 +2332,7 @@ class EntriesCompanion extends UpdateCompanion<Entry> {
     this.id = const Value.absent(),
     this.type = const Value.absent(),
     this.amount = const Value.absent(),
+    this.amountMicro = const Value.absent(),
     this.categoryId = const Value.absent(),
     this.accountId = const Value.absent(),
     this.toAccountId = const Value.absent(),
@@ -2105,6 +2345,7 @@ class EntriesCompanion extends UpdateCompanion<Entry> {
     this.id = const Value.absent(),
     required EntryType type,
     required int amount,
+    this.amountMicro = const Value.absent(),
     this.categoryId = const Value.absent(),
     required int accountId,
     this.toAccountId = const Value.absent(),
@@ -2120,6 +2361,7 @@ class EntriesCompanion extends UpdateCompanion<Entry> {
     Expression<int>? id,
     Expression<int>? type,
     Expression<int>? amount,
+    Expression<int>? amountMicro,
     Expression<int>? categoryId,
     Expression<int>? accountId,
     Expression<int>? toAccountId,
@@ -2132,6 +2374,7 @@ class EntriesCompanion extends UpdateCompanion<Entry> {
       if (id != null) 'id': id,
       if (type != null) 'type': type,
       if (amount != null) 'amount': amount,
+      if (amountMicro != null) 'amount_micro': amountMicro,
       if (categoryId != null) 'category_id': categoryId,
       if (accountId != null) 'account_id': accountId,
       if (toAccountId != null) 'to_account_id': toAccountId,
@@ -2146,6 +2389,7 @@ class EntriesCompanion extends UpdateCompanion<Entry> {
     Value<int>? id,
     Value<EntryType>? type,
     Value<int>? amount,
+    Value<int?>? amountMicro,
     Value<int?>? categoryId,
     Value<int>? accountId,
     Value<int?>? toAccountId,
@@ -2158,6 +2402,7 @@ class EntriesCompanion extends UpdateCompanion<Entry> {
       id: id ?? this.id,
       type: type ?? this.type,
       amount: amount ?? this.amount,
+      amountMicro: amountMicro ?? this.amountMicro,
       categoryId: categoryId ?? this.categoryId,
       accountId: accountId ?? this.accountId,
       toAccountId: toAccountId ?? this.toAccountId,
@@ -2181,6 +2426,9 @@ class EntriesCompanion extends UpdateCompanion<Entry> {
     }
     if (amount.present) {
       map['amount'] = Variable<int>(amount.value);
+    }
+    if (amountMicro.present) {
+      map['amount_micro'] = Variable<int>(amountMicro.value);
     }
     if (categoryId.present) {
       map['category_id'] = Variable<int>(categoryId.value);
@@ -2212,6 +2460,7 @@ class EntriesCompanion extends UpdateCompanion<Entry> {
           ..write('id: $id, ')
           ..write('type: $type, ')
           ..write('amount: $amount, ')
+          ..write('amountMicro: $amountMicro, ')
           ..write('categoryId: $categoryId, ')
           ..write('accountId: $accountId, ')
           ..write('toAccountId: $toAccountId, ')
@@ -2455,6 +2704,7 @@ typedef $$AccountsTableCreateCompanionBuilder = AccountsCompanion Function({
   Value<String?> nameKey,
   Value<String?> name,
   Value<int> initialBalance,
+  Value<int?> initialBalanceMicro,
   Value<int> sortOrder,
   Value<bool> archived,
 });
@@ -2463,6 +2713,7 @@ typedef $$AccountsTableUpdateCompanionBuilder = AccountsCompanion Function({
   Value<String?> nameKey,
   Value<String?> name,
   Value<int> initialBalance,
+  Value<int?> initialBalanceMicro,
   Value<int> sortOrder,
   Value<bool> archived,
 });
@@ -2574,6 +2825,11 @@ class $$AccountsTableFilterComposer
 
   ColumnFilters<int> get initialBalance => $composableBuilder(
     column: $table.initialBalance,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get initialBalanceMicro => $composableBuilder(
+    column: $table.initialBalanceMicro,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -2717,6 +2973,11 @@ class $$AccountsTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<int> get initialBalanceMicro => $composableBuilder(
+    column: $table.initialBalanceMicro,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<int> get sortOrder => $composableBuilder(
     column: $table.sortOrder,
     builder: (column) => ColumnOrderings(column),
@@ -2748,6 +3009,11 @@ class $$AccountsTableAnnotationComposer
 
   GeneratedColumn<int> get initialBalance => $composableBuilder(
     column: $table.initialBalance,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get initialBalanceMicro => $composableBuilder(
+    column: $table.initialBalanceMicro,
     builder: (column) => column,
   );
 
@@ -2895,6 +3161,7 @@ class $$AccountsTableTableManager
                 Value<String?> nameKey = const Value.absent(),
                 Value<String?> name = const Value.absent(),
                 Value<int> initialBalance = const Value.absent(),
+                Value<int?> initialBalanceMicro = const Value.absent(),
                 Value<int> sortOrder = const Value.absent(),
                 Value<bool> archived = const Value.absent(),
               }) => AccountsCompanion(
@@ -2902,6 +3169,7 @@ class $$AccountsTableTableManager
                 nameKey: nameKey,
                 name: name,
                 initialBalance: initialBalance,
+                initialBalanceMicro: initialBalanceMicro,
                 sortOrder: sortOrder,
                 archived: archived,
               ),
@@ -2911,6 +3179,7 @@ class $$AccountsTableTableManager
                 Value<String?> nameKey = const Value.absent(),
                 Value<String?> name = const Value.absent(),
                 Value<int> initialBalance = const Value.absent(),
+                Value<int?> initialBalanceMicro = const Value.absent(),
                 Value<int> sortOrder = const Value.absent(),
                 Value<bool> archived = const Value.absent(),
               }) => AccountsCompanion.insert(
@@ -2918,6 +3187,7 @@ class $$AccountsTableTableManager
                 nameKey: nameKey,
                 name: name,
                 initialBalance: initialBalance,
+                initialBalanceMicro: initialBalanceMicro,
                 sortOrder: sortOrder,
                 archived: archived,
               ),
@@ -3063,6 +3333,7 @@ typedef $$CategoriesTableCreateCompanionBuilder = CategoriesCompanion Function({
   required int color,
   Value<int> sortOrder,
   Value<int?> budget,
+  Value<int?> budgetMicro,
 });
 typedef $$CategoriesTableUpdateCompanionBuilder = CategoriesCompanion Function({
   Value<int> id,
@@ -3073,6 +3344,7 @@ typedef $$CategoriesTableUpdateCompanionBuilder = CategoriesCompanion Function({
   Value<int> color,
   Value<int> sortOrder,
   Value<int?> budget,
+  Value<int?> budgetMicro,
 });
 
 final class $$CategoriesTableReferences
@@ -3164,6 +3436,11 @@ class $$CategoriesTableFilterComposer
 
   ColumnFilters<int> get budget => $composableBuilder(
     column: $table.budget,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get budgetMicro => $composableBuilder(
+    column: $table.budgetMicro,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -3266,6 +3543,11 @@ class $$CategoriesTableOrderingComposer
     column: $table.budget,
     builder: (column) => ColumnOrderings(column),
   );
+
+  ColumnOrderings<int> get budgetMicro => $composableBuilder(
+    column: $table.budgetMicro,
+    builder: (column) => ColumnOrderings(column),
+  );
 }
 
 class $$CategoriesTableAnnotationComposer
@@ -3300,6 +3582,11 @@ class $$CategoriesTableAnnotationComposer
 
   GeneratedColumn<int> get budget =>
       $composableBuilder(column: $table.budget, builder: (column) => column);
+
+  GeneratedColumn<int> get budgetMicro => $composableBuilder(
+    column: $table.budgetMicro,
+    builder: (column) => column,
+  );
 
   Expression<T> recurringRulesRefs<T extends Object>(
     Expression<T> Function($$RecurringRulesTableAnnotationComposer a) f,
@@ -3388,6 +3675,7 @@ class $$CategoriesTableTableManager
                 Value<int> color = const Value.absent(),
                 Value<int> sortOrder = const Value.absent(),
                 Value<int?> budget = const Value.absent(),
+                Value<int?> budgetMicro = const Value.absent(),
               }) => CategoriesCompanion(
                 id: id,
                 type: type,
@@ -3397,6 +3685,7 @@ class $$CategoriesTableTableManager
                 color: color,
                 sortOrder: sortOrder,
                 budget: budget,
+                budgetMicro: budgetMicro,
               ),
           createCompanionCallback:
               ({
@@ -3408,6 +3697,7 @@ class $$CategoriesTableTableManager
                 required int color,
                 Value<int> sortOrder = const Value.absent(),
                 Value<int?> budget = const Value.absent(),
+                Value<int?> budgetMicro = const Value.absent(),
               }) => CategoriesCompanion.insert(
                 id: id,
                 type: type,
@@ -3417,6 +3707,7 @@ class $$CategoriesTableTableManager
                 color: color,
                 sortOrder: sortOrder,
                 budget: budget,
+                budgetMicro: budgetMicro,
               ),
           withReferenceMapper: (p0) => p0
               .map(
@@ -3504,6 +3795,7 @@ typedef $$RecurringRulesTableCreateCompanionBuilder =
       Value<int> id,
       required EntryType type,
       required int amount,
+      Value<int?> amountMicro,
       Value<int?> categoryId,
       required int accountId,
       Value<int?> toAccountId,
@@ -3518,6 +3810,7 @@ typedef $$RecurringRulesTableUpdateCompanionBuilder =
       Value<int> id,
       Value<EntryType> type,
       Value<int> amount,
+      Value<int?> amountMicro,
       Value<int?> categoryId,
       Value<int> accountId,
       Value<int?> toAccountId,
@@ -3629,6 +3922,11 @@ class $$RecurringRulesTableFilterComposer
 
   ColumnFilters<int> get amount => $composableBuilder(
     column: $table.amount,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get amountMicro => $composableBuilder(
+    column: $table.amountMicro,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -3777,6 +4075,11 @@ class $$RecurringRulesTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<int> get amountMicro => $composableBuilder(
+    column: $table.amountMicro,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<String> get note => $composableBuilder(
     column: $table.note,
     builder: (column) => ColumnOrderings(column),
@@ -3889,6 +4192,11 @@ class $$RecurringRulesTableAnnotationComposer
 
   GeneratedColumn<int> get amount =>
       $composableBuilder(column: $table.amount, builder: (column) => column);
+
+  GeneratedColumn<int> get amountMicro => $composableBuilder(
+    column: $table.amountMicro,
+    builder: (column) => column,
+  );
 
   GeneratedColumn<String> get note =>
       $composableBuilder(column: $table.note, builder: (column) => column);
@@ -4040,6 +4348,7 @@ class $$RecurringRulesTableTableManager
                 Value<int> id = const Value.absent(),
                 Value<EntryType> type = const Value.absent(),
                 Value<int> amount = const Value.absent(),
+                Value<int?> amountMicro = const Value.absent(),
                 Value<int?> categoryId = const Value.absent(),
                 Value<int> accountId = const Value.absent(),
                 Value<int?> toAccountId = const Value.absent(),
@@ -4052,6 +4361,7 @@ class $$RecurringRulesTableTableManager
                 id: id,
                 type: type,
                 amount: amount,
+                amountMicro: amountMicro,
                 categoryId: categoryId,
                 accountId: accountId,
                 toAccountId: toAccountId,
@@ -4066,6 +4376,7 @@ class $$RecurringRulesTableTableManager
                 Value<int> id = const Value.absent(),
                 required EntryType type,
                 required int amount,
+                Value<int?> amountMicro = const Value.absent(),
                 Value<int?> categoryId = const Value.absent(),
                 required int accountId,
                 Value<int?> toAccountId = const Value.absent(),
@@ -4078,6 +4389,7 @@ class $$RecurringRulesTableTableManager
                 id: id,
                 type: type,
                 amount: amount,
+                amountMicro: amountMicro,
                 categoryId: categoryId,
                 accountId: accountId,
                 toAccountId: toAccountId,
@@ -4210,6 +4522,7 @@ typedef $$EntriesTableCreateCompanionBuilder = EntriesCompanion Function({
   Value<int> id,
   required EntryType type,
   required int amount,
+  Value<int?> amountMicro,
   Value<int?> categoryId,
   required int accountId,
   Value<int?> toAccountId,
@@ -4222,6 +4535,7 @@ typedef $$EntriesTableUpdateCompanionBuilder = EntriesCompanion Function({
   Value<int> id,
   Value<EntryType> type,
   Value<int> amount,
+  Value<int?> amountMicro,
   Value<int?> categoryId,
   Value<int> accountId,
   Value<int?> toAccountId,
@@ -4327,6 +4641,11 @@ class $$EntriesTableFilterComposer
 
   ColumnFilters<int> get amount => $composableBuilder(
     column: $table.amount,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get amountMicro => $composableBuilder(
+    column: $table.amountMicro,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -4462,6 +4781,11 @@ class $$EntriesTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<int> get amountMicro => $composableBuilder(
+    column: $table.amountMicro,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<String> get date => $composableBuilder(
     column: $table.date,
     builder: (column) => ColumnOrderings(column),
@@ -4587,6 +4911,11 @@ class $$EntriesTableAnnotationComposer
 
   GeneratedColumn<int> get amount =>
       $composableBuilder(column: $table.amount, builder: (column) => column);
+
+  GeneratedColumn<int> get amountMicro => $composableBuilder(
+    column: $table.amountMicro,
+    builder: (column) => column,
+  );
 
   GeneratedColumn<String> get date =>
       $composableBuilder(column: $table.date, builder: (column) => column);
@@ -4726,6 +5055,7 @@ class $$EntriesTableTableManager
                 Value<int> id = const Value.absent(),
                 Value<EntryType> type = const Value.absent(),
                 Value<int> amount = const Value.absent(),
+                Value<int?> amountMicro = const Value.absent(),
                 Value<int?> categoryId = const Value.absent(),
                 Value<int> accountId = const Value.absent(),
                 Value<int?> toAccountId = const Value.absent(),
@@ -4737,6 +5067,7 @@ class $$EntriesTableTableManager
                 id: id,
                 type: type,
                 amount: amount,
+                amountMicro: amountMicro,
                 categoryId: categoryId,
                 accountId: accountId,
                 toAccountId: toAccountId,
@@ -4750,6 +5081,7 @@ class $$EntriesTableTableManager
                 Value<int> id = const Value.absent(),
                 required EntryType type,
                 required int amount,
+                Value<int?> amountMicro = const Value.absent(),
                 Value<int?> categoryId = const Value.absent(),
                 required int accountId,
                 Value<int?> toAccountId = const Value.absent(),
@@ -4761,6 +5093,7 @@ class $$EntriesTableTableManager
                 id: id,
                 type: type,
                 amount: amount,
+                amountMicro: amountMicro,
                 categoryId: categoryId,
                 accountId: accountId,
                 toAccountId: toAccountId,
