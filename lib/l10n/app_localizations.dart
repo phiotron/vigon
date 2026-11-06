@@ -2485,6 +2485,186 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Remaining'**
   String get debtRemainingLabel;
+
+  /// No description provided for @importQueue.
+  ///
+  /// In en, this message translates to:
+  /// **'Queue'**
+  String get importQueue;
+
+  /// No description provided for @importQueueCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 record waiting for a category} other{{count} records waiting for a category}}'**
+  String importQueueCount(int count);
+
+  /// No description provided for @importQueueNone.
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing is waiting'**
+  String get importQueueNone;
+
+  /// No description provided for @queueEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing is waiting. When a new receipt email arrives, it shows up here for you to pick a category.'**
+  String get queueEmpty;
+
+  /// No description provided for @queuePayeeUnknown.
+  ///
+  /// In en, this message translates to:
+  /// **'Unknown payee'**
+  String get queuePayeeUnknown;
+
+  /// No description provided for @queueFromAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'From {account}'**
+  String queueFromAccount(String account);
+
+  /// No description provided for @queueCurrencyNote.
+  ///
+  /// In en, this message translates to:
+  /// **'The email is in {emailCurrency} but the app uses {appCurrency}. You\'ll enter the amount in the next step.'**
+  String queueCurrencyNote(String emailCurrency, String appCurrency);
+
+  /// No description provided for @queueSuggested.
+  ///
+  /// In en, this message translates to:
+  /// **'Suggested'**
+  String get queueSuggested;
+
+  /// No description provided for @queueSaveTo.
+  ///
+  /// In en, this message translates to:
+  /// **'Save to {category}'**
+  String queueSaveTo(String category);
+
+  /// No description provided for @queueMoveTo.
+  ///
+  /// In en, this message translates to:
+  /// **'Move to {account}'**
+  String queueMoveTo(String account);
+
+  /// No description provided for @queueEditFirst.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit before saving'**
+  String get queueEditFirst;
+
+  /// No description provided for @queueMoveToMine.
+  ///
+  /// In en, this message translates to:
+  /// **'Move to my account'**
+  String get queueMoveToMine;
+
+  /// No description provided for @queueMoveToTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Move to account'**
+  String get queueMoveToTitle;
+
+  /// No description provided for @queueNoOtherAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'There is no other account to choose'**
+  String get queueNoOtherAccount;
+
+  /// No description provided for @queueSkip.
+  ///
+  /// In en, this message translates to:
+  /// **'Skip'**
+  String get queueSkip;
+
+  /// No description provided for @queueSkipTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Skip this record?'**
+  String get queueSkipTitle;
+
+  /// No description provided for @queueSkipBody.
+  ///
+  /// In en, this message translates to:
+  /// **'It leaves the queue and won\'t be imported again from this email.'**
+  String get queueSkipBody;
+
+  /// No description provided for @queueSaved.
+  ///
+  /// In en, this message translates to:
+  /// **'Saved to {category}'**
+  String queueSaved(String category);
+
+  /// No description provided for @queueMoved.
+  ///
+  /// In en, this message translates to:
+  /// **'Moved to {account}'**
+  String queueMoved(String account);
+
+  /// No description provided for @queueSkipped.
+  ///
+  /// In en, this message translates to:
+  /// **'Skipped'**
+  String get queueSkipped;
+
+  /// No description provided for @queueSuggestions.
+  ///
+  /// In en, this message translates to:
+  /// **'Remembered suggestions'**
+  String get queueSuggestions;
+
+  /// No description provided for @queueSuggestionsEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No suggestions yet. Ví Gọn remembers the category you pick for each payee to suggest it next time.'**
+  String get queueSuggestionsEmpty;
+
+  /// No description provided for @queueSuggestionMove.
+  ///
+  /// In en, this message translates to:
+  /// **'Move to {account}'**
+  String queueSuggestionMove(String account);
+
+  /// No description provided for @queueSuggestionDelete.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete suggestion'**
+  String get queueSuggestionDelete;
+
+  /// No description provided for @queueSuggestionDeleted.
+  ///
+  /// In en, this message translates to:
+  /// **'Suggestion deleted'**
+  String get queueSuggestionDeleted;
+
+  /// No description provided for @queueAutoAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Created account {account}'**
+  String queueAutoAccount(String account);
+
+  /// No description provided for @queueAttach.
+  ///
+  /// In en, this message translates to:
+  /// **'Attach to an existing account'**
+  String get queueAttach;
+
+  /// No description provided for @queueAttachTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Attach to account'**
+  String get queueAttachTitle;
+
+  /// No description provided for @queueDismiss.
+  ///
+  /// In en, this message translates to:
+  /// **'Dismiss'**
+  String get queueDismiss;
+
+  /// No description provided for @queueMatched.
+  ///
+  /// In en, this message translates to:
+  /// **'Matched with MB email {time}'**
+  String queueMatched(String time);
 }
 
 class _AppLocalizationsDelegate

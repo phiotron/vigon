@@ -17,6 +17,7 @@ import '../../ui/messenger.dart';
 import '../../ui/tokens.g.dart';
 import '../entry/entry_time.dart';
 import '../entry/keypad.dart';
+import '../import_queue/queue_match.dart';
 
 /// Chuyển tiền giữa hai tài khoản (AC-19); sửa hoặc xóa lần chuyển có sẵn.
 class TransferScreen extends ConsumerStatefulWidget {
@@ -108,8 +109,9 @@ class _TransferScreenState extends ConsumerState<TransferScreen> {
     final repo = ref.read(entryRepositoryProvider);
     final note = _note.text.trim().isEmpty ? null : _note.text.trim();
     final original = _original;
+    int savedId;
     if (original == null) {
-      await repo.addTransfer(
+      savedId = await repo.addTransfer(
         fromAccountId: from,
         toAccountId: to,
         amount: amount,
@@ -128,8 +130,12 @@ class _TransferScreenState extends ConsumerState<TransferScreen> {
           note: Value(note),
         ),
       );
+      savedId = original.id;
     }
+    // Chuyển tiền đi vừa lưu khớp một mục đang chờ (AC-94, AC-91).
+    final matched = mounted ? await matchQueueFor(ref, context, savedId) : null;
     if (mounted) context.pop();
+    matched?.showUndo();
   }
 
   Future<void> _delete() async {

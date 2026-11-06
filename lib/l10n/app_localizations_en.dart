@@ -1408,4 +1408,123 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get debtRemainingLabel => 'Remaining';
+
+  @override
+  String get importQueue => 'Queue';
+
+  @override
+  String importQueueCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count records waiting for a category',
+      one: '1 record waiting for a category',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get importQueueNone => 'Nothing is waiting';
+
+  @override
+  String get queueEmpty =>
+      'Nothing is waiting. When a new receipt email arrives, it shows up here for you to pick a category.';
+
+  @override
+  String get queuePayeeUnknown => 'Unknown payee';
+
+  @override
+  String queueFromAccount(String account) {
+    return 'From $account';
+  }
+
+  @override
+  String queueCurrencyNote(String emailCurrency, String appCurrency) {
+    return 'The email is in $emailCurrency but the app uses $appCurrency. You\'ll enter the amount in the next step.';
+  }
+
+  @override
+  String get queueSuggested => 'Suggested';
+
+  @override
+  String queueSaveTo(String category) {
+    return 'Save to $category';
+  }
+
+  @override
+  String queueMoveTo(String account) {
+    return 'Move to $account';
+  }
+
+  @override
+  String get queueEditFirst => 'Edit before saving';
+
+  @override
+  String get queueMoveToMine => 'Move to my account';
+
+  @override
+  String get queueMoveToTitle => 'Move to account';
+
+  @override
+  String get queueNoOtherAccount => 'There is no other account to choose';
+
+  @override
+  String get queueSkip => 'Skip';
+
+  @override
+  String get queueSkipTitle => 'Skip this record?';
+
+  @override
+  String get queueSkipBody =>
+      'It leaves the queue and won\'t be imported again from this email.';
+
+  @override
+  String queueSaved(String category) {
+    return 'Saved to $category';
+  }
+
+  @override
+  String queueMoved(String account) {
+    return 'Moved to $account';
+  }
+
+  @override
+  String get queueSkipped => 'Skipped';
+
+  @override
+  String get queueSuggestions => 'Remembered suggestions';
+
+  @override
+  String get queueSuggestionsEmpty =>
+      'No suggestions yet. Ví Gọn remembers the category you pick for each payee to suggest it next time.';
+
+  @override
+  String queueSuggestionMove(String account) {
+    return 'Move to $account';
+  }
+
+  @override
+  String get queueSuggestionDelete => 'Delete suggestion';
+
+  @override
+  String get queueSuggestionDeleted => 'Suggestion deleted';
+
+  @override
+  String queueAutoAccount(String account) {
+    return 'Created account $account';
+  }
+
+  @override
+  String get queueAttach => 'Attach to an existing account';
+
+  @override
+  String get queueAttachTitle => 'Attach to account';
+
+  @override
+  String get queueDismiss => 'Dismiss';
+
+  @override
+  String queueMatched(String time) {
+    return 'Matched with MB email $time';
+  }
 }

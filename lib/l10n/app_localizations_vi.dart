@@ -1390,4 +1390,122 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get debtRemainingLabel => 'Còn lại';
+
+  @override
+  String get importQueue => 'Hàng đợi';
+
+  @override
+  String importQueueCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count khoản chờ chọn danh mục',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get importQueueNone => 'Không có khoản nào đang chờ';
+
+  @override
+  String get queueEmpty =>
+      'Không có khoản nào đang chờ. Khi có email biên lai mới, khoản sẽ hiện ở đây để bạn chọn danh mục.';
+
+  @override
+  String get queuePayeeUnknown => 'Không rõ người nhận';
+
+  @override
+  String queueFromAccount(String account) {
+    return 'Từ $account';
+  }
+
+  @override
+  String queueCurrencyNote(String emailCurrency, String appCurrency) {
+    return 'Email bằng $emailCurrency, app đang dùng $appCurrency. Bạn nhập số tiền ở bước tiếp theo.';
+  }
+
+  @override
+  String get queueSuggested => 'Gợi ý';
+
+  @override
+  String queueSaveTo(String category) {
+    return 'Lưu vào $category';
+  }
+
+  @override
+  String queueMoveTo(String account) {
+    return 'Chuyển sang $account';
+  }
+
+  @override
+  String get queueEditFirst => 'Sửa trước khi lưu';
+
+  @override
+  String get queueMoveToMine => 'Chuyển sang tài khoản của tôi';
+
+  @override
+  String get queueMoveToTitle => 'Chuyển sang tài khoản';
+
+  @override
+  String get queueNoOtherAccount => 'Chưa có tài khoản nào khác để chọn';
+
+  @override
+  String get queueSkip => 'Bỏ qua';
+
+  @override
+  String get queueSkipTitle => 'Bỏ qua khoản này?';
+
+  @override
+  String get queueSkipBody =>
+      'Khoản rời hàng đợi và sẽ không được nhập lại từ email này.';
+
+  @override
+  String queueSaved(String category) {
+    return 'Đã lưu vào $category';
+  }
+
+  @override
+  String queueMoved(String account) {
+    return 'Đã chuyển sang $account';
+  }
+
+  @override
+  String get queueSkipped => 'Đã bỏ qua';
+
+  @override
+  String get queueSuggestions => 'Gợi ý đã nhớ';
+
+  @override
+  String get queueSuggestionsEmpty =>
+      'Chưa có gợi ý nào. Ví Gọn nhớ danh mục bạn chọn cho từng người nhận để gợi ý lần sau.';
+
+  @override
+  String queueSuggestionMove(String account) {
+    return 'Chuyển sang $account';
+  }
+
+  @override
+  String get queueSuggestionDelete => 'Xoá gợi ý';
+
+  @override
+  String get queueSuggestionDeleted => 'Đã xoá gợi ý';
+
+  @override
+  String queueAutoAccount(String account) {
+    return 'Đã tạo tài khoản $account';
+  }
+
+  @override
+  String get queueAttach => 'Gắn vào tài khoản có sẵn';
+
+  @override
+  String get queueAttachTitle => 'Gắn vào tài khoản';
+
+  @override
+  String get queueDismiss => 'Đóng';
+
+  @override
+  String queueMatched(String time) {
+    return 'Đã ghép với email MB $time';
+  }
 }

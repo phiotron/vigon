@@ -13,6 +13,8 @@ import 'features/debts/debts_screen.dart';
 import 'features/entries/entries_screen.dart';
 import 'features/entry/entry_editor_screen.dart';
 import 'features/home/home_screen.dart';
+import 'features/import_queue/import_queue_screen.dart';
+import 'features/import_queue/payee_suggestions_screen.dart';
 import 'features/lock/app_lock.dart';
 import 'features/lock/lock_screen.dart';
 import 'features/recurring/recurring_screen.dart';
@@ -86,6 +88,8 @@ GoRouter createRouter() => GoRouter(
                   ? EntryType.income
                   : EntryType.expense,
               categoryId: int.tryParse(q['category'] ?? ''),
+              // `?queue=` chỉ nhận số nguyên: "Sửa trước khi lưu" mục hàng đợi.
+              queueItemId: int.tryParse(q['queue'] ?? ''),
             );
           },
         ),
@@ -95,6 +99,17 @@ GoRouter createRouter() => GoRouter(
           builder: (context, state) => EntryEditorScreen(
             entryId: int.parse(state.pathParameters['id']!),
           ),
+        ),
+        // F-32: Hàng đợi chọn danh mục + Gợi ý đã nhớ.
+        GoRoute(
+          path: 'import-queue',
+          builder: (context, state) => const ImportQueueScreen(),
+          routes: [
+            GoRoute(
+              path: 'suggestions',
+              builder: (context, state) => const PayeeSuggestionsScreen(),
+            ),
+          ],
         ),
         // F-34: Khoản nợ.
         GoRoute(

@@ -18,6 +18,9 @@ import '../../ui/choice_sheet.dart';
 import '../../ui/format.dart';
 import '../../ui/messenger.dart';
 import '../../ui/theme.dart';
+import '../import_queue/import_queue_actions.dart';
+import '../import_queue/import_queue_providers.dart';
+import '../import_queue/queue_match.dart';
 import '../../ui/tokens.g.dart';
 import 'entry_time.dart';
 import 'keypad.dart';
@@ -29,11 +32,16 @@ class EntryEditorScreen extends ConsumerStatefulWidget {
     this.entryId,
     this.type = EntryType.expense,
     this.categoryId,
+    this.queueItemId,
   });
 
   final int? entryId;
   final EntryType type;
   final int? categoryId;
+
+  /// Mục hàng đợi đang "Sửa trước khi lưu" (AC-96): màn điền sẵn dữ liệu của
+  /// mục; lưu thì tạo khoản có nguồn + số tham chiếu và mục rời hàng đợi.
+  final int? queueItemId;
 
   @override
   ConsumerState<EntryEditorScreen> createState() => _EntryEditorScreenState();
@@ -41,6 +49,7 @@ class EntryEditorScreen extends ConsumerStatefulWidget {
 
 class _EntryEditorScreenState extends ConsumerState<EntryEditorScreen> {
   Entry? _original;
+  ImportQueueItem? _queueItem;
   late EntryType _type = widget.type;
   late int? _categoryId = widget.categoryId;
   String _expression = '';
@@ -62,7 +71,41 @@ class _EntryEditorScreenState extends ConsumerState<EntryEditorScreen> {
     if (widget.entryId != null) {
       _loading = true;
       _load(widget.entryId!);
+    } else if (widget.queueItemId != null) {
+      _loading = true;
+      _loadQueueItem(widget.queueItemId!);
     }
+  }
+
+  /// Điền sẵn từ mục hàng đợi (AC-96). Khác tiền tệ app thì ô số tiền để trống
+  /// cho người dùng tự nhập, không tự quy đổi (AC-87).
+  Future<void> _loadQueueItem(int id) async {
+    final item = await ref.read(importQueueRepositoryProvider).find(id);
+    if (!mounted) return;
+    if (item == null) {
+      context.pop();
+      return;
+    }
+    final currency = ref.read(currencyProvider).value ?? 'VND';
+    final accountId = await ref
+        .read(importQueueActionsProvider)
+        .resolveAccount(item);
+    if (!mounted) return;
+    setState(() {
+      _queueItem = item;
+      _type = EntryType.expense;
+      _accountId = accountId;
+      _date = parseDateKey(item.date);
+      _time = item.time;
+      _note.text = queueItemNote(item) ?? '';
+      if (item.currency == currency) {
+        _expression = minorUnitsToInput(
+          item.amount,
+          currencyDecimalDigits(currency),
+        );
+      }
+      _loading = false;
+    });
   }
 
   Future<void> _load(int id) async {
@@ -136,12 +179,35 @@ class _EntryEditorScreenState extends ConsumerState<EntryEditorScreen> {
       _categoryId = picked;
     }
     _saving = true;
+    int? savedId;
     try {
       final repo = ref.read(entryRepositoryProvider);
       final accountId = _accountId ?? await _defaultAccountId();
       final note = _note.text.trim().isEmpty ? null : _note.text.trim();
       final original = _original;
-      if (original == null) {
+      final queueItem = _queueItem;
+      if (queueItem != null) {
+        // Từ hàng đợi: tạo khoản chi có nguồn + số tham chiếu của email, mục
+        // rời hàng đợi, nhớ gợi ý (AC-96). Giữ số chính xác nếu không đổi số.
+        final currency = ref.read(currencyProvider).value ?? 'VND';
+        final same =
+            queueItem.currency == currency && amount == queueItem.amount;
+        await ref
+            .read(importQueueActionsProvider)
+            .saveEdited(
+              queueItem,
+              EntriesCompanion.insert(
+                type: EntryType.expense,
+                amount: amount,
+                amountMicro: Value(same ? queueItem.amountMicro : null),
+                categoryId: Value(_categoryId),
+                accountId: accountId,
+                date: dateKey(_date),
+                time: Value(_time),
+                note: Value(note),
+              ),
+            );
+      } else if (original == null) {
         final entry = EntriesCompanion.insert(
           type: _type,
           amount: amount,
@@ -153,7 +219,7 @@ class _EntryEditorScreenState extends ConsumerState<EntryEditorScreen> {
         );
         final repeat = _repeat;
         if (repeat == null) {
-          await repo.add(entry);
+          savedId = await repo.add(entry);
         } else {
           // Ngày bắt đầu ở quá khứ thì tạo luôn các lần đã tới hạn (AC-24).
           final recurring = ref.read(recurringRepositoryProvider);
@@ -171,12 +237,19 @@ class _EntryEditorScreenState extends ConsumerState<EntryEditorScreen> {
             note: Value(note),
           ),
         );
+        savedId = original.id;
       }
     } catch (_) {
       _saving = false;
       rethrow;
     }
+    // Khoản ghi tay vừa lưu khớp một mục đang chờ (AC-94): mục rời hàng đợi,
+    // gắn vào khoản, có thanh "Hoàn tác".
+    final matched = savedId == null || !mounted
+        ? null
+        : await matchQueueFor(ref, context, savedId);
     if (mounted) context.pop();
+    matched?.showUndo();
   }
 
   Future<int> _defaultAccountId() async {
@@ -381,7 +454,7 @@ class _EntryEditorScreenState extends ConsumerState<EntryEditorScreen> {
                                   ),
                                   onChanged: (t) => setState(() => _time = t),
                                 ),
-                                if (_original == null)
+                                if (_original == null && _queueItem == null)
                                   ActionChip(
                                     avatar: const Icon(
                                       Symbols.repeat_rounded,
