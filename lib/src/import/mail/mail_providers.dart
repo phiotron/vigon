@@ -8,6 +8,7 @@ import '../../providers.dart';
 import 'bank_senders.dart';
 import 'enough_imap.dart';
 import 'imap_gateway.dart';
+import '../mb/mb_receipt_handler.dart';
 import 'mail_check_scheduler.dart';
 import 'mailbox_service.dart';
 import 'mailbox_store.dart';
@@ -23,10 +24,11 @@ final senderAllowlistProvider = Provider<SenderAllowlist>(
   (ref) => defaultSenderAllowlist,
 );
 
-/// Bộ đọc email biên lai trong app. **M1 thay bằng bộ đọc thật** (vd
-/// `MbReceiptHandler(ref.watch(databaseProvider))`).
+/// Bộ đọc email biên lai trong app (M1): đọc email MB, chống trùng, ghép với
+/// khoản ghi tay hoặc đưa vào hàng đợi. Nền Android dùng cùng bộ đọc này
+/// (`mailCheckBackgroundMain` trong `main.dart`); test ghi đè.
 final receiptMailHandlerProvider = Provider<ReceiptMailHandler>(
-  (ref) => const DiscardingMailHandler(),
+  (ref) => MbReceiptHandler(ref.watch(databaseProvider)),
 );
 
 /// Dấu cài đặt (dọn Keychain khi cài lại trên iOS); test ghi đè.

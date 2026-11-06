@@ -13,7 +13,8 @@ import 'src/features/reminder/reminder_providers.dart';
 import 'src/features/settings/auto_backup_providers.dart';
 import 'src/import/mail/mail_background.dart';
 import 'src/import/mail/mail_providers.dart';
-import 'src/import/mail/raw_mail.dart';
+import 'src/import/mail/mailbox_service.dart' show MailCheckOutcome;
+import 'src/import/mb/mb_receipt_handler.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -80,15 +81,26 @@ const backupJobChannel = 'vigon/backup_job';
 /// FlutterEngine không giao diện và chạy hàm này khoảng mỗi giờ. Xong thì báo
 /// `done` (chỉ số đếm) để Kotlin kết thúc job.
 ///
-/// M1: thay [DiscardingMailHandler] bằng bộ đọc thật (mở cơ sở dữ liệu ở đây,
-/// đóng sau khi `runScheduledMailCheck` trả về).
+/// Dùng cùng bộ đọc [MbReceiptHandler] như trong app; cơ sở dữ liệu mở ở đây và
+/// đóng sau khi `runScheduledMailCheck` trả về (kể cả lỗi).
 @pragma('vm:entry-point')
 Future<void> mailCheckBackgroundMain() async {
   WidgetsFlutterBinding.ensureInitialized();
   DartPluginRegistrant.ensureInitialized();
-  final outcome = await runScheduledMailCheck(
-    handler: const DiscardingMailHandler(),
-  );
+  MailCheckOutcome? outcome;
+  AppDatabase? db;
+  try {
+    db = AppDatabase();
+    outcome = await runScheduledMailCheck(handler: MbReceiptHandler(db));
+  } catch (_) {
+    outcome = null;
+  } finally {
+    try {
+      await db?.close();
+    } catch (_) {
+      // Bỏ qua: Kotlin tự kết thúc sau thời hạn.
+    }
+  }
   try {
     await const MethodChannel(mailJobChannel).invokeMethod<void>(
       'done',
