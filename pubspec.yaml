@@ -54,6 +54,7 @@ dependencies:
   timezone: ^0.11.2
   flutter_timezone: ^5.1.1
   material_symbols_icons: ^4.2960.0
+  enough_mail: ^3.0.0
 
 dev_dependencies:
   flutter_test:
