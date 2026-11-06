@@ -15,7 +15,8 @@
 | **Expense** ⚠ | Chi (khoản chi) — EN UI: *Expenses* | Entry làm giảm tiền, có danh mục chi. Ghi qua nút "−", icon danh mục quanh vòng, ô "Danh mục khác", nút Chi của Widget hoặc chạm Reminder. | "spending" trong nhãn |
 | **Income** | Thu (khoản thu) | Entry làm tăng tiền, có danh mục thu. Ghi qua nút "+" hoặc nút Thu của Widget. | "revenue" |
 | **Transfer** | Chuyển tiền | Entry loại `transfer` từ Account nguồn sang Account đích. **Không** phải thu/chi: không vào biểu đồ, tổng thu/chi, Period balance, Budget, Category budget; chỉ đổi Account balance. | "chuyển khoản" (dễ nhầm chuyển khoản ngân hàng / chuyển khoản sang danh mục khác) |
-| **Amount** | Số tiền | Số nguyên theo Minor unit của Currency, > 0 với Entry, tối đa 10¹² đơn vị nhỏ nhất. | số thực, "giá" |
+| **Amount** | Số tiền | Số nguyên theo Minor unit của Currency, tối đa 10¹² đơn vị nhỏ nhất. Người dùng gõ phải > 0; Entry có thể là 0 chỉ khi Currency conversion làm tròn một số rất nhỏ (D-029). Là số hiện và cộng tổng; phía sau có thể có Exact amount. | số thực, "giá" |
+| **Exact amount** | Số tiền chính xác | Số tiền giữ 6 chữ số lẻ trên đơn vị chính (micro, 10⁻⁶), ẩn, không hiện ở đâu; chỉ dùng khi Currency conversion để đổi A→B→A ra đúng số cũ (D-029). Không có (null) = đúng bằng Amount; Amount bị sửa tay thì Exact amount cũ tự bỏ. | "số gốc", "số thật" |
 | **Minor unit** | Đơn vị nhỏ nhất | Đơn vị lưu tiền: theo số chữ số thập phân ISO (VND 0, USD 2, KWD 3). | |
 | **Amount expression** | Phép tính | Chuỗi gõ trên Keypad (vd `120+35`), tính ra Amount khi lưu hoặc bấm "=". | "công thức" |
 | **Keypad** | Bàn phím số | Bàn phím riêng của app ở màn Nhập khoản/Chuyển tiền (số, `000`/`.`, ⌫, `÷ × − +`, `=`, nút lớn Chọn danh mục/Lưu). Khác **PIN pad**. | "bàn phím hệ thống" |
@@ -64,7 +65,7 @@
 
 | Term (code) | VI | Định nghĩa | Tránh dùng |
 |---|---|---|---|
-| **Currency** | Tiền tệ | **Một** mã ISO 4217 cho toàn app (khoảng 156 mã, chọn có ô tìm), mặc định theo vùng máy. Đổi tiền tệ chỉ đổi ký hiệu, không quy đổi tỉ giá; khác số lẻ thì mọi số tiền, Budget và Category budget được nhân/chia để con số nhìn thấy giữ nguyên. | "Primary currency", "tiền tệ chính", "base currency" (app không có nhiều tiền tệ) |
+| **Currency** | Tiền tệ | **Một** mã ISO 4217 cho toàn app (khoảng 156 mã, chọn có ô tìm), mặc định theo vùng máy. Đổi tiền tệ = **quy đổi** mọi số tiền (Entry, Recurring series, số dư ban đầu, Budget, Category budget) theo tỉ giá tải qua mạng hoặc nhập tay, trong một lần (D-025); quy đổi từ Exact amount, số hiện làm tròn theo số lẻ của tiền mới (D-029). | "Primary currency", "tiền tệ chính", "base currency" (app không có nhiều tiền tệ) |
 | **Backup** | Bản sao lưu (file `.vigon`) | File chứa đủ tài khoản, danh mục, khoản, chuỗi định kỳ, cài đặt (trừ Device-only settings, PIN). Xuất tay qua bảng chia sẻ của hệ điều hành. | "đồng bộ", "cloud backup" |
 | **Encrypted backup** | Bản sao lưu có mật khẩu | Backup được bọc mã hóa bằng **Backup password** (AES-256-GCM, khóa từ PBKDF2). Tùy chọn khi xuất tay (mặc định tắt); Auto backup luôn mã hóa. Không đặt mật khẩu thì file là JSON không mã hóa và app nói rõ. | "khóa file", "file PIN" |
 | **Backup password** | Mật khẩu (file sao lưu) | Mật khẩu ≥ 6 ký tự, nhập hai lần, có cảnh báo "Quên mật khẩu thì không mở được file". Xuất tay: không lưu ở đâu; Auto backup: lưu trong bộ nhớ an toàn của máy. Khác **PIN**. | "mã", "PIN" |
