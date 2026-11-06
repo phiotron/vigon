@@ -26,7 +26,7 @@
 ## Tính năng (đã code xong — F-01..F-26, sau khi gộp 2026-11-05)
 1. **Bản 1.0 (F-01..F-13):** ghi khoản nhanh (bàn phím có phép tính, sửa/xoá có hoàn tác); màn chính biểu đồ tròn + vòng icon danh mục, chọn/vuốt kỳ; danh mục, tài khoản, chuyển tiền, tiền tệ; khoản định kỳ; ngân sách tháng; sao lưu `.vigon`/CSV; khoá PIN; giao diện/ngôn ngữ/a11y; pháp lý trong app.
 2. **Bản 1.1 (F-14..F-23):** ẩn/hiện/xoá tài khoản · tìm kiếm khoản · sửa đủ chuỗi định kỳ · ô "Danh mục khác" ở màn chính · CSV theo ngôn ngữ · đủ tiền tệ ISO 4217 có tìm · ngân sách theo danh mục · mã hoá file sao lưu bằng mật khẩu · che nội dung đa nhiệm · icon đơn sắc.
-3. **Bản 1.2 (F-24..F-26):** sao lưu tự động hằng ngày (mã hoá, giữ 7 file) · nhắc ghi chép hằng ngày · widget màn hình chính Chi/Thu.
+3. **Bản 1.2 (F-24..F-26):** sao lưu tự động hằng ngày (mã hoá, giữ 2 file — D-027) · nhắc ghi chép hằng ngày · widget màn hình chính Chi/Thu.
 4. **Giao diện:** theo bộ thiết kế đã duyệt `design/current/screens/` (S01–S16, token, Be Vietnam Pro, Material Symbols) — PLAN-001.
 5. **Hiện chỉ Android, iOS ẩn mục (D-019) — đang làm bản iOS ở #2 (D-022):** sao lưu tự động (F-24), widget (F-26), che đa nhiệm (F-22), icon đơn sắc (F-23). Nhắc ghi chép có trên iOS nhưng CHƯA thử thông báo thật.
 
@@ -43,12 +43,13 @@ Luồng nhanh nhất: Màn chính → chạm icon danh mục (hoặc −/+) → 
 |---|---|---|---|
 | #1 Nhận app + gộp + product.md | 2026-11-04..05 | product.md · nền iOS + CI · store & pháp lý · gộp 2 nhánh (+2 phụ) · iOS mã hoá/iCloud · tài liệu D-020/021 | ✅ Xong: nhận app, gộp bản 1.2 + PLAN-001, 364 test, CI Android + iOS xanh, product.md v2 duyệt. Nhật ký: `memory/sessions/2026-11-05-A002-vigon.md` (repo xưởng) |
 | #2 Áp UI Hi-Fi + iOS đủ tính năng + test 2 nền tảng | 2026-11-05.. | D0 token/component/chữ → D1 màn chính+nhập, D2 danh mục/tài khoản/định kỳ, D3 cài đặt/sao lưu/khoá, D4 iOS F-22/24/26 + widget Android song song → D5 so mockup + thử máy | ✅ Đóng 2026-11-06 (còn thử máy nốt): UI Hi-Fi P1+P2, iOS F-22/24/26 + iOS 16 (D-022..D-024), quy đổi tiền tệ (D-025), sao lưu theo giờ (D-026), widget kiểu B; sửa crash sao lưu, widget không thêm được, nhắc release; 620 test; `dev` `4280a98` (main chưa gộp). Nhật ký: `memory/sessions/2026-11-06-A002-vigon.md` (repo xưởng) |
+| #2b Sửa nhanh + thử máy (không phiên con) | 2026-11-06 | — (làm trực tiếp, Claude tự lái adb) | ✅ D-027 giữ 2 file sao lưu + báo "dữ liệu không đổi"; D-028 thanh ngân sách theo tháng đang xem; thử máy sao lưu M-2 (a)(b) + nhiều chức năng đạt; 625 test; push `dev` `47fa34a`. Nhật ký: `memory/sessions/2026-11-06-A002-vigon-phien2.md` |
 | #3 Phát hành | | E ảnh store · F Android · G iOS | |
 
 Kế hoạch đầy đủ 3 phiên: `notes/2026-11-04-ke-hoach-3-phien.md`.
 
 **Việc dở / bước tiếp:**
-- **Sau #2 (2026-11-06):** thử máy nốt (D9 chờ "máy rảnh": widget mới, M-2 sao lưu theo giờ, Q-3, Q-7 hỏi phép) → người dùng duyệt UI → gộp `dev`→`main` khi GitHub Billing ổn + chạy tay CI iOS → #3 Phát hành. Chưa kiểm máy thật: chạy nền sao lưu theo giờ, iOS (App Group, widget, che màn, thông báo sao lưu).
+- **Sau #2b (2026-11-06):** M-2 sao lưu theo giờ ĐÃ thử máy (đạt). Còn thử máy: widget mới (tối, 4×2), Q-3 USD→VND (hỏi trước), Q-7 khôi phục (hỏi phép), PIN, xuất file/CSV → người dùng duyệt UI → gộp `dev`→`main` khi GitHub Billing ổn + chạy tay CI iOS → #3 Phát hành. Chưa kiểm máy thật: chạy nền sao lưu theo giờ, iOS (App Group, widget, che màn, thông báo sao lưu).
 - **2026-11-05: đã có mockup Hi-Fi P1** (`design/hifi/`, link `design/LINKS.md`; PNG + zip chỉ ở máy, không vào git) → phiên #2
   đang chạy: P1 + P2 theo `design/hifi/tokens/CHANGELOG.md` (D-023), iOS làm F-22/F-24/F-26 (D-022).
 - Người dùng: tạo App Group `group.com.phiotron.vigon` (khi có Apple Developer) để widget iOS chạy thật.
@@ -97,6 +98,8 @@ Flutter 3.47.8 ở `C:/src/flutter`, **chưa có trong PATH**. Git Bash: `export
 - **D-005** Tiền số nguyên, ngày dạng chữ, cài đặt trong DB. · **D-006** Sao lưu `.vigon` JSON có mã băm, khôi phục thay toàn bộ trong 1 giao dịch.
 - **D-007** PIN băm có muối trong bộ nhớ an toàn, màn khoá phủ lên app. · **D-008** Liên hệ ở `app_info.dart`; bố cục co theo cỡ chữ; test a11y tự động.
 - **D-009** Logo "hai thẻ xếp chồng".
+- **D-028** Thanh ngân sách màn chính theo tháng đang xem (ngày/tuần → tháng chứa ngày cuối; năm/tất cả/tùy chọn → ẩn); widget giữ tháng hiện tại.
+- **D-027** Sao lưu tự động giữ 2 file (xoá cũ sau khi ghi xong); dữ liệu không đổi thì bỏ qua nhưng Cài đặt báo "Đã kiểm…".
 - **D-026** Sao lưu tự động theo giờ người dùng chọn (mặc định 21:00, giờ máy); Android chạy nền, iPhone thông báo; bù khi lỡ.
 - **D-025** Đổi tiền tệ = quy đổi toàn bộ số tiền theo tỉ giá lấy qua mạng (sửa D-002/AC-21; app có quyền mạng chỉ cho việc này).
 - **D-024** iOS tối thiểu 16.0 (widget cần iOS 16).
