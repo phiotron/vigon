@@ -69,17 +69,42 @@ void main() {
     );
   });
 
-  test('chỉ một nơi gọi mạng: nguồn tỉ giá, qua HTTPS (D-025)', () {
-    final callers = [
+  test('mã gọi mạng Dart chỉ ở hai chỗ: tỉ giá (HTTPS) và IMAP (TLS) '
+      '(D-025, D-031, AC-125)', () {
+    final dart = [
       for (final f in Directory('lib').listSync(recursive: true))
-        if (f is File &&
-            f.path.endsWith('.dart') &&
-            f.readAsStringSync().contains('HttpClient('))
-          f.path.replaceAll(r'\', '/'),
+        if (f is File && f.path.endsWith('.dart'))
+          (f.path.replaceAll(r'\', '/'), f.readAsStringSync()),
     ];
-    expect(callers, ['lib/src/data/exchange_rate.dart']);
-    final src = File('lib/src/data/exchange_rate.dart').readAsStringSync();
-    expect(src.contains('http://'), isFalse);
+    List<String> using(bool Function(String src) uses) => [
+      for (final (path, src) in dart)
+        if (uses(src)) path,
+    ];
+    // Tỉ giá: HttpClient của dart:io.
+    expect(using((s) => s.contains('HttpClient(')), [
+      'lib/src/data/exchange_rate.dart',
+    ]);
+    final rates = File('lib/src/data/exchange_rate.dart').readAsStringSync();
+    expect(rates.contains('http://'), isFalse);
+    // IMAP: chỉ một file dùng thư viện IMAP; không ai mở socket trực tiếp.
+    expect(using((s) => s.contains('package:enough_mail')), [
+      'lib/src/import/mail/enough_imap.dart',
+    ]);
+    expect(
+      using(
+        (s) =>
+            s.contains('Socket.connect') ||
+            s.contains('RawSocket') ||
+            s.contains('SecureSocket') ||
+            s.contains('WebSocket'),
+      ),
+      isEmpty,
+    );
+    final imap = File('lib/src/import/mail/enough_imap.dart')
+        .readAsStringSync();
+    expect(imap, contains('isSecure: true'));
+    expect(imap.contains('isSecure: false'), isFalse);
+    expect(imap.contains('onBadCertificate'), isFalse);
   });
 
   test('manifest hợp nhất bản release (nếu đã build) không có quyền ngoài danh '

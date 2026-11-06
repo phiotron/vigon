@@ -1,7 +1,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
-    <!-- D-025: INTERNET chỉ để tải bảng tỉ giá công khai (HTTPS) khi người dùng đổi tiền tệ;
-         không gửi dữ liệu người dùng, không SDK, không analytics. -->
+    <!-- D-025: INTERNET để tải bảng tỉ giá công khai (HTTPS) khi người dùng đổi tiền tệ;
+         D-031: và đọc email biên lai qua IMAP/TLS (993) tới Gmail/Yahoo/iCloud khi người dùng thêm
+         hộp thư. Không gửi dữ liệu người dùng cho nhà phát triển, không SDK, không analytics. -->
     <uses-permission android:name="android.permission.INTERNET"/>
     <!-- F-25 nhắc ghi chép: hai quyền này. Không báo thức chính xác. -->
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
@@ -80,6 +81,12 @@
         <!-- Job chạy Dart nền (FlutterEngine không giao diện) để sao lưu; chỉ JobScheduler gọi được. -->
         <service
             android:name=".BackupJobService"
+            android:permission="android.permission.BIND_JOB_SERVICE"
+            android:exported="false"/>
+        <!-- F-28/AC-82: kiểm thư email nền ~mỗi giờ (job định kỳ, giữ qua khởi động lại nhờ
+             RECEIVE_BOOT_COMPLETED đã có; không điều kiện mạng). Chỉ JobScheduler gọi được. -->
+        <service
+            android:name=".MailCheckJobService"
             android:permission="android.permission.BIND_JOB_SERVICE"
             android:exported="false"/>
         <!-- Don't delete the meta-data below.

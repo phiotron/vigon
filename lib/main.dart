@@ -11,6 +11,9 @@ import 'src/data/auto_backup_background.dart';
 import 'src/data/database.dart';
 import 'src/features/reminder/reminder_providers.dart';
 import 'src/features/settings/auto_backup_providers.dart';
+import 'src/import/mail/mail_background.dart';
+import 'src/import/mail/mail_providers.dart';
+import 'src/import/mail/raw_mail.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -24,6 +27,8 @@ Future<void> main() async {
   });
   final container = ProviderContainer();
   runAutoBackupOnOpen(container);
+  // F-28/AC-82: kiểm thư email khi mở/quay lại app (cách lần trước ≥ 15 phút).
+  runMailCheckOnOpen(container);
   runApp(
     UncontrolledProviderScope(container: container, child: const VigonApp()),
   );
@@ -70,3 +75,31 @@ Future<void> autoBackupBackgroundMain() async {
 
 /// Kênh báo xong của `BackupJobService.kt`.
 const backupJobChannel = 'vigon/backup_job';
+
+/// Điểm vào Dart của lịch kiểm thư nền (Android, AC-82): `MailCheckJob.kt` dựng
+/// FlutterEngine không giao diện và chạy hàm này khoảng mỗi giờ. Xong thì báo
+/// `done` (chỉ số đếm) để Kotlin kết thúc job.
+///
+/// M1: thay [DiscardingMailHandler] bằng bộ đọc thật (mở cơ sở dữ liệu ở đây,
+/// đóng sau khi `runScheduledMailCheck` trả về).
+@pragma('vm:entry-point')
+Future<void> mailCheckBackgroundMain() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  DartPluginRegistrant.ensureInitialized();
+  final outcome = await runScheduledMailCheck(
+    handler: const DiscardingMailHandler(),
+  );
+  try {
+    await const MethodChannel(mailJobChannel).invokeMethod<void>(
+      'done',
+      outcome == null
+          ? null
+          : 'checked=${outcome.checked} failed=${outcome.failed}',
+    );
+  } catch (_) {
+    // Kotlin tự kết thúc sau thời hạn.
+  }
+}
+
+/// Kênh báo xong của `MailCheckJob.kt`.
+const mailJobChannel = 'vigon/mail_job';

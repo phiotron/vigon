@@ -13,6 +13,7 @@ import '../../../l10n/app_localizations.dart';
 import '../../data/backup.dart';
 import '../../data/backup_crypto.dart';
 import '../../data/money.dart';
+import '../../import/mail/mail_providers.dart';
 import '../../l10n_names.dart';
 import '../../providers.dart';
 import '../../ui/confirm_dialog.dart';
@@ -186,6 +187,8 @@ Future<bool> deleteEverything(BuildContext context, WidgetRef ref) async {
   // bản sao lưu rỗng không đẩy dần các file tốt ra khỏi thư mục.
   await ref.read(autoBackupServiceProvider).disable();
   ref.invalidate(autoBackupStateProvider);
+  // AC-123: hộp thư, mật khẩu ứng dụng (Keystore/Keychain), tắt kiểm thư nền.
+  await eraseEmailImport(ref);
   await ref
       .read(settingsRepositoryProvider)
       .ensureCurrency(ref.read(deviceLocaleProvider));
