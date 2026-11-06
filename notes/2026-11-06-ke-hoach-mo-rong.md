@@ -5,6 +5,24 @@
 > báo về phiên điều phối.
 > Số quyết định: D-030..D-035 (D-029 đã dùng cho quy đổi tiền tệ chính xác). Số AC mới bắt đầu từ **AC-74**.
 
+## ⚠ CẬP NHẬT 2026-11-06 sau khi duyệt bản nháp SPEC — các dòng dưới đây THẮNG phần cũ của file
+- **Bỏ:** quét hoá đơn (OCR/ML Kit — ML Kit gửi dữ liệu chẩn đoán về Google, trái lời hứa "không thu thập"),
+  đính kèm ảnh hoá đơn, đọc thông báo Android, khoản "Điều chỉnh số dư", số dư ban đầu lấy từ tin, ghép chuyển nội bộ
+  tự động, bộ đọc 10 ngân hàng.
+- **Nhập tự động chỉ còn email** (IMAP + mật khẩu ứng dụng). Bản đầu **chỉ MB Bank**; nguồn chưa có mẫu email thật
+  thì ẩn. Email MB là biên lai chuyển tiền đi, **không có số dư, không có tiền vào**, nên chỉ tạo **khoản chi**.
+  - Chỉ nhận email có tình trạng thành công.
+  - Chống nhập trùng bằng **số tham chiếu**.
+  - Account lấy từ "tài khoản trích nợ".
+- **Mọi khoản từ email vào hàng đợi để người dùng chọn danh mục.** Chưa chọn danh mục thì khoản chưa được tính vào
+  tổng. App gợi ý sẵn danh mục theo người thụ hưởng. Có lựa chọn "Chuyển sang tài khoản của tôi" để biến khoản thành
+  Transfer.
+- **Ghép với khoản ghi tay:** chỉ khi cùng Account, cùng số tiền, chênh ±2 giờ (Q-03).
+- **Thông báo ngân sách** chỉ hiện %, không hiện số tiền (Q-08).
+- **Dashboard** là màn/tab riêng "Tổng quan" (Q-09).
+- **Phiên con #3 đổi thành:** S0 → M0 schema → M1 bộ đọc email MB + hàng đợi + ghép → N2 IMAP + cài đặt hộp thư · M5
+  tiết kiệm/nợ/màn hàng đợi → V3. **Bỏ N1, N3.**
+
 ## Vì sao
 Ví Gọn đã có F-01..F-26 nhưng chỉ cho nhập tay. Người dùng muốn trước khi phát hành phải có thêm hai phần:
 - **Nhập tự động:** đọc thông báo ngân hàng/ví, đọc email ngân hàng, quét hoá đơn.
