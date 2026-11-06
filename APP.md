@@ -42,12 +42,13 @@ Luồng nhanh nhất: Màn chính → chạm icon danh mục (hoặc −/+) → 
 | Phiên điều phối | Ngày | Phiên con đã mở | Kết quả |
 |---|---|---|---|
 | #1 Nhận app + gộp + product.md | 2026-11-04..05 | product.md · nền iOS + CI · store & pháp lý · gộp 2 nhánh (+2 phụ) · iOS mã hoá/iCloud · tài liệu D-020/021 | ✅ Xong: nhận app, gộp bản 1.2 + PLAN-001, 364 test, CI Android + iOS xanh, product.md v2 duyệt. Nhật ký: `memory/sessions/2026-11-05-A002-vigon.md` (repo xưởng) |
-| #2 Áp UI Hi-Fi + iOS đủ tính năng + test 2 nền tảng | 2026-11-05.. | D0 token/component/chữ → D1 màn chính+nhập, D2 danh mục/tài khoản/định kỳ, D3 cài đặt/sao lưu/khoá, D4 iOS F-22/24/26 + widget Android song song → D5 so mockup + thử máy | 🔨 Đang làm. Mockup Hi-Fi P1 `6eb81fa`; phạm vi D-022, D-023 |
+| #2 Áp UI Hi-Fi + iOS đủ tính năng + test 2 nền tảng | 2026-11-05.. | D0 token/component/chữ → D1 màn chính+nhập, D2 danh mục/tài khoản/định kỳ, D3 cài đặt/sao lưu/khoá, D4 iOS F-22/24/26 + widget Android song song → D5 so mockup + thử máy | ✅ Đóng 2026-11-06 (còn thử máy nốt): UI Hi-Fi P1+P2, iOS F-22/24/26 + iOS 16 (D-022..D-024), quy đổi tiền tệ (D-025), sao lưu theo giờ (D-026), widget kiểu B; sửa crash sao lưu, widget không thêm được, nhắc release; 620 test; `dev` `4280a98` (main chưa gộp). Nhật ký: `memory/sessions/2026-11-06-A002-vigon.md` (repo xưởng) |
 | #3 Phát hành | | E ảnh store · F Android · G iOS | |
 
 Kế hoạch đầy đủ 3 phiên: `notes/2026-11-04-ke-hoach-3-phien.md`.
 
 **Việc dở / bước tiếp:**
+- **Sau #2 (2026-11-06):** thử máy nốt (D9 chờ "máy rảnh": widget mới, M-2 sao lưu theo giờ, Q-3, Q-7 hỏi phép) → người dùng duyệt UI → gộp `dev`→`main` khi GitHub Billing ổn + chạy tay CI iOS → #3 Phát hành. Chưa kiểm máy thật: chạy nền sao lưu theo giờ, iOS (App Group, widget, che màn, thông báo sao lưu).
 - **2026-11-05: đã có mockup Hi-Fi P1** (`design/hifi/`, link `design/LINKS.md`; PNG + zip chỉ ở máy, không vào git) → phiên #2
   đang chạy: P1 + P2 theo `design/hifi/tokens/CHANGELOG.md` (D-023), iOS làm F-22/F-24/F-26 (D-022).
 - Người dùng: tạo App Group `group.com.phiotron.vigon` (khi có Apple Developer) để widget iOS chạy thật.
