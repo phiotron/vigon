@@ -44,6 +44,7 @@ class RecurringRepository {
           RecurringRulesCompanion.insert(
             type: first.type.value,
             amount: first.amount.value,
+            amountMicro: first.amountMicro,
             categoryId: first.categoryId,
             accountId: first.accountId.value,
             toAccountId: first.toAccountId,
@@ -81,6 +82,8 @@ class RecurringRepository {
               EntriesCompanion.insert(
                 type: rule.type,
                 amount: rule.amount,
+                // Số chính xác đi theo chuỗi (D-029): quy đổi lại vẫn đúng.
+                amountMicro: Value(rule.amountMicro),
                 categoryId: Value(rule.categoryId),
                 accountId: rule.accountId,
                 toAccountId: Value(rule.toAccountId),

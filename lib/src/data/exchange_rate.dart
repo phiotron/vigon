@@ -41,14 +41,35 @@ class ExchangeRate {
     return tryParse(value.toStringAsPrecision(12));
   }
 
+  /// Đọc chữ do [toStorage] ghi: số thập phân như [tryParse] hoặc phân số
+  /// "tử/mẫu" (tỉ giá chéo, tỉ giá đảo chiều). Null nếu sai hoặc ≤ 0.
+  static ExchangeRate? fromStorage(String text) {
+    final m = RegExp(r'^([0-9]+)/([0-9]+)$').firstMatch(text.trim());
+    if (m == null) return tryParse(text);
+    final numerator = BigInt.parse(m[1]!);
+    final denominator = BigInt.parse(m[2]!);
+    if (numerator <= BigInt.zero || denominator <= BigInt.zero) return null;
+    return ExchangeRate._(numerator, denominator);
+  }
+
   /// "1 tiền mới = ? tiền cũ".
   ExchangeRate get inverse => ExchangeRate._(denominator, numerator);
+
+  /// Thương hai tỉ giá, chính xác (phân số, rút gọn): tỉ giá chéo
+  /// "1 A = (b / a) B" từ hai tỉ giá cùng gốc (D-029).
+  ExchangeRate operator /(ExchangeRate other) {
+    final n = numerator * other.denominator;
+    final d = denominator * other.numerator;
+    final g = n.gcd(d);
+    return ExchangeRate._(n ~/ g, d ~/ g);
+  }
 
   /// Chỉ để hiển thị.
   double toDouble() => numerator / denominator;
 
-  /// Dạng thập phân gọn để lưu ("0.0000385"); đọc lại bằng [tryParse] cho đúng
-  /// giá trị khi mẫu số là lũy thừa của 10 (luôn đúng với tỉ giá đọc từ chữ).
+  /// Dạng gọn để lưu, đọc lại bằng [fromStorage] ra đúng giá trị: thập phân
+  /// ("0.0000385") khi mẫu số là lũy thừa của 10 (tỉ giá đọc từ chữ), không
+  /// thì phân số "tử/mẫu" (tỉ giá chéo, tỉ giá đảo chiều — D-029).
   String toStorage() {
     var d = denominator;
     var zeros = 0;
@@ -56,7 +77,7 @@ class ExchangeRate {
       d ~/= BigInt.from(10);
       zeros++;
     }
-    if (d != BigInt.one) return toDouble().toStringAsPrecision(12);
+    if (d != BigInt.one) return '$numerator/$denominator';
     final digits = numerator.toString();
     if (zeros == 0) return digits;
     final padded = digits.padLeft(zeros + 1, '0');
@@ -108,12 +129,17 @@ class RateTable {
   final String date;
   final Map<String, double> rates;
 
-  /// Tỉ giá chéo "1 [from] = ? [to]"; null nếu bảng thiếu một trong hai mã.
+  /// Tỉ giá chéo "1 [from] = ? [to]" = b / a tính bằng phân số (không qua số
+  /// thực) nên A→B và B→A cùng bảng là nghịch đảo đúng (D-029); null nếu bảng
+  /// thiếu một trong hai mã.
   ExchangeRate? rate(String from, String to) {
     final a = from == base ? 1.0 : rates[from];
     final b = to == base ? 1.0 : rates[to];
-    if (a == null || b == null || a <= 0 || b <= 0) return null;
-    return ExchangeRate.fromDouble(b / a);
+    if (a == null || b == null) return null;
+    final ra = ExchangeRate.fromDouble(a);
+    final rb = ExchangeRate.fromDouble(b);
+    if (ra == null || rb == null) return null;
+    return rb / ra;
   }
 
   String toJson() => jsonEncode({'base': base, 'date': date, 'rates': rates});

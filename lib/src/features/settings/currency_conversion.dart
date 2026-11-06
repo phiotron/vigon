@@ -105,8 +105,9 @@ class CurrencyConversionDialog extends StatefulWidget {
   final String from;
   final String to;
 
-  /// Số tiền ví dụ (đơn vị nhỏ nhất của [from]); null thì lấy 100 đơn vị lớn.
-  final int? example;
+  /// Số tiền ví dụ ([conversionExampleAmount]: số đang hiện, đơn vị nhỏ nhất
+  /// của [from], và số chính xác micro); null thì lấy 100 đơn vị lớn.
+  final ({int minor, int exact})? example;
   final ExchangeRateSource source;
   final SettingsRepository settings;
   final DateTime today;
@@ -332,16 +333,14 @@ class _CurrencyConversionDialogState extends State<CurrencyConversionDialog> {
     const digits = TextStyle(fontFeatures: [FontFeature.tabularFigures()]);
     final fromDigits = currencyDecimalDigits(from);
     final toDigits = currencyDecimalDigits(to);
-    final example = widget.example ?? 100 * pow(10, fromDigits).toInt();
-    final converted = convertMinorUnits(
-      example,
+    final example = widget.example?.minor ?? 100 * pow(10, fromDigits).toInt();
+    // Tính như khi đổi thật (D-029): từ số chính xác, làm tròn về tiền mới.
+    final converted = convertExact(
+      widget.example?.exact ?? example * microPerMinor(fromDigits),
       rate,
-      fromDigits: fromDigits,
       toDigits: toDigits,
-    );
-    final after = converted > BigInt.from(1 << 52)
-        ? null
-        : max(1, converted.toInt());
+    ).minor;
+    final after = converted > BigInt.from(1 << 52) ? null : converted.toInt();
     final muted = VgType.bodySm.copyWith(color: scheme.onSurfaceVariant);
     return VgDialog(
       icon: Symbols.currency_exchange_rounded,

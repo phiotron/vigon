@@ -18,6 +18,10 @@ class SettingsRepository {
   static const weekStartKey = 'weekStart';
   static const monthStartDayKey = 'monthStartDay';
   static const budgetKey = 'monthlyBudget';
+
+  /// Ngân sách tháng chính xác, phần triệu đơn vị chính (D-029); thiếu là
+  /// đúng bằng [budgetKey].
+  static const budgetMicroKey = 'budgetMicro';
   static const secureWindowKey = 'secureWindow';
   static const widgetShowAmountsKey = 'widgetShowAmounts';
   static const reminderEnabledKey = 'reminderEnabled';
@@ -99,7 +103,7 @@ class SettingsRepository {
     if (text == null) return null;
     try {
       final m = jsonDecode(text) as Map<String, dynamic>;
-      final rate = ExchangeRate.tryParse(m['rate'] as String);
+      final rate = ExchangeRate.fromStorage(m['rate'] as String);
       final date = m['date'] as String;
       if (rate == null) return null;
       if (m['from'] == from && m['to'] == to) return (rate: rate, date: date);
@@ -191,6 +195,14 @@ class SettingsRepository {
   Future<void> setBudget(int? amount) => amount == null || amount <= 0
       ? _remove(budgetKey)
       : _write(budgetKey, '$amount');
+
+  /// Ngân sách tháng chính xác (D-029); null là đúng bằng [readBudget].
+  Future<int?> readBudgetMicro() =>
+      _read(budgetMicroKey).then((v) => int.tryParse(v ?? ''));
+
+  Future<void> setBudgetMicro(int? micro) => micro == null
+      ? _remove(budgetMicroKey)
+      : _write(budgetMicroKey, '$micro');
 
   /// Mã cài đặt đi kèm mã PIN; null là cơ sở dữ liệu chưa từng đặt PIN.
   Future<String?> readPinInstallId() => _read(pinInstallIdKey);
