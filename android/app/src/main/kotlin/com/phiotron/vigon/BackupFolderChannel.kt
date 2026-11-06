@@ -196,7 +196,10 @@ class BackupFolderChannel(
         }
         worker.execute {
             try {
-                val value = block()
+                // Hàm không trả gì (ghi/xóa file) cho ra kotlin.Unit; StandardMessageCodec
+                // không mã hóa được Unit và ném lỗi trên luồng chính → app crash sau mỗi
+                // lần sao lưu tự động thành công (D9, Galaxy A13 2026-11-05).
+                val value = block().let { if (it == Unit) null else it }
                 main.post { result.success(value) }
             } catch (e: SecurityException) {
                 main.post { result.error("permission_denied", e.message, null) }
