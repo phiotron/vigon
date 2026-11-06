@@ -28,6 +28,11 @@ const _routes = [
   // 2.0 (AC-126): hộp thư email (màn giải thích) và thêm hộp thư.
   '/email-import',
   '/email-import/add',
+  // 2.0 (AC-126): Tiết kiệm, Khoản nợ, Hàng đợi, Gợi ý đã nhớ.
+  '/savings',
+  '/debts',
+  '/import-queue',
+  '/import-queue/suggestions',
 ];
 
 Future<AppDatabase> _seed(

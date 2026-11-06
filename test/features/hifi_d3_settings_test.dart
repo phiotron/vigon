@@ -188,7 +188,8 @@ void main() {
         'tìm, không khớp', (tester) async {
       final db = await pumpApp(tester);
       await _openSettings(tester);
-      await tester.ensureVisible(find.text('Tiền tệ'));
+      // Danh sách dựng lười: cuộn tới hàng (2.0 thêm thẻ Tiết kiệm/Nợ/Hàng đợi).
+      await tester.scrollUntilVisible(find.text('Tiền tệ'), 200);
       await tester.pumpAndSettle();
       await tester.tap(find.text('Tiền tệ'));
       await settle(tester);

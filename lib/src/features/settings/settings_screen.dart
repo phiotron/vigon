@@ -10,6 +10,7 @@ import '../../ui/choice_segments.dart';
 import '../../ui/format.dart';
 import '../../ui/settings_rows.dart';
 import '../../ui/tokens.g.dart';
+import '../import_queue/import_queue_providers.dart';
 import '../lock/app_lock.dart';
 import 'auto_backup_section.dart';
 import 'budget_dialog.dart';
@@ -43,6 +44,7 @@ class SettingsScreen extends ConsumerWidget {
     final budget = ref.watch(budgetProvider).value;
     final pinEnabled = ref.watch(pinEnabledProvider).value ?? false;
     final scheme = Theme.of(context).colorScheme;
+    final queueCount = ref.watch(importQueueCountProvider).value ?? 0;
 
     const cardGap = SizedBox(height: SettingsCard.gap);
 
@@ -97,6 +99,31 @@ class SettingsScreen extends ConsumerWidget {
                 icon: Symbols.account_balance_wallet_rounded,
                 title: l.accounts,
                 onTap: () => context.push('/accounts'),
+              ),
+            ],
+          ),
+          cardGap,
+          // 2.0: Tiết kiệm, Khoản nợ, Hàng đợi (điểm vào tạm; vị trí cuối cùng
+          // theo mockup phiên #4).
+          SettingsCard(
+            children: [
+              SettingsNavRow(
+                icon: Symbols.savings_rounded,
+                title: l.savings,
+                onTap: () => context.push('/savings'),
+              ),
+              SettingsNavRow(
+                icon: Symbols.handshake_rounded,
+                title: l.debts,
+                onTap: () => context.push('/debts'),
+              ),
+              SettingsNavRow(
+                icon: Symbols.inbox_rounded,
+                title: l.importQueue,
+                value: queueCount == 0
+                    ? l.importQueueNone
+                    : l.importQueueCount(queueCount),
+                onTap: () => context.push('/import-queue'),
               ),
             ],
           ),
