@@ -25,6 +25,9 @@ const _routes = [
   '/transfer',
   '/recurring',
   '/about',
+  // 2.0 (AC-126): hộp thư email (màn giải thích) và thêm hộp thư.
+  '/email-import',
+  '/email-import/add',
 ];
 
 Future<AppDatabase> _seed(

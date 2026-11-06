@@ -979,4 +979,197 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get currencyConvertOk => 'OK';
+
+  @override
+  String get emailImportGroup => 'Auto import';
+
+  @override
+  String get emailImport => 'Import from bank email';
+
+  @override
+  String get emailImportNoMailbox => 'No mailbox yet';
+
+  @override
+  String emailImportMailboxCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count mailboxes',
+      one: '1 mailbox',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get emailIntroTitle => 'Record spending from receipt emails';
+
+  @override
+  String get emailIntroRead =>
+      'Ví Gọn reads your bank\'s transfer receipt emails in the mailbox you add, then puts them in a queue for you to pick a category.';
+
+  @override
+  String get emailIntroLocal =>
+      'On this phone only: email content is never sent anywhere.';
+
+  @override
+  String get emailIntroReadOnly =>
+      'No email is changed, deleted or marked as read.';
+
+  @override
+  String get emailIntroAppPassword =>
+      'Needs an app password from your email provider, not your main sign-in password.';
+
+  @override
+  String get emailIntroBanks => 'Only MB Bank is supported for now.';
+
+  @override
+  String get emailIntroIos =>
+      'On iPhone, Ví Gọn checks email only when you open or return to the app.';
+
+  @override
+  String get emailAddMailbox => 'Add mailbox';
+
+  @override
+  String get emailMailboxLimit =>
+      'You already have 3 mailboxes. Remove one to add another.';
+
+  @override
+  String get emailScheduleAndroid =>
+      'Ví Gọn checks email when you open the app and about every hour while it\'s closed. Pull down to check now.';
+
+  @override
+  String get emailScheduleIos =>
+      'On iPhone, Ví Gọn checks email only when you open or return to the app. Pull down to check now.';
+
+  @override
+  String get emailConnected => 'Connected';
+
+  @override
+  String emailLastCheck(String time) {
+    return 'Connected · Last check: $time';
+  }
+
+  @override
+  String emailErrorAt(String time, String error) {
+    return 'Check at $time: $error';
+  }
+
+  @override
+  String get emailErrorCredentials => 'Wrong address or app password';
+
+  @override
+  String get emailErrorImapDisabled => 'IMAP is turned off for this mailbox';
+
+  @override
+  String get emailErrorNetwork => 'No internet connection';
+
+  @override
+  String get emailErrorSecure =>
+      'Couldn\'t make a secure connection to the email server';
+
+  @override
+  String get emailErrorServer =>
+      'The email server returned an error. Try again later';
+
+  @override
+  String get emailPaused =>
+      'Checking this mailbox is paused. Enter the app password again to continue.';
+
+  @override
+  String emailUnreadable(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count MB emails couldn\'t be read',
+      one: '1 MB email couldn\'t be read',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get emailReenterPassword => 'Re-enter password';
+
+  @override
+  String get emailRemoveMailbox => 'Remove mailbox';
+
+  @override
+  String get emailRemoveTitle => 'Remove mailbox?';
+
+  @override
+  String emailRemoveBody(String address) {
+    return 'Ví Gọn will stop reading email from $address and delete the app password from this phone. Records already saved stay as they are.';
+  }
+
+  @override
+  String get emailRemoved => 'Mailbox removed';
+
+  @override
+  String get emailProvider => 'Provider';
+
+  @override
+  String get emailStepsTitle => 'Create an app password';
+
+  @override
+  String get emailStepsGmail1 =>
+      'Turn on 2-Step Verification for your Google account (required for app passwords).';
+
+  @override
+  String get emailStepsGmail2 =>
+      'Open the App passwords page with the button below, name it \"Ví Gọn\" and tap Create.';
+
+  @override
+  String get emailStepsGmail3 =>
+      'Copy the 16-character password Google shows into the App password field below.';
+
+  @override
+  String get emailStepsYahoo1 =>
+      'Open the Yahoo Account security page with the button below.';
+
+  @override
+  String get emailStepsYahoo2 =>
+      'Choose \"Generate app password\", name it \"Ví Gọn\" and tap Generate.';
+
+  @override
+  String get emailStepsYahoo3 =>
+      'Copy the password Yahoo shows into the App password field below.';
+
+  @override
+  String get emailStepsIcloud1 =>
+      'Turn on two-factor authentication for your Apple Account.';
+
+  @override
+  String get emailStepsIcloud2 =>
+      'Open the Apple Account page with the button below → Sign-In and Security → App-Specific Passwords, name it \"Ví Gọn\".';
+
+  @override
+  String get emailStepsIcloud3 =>
+      'Copy the password Apple shows into the App password field below; the address is your iCloud email.';
+
+  @override
+  String get emailOpenPasswordPage => 'Open the app password page';
+
+  @override
+  String get emailAddress => 'Email address';
+
+  @override
+  String get emailAddressInvalid => 'Enter a valid email address';
+
+  @override
+  String get emailAppPassword => 'App password';
+
+  @override
+  String get emailAppPasswordHelper =>
+      'Not your main sign-in password. Stored only in this phone\'s secure storage.';
+
+  @override
+  String get emailAppPasswordEmpty => 'Enter the app password';
+
+  @override
+  String get emailConnect => 'Connect';
+
+  @override
+  String get emailDuplicate => 'This mailbox is already added';
+
+  @override
+  String get emailSaveReenter => 'Save and reconnect';
 }

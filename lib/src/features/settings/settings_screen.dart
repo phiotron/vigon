@@ -16,6 +16,7 @@ import 'budget_dialog.dart';
 import 'currency_conversion.dart';
 import 'currency_picker.dart';
 import 'data_actions.dart';
+import 'email_import_screen.dart';
 import 'reminder_section.dart';
 import 'secure_window.dart';
 import 'settings_lead.dart';
@@ -171,6 +172,8 @@ class SettingsScreen extends ConsumerWidget {
             ],
           ),
           const ReminderSection(),
+          // F-28: Nhập từ email ngân hàng (hộp thư IMAP).
+          const EmailImportEntry(),
           SettingsGroupTitle(l.dataSection),
           Padding(
             padding: const EdgeInsets.fromLTRB(

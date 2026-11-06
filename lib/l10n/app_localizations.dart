@@ -1801,6 +1801,306 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'OK'**
   String get currencyConvertOk;
+
+  /// No description provided for @emailImportGroup.
+  ///
+  /// In en, this message translates to:
+  /// **'Auto import'**
+  String get emailImportGroup;
+
+  /// No description provided for @emailImport.
+  ///
+  /// In en, this message translates to:
+  /// **'Import from bank email'**
+  String get emailImport;
+
+  /// No description provided for @emailImportNoMailbox.
+  ///
+  /// In en, this message translates to:
+  /// **'No mailbox yet'**
+  String get emailImportNoMailbox;
+
+  /// No description provided for @emailImportMailboxCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 mailbox} other{{count} mailboxes}}'**
+  String emailImportMailboxCount(int count);
+
+  /// No description provided for @emailIntroTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Record spending from receipt emails'**
+  String get emailIntroTitle;
+
+  /// No description provided for @emailIntroRead.
+  ///
+  /// In en, this message translates to:
+  /// **'Ví Gọn reads your bank\'s transfer receipt emails in the mailbox you add, then puts them in a queue for you to pick a category.'**
+  String get emailIntroRead;
+
+  /// No description provided for @emailIntroLocal.
+  ///
+  /// In en, this message translates to:
+  /// **'On this phone only: email content is never sent anywhere.'**
+  String get emailIntroLocal;
+
+  /// No description provided for @emailIntroReadOnly.
+  ///
+  /// In en, this message translates to:
+  /// **'No email is changed, deleted or marked as read.'**
+  String get emailIntroReadOnly;
+
+  /// No description provided for @emailIntroAppPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Needs an app password from your email provider, not your main sign-in password.'**
+  String get emailIntroAppPassword;
+
+  /// No description provided for @emailIntroBanks.
+  ///
+  /// In en, this message translates to:
+  /// **'Only MB Bank is supported for now.'**
+  String get emailIntroBanks;
+
+  /// No description provided for @emailIntroIos.
+  ///
+  /// In en, this message translates to:
+  /// **'On iPhone, Ví Gọn checks email only when you open or return to the app.'**
+  String get emailIntroIos;
+
+  /// No description provided for @emailAddMailbox.
+  ///
+  /// In en, this message translates to:
+  /// **'Add mailbox'**
+  String get emailAddMailbox;
+
+  /// No description provided for @emailMailboxLimit.
+  ///
+  /// In en, this message translates to:
+  /// **'You already have 3 mailboxes. Remove one to add another.'**
+  String get emailMailboxLimit;
+
+  /// No description provided for @emailScheduleAndroid.
+  ///
+  /// In en, this message translates to:
+  /// **'Ví Gọn checks email when you open the app and about every hour while it\'s closed. Pull down to check now.'**
+  String get emailScheduleAndroid;
+
+  /// No description provided for @emailScheduleIos.
+  ///
+  /// In en, this message translates to:
+  /// **'On iPhone, Ví Gọn checks email only when you open or return to the app. Pull down to check now.'**
+  String get emailScheduleIos;
+
+  /// No description provided for @emailConnected.
+  ///
+  /// In en, this message translates to:
+  /// **'Connected'**
+  String get emailConnected;
+
+  /// No description provided for @emailLastCheck.
+  ///
+  /// In en, this message translates to:
+  /// **'Connected · Last check: {time}'**
+  String emailLastCheck(String time);
+
+  /// No description provided for @emailErrorAt.
+  ///
+  /// In en, this message translates to:
+  /// **'Check at {time}: {error}'**
+  String emailErrorAt(String time, String error);
+
+  /// No description provided for @emailErrorCredentials.
+  ///
+  /// In en, this message translates to:
+  /// **'Wrong address or app password'**
+  String get emailErrorCredentials;
+
+  /// No description provided for @emailErrorImapDisabled.
+  ///
+  /// In en, this message translates to:
+  /// **'IMAP is turned off for this mailbox'**
+  String get emailErrorImapDisabled;
+
+  /// No description provided for @emailErrorNetwork.
+  ///
+  /// In en, this message translates to:
+  /// **'No internet connection'**
+  String get emailErrorNetwork;
+
+  /// No description provided for @emailErrorSecure.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t make a secure connection to the email server'**
+  String get emailErrorSecure;
+
+  /// No description provided for @emailErrorServer.
+  ///
+  /// In en, this message translates to:
+  /// **'The email server returned an error. Try again later'**
+  String get emailErrorServer;
+
+  /// No description provided for @emailPaused.
+  ///
+  /// In en, this message translates to:
+  /// **'Checking this mailbox is paused. Enter the app password again to continue.'**
+  String get emailPaused;
+
+  /// No description provided for @emailUnreadable.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 MB email couldn\'t be read} other{{count} MB emails couldn\'t be read}}'**
+  String emailUnreadable(int count);
+
+  /// No description provided for @emailReenterPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Re-enter password'**
+  String get emailReenterPassword;
+
+  /// No description provided for @emailRemoveMailbox.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove mailbox'**
+  String get emailRemoveMailbox;
+
+  /// No description provided for @emailRemoveTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove mailbox?'**
+  String get emailRemoveTitle;
+
+  /// No description provided for @emailRemoveBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Ví Gọn will stop reading email from {address} and delete the app password from this phone. Records already saved stay as they are.'**
+  String emailRemoveBody(String address);
+
+  /// No description provided for @emailRemoved.
+  ///
+  /// In en, this message translates to:
+  /// **'Mailbox removed'**
+  String get emailRemoved;
+
+  /// No description provided for @emailProvider.
+  ///
+  /// In en, this message translates to:
+  /// **'Provider'**
+  String get emailProvider;
+
+  /// No description provided for @emailStepsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Create an app password'**
+  String get emailStepsTitle;
+
+  /// No description provided for @emailStepsGmail1.
+  ///
+  /// In en, this message translates to:
+  /// **'Turn on 2-Step Verification for your Google account (required for app passwords).'**
+  String get emailStepsGmail1;
+
+  /// No description provided for @emailStepsGmail2.
+  ///
+  /// In en, this message translates to:
+  /// **'Open the App passwords page with the button below, name it \"Ví Gọn\" and tap Create.'**
+  String get emailStepsGmail2;
+
+  /// No description provided for @emailStepsGmail3.
+  ///
+  /// In en, this message translates to:
+  /// **'Copy the 16-character password Google shows into the App password field below.'**
+  String get emailStepsGmail3;
+
+  /// No description provided for @emailStepsYahoo1.
+  ///
+  /// In en, this message translates to:
+  /// **'Open the Yahoo Account security page with the button below.'**
+  String get emailStepsYahoo1;
+
+  /// No description provided for @emailStepsYahoo2.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose \"Generate app password\", name it \"Ví Gọn\" and tap Generate.'**
+  String get emailStepsYahoo2;
+
+  /// No description provided for @emailStepsYahoo3.
+  ///
+  /// In en, this message translates to:
+  /// **'Copy the password Yahoo shows into the App password field below.'**
+  String get emailStepsYahoo3;
+
+  /// No description provided for @emailStepsIcloud1.
+  ///
+  /// In en, this message translates to:
+  /// **'Turn on two-factor authentication for your Apple Account.'**
+  String get emailStepsIcloud1;
+
+  /// No description provided for @emailStepsIcloud2.
+  ///
+  /// In en, this message translates to:
+  /// **'Open the Apple Account page with the button below → Sign-In and Security → App-Specific Passwords, name it \"Ví Gọn\".'**
+  String get emailStepsIcloud2;
+
+  /// No description provided for @emailStepsIcloud3.
+  ///
+  /// In en, this message translates to:
+  /// **'Copy the password Apple shows into the App password field below; the address is your iCloud email.'**
+  String get emailStepsIcloud3;
+
+  /// No description provided for @emailOpenPasswordPage.
+  ///
+  /// In en, this message translates to:
+  /// **'Open the app password page'**
+  String get emailOpenPasswordPage;
+
+  /// No description provided for @emailAddress.
+  ///
+  /// In en, this message translates to:
+  /// **'Email address'**
+  String get emailAddress;
+
+  /// No description provided for @emailAddressInvalid.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a valid email address'**
+  String get emailAddressInvalid;
+
+  /// No description provided for @emailAppPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'App password'**
+  String get emailAppPassword;
+
+  /// No description provided for @emailAppPasswordHelper.
+  ///
+  /// In en, this message translates to:
+  /// **'Not your main sign-in password. Stored only in this phone\'s secure storage.'**
+  String get emailAppPasswordHelper;
+
+  /// No description provided for @emailAppPasswordEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter the app password'**
+  String get emailAppPasswordEmpty;
+
+  /// No description provided for @emailConnect.
+  ///
+  /// In en, this message translates to:
+  /// **'Connect'**
+  String get emailConnect;
+
+  /// No description provided for @emailDuplicate.
+  ///
+  /// In en, this message translates to:
+  /// **'This mailbox is already added'**
+  String get emailDuplicate;
+
+  /// No description provided for @emailSaveReenter.
+  ///
+  /// In en, this message translates to:
+  /// **'Save and reconnect'**
+  String get emailSaveReenter;
 }
 
 class _AppLocalizationsDelegate

@@ -16,10 +16,13 @@ import 'features/lock/app_lock.dart';
 import 'features/lock/lock_screen.dart';
 import 'features/recurring/recurring_screen.dart';
 import 'features/reminder/reminder_providers.dart';
+import 'features/settings/email_import_screen.dart';
+import 'features/settings/email_mailbox_form.dart';
 import 'features/settings/secure_window.dart';
 import 'features/settings/settings_screen.dart';
 import 'features/widget/deep_link.dart';
 import 'features/widget/widget_sync.dart';
+import 'import/mail/mailbox_store.dart';
 import 'providers.dart';
 import 'ui/messenger.dart';
 import 'ui/theme.dart';
@@ -87,6 +90,22 @@ GoRouter createRouter() => GoRouter(
           builder: (context, state) => EntryEditorScreen(
             entryId: int.parse(state.pathParameters['id']!),
           ),
+        ),
+        // F-28: hộp thư email; `?id=` chỉ nhận id ô có thật (nhập lại mật khẩu).
+        GoRoute(
+          path: 'email-import',
+          builder: (context, state) => const EmailImportScreen(),
+          routes: [
+            GoRoute(
+              path: 'add',
+              builder: (context, state) {
+                final id = state.uri.queryParameters['id'];
+                return EmailMailboxForm(
+                  mailboxId: MailboxStore.slotIds.contains(id) ? id : null,
+                );
+              },
+            ),
+          ],
         ),
       ],
     ),

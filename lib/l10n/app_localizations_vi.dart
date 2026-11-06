@@ -968,4 +968,193 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get currencyConvertOk => 'Đã hiểu';
+
+  @override
+  String get emailImportGroup => 'Nhập tự động';
+
+  @override
+  String get emailImport => 'Nhập từ email ngân hàng';
+
+  @override
+  String get emailImportNoMailbox => 'Chưa có hộp thư';
+
+  @override
+  String emailImportMailboxCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count hộp thư',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get emailIntroTitle => 'Ghi khoản chi từ email biên lai';
+
+  @override
+  String get emailIntroRead =>
+      'Ví Gọn đọc email biên lai chuyển tiền của ngân hàng trong hộp thư bạn thêm, rồi đưa vào hàng đợi để bạn chọn danh mục.';
+
+  @override
+  String get emailIntroLocal =>
+      'Chỉ trên máy này: nội dung email không được gửi đi đâu.';
+
+  @override
+  String get emailIntroReadOnly =>
+      'Không sửa, không xoá, không đánh dấu đã đọc thư nào.';
+
+  @override
+  String get emailIntroAppPassword =>
+      'Cần mật khẩu ứng dụng do nhà cung cấp email cấp, không phải mật khẩu đăng nhập chính.';
+
+  @override
+  String get emailIntroBanks => 'Hiện chỉ hỗ trợ MB Bank.';
+
+  @override
+  String get emailIntroIos =>
+      'Trên iPhone, Ví Gọn chỉ kiểm thư khi bạn mở hoặc quay lại app.';
+
+  @override
+  String get emailAddMailbox => 'Thêm hộp thư';
+
+  @override
+  String get emailMailboxLimit =>
+      'Đã đủ 3 hộp thư. Xoá một hộp thư để thêm hộp thư khác.';
+
+  @override
+  String get emailScheduleAndroid =>
+      'Ví Gọn kiểm thư khi mở app và khoảng mỗi giờ khi app đóng. Kéo xuống để kiểm ngay.';
+
+  @override
+  String get emailScheduleIos =>
+      'Trên iPhone, Ví Gọn chỉ kiểm thư khi bạn mở hoặc quay lại app. Kéo xuống để kiểm ngay.';
+
+  @override
+  String get emailConnected => 'Đã kết nối';
+
+  @override
+  String emailLastCheck(String time) {
+    return 'Đã kết nối · Lần kiểm cuối: $time';
+  }
+
+  @override
+  String emailErrorAt(String time, String error) {
+    return 'Lần kiểm $time: $error';
+  }
+
+  @override
+  String get emailErrorCredentials => 'Sai địa chỉ hoặc mật khẩu ứng dụng';
+
+  @override
+  String get emailErrorImapDisabled => 'Hộp thư chưa bật IMAP';
+
+  @override
+  String get emailErrorNetwork => 'Không có mạng';
+
+  @override
+  String get emailErrorSecure => 'Không kết nối an toàn được tới máy chủ email';
+
+  @override
+  String get emailErrorServer => 'Máy chủ email báo lỗi. Thử lại sau';
+
+  @override
+  String get emailPaused =>
+      'Đã dừng kiểm thư hộp thư này. Nhập lại mật khẩu ứng dụng để tiếp tục.';
+
+  @override
+  String emailUnreadable(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count email MB không đọc được',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get emailReenterPassword => 'Nhập lại mật khẩu';
+
+  @override
+  String get emailRemoveMailbox => 'Xoá hộp thư';
+
+  @override
+  String get emailRemoveTitle => 'Xoá hộp thư?';
+
+  @override
+  String emailRemoveBody(String address) {
+    return 'Ví Gọn sẽ thôi đọc email của $address và xoá mật khẩu ứng dụng khỏi máy. Các khoản đã ghi vẫn giữ nguyên.';
+  }
+
+  @override
+  String get emailRemoved => 'Đã xoá hộp thư';
+
+  @override
+  String get emailProvider => 'Nhà cung cấp';
+
+  @override
+  String get emailStepsTitle => 'Tạo mật khẩu ứng dụng';
+
+  @override
+  String get emailStepsGmail1 =>
+      'Bật Xác minh 2 bước cho tài khoản Google (bắt buộc để có mật khẩu ứng dụng).';
+
+  @override
+  String get emailStepsGmail2 =>
+      'Mở trang Mật khẩu ứng dụng bằng nút dưới, đặt tên \"Ví Gọn\" rồi bấm Tạo.';
+
+  @override
+  String get emailStepsGmail3 =>
+      'Chép mật khẩu 16 ký tự Google hiện ra vào ô Mật khẩu ứng dụng bên dưới.';
+
+  @override
+  String get emailStepsYahoo1 =>
+      'Mở trang Bảo mật tài khoản Yahoo bằng nút dưới.';
+
+  @override
+  String get emailStepsYahoo2 =>
+      'Chọn \"Tạo mật khẩu ứng dụng\", đặt tên \"Ví Gọn\" rồi bấm Tạo.';
+
+  @override
+  String get emailStepsYahoo3 =>
+      'Chép mật khẩu Yahoo hiện ra vào ô Mật khẩu ứng dụng bên dưới.';
+
+  @override
+  String get emailStepsIcloud1 =>
+      'Bật xác thực hai yếu tố cho Tài khoản Apple.';
+
+  @override
+  String get emailStepsIcloud2 =>
+      'Mở trang Tài khoản Apple bằng nút dưới → Đăng nhập và bảo mật → Mật khẩu dành riêng cho ứng dụng, đặt tên \"Ví Gọn\".';
+
+  @override
+  String get emailStepsIcloud3 =>
+      'Chép mật khẩu Apple hiện ra vào ô Mật khẩu ứng dụng bên dưới; địa chỉ là email iCloud của bạn.';
+
+  @override
+  String get emailOpenPasswordPage => 'Mở trang tạo mật khẩu ứng dụng';
+
+  @override
+  String get emailAddress => 'Địa chỉ email';
+
+  @override
+  String get emailAddressInvalid => 'Nhập đúng địa chỉ email';
+
+  @override
+  String get emailAppPassword => 'Mật khẩu ứng dụng';
+
+  @override
+  String get emailAppPasswordHelper =>
+      'Không phải mật khẩu đăng nhập chính. Chỉ lưu trong bộ nhớ an toàn của máy.';
+
+  @override
+  String get emailAppPasswordEmpty => 'Nhập mật khẩu ứng dụng';
+
+  @override
+  String get emailConnect => 'Kết nối';
+
+  @override
+  String get emailDuplicate => 'Hộp thư này đã được thêm';
+
+  @override
+  String get emailSaveReenter => 'Lưu và kết nối lại';
 }
