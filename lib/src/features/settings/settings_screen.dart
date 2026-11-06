@@ -103,31 +103,6 @@ class SettingsScreen extends ConsumerWidget {
             ],
           ),
           cardGap,
-          // 2.0: Tiết kiệm, Khoản nợ, Hàng đợi (điểm vào tạm; vị trí cuối cùng
-          // theo mockup phiên #4).
-          SettingsCard(
-            children: [
-              SettingsNavRow(
-                icon: Symbols.savings_rounded,
-                title: l.savings,
-                onTap: () => context.push('/savings'),
-              ),
-              SettingsNavRow(
-                icon: Symbols.handshake_rounded,
-                title: l.debts,
-                onTap: () => context.push('/debts'),
-              ),
-              SettingsNavRow(
-                icon: Symbols.inbox_rounded,
-                title: l.importQueue,
-                value: queueCount == 0
-                    ? l.importQueueNone
-                    : l.importQueueCount(queueCount),
-                onTap: () => context.push('/import-queue'),
-              ),
-            ],
-          ),
-          cardGap,
           SettingsCard(
             children: [
               SettingsNavRow(
@@ -168,6 +143,31 @@ class SettingsScreen extends ConsumerWidget {
               _MonthStartRow(
                 value: monthStartDay,
                 onChanged: repo.setMonthStartDay,
+              ),
+            ],
+          ),
+          cardGap,
+          // 2.0: Tiết kiệm, Khoản nợ, Hàng đợi (điểm vào tạm; vị trí cuối cùng
+          // theo mockup phiên #4).
+          SettingsCard(
+            children: [
+              SettingsNavRow(
+                icon: Symbols.savings_rounded,
+                title: l.savings,
+                onTap: () => context.push('/savings'),
+              ),
+              SettingsNavRow(
+                icon: Symbols.handshake_rounded,
+                title: l.debts,
+                onTap: () => context.push('/debts'),
+              ),
+              SettingsNavRow(
+                icon: Symbols.inbox_rounded,
+                title: l.importQueue,
+                value: queueCount == 0
+                    ? l.importQueueNone
+                    : l.importQueueCount(queueCount),
+                onTap: () => context.push('/import-queue'),
               ),
             ],
           ),

@@ -440,20 +440,28 @@ void main() {
       'mở đúng màn', (tester) async {
     final db = await pumpApp(tester);
     await goTo(tester, '/settings');
+    await tester.scrollUntilVisible(find.text('Hàng đợi'), 200);
     expect(find.text('Tiết kiệm'), findsOneWidget);
     expect(find.text('Khoản nợ'), findsOneWidget);
     expect(find.text('Không có khoản nào đang chờ'), findsOneWidget);
     await _item(tester, db);
     await _item(tester, db, ref: 'REF0002');
     expect(find.text('2 khoản chờ chọn danh mục'), findsOneWidget);
+    await tester.scrollUntilVisible(find.text('Hàng đợi'), 200);
     await tester.tap(find.text('Hàng đợi'));
     await settle(tester);
     expect(find.text(_payee), findsWidgets);
     await goTo(tester, '/settings');
+    await tester.scrollUntilVisible(find.text('Tiết kiệm'), 200);
+    await tester.ensureVisible(find.text('Tiết kiệm'));
+    await settle(tester);
     await tester.tap(find.text('Tiết kiệm'));
     await settle(tester);
     expect(find.text('Thêm mục tiêu'), findsOneWidget);
     await goTo(tester, '/settings');
+    await tester.scrollUntilVisible(find.text('Khoản nợ'), 200);
+    await tester.ensureVisible(find.text('Khoản nợ'));
+    await settle(tester);
     await tester.tap(find.text('Khoản nợ'));
     await settle(tester);
     expect(find.text('Thêm khoản nợ'), findsOneWidget);
