@@ -1,0 +1,17 @@
+Cảm ơn Quý khách đã sử dụng dịch vụ MB eBanking.
+MB xin thông báo giao dịch của Quý khách đã được thực hiện như sau:
+
+Ngày, giờ giao dịch: 08-11-2026 09:30:15
+Loại giao dịch: Chuyển tiền nhanh ngoài MB
+Số tham chiếu: 26110809301234567
+Tài khoản trích nợ: TRAN THI MAU - ········4821 (VND)
+Người thụ hưởng: LE VAN KHACH - 012300XXX7788
+Số tiền giao dịch: (VND) 48,000.00
+Nội dung chuyển tiền: TRAN THI MAU chuyen tien
+Cách thức lệnh: Thanh toán ngay
+Ngày nhập lệnh: 08-11-2026
+Thời gian: 08-11-2026 09:30:15
+Tình trạng: Giao dịch thành công
+
+Xin chân thành cảm ơn.
+Hotline MB247
