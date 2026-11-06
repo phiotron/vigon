@@ -217,12 +217,17 @@ void main() {
         final lines = csv.substring(1).trim().split('\r\n');
         expect(
           lines[0],
-          'date,type,amount,currency,category,account,to_account,note',
+          'date,type,amount,currency,category,account,to_account,note,'
+          'time,source',
         );
-        expect(lines[1], "2026-11-01,income,5,VND,Lương,Tiền mặt,,'=1+1");
+        expect(
+          lines[1],
+          "2026-11-01,income,5,VND,Lương,Tiền mặt,,'=1+1,,manual",
+        );
         expect(
           lines[2],
-          '2026-11-03,expense,155000,VND,Ăn uống,Tiền mặt,,"phở, ""bò"""',
+          '2026-11-03,expense,155000,VND,Ăn uống,Tiền mặt,,"phở, ""bò""",,'
+          'manual',
         );
       },
     );
@@ -270,6 +275,10 @@ void main() {
       expense: 'Chi',
       income: 'Thu',
       transfer: 'Chuyển tiền',
+      timeHeader: 'Giờ',
+      sourceHeader: 'Nguồn',
+      manualSource: 'Ghi tay',
+      emailMbSource: 'Email MB',
     );
 
     Entry entry(
@@ -324,11 +333,18 @@ void main() {
       final lines = csv.substring(1).trim().split('\r\n');
       expect(
         lines[0],
-        'Ngày;Loại;Số tiền;Tiền tệ;Danh mục;Tài khoản;Đến tài khoản;Ghi chú',
+        'Ngày;Loại;Số tiền;Tiền tệ;Danh mục;Tài khoản;Đến tài khoản;Ghi chú;'
+        'Giờ;Nguồn',
       );
-      expect(lines[1], '2026-11-03;Chi;155000;VND;Ăn uống;Tiền mặt;;');
-      expect(lines[2], '2026-11-04;Thu;5000000;VND;Ăn uống;Tiền mặt;;');
-      expect(lines[3], '2026-11-05;Chuyển tiền;20000;VND;;Tiền mặt;Thẻ;');
+      expect(lines[1], '2026-11-03;Chi;155000;VND;Ăn uống;Tiền mặt;;;;Ghi tay');
+      expect(
+        lines[2],
+        '2026-11-04;Thu;5000000;VND;Ăn uống;Tiền mặt;;;;Ghi tay',
+      );
+      expect(
+        lines[3],
+        '2026-11-05;Chuyển tiền;20000;VND;;Tiền mặt;Thẻ;;;Ghi tay',
+      );
     });
 
     test('tiếng Anh: tiêu đề và loại tiếng Anh, dấu phẩy và dấu chấm', () {
@@ -349,10 +365,11 @@ void main() {
       ).split('\n');
       expect(
         out[0],
-        'date,type,amount,currency,category,account,to_account,note',
+        'date,type,amount,currency,category,account,to_account,note,'
+        'time,source',
       );
-      expect(out[1], '2026-11-03,expense,12.50,USD,Ăn uống,Tiền mặt,,');
-      expect(out[2], '2026-11-04,transfer,0.05,USD,,Tiền mặt,Thẻ,');
+      expect(out[1], '2026-11-03,expense,12.50,USD,Ăn uống,Tiền mặt,,,,manual');
+      expect(out[2], '2026-11-04,transfer,0.05,USD,,Tiền mặt,Thẻ,,,manual');
     });
 
     test('forLanguage chọn dấu theo ngôn ngữ', () {
@@ -395,11 +412,11 @@ void main() {
       final viOut = build([
         entry(1, EntryType.expense, 100, note: 'a; b, c'),
       ], vi);
-      expect(viOut, endsWith(';"a; b, c"'));
+      expect(viOut, endsWith(';"a; b, c";;Ghi tay'));
       final enOut = build([
         entry(1, EntryType.expense, 100, note: 'a; b, c'),
       ], CsvFormat.english);
-      expect(enOut, endsWith(',"a; b, c"'));
+      expect(enOut, endsWith(',"a; b, c",,manual'));
       // Ngoặc kép bên trong được nhân đôi; xuống dòng cũng được bao ngoặc kép.
       final quote = exportCsv(
         entries: [entry(1, EntryType.expense, 100, note: 'dòng 1\n"x"')],
@@ -418,13 +435,14 @@ void main() {
           final out = build([
             entry(1, EntryType.expense, 1, note: bad),
           ], format);
-          expect(out, endsWith("'$bad"));
+          final d = format.delimiter;
+          expect(out, endsWith("'$bad$d$d${format.manualSource}"));
         }
       }
       // Ghi chú có dấu ngăn vừa là công thức: thêm dấu ' rồi bao ngoặc kép.
       expect(
         build([entry(1, EntryType.expense, 1, note: '=a;b')], vi),
-        endsWith('"\'=a;b"'),
+        endsWith('"\'=a;b";;Ghi tay'),
       );
     });
   });

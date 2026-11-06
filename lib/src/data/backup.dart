@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:crypto/crypto.dart';
 
 import 'database.dart';
+import 'import_repositories.dart' show entrySourceForBank;
 import 'seed.dart';
 import 'settings_repository.dart';
 
@@ -57,6 +58,21 @@ Future<String> exportBackup(AppDatabase db, {required DateTime now}) async {
         if (!deviceOnlySettingKeys.contains(r.key) && r.key != _installIdKey)
           r.toJson(),
     ],
+    // Schema 4 (AC-121). Hàng đợi KHÔNG vào file (AC-99); hộp thư không nằm
+    // trong cơ sở dữ liệu (AC-79).
+    'savingsGoals': [
+      for (final r in await db.select(db.savingsGoals).get()) r.toJson(),
+    ],
+    'debts': [for (final r in await db.select(db.debts).get()) r.toJson()],
+    'debtPayments': [
+      for (final r in await db.select(db.debtPayments).get()) r.toJson(),
+    ],
+    'payeeSuggestions': [
+      for (final r in await db.select(db.payeeSuggestions).get()) r.toJson(),
+    ],
+    'seenReferences': [
+      for (final r in await db.select(db.seenReferences).get()) r.toJson(),
+    ],
   };
   return const JsonEncoder.withIndent(' ').convert({
     'format': backupFormat,
@@ -77,6 +93,11 @@ typedef _Parsed = ({
   List<RecurringRule> rules,
   List<Entry> entries,
   List<Setting> settings,
+  List<SavingsGoal> goals,
+  List<Debt> debts,
+  List<DebtPayment> debtPayments,
+  List<PayeeSuggestion> suggestions,
+  List<SeenReference> seenReferences,
 });
 
 /// Đọc và kiểm hết file (định dạng, phiên bản, mã băm, từng dòng) mà KHÔNG đụng
@@ -97,7 +118,8 @@ _Parsed _parseBackup(String content) {
   }
   // File cũ vẫn đọc được: schema 1 không có cột budget của danh mục, schema 1/2
   // không có cột số tiền chính xác `*Micro` và khóa `budgetMicro` (D-029) —
-  // thiếu thì null, tức số chính xác bằng đúng số đã làm tròn. File từ bản app
+  // thiếu thì null, tức số chính xác bằng đúng số đã làm tròn; schema 1–3 không
+  // có bảng/cột của bản 2.0 (AC-77, AC-121) — xem [rows] dưới. File từ bản app
   // mới hơn schema hiện tại thì từ chối.
   final schema = root['schemaVersion'];
   if (schema != null && (schema is! int || schema > currentSchemaVersion)) {
@@ -109,11 +131,25 @@ _Parsed _parseBackup(String content) {
     throw BackupFormatException('mã băm không khớp');
   }
 
-  List<T> rows<T>(String name, T Function(Map<String, dynamic>) fromJson) {
+  // File không ghi schemaVersion là bản đầu (schema 1).
+  final fileSchema = schema is int ? schema : 1;
+
+  /// Bảng [name]; [since] là schema đầu tiên có bảng đó — file cũ hơn không có
+  /// thì coi là rỗng, file từ schema đó trở đi thiếu bảng là hỏng.
+  List<T> rows<T>(
+    String name,
+    T Function(Map<String, dynamic>) fromJson, {
+    int since = 1,
+    Map<String, dynamic> defaults = const {},
+  }) {
     final list = tables[name];
+    if (list == null && fileSchema < since) return const [];
     if (list is! List) throw BackupFormatException('thiếu bảng $name');
     try {
-      return [for (final r in list) fromJson(r as Map<String, dynamic>)];
+      return [
+        for (final r in list)
+          fromJson({...defaults, ...r as Map<String, dynamic>}),
+      ];
     } catch (e) {
       throw BackupFormatException('bảng $name hỏng: $e');
     }
@@ -122,7 +158,25 @@ _Parsed _parseBackup(String content) {
   final accounts = rows('accounts', Account.fromJson);
   final categories = rows('categories', Category.fromJson);
   final rules = rows('recurringRules', RecurringRule.fromJson);
-  final entries = rows('entries', Entry.fromJson);
+  // File schema 1–3: khoản là ghi tay, không giờ, không số tham chiếu (AC-77).
+  final entries = rows(
+    'entries',
+    Entry.fromJson,
+    defaults: {'source': EntrySource.manual.name},
+  );
+  final goals = rows('savingsGoals', SavingsGoal.fromJson, since: 4);
+  final debts = rows('debts', Debt.fromJson, since: 4);
+  final debtPayments = rows('debtPayments', DebtPayment.fromJson, since: 4);
+  final suggestions = rows(
+    'payeeSuggestions',
+    PayeeSuggestion.fromJson,
+    since: 4,
+  );
+  final seenReferences = rows(
+    'seenReferences',
+    SeenReference.fromJson,
+    since: 4,
+  );
   // Bỏ cài đặt "theo máy" (file cũ có thể còn chứa): xem [deviceOnlySettingKeys].
   final settings = [
     for (final s in rows('settings', Setting.fromJson))
@@ -138,6 +192,11 @@ _Parsed _parseBackup(String content) {
     rules: rules,
     entries: entries,
     settings: settings,
+    goals: goals,
+    debts: debts,
+    debtPayments: debtPayments,
+    suggestions: suggestions,
+    seenReferences: seenReferences,
   );
 }
 
@@ -158,7 +217,13 @@ Future<void> importBackup(AppDatabase db, String content) async {
           for (final s in parsed.settings)
             if (s.key != _installIdKey) s,
         ]);
+        b.insertAll(db.savingsGoals, parsed.goals);
+        b.insertAll(db.debts, parsed.debts);
+        b.insertAll(db.debtPayments, parsed.debtPayments);
+        b.insertAll(db.payeeSuggestions, parsed.suggestions);
+        b.insertAll(db.seenReferences, parsed.seenReferences);
       });
+      await _reconcileQueue(db);
     });
   } on BackupFormatException {
     rethrow;
@@ -168,7 +233,41 @@ Future<void> importBackup(AppDatabase db, String content) async {
   }
 }
 
+/// Sau khôi phục, hàng đợi hiện có được giữ (AC-99) nhưng: mục có số tham
+/// chiếu đã nằm trong khoản hoặc trong "số tham chiếu đã gặp" của file thì bỏ;
+/// mục còn lại gắn lại tài khoản theo liên kết (ngân hàng, 4 số cuối) của dữ
+/// liệu vừa khôi phục — không có thì để null cho bên nhập tạo lại (AC-90).
+/// (Xoá tài khoản cũ đã làm `accountId` của mục thành null, khoá ngoại SET NULL.)
+Future<void> _reconcileQueue(AppDatabase db) async {
+  final sourceOfBank = [
+    'CASE import_queue_items.bank',
+    for (final b in Bank.values)
+      "WHEN '${b.name}' THEN '${entrySourceForBank(b).name}'",
+    'END',
+  ].join(' ');
+  await db.customStatement('''
+    DELETE FROM import_queue_items WHERE EXISTS (
+      SELECT 1 FROM seen_references s
+      WHERE s.bank = import_queue_items.bank
+        AND s.reference_number = import_queue_items.reference_number)
+    OR EXISTS (
+      SELECT 1 FROM entries e
+      WHERE e.source = $sourceOfBank
+        AND e.reference_number = import_queue_items.reference_number)''');
+  await db.customStatement('''
+    UPDATE import_queue_items SET account_id = (
+      SELECT a.id FROM accounts a
+      WHERE a.bank = import_queue_items.bank
+        AND a.bank_last4 = import_queue_items.debit_last4)''');
+}
+
 Future<void> _clearAll(AppDatabase db) async {
+  // Bảng con trước bảng cha (khoá ngoại). Hàng đợi KHÔNG xoá ở đây (AC-99).
+  await db.delete(db.seenReferences).go();
+  await db.delete(db.payeeSuggestions).go();
+  await db.delete(db.debtPayments).go();
+  await db.delete(db.debts).go();
+  await db.delete(db.savingsGoals).go();
   await db.delete(db.entries).go();
   await db.delete(db.recurringRules).go();
   await db.delete(db.categories).go();
@@ -178,12 +277,39 @@ Future<void> _clearAll(AppDatabase db) async {
   )..where((s) => s.key.isNotValue(_installIdKey))).go();
 }
 
-/// Xóa toàn bộ dữ liệu rồi tạo lại danh mục, tài khoản mặc định như lúc mới cài (AC-42).
-Future<void> deleteAllData(AppDatabase db) => db.transaction(() async {
-  await _clearAll(db);
-  await db.customStatement('DELETE FROM sqlite_sequence');
-  await seedDefaults(db);
-});
+/// Việc dọn NGOÀI cơ sở dữ liệu khi "Xóa toàn bộ dữ liệu" (AC-123), ví dụ xoá
+/// hộp thư + mật khẩu ứng dụng khỏi Keystore/Keychain, tắt kiểm thư nền, tắt
+/// sinh trắc. Chạy sau khi phần cơ sở dữ liệu đã xoá xong.
+typedef DeleteAllDataHook = Future<void> Function();
+
+/// Xóa toàn bộ dữ liệu rồi tạo lại danh mục, tài khoản mặc định như lúc mới cài
+/// (AC-42). Bản 2.0 xoá thêm mục tiêu, khoản nợ + lần trả, gợi ý, hàng đợi, số
+/// tham chiếu đã gặp (AC-123) trong cùng giao dịch. Sau đó chạy lần lượt mọi
+/// [hooks] (kể cả khi một hook lỗi, rồi ném lại lỗi đầu tiên) — phần ngoài cơ
+/// sở dữ liệu do nơi gọi truyền vào (tầng dữ liệu không biết Keystore hay lịch
+/// chạy nền).
+Future<void> deleteAllData(
+  AppDatabase db, {
+  Iterable<DeleteAllDataHook> hooks = const [],
+}) async {
+  await db.transaction(() async {
+    await db.delete(db.importQueueItems).go();
+    await _clearAll(db);
+    await db.customStatement('DELETE FROM sqlite_sequence');
+    await seedDefaults(db);
+  });
+  Object? firstError;
+  StackTrace? firstStack;
+  for (final hook in hooks) {
+    try {
+      await hook();
+    } catch (e, s) {
+      firstError ??= e;
+      firstStack ??= s;
+    }
+  }
+  if (firstError != null) Error.throwWithStackTrace(firstError, firstStack!);
+}
 
 /// Cách ghi file CSV theo ngôn ngữ (AC-52). Tầng dữ liệu không biết
 /// `BuildContext`: chuỗi nằm trong `.arb`, nơi gọi truyền vào.
@@ -195,6 +321,10 @@ class CsvFormat {
     required this.expense,
     required this.income,
     required this.transfer,
+    this.timeHeader = 'time',
+    this.sourceHeader = 'source',
+    this.manualSource = 'manual',
+    this.emailMbSource = 'email_mb',
   });
 
   /// Chọn dấu ngăn theo ngôn ngữ: tiếng Việt `;` và `,` (Excel vùng Việt đọc
@@ -205,6 +335,10 @@ class CsvFormat {
     required String expense,
     required String income,
     required String transfer,
+    String timeHeader = 'time',
+    String sourceHeader = 'source',
+    String manualSource = 'manual',
+    String emailMbSource = 'email_mb',
   }) => CsvFormat(
     delimiter: languageCode == 'vi' ? ';' : ',',
     decimalSeparator: languageCode == 'vi' ? ',' : '.',
@@ -212,6 +346,10 @@ class CsvFormat {
     expense: expense,
     income: income,
     transfer: transfer,
+    timeHeader: timeHeader,
+    sourceHeader: sourceHeader,
+    manualSource: manualSource,
+    emailMbSource: emailMbSource,
   );
 
   static const english = CsvFormat(
@@ -241,6 +379,19 @@ class CsvFormat {
   final String income;
   final String transfer;
 
+  /// Hai cột thêm ở CUỐI (AC-124) để giữ thứ tự tám cột cũ: Giờ và Nguồn.
+  final String timeHeader;
+  final String sourceHeader;
+
+  /// Chữ của cột Nguồn: "Ghi tay" / "Email MB".
+  final String manualSource;
+  final String emailMbSource;
+
+  String sourceName(EntrySource source) => switch (source) {
+    EntrySource.manual => manualSource,
+    EntrySource.emailMb => emailMbSource,
+  };
+
   String typeName(EntryType type) => switch (type) {
     EntryType.expense => expense,
     EntryType.income => income,
@@ -248,7 +399,8 @@ class CsvFormat {
   };
 }
 
-/// Xuất CSV: ngày, loại, số tiền, tiền tệ, danh mục, tài khoản, ghi chú (AC-30, AC-52).
+/// Xuất CSV: ngày, loại, số tiền, tiền tệ, danh mục, tài khoản, đến tài khoản,
+/// ghi chú (AC-30, AC-52), rồi giờ (trống nếu khoản không giờ) và nguồn (AC-124).
 /// UTF-8 có BOM để Excel đọc đúng chữ tiếng Việt.
 String exportCsv({
   required List<Entry> entries,
@@ -284,7 +436,11 @@ String exportCsv({
           : a.id.compareTo(b.id),
     );
   final lines = [
-    format.header.map(cell).join(format.delimiter),
+    [
+      ...format.header,
+      format.timeHeader,
+      format.sourceHeader,
+    ].map(cell).join(format.delimiter),
     for (final e in sorted)
       [
         e.date,
@@ -295,6 +451,8 @@ String exportCsv({
         cell(accountName(e.accountId)),
         cell(e.toAccountId == null ? '' : accountName(e.toAccountId!)),
         cell(e.note ?? ''),
+        e.time ?? '',
+        cell(format.sourceName(e.source)),
       ].join(format.delimiter),
   ];
   return '﻿${lines.join('\r\n')}\r\n';

@@ -76,14 +76,16 @@ int exactMicro(int amount, int? micro, int digits) {
 /// Đổi tiền tệ của app sang [newCode] và quy đổi MỌI số tiền theo [rate]
 /// ("1 tiền cũ = rate tiền mới") trong MỘT giao dịch (D-025, AC-21, D-029):
 /// khoản thu chi và chuyển tiền, khoản định kỳ, số dư ban đầu tài khoản, hạn
-/// mức danh mục, ngân sách tháng.
+/// mức danh mục, ngân sách tháng; bản 2.0 thêm mục tiêu tiết kiệm, khoản nợ,
+/// lần trả, mục hàng đợi (AC-122).
 ///
 /// Quy đổi từ số tiền CHÍNH XÁC ([exactMicro], 6 chữ số lẻ) chứ không từ số
 /// đã làm tròn, rồi ghi cả hai: số làm tròn half-up về đơn vị nhỏ nhất của
 /// tiền mới (cột hiện, cộng tổng) và số chính xác (cột `*Micro`, null khi bằng
 /// đúng số làm tròn). Nhờ vậy đổi A→B→A cùng bảng tỉ giá ra đúng số cũ (AC-73).
-/// Khoản và khoản định kỳ có thể thành 0 (số rất nhỏ); hạn mức danh mục và
-/// ngân sách tháng tối thiểu 1 đơn vị; số dư ban đầu có dấu. Có số nào vượt
+/// Khoản, khoản định kỳ, khoản nợ, lần trả, mục hàng đợi có thể thành 0 (số
+/// rất nhỏ); hạn mức danh mục, ngân sách tháng và mục tiêu tiết kiệm tối
+/// thiểu 1 đơn vị; số dư ban đầu có dấu. Có số nào vượt
 /// [maxMinorUnits] thì ném [CurrencyConversionOverflow] và không đổi gì. Lỗi
 /// giữa chừng thì giao dịch quay lui, dữ liệu như cũ. Cùng mã với tiền hiện
 /// tại thì không làm gì.
@@ -135,6 +137,27 @@ Future<void> convertCurrency(
       if (c.budget != null)
         (c.id, convert(c.budget!, c.budgetMicro, atLeastOne: true)),
   ];
+  // Bản 2.0 (AC-122): mục tiêu tiết kiệm (tối thiểu 1), khoản nợ, lần trả,
+  // mục hàng đợi. Mục hàng đợi chỉ đổi khi đang ở đúng tiền tệ cũ của app
+  // (mục bằng tiền khác — AC-87 — giữ nguyên số và tiền tệ của nó).
+  final goals = [
+    for (final g in await db.select(db.savingsGoals).get())
+      (g.id, convert(g.targetAmount, g.targetAmountMicro, atLeastOne: true)),
+  ];
+  final debts = [
+    for (final d in await db.select(db.debts).get())
+      (d.id, convert(d.amount, d.amountMicro)),
+  ];
+  final payments = [
+    for (final p in await db.select(db.debtPayments).get())
+      (p.id, convert(p.amount, p.amountMicro)),
+  ];
+  final queue = [
+    for (final q in await (db.select(
+      db.importQueueItems,
+    )..where((q) => q.currency.equals(oldCode))).get())
+      (q.id, convert(q.amount, q.amountMicro)),
+  ];
   final oldBudget = await settings.readBudget();
   final budget = oldBudget == null
       ? null
@@ -172,6 +195,41 @@ Future<void> convertCurrency(
       b.update(
         db.categories,
         CategoriesCompanion(budget: Value(amount), budgetMicro: Value(micro)),
+        where: (t) => t.id.equals(id),
+      );
+    }
+    for (final (id, (amount, micro)) in goals) {
+      b.update(
+        db.savingsGoals,
+        SavingsGoalsCompanion(
+          targetAmount: Value(amount),
+          targetAmountMicro: Value(micro),
+        ),
+        where: (t) => t.id.equals(id),
+      );
+    }
+    for (final (id, (amount, micro)) in debts) {
+      b.update(
+        db.debts,
+        DebtsCompanion(amount: Value(amount), amountMicro: Value(micro)),
+        where: (t) => t.id.equals(id),
+      );
+    }
+    for (final (id, (amount, micro)) in payments) {
+      b.update(
+        db.debtPayments,
+        DebtPaymentsCompanion(amount: Value(amount), amountMicro: Value(micro)),
+        where: (t) => t.id.equals(id),
+      );
+    }
+    for (final (id, (amount, micro)) in queue) {
+      b.update(
+        db.importQueueItems,
+        ImportQueueItemsCompanion(
+          amount: Value(amount),
+          amountMicro: Value(micro),
+          currency: Value(newCode),
+        ),
         where: (t) => t.id.equals(id),
       );
     }
