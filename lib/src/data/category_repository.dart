@@ -99,6 +99,10 @@ class CategoryRepository {
       await (_db.update(_db.recurringRules)
             ..where((r) => r.categoryId.equals(id)))
           .write(RecurringRulesCompanion(categoryId: Value(moveTo)));
+      // Gợi ý theo người thụ hưởng trỏ tới danh mục này cũng chuyển theo (AC-97).
+      await (_db.update(_db.payeeSuggestions)
+            ..where((s) => s.categoryId.equals(id)))
+          .write(PayeeSuggestionsCompanion(categoryId: Value(moveTo)));
       await (_db.delete(_db.categories)..where((c) => c.id.equals(id))).go();
     });
   }

@@ -10,7 +10,10 @@ part 'database.g.dart';
 
 /// Phiên bản schema hiện tại; file sao lưu có schemaVersion lớn hơn bị từ chối.
 /// 3: thêm cột số tiền chính xác `*Micro` (D-029), khoản cho phép 0.
-const currentSchemaVersion = 3;
+/// 4: bản 2.0 (AC-121) — giờ, nguồn, số tham chiếu của khoản; liên kết ngân
+/// hàng của tài khoản; mục tiêu tiết kiệm, khoản nợ + lần trả, gợi ý theo
+/// người thụ hưởng, hàng đợi nhập, số tham chiếu đã gặp.
+const currentSchemaVersion = 4;
 
 /// Loại khoản ghi. Chuyển tiền không tính là thu hay chi (AC-19).
 enum EntryType { expense, income, transfer }
@@ -21,6 +24,34 @@ enum CategoryType { expense, income }
 /// Chu kỳ của khoản định kỳ (AC-23).
 enum RecurrenceFrequency { daily, weekly, monthly, yearly }
 
+/// Nguồn của khoản (Import source, AC-124): ghi tay hoặc email biên lai MB.
+/// Lưu bằng tên (`textEnum`) nên thêm nguồn sau này không đổi dữ liệu cũ.
+enum EntrySource { manual, emailMb }
+
+/// Ngân hàng gửi email biên lai (D-030: bản đầu chỉ MB Bank). Lưu bằng tên.
+enum Bank { mb }
+
+/// Chiều của khoản nợ (AC-104): cho vay = người khác nợ bạn; đi vay = bạn nợ.
+enum DebtDirection { lent, borrowed }
+
+/// Số tham chiếu đã được xử lý thế nào (AC-86): ghép vào khoản ghi tay, lưu từ
+/// hàng đợi (khoản chi hoặc chuyển tiền), hay bị bỏ qua.
+enum ReferenceOutcome { matched, confirmed, skipped }
+
+/// Ràng buộc CHECK cho cột giờ `HH:mm` (AC-74).
+Expression<bool> _isHhMm(String column) =>
+    CustomExpression<bool>("$column GLOB '[0-2][0-9]:[0-5][0-9]'");
+
+/// Ràng buộc CHECK cho 4 số cuối tài khoản (AC-88: không lưu số đầy đủ).
+Expression<bool> _isLast4(String column) =>
+    CustomExpression<bool>("$column GLOB '[0-9][0-9][0-9][0-9]'");
+
+/// Liên kết (ngân hàng, 4 số cuối) thuộc tối đa một tài khoản (AC-89, AC-90).
+@TableIndex(
+  name: 'accounts_bank_link',
+  columns: {#bank, #bankLast4},
+  unique: true,
+)
 class Accounts extends Table {
   IntColumn get id => integer().autoIncrement()();
 
@@ -36,6 +67,15 @@ class Accounts extends Table {
   IntColumn get initialBalanceMicro => integer().nullable()();
   IntColumn get sortOrder => integer().withDefault(const Constant(0))();
   BoolColumn get archived => boolean().withDefault(const Constant(false))();
+
+  /// Ngân hàng của tài khoản trích nợ liên kết (AC-89); null là không liên
+  /// kết. Có [bank] thì phải có [bankLast4] và ngược lại (repository giữ).
+  /// Thêm ở schema 4.
+  TextColumn get bank => textEnum<Bank>().nullable()();
+
+  /// 4 số cuối của tài khoản trích nợ — KHÔNG bao giờ lưu số đầy đủ (AC-88).
+  /// Thêm ở schema 4.
+  TextColumn get bankLast4 => text().nullable().check(_isLast4('bank_last4'))();
 }
 
 class Categories extends Table {
@@ -85,6 +125,13 @@ class RecurringRules extends Table {
   BoolColumn get active => boolean().withDefault(const Constant(true))();
 }
 
+/// Một số tham chiếu chỉ nằm ở một khoản (AC-86, AC-93). NULL (khoản ghi tay
+/// chưa ghép) không tính trùng.
+@TableIndex(
+  name: 'entries_reference',
+  columns: {#source, #referenceNumber},
+  unique: true,
+)
 class Entries extends Table {
   IntColumn get id => integer().autoIncrement()();
   IntColumn get type => intEnum<EntryType>()();
@@ -111,6 +158,171 @@ class Entries extends Table {
   IntColumn get recurringRuleId =>
       integer().nullable().references(RecurringRules, #id)();
   DateTimeColumn get createdAt => dateTime().withDefault(currentDateAndTime)();
+
+  /// Giờ `HH:mm` theo giờ máy (AC-74). Null: khoản có từ trước schema 4 hoặc
+  /// sinh từ khoản định kỳ (AC-75); khi ghép coi là 12:00. Thêm ở schema 4.
+  TextColumn get time => text().nullable().check(_isHhMm('"time"'))();
+
+  /// Ghi tay hay từ email MB (AC-91, AC-96, AC-124). Thêm ở schema 4; khoản
+  /// cũ là ghi tay.
+  TextColumn get source =>
+      textEnum<EntrySource>().withDefault(Constant(EntrySource.manual.name))();
+
+  /// Số tham chiếu của email biên lai đã ghép/lưu vào khoản (AC-86); null với
+  /// khoản ghi tay chưa ghép. Thêm ở schema 4.
+  TextColumn get referenceNumber => text().withLength(max: 64).nullable()();
+}
+
+/// Mục tiêu tiết kiệm (Savings goal, AC-100..AC-103): tiến độ là số dư của
+/// tài khoản gắn; một tài khoản gắn tối đa một mục tiêu. Thêm ở schema 4.
+class SavingsGoals extends Table {
+  IntColumn get id => integer().autoIncrement()();
+  TextColumn get name => text().withLength(min: 1, max: 50)();
+
+  /// Số tiền mục tiêu, đơn vị nhỏ nhất, tối thiểu 1 (kể cả sau quy đổi).
+  IntColumn get targetAmount =>
+      // ignore: recursive_getters
+      integer().check(targetAmount.isBiggerThanValue(0))();
+
+  /// Số chính xác, phần triệu đơn vị chính (D-029); null là đúng bằng
+  /// [targetAmount].
+  IntColumn get targetAmountMicro => integer().nullable()();
+
+  /// Hạn `YYYY-MM-DD`, tuỳ chọn.
+  TextColumn get dueDate => text().withLength(min: 10, max: 10).nullable()();
+
+  /// Tài khoản gắn. Xoá tài khoản bị chặn khi còn mục tiêu (AccountRepository).
+  IntColumn get accountId => integer().unique().references(Accounts, #id)();
+  DateTimeColumn get createdAt => dateTime().withDefault(currentDateAndTime)();
+}
+
+/// Khoản nợ (Debt record, AC-104..AC-106): sổ ghi nhớ, không phải khoản,
+/// không đụng số dư tài khoản. Thêm ở schema 4.
+class Debts extends Table {
+  IntColumn get id => integer().autoIncrement()();
+  TextColumn get person => text().withLength(min: 1, max: 50)();
+  TextColumn get direction => textEnum<DebtDirection>()();
+
+  /// Đơn vị nhỏ nhất; người dùng nhập > 0, quy đổi có thể ra 0 (như khoản).
+  // ignore: recursive_getters
+  IntColumn get amount => integer().check(amount.isBiggerOrEqualValue(0))();
+
+  /// Số chính xác (D-029); null là đúng bằng [amount].
+  IntColumn get amountMicro => integer().nullable()();
+
+  /// Ngày `YYYY-MM-DD`.
+  TextColumn get date => text().withLength(min: 10, max: 10)();
+  TextColumn get dueDate => text().withLength(min: 10, max: 10).nullable()();
+  TextColumn get note => text().withLength(max: 200).nullable()();
+  DateTimeColumn get createdAt => dateTime().withDefault(currentDateAndTime)();
+}
+
+/// Lần trả của khoản nợ (Debt payment, AC-105). Xoá khoản nợ xoá luôn lần trả.
+/// Thêm ở schema 4.
+class DebtPayments extends Table {
+  IntColumn get id => integer().autoIncrement()();
+  IntColumn get debtId =>
+      integer().references(Debts, #id, onDelete: KeyAction.cascade)();
+
+  /// Đơn vị nhỏ nhất; ≥ 0 như [Debts.amount].
+  // ignore: recursive_getters
+  IntColumn get amount => integer().check(amount.isBiggerOrEqualValue(0))();
+  IntColumn get amountMicro => integer().nullable()();
+  TextColumn get date => text().withLength(min: 10, max: 10)();
+  DateTimeColumn get createdAt => dateTime().withDefault(currentDateAndTime)();
+}
+
+/// Gợi ý theo người thụ hưởng (Payee suggestion, AC-97): lựa chọn gần nhất
+/// cho cùng khoá — một danh mục, HOẶC chuyển sang tài khoản (AC-98). Thêm ở
+/// schema 4.
+class PayeeSuggestions extends Table {
+  /// Tên người thụ hưởng đã gấp: bỏ dấu, viết thường, gộp khoảng trắng
+  /// (`payeeKey()` trong `import_repositories.dart`).
+  TextColumn get payeeKey => text().withLength(min: 1, max: 200)();
+
+  /// Tên như trên email lần gần nhất, để hiện ở "Gợi ý đã nhớ".
+  TextColumn get payee => text().withLength(min: 1, max: 200)();
+
+  /// Xoá danh mục thì gợi ý chuyển sang danh mục nhận khoản (CategoryRepository).
+  IntColumn get categoryId =>
+      integer().nullable().references(Categories, #id)();
+
+  /// Xoá tài khoản thì gợi ý chuyển sang nó mất theo.
+  @ReferenceName('payeeTransferSuggestions')
+  IntColumn get toAccountId => integer().nullable().references(
+    Accounts,
+    #id,
+    onDelete: KeyAction.cascade,
+  )();
+  DateTimeColumn get updatedAt => dateTime().withDefault(currentDateAndTime)();
+
+  @override
+  Set<Column> get primaryKey => {payeeKey};
+
+  @override
+  List<String> get customConstraints => [
+    'CHECK ((category_id IS NULL) <> (to_account_id IS NULL))',
+  ];
+}
+
+/// Mục hàng đợi (Import queue, AC-95..AC-99): email thành công chưa ghép,
+/// CHƯA là khoản. Không vào file sao lưu (AC-99, AC-121). Thêm ở schema 4.
+@TableIndex(
+  name: 'import_queue_reference',
+  columns: {#bank, #referenceNumber},
+  unique: true,
+)
+class ImportQueueItems extends Table {
+  IntColumn get id => integer().autoIncrement()();
+  TextColumn get bank => textEnum<Bank>()();
+  TextColumn get referenceNumber => text().withLength(min: 1, max: 64)();
+
+  /// 4 số cuối tài khoản trích nợ (AC-88): để tìm lại tài khoản liên kết khi
+  /// [accountId] bị xoá hoặc sau khôi phục.
+  TextColumn get debitLast4 => text().check(_isLast4('debit_last4'))();
+
+  /// Tài khoản liên kết với tài khoản trích nợ; null khi tài khoản đó bị xoá
+  /// hoặc sau khôi phục không tìm lại được — bên nhập phải gắn lại (AC-90).
+  IntColumn get accountId => integer().nullable().references(
+    Accounts,
+    #id,
+    onDelete: KeyAction.setNull,
+  )();
+
+  /// Tiền tệ của [amount] (email MB là VND). Khác tiền tệ app → AC-87. Đổi
+  /// tiền tệ app chỉ quy đổi mục đang cùng tiền tệ cũ (AC-122).
+  TextColumn get currency => text().withLength(min: 3, max: 3)();
+
+  /// Đơn vị nhỏ nhất của [currency].
+  // ignore: recursive_getters
+  IntColumn get amount => integer().check(amount.isBiggerOrEqualValue(0))();
+  IntColumn get amountMicro => integer().nullable()();
+
+  /// Ngày `YYYY-MM-DD` và giờ `HH:mm` của email (AC-84).
+  TextColumn get date => text().withLength(min: 10, max: 10)();
+  TextColumn get time => text().check(_isHhMm('"time"'))();
+
+  /// Người thụ hưởng; dãy ≥ 9 chữ số đã che (AC-88).
+  TextColumn get payee => text().withLength(max: 200).nullable()();
+
+  /// Nội dung chuyển tiền; dãy ≥ 9 chữ số đã che (AC-88).
+  TextColumn get transferContent => text().withLength(max: 500).nullable()();
+  DateTimeColumn get createdAt => dateTime().withDefault(currentDateAndTime)();
+}
+
+/// Số tham chiếu đã gặp (AC-86): đã ghép, đã lưu hay đã bỏ qua thì không nhập
+/// lại, kể cả khi khoản bị xoá. Đi theo file sao lưu (AC-121). Mục còn trong
+/// hàng đợi KHÔNG ghi ở đây (hàng đợi chặn trùng bằng chỉ mục riêng, và hàng
+/// đợi không vào file — ghi ở đây thì khôi phục sang máy khác sẽ mất mục).
+/// Thêm ở schema 4.
+class SeenReferences extends Table {
+  TextColumn get bank => textEnum<Bank>()();
+  TextColumn get referenceNumber => text().withLength(min: 1, max: 64)();
+  TextColumn get outcome => textEnum<ReferenceOutcome>()();
+  DateTimeColumn get seenAt => dateTime().withDefault(currentDateAndTime)();
+
+  @override
+  Set<Column> get primaryKey => {bank, referenceNumber};
 }
 
 /// Cài đặt dạng khóa-giá trị, nằm cùng cơ sở dữ liệu để sao lưu một file (D-005).
@@ -123,7 +335,19 @@ class Settings extends Table {
 }
 
 @DriftDatabase(
-  tables: [Accounts, Categories, RecurringRules, Entries, Settings],
+  tables: [
+    Accounts,
+    Categories,
+    RecurringRules,
+    Entries,
+    Settings,
+    SavingsGoals,
+    Debts,
+    DebtPayments,
+    PayeeSuggestions,
+    ImportQueueItems,
+    SeenReferences,
+  ],
 )
 class AppDatabase extends _$AppDatabase {
   /// [afterOpen] chạy (không chờ) sau mỗi lần mở. Khi dùng file mặc định
@@ -162,12 +386,46 @@ class AppDatabase extends _$AppDatabase {
             newColumns: [recurringRules.amountMicro],
           ),
         );
+        // Dựng lại theo định nghĩa HIỆN TẠI của bảng: các cột schema 4 cũng
+        // được tạo luôn ở đây (rỗng/mặc định), nên bước 3 -> 4 bỏ qua chúng.
         await m.alterTable(
-          TableMigration(entries, newColumns: [entries.amountMicro]),
+          TableMigration(
+            entries,
+            newColumns: [
+              entries.amountMicro,
+              entries.time,
+              entries.source,
+              entries.referenceNumber,
+            ],
+          ),
         );
         final broken = await customSelect('PRAGMA foreign_key_check').get();
         if (broken.isNotEmpty) {
           throw StateError('foreign_key_check after v3 migration: $broken');
+        }
+      }
+      // 3 -> 4: bản 2.0 (AC-121). Chỉ thêm cột (null hoặc có mặc định) và bảng
+      // mới; khoản cũ là ghi tay, không giờ (AC-75). Không dựng lại bảng cũ.
+      if (from < 4) {
+        await m.addColumn(accounts, accounts.bank);
+        await m.addColumn(accounts, accounts.bankLast4);
+        if (from == 3) {
+          await m.addColumn(entries, entries.time);
+          await m.addColumn(entries, entries.source);
+          await m.addColumn(entries, entries.referenceNumber);
+        }
+        await m.create(accountsBankLink);
+        await m.create(entriesReference);
+        await m.create(savingsGoals);
+        await m.create(debts);
+        await m.create(debtPayments);
+        await m.create(payeeSuggestions);
+        await m.create(importQueueItems);
+        await m.create(importQueueReference);
+        await m.create(seenReferences);
+        final broken = await customSelect('PRAGMA foreign_key_check').get();
+        if (broken.isNotEmpty) {
+          throw StateError('foreign_key_check after v4 migration: $broken');
         }
       }
     },

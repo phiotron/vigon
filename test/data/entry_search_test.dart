@@ -30,6 +30,7 @@ EntryView _row(
     date: '2026-11-03',
     note: note,
     recurringRuleId: null,
+    source: EntrySource.manual,
     createdAt: DateTime(2026),
   ),
   category,

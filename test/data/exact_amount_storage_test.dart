@@ -81,7 +81,7 @@ void main() {
 
     test('dữ liệu cũ còn nguyên, cột micro rỗng, khóa ngoại còn', () async {
       final version = await old.customSelect('PRAGMA user_version').getSingle();
-      expect(version.read<int>('user_version'), 3);
+      expect(version.read<int>('user_version'), currentSchemaVersion);
 
       final entries = await (old.select(
         old.entries,
@@ -173,7 +173,7 @@ void main() {
       final db = AppDatabase(NativeDatabase.memory());
       addTearDown(db.close);
       expect(db.schemaVersion, currentSchemaVersion);
-      expect(currentSchemaVersion, 3);
+      expect(currentSchemaVersion, greaterThanOrEqualTo(3));
       Future<List<String>> cols(String table) async => [
         for (final r
             in await db
@@ -246,7 +246,7 @@ void main() {
       await seed();
       final json = await exportBackup(db, now: now);
       final root = jsonDecode(json) as Map<String, dynamic>;
-      expect(root['schemaVersion'], 3);
+      expect(root['schemaVersion'], currentSchemaVersion);
       final tables = root['tables'] as Map<String, dynamic>;
       expect((tables['entries'] as List).first['amountMicro'], 3850);
       expect(

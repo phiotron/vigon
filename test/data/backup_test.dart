@@ -189,6 +189,7 @@ void main() {
             date: '2026-11-03',
             note: 'phở, "bò"',
             recurringRuleId: null,
+            source: EntrySource.manual,
             createdAt: now,
           ),
           Entry(
@@ -201,6 +202,7 @@ void main() {
             date: '2026-11-01',
             note: '=1+1',
             recurringRuleId: null,
+            source: EntrySource.manual,
             createdAt: now,
           ),
         ];
@@ -238,6 +240,7 @@ void main() {
             date: '2026-11-03',
             note: null,
             recurringRuleId: null,
+            source: EntrySource.manual,
             createdAt: now,
           ),
         ],
@@ -286,6 +289,7 @@ void main() {
       date: date,
       note: note,
       recurringRuleId: null,
+      source: EntrySource.manual,
       createdAt: now,
     );
 

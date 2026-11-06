@@ -73,4 +73,36 @@ class EntryRepository {
 
   /// Ghi lại đúng bản ghi đã xóa, giữ nguyên id (AC-14).
   Future<void> restore(Entry entry) => _db.into(_db.entries).insert(entry);
+
+  /// Khoản đang gắn số tham chiếu [reference] của nguồn [source] (AC-86).
+  Future<Entry?> findByReference(EntrySource source, String reference) =>
+      (_db.select(_db.entries)..where(
+            (e) =>
+                e.source.equalsValue(source) &
+                e.referenceNumber.equals(reference),
+          ))
+          .getSingleOrNull();
+
+  /// Ghép (AC-91): gắn nguồn [source] và số tham chiếu vào khoản [id], mọi dữ
+  /// liệu khác giữ nguyên. [source] không được là ghi tay.
+  Future<void> attachReference(int id, EntrySource source, String reference) {
+    if (source == EntrySource.manual) {
+      throw ArgumentError.value(source, 'source', 'không phải nguồn email');
+    }
+    return (_db.update(_db.entries)..where((e) => e.id.equals(id))).write(
+      EntriesCompanion(
+        source: Value(source),
+        referenceNumber: Value(reference),
+      ),
+    );
+  }
+
+  /// Bỏ ghép (Hoàn tác, AC-94): khoản về ghi tay, không số tham chiếu.
+  Future<void> detachReference(int id) =>
+      (_db.update(_db.entries)..where((e) => e.id.equals(id))).write(
+        const EntriesCompanion(
+          source: Value(EntrySource.manual),
+          referenceNumber: Value(null),
+        ),
+      );
 }

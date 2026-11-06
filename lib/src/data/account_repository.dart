@@ -1,6 +1,7 @@
 import 'package:drift/drift.dart';
 
 import 'database.dart';
+import 'import_text.dart';
 
 /// Lý do không ẩn hoặc xóa được tài khoản (AC-45, AC-46).
 enum AccountBlock {
@@ -83,8 +84,15 @@ class AccountRepository {
       );
 
   /// Xóa tài khoản (AC-45, AC-46). Trả về lý do nếu không xóa được, null nếu đã xóa.
+  /// Tài khoản đang gắn mục tiêu tiết kiệm cũng tính là đang dùng (AC-103: xoá
+  /// mục tiêu trước). Mục hàng đợi của nó mất tài khoản (null, AC-90); gợi ý
+  /// "chuyển sang" nó bị xoá theo.
   Future<AccountBlock?> delete(int id) => _db.transaction(() async {
     if (await isInUse(id)) return AccountBlock.inUse;
+    final goal = await (_db.select(
+      _db.savingsGoals,
+    )..where((g) => g.accountId.equals(id))).getSingleOrNull();
+    if (goal != null) return AccountBlock.inUse;
     if (await _isLastVisible(id)) return AccountBlock.lastVisible;
     await (_db.delete(_db.accounts)..where((a) => a.id.equals(id))).go();
     return null;
@@ -110,6 +118,41 @@ class AccountRepository {
       initialBalance: Value(initialBalance),
     ),
   );
+
+  /// Tài khoản liên kết với tài khoản trích nợ ([bank], [last4]) (AC-89, AC-90),
+  /// kể cả đã ẩn; null nếu chưa có.
+  Future<Account?> findByBankLink(Bank bank, String last4) =>
+      (_db.select(
+            _db.accounts,
+          )..where((a) => a.bank.equalsValue(bank) & a.bankLast4.equals(last4)))
+          .getSingleOrNull();
+
+  /// Gắn liên kết ([bank], [last4]) vào tài khoản [id]; tài khoản khác đang giữ
+  /// liên kết đó thì mất liên kết (AC-89 "Gắn vào tài khoản có sẵn"). Chỉ nhận
+  /// đúng 4 chữ số (AC-88).
+  Future<void> setBankLink(int id, Bank bank, String last4) {
+    checkLast4(last4);
+    return _db.transaction(() async {
+      await (_db.update(_db.accounts)..where(
+            (a) =>
+                a.bank.equalsValue(bank) &
+                a.bankLast4.equals(last4) &
+                a.id.equals(id).not(),
+          ))
+          .write(
+            const AccountsCompanion(bank: Value(null), bankLast4: Value(null)),
+          );
+      await (_db.update(_db.accounts)..where((a) => a.id.equals(id))).write(
+        AccountsCompanion(bank: Value(bank), bankLast4: Value(last4)),
+      );
+    });
+  }
+
+  /// Bỏ liên kết ngân hàng của tài khoản [id].
+  Future<void> clearBankLink(int id) =>
+      (_db.update(_db.accounts)..where((a) => a.id.equals(id))).write(
+        const AccountsCompanion(bank: Value(null), bankLast4: Value(null)),
+      );
 
   /// Số dư hiện tại mỗi tài khoản: số dư ban đầu + thu − chi + nhận − chuyển đi (AC-18, AC-19).
   Stream<Map<int, int>> watchBalances() => _db
