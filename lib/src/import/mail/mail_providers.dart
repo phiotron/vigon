@@ -101,7 +101,8 @@ void runMailCheckOnOpen(
 /// liệu (hàng đợi, số tham chiếu đã gặp…) do `deleteAllData` của M0 lo.
 Future<void> eraseEmailImport(WidgetRef ref) async {
   await ref.read(mailboxServiceProvider).removeAll();
-  await ref.read(mailCheckSchedulerProvider).disable();
+  // Không chờ kênh nền tảng (như đặt lịch sao lưu): lỗi đã được nuốt bên trong.
+  unawaited(ref.read(mailCheckSchedulerProvider).disable());
   ref.invalidate(mailboxesProvider);
   ref.invalidate(mailIntroSeenProvider);
 }

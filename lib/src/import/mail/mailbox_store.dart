@@ -281,9 +281,13 @@ class MailboxStore {
 
   /// Xoá MỌI thứ của hộp thư khỏi Keystore/Keychain (AC-79, AC-123).
   Future<void> clear() async {
+    // Chỉ đụng tới file dấu khi đã từng đặt (có mã trong Keystore): xoá dữ
+    // liệu khi chưa từng có hộp thư thì không cần I/O file.
+    final hadMarker = await _secrets.read(installKey) != null;
     for (final key in allKeys) {
       await _secrets.delete(key);
     }
+    if (!hadMarker) return;
     try {
       await _marker.delete();
     } catch (_) {}
