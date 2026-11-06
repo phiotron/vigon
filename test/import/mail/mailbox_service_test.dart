@@ -207,14 +207,24 @@ void main() {
     test(
       'chưa có ngân hàng nào hỗ trợ → không mở kết nối nào (AC-83)',
       () async {
-        final rig = _Rig(senders: defaultSenderAllowlist);
+        const none = SenderAllowlist([
+          BankSource(id: 'mb', name: 'MB Bank', senders: {}),
+        ]);
+        final rig = _Rig(senders: none);
         await rig.addGmail();
         final opens = rig.server.opens;
         await rig.service.checkAll(MailCheckTrigger.manual);
         expect(rig.server.opens, opens);
-        expect(defaultSenderAllowlist.supported, isEmpty);
+        expect(none.supported, isEmpty);
       },
     );
+
+    test('danh sách của bản build: MB Bank có đúng một địa chỉ gửi (M1)', () {
+      expect(defaultSenderAllowlist.supported.map((s) => s.id), ['mb']);
+      expect(defaultSenderAllowlist.addresses, {mbSenderAddress});
+      expect(defaultSenderAllowlist.allows('MBeBanking@mbbank.com.vn'), isTrue);
+      expect(defaultSenderAllowlist.allows('x$mbSenderAddress'), isFalse);
+    });
 
     test('chỉ thư từ ĐÚNG địa chỉ cho phép được tải thân thư; theo UID tăng '
         'dần; thư khác không tải', () async {

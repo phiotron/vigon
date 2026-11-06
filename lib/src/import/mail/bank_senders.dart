@@ -1,8 +1,7 @@
 /// Danh mục ngân hàng nguồn của email biên lai (AC-81, AC-83, D-030).
 ///
-/// **Nơi M1 điền địa chỉ gửi thật của MB Bank**: thêm vào `senders` của
-/// [mbBank] đúng địa chỉ trong email mẫu thật người dùng gửi (viết thường),
-/// cùng với mẫu và test của bộ đọc. Chưa có địa chỉ nào thì ngân hàng đó coi
+/// Địa chỉ gửi của từng ngân hàng điền ở `senders` (viết thường), cùng với mẫu
+/// và test của bộ đọc. Chưa có địa chỉ nào thì ngân hàng đó coi
 /// như chưa hỗ trợ: không hiện ở đâu và app không tải thư nào (không mở kết
 /// nối để tìm thư).
 class BankSource {
@@ -25,9 +24,20 @@ class BankSource {
   bool get isSupported => senders.isNotEmpty;
 }
 
-/// MB Bank. `senders` để trống tới khi M1 có email mẫu thật (SPEC 3d
-/// "Câu hỏi mở").
-const mbBank = BankSource(id: 'mb', name: 'MB Bank', senders: {});
+/// Địa chỉ gửi email biên lai của MB Bank — MỘT chỗ duy nhất trong app.
+///
+/// **GIẢ ĐỊNH, chưa xác minh:** ảnh chụp mẫu chỉ thấy `mbebanking@mbb…` (bị
+/// cắt) và chân thư dùng tên miền `mbbank.com.vn`. Người dùng bảo chưa cần xác
+/// minh; kiểm lại khi kết nối Gmail thật (nếu sai, bộ lọc không tải thư nào và
+/// bộ đếm "không đọc được" vẫn 0 — sửa đúng dòng này).
+const mbSenderAddress = 'mbebanking@mbbank.com.vn';
+
+/// MB Bank (M1: đã có bộ đọc `lib/src/import/mb/` và mẫu test đã che).
+const mbBank = BankSource(
+  id: 'mb',
+  name: 'MB Bank',
+  senders: {mbSenderAddress},
+);
 
 /// Mọi nguồn đã khai báo (gồm cả nguồn chưa hỗ trợ).
 const declaredBankSources = <BankSource>[mbBank];
