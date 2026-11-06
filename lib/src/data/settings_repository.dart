@@ -22,6 +22,10 @@ class SettingsRepository {
   /// Ngân sách tháng chính xác, phần triệu đơn vị chính (D-029); thiếu là
   /// đúng bằng [budgetKey].
   static const budgetMicroKey = 'budgetMicro';
+
+  /// Tài khoản tự tạo từ email MB còn thẻ "Gắn vào tài khoản có sẵn" (AC-89):
+  /// danh sách id cách nhau dấu phẩy. Theo máy, không vào file sao lưu.
+  static const mbAutoAccountNoticesKey = 'mbAutoAccountNotices';
   static const secureWindowKey = 'secureWindow';
   static const widgetShowAmountsKey = 'widgetShowAmounts';
   static const reminderEnabledKey = 'reminderEnabled';
