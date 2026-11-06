@@ -44,6 +44,7 @@ Luồng nhanh nhất: Màn chính → chạm icon danh mục (hoặc −/+) → 
 | #1 Nhận app + gộp + product.md | 2026-11-04..05 | product.md · nền iOS + CI · store & pháp lý · gộp 2 nhánh (+2 phụ) · iOS mã hoá/iCloud · tài liệu D-020/021 | ✅ Xong: nhận app, gộp bản 1.2 + PLAN-001, 364 test, CI Android + iOS xanh, product.md v2 duyệt. Nhật ký: `memory/sessions/2026-11-05-A002-vigon.md` (repo xưởng) |
 | #2 Áp UI Hi-Fi + iOS đủ tính năng + test 2 nền tảng | 2026-11-05.. | D0 token/component/chữ → D1 màn chính+nhập, D2 danh mục/tài khoản/định kỳ, D3 cài đặt/sao lưu/khoá, D4 iOS F-22/24/26 + widget Android song song → D5 so mockup + thử máy | ✅ Đóng 2026-11-06 (còn thử máy nốt): UI Hi-Fi P1+P2, iOS F-22/24/26 + iOS 16 (D-022..D-024), quy đổi tiền tệ (D-025), sao lưu theo giờ (D-026), widget kiểu B; sửa crash sao lưu, widget không thêm được, nhắc release; 620 test; `dev` `4280a98` (main chưa gộp). Nhật ký: `memory/sessions/2026-11-06-A002-vigon.md` (repo xưởng) |
 | #2b Sửa nhanh + thử máy (không phiên con) | 2026-11-06 | — (làm trực tiếp, Claude tự lái adb) | ✅ D-027 giữ 2 file sao lưu + báo "dữ liệu không đổi"; D-028 thanh ngân sách theo tháng đang xem; thử máy sao lưu M-2 (a)(b) + nhiều chức năng đạt; 625 test; push `dev` `47fa34a`. Nhật ký: `memory/sessions/2026-11-06-A002-vigon-phien2.md` |
+| #2c Sửa quy đổi tiền tệ (1 phiên con) | 2026-11-06 | `a002-exact-fx` | ✅ D-029 giữ số chính xác 6 lẻ khi quy đổi (schema v3, cột `*Micro`, khoản được 0, tỉ giá chéo phân số), AC-73; 645 test; `dev` `f3cf4f4` chưa push. Báo cáo: `notes/2026-11-06-exact-currency-conversion.md` |
 | #3 Phát hành | | E ảnh store · F Android · G iOS | |
 
 Kế hoạch đầy đủ 3 phiên: `notes/2026-11-04-ke-hoach-3-phien.md`.
@@ -98,6 +99,7 @@ Flutter 3.47.8 ở `C:/src/flutter`, **chưa có trong PATH**. Git Bash: `export
 - **D-005** Tiền số nguyên, ngày dạng chữ, cài đặt trong DB. · **D-006** Sao lưu `.vigon` JSON có mã băm, khôi phục thay toàn bộ trong 1 giao dịch.
 - **D-007** PIN băm có muối trong bộ nhớ an toàn, màn khoá phủ lên app. · **D-008** Liên hệ ở `app_info.dart`; bố cục co theo cỡ chữ; test a11y tự động.
 - **D-009** Logo "hai thẻ xếp chồng".
+- **D-029** Quy đổi tiền tệ giữ số tiền chính xác 6 chữ số lẻ (cột `*Micro`, tự kiểm, không trigger); hiển thị/tổng vẫn theo số làm tròn; khoản có thể 0 sau quy đổi; schema v3.
 - **D-028** Thanh ngân sách màn chính theo tháng đang xem (ngày/tuần → tháng chứa ngày cuối; năm/tất cả/tùy chọn → ẩn); widget giữ tháng hiện tại.
 - **D-027** Sao lưu tự động giữ 2 file (xoá cũ sau khi ghi xong); dữ liệu không đổi thì bỏ qua nhưng Cài đặt báo "Đã kiểm…".
 - **D-026** Sao lưu tự động theo giờ người dùng chọn (mặc định 21:00, giờ máy); Android chạy nền, iPhone thông báo; bù khi lỡ.
