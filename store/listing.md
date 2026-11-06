@@ -17,7 +17,7 @@ Không sao chép tên, icon, mô tả hay ảnh của app khác (SPEC mục 7). 
 - en: Log spending in seconds. Daily reminder, widget. Your data stays on your phone. (79 chars)
 
 ## Mô tả đầy đủ (≤ 4.000 ký tự)
-Viết lại 2026-11-05 theo bản đã gộp (F-01..F-26, mọi mục đều có trên Android). Số ký tự: vi 2862, en 2974 (đếm lại 2026-11-05 sau D-025, sửa câu sao lưu tự động ở D8 +3 ký tự vi; giới hạn 4.000; đếm bằng script, tính cả dấu `**`).
+Viết lại 2026-11-05 theo bản đã gộp (F-01..F-26, mọi mục đều có trên Android). Số ký tự: vi 2909, en 3023 (đếm lại 2026-11-06 sau D-026 — câu sao lưu tự động có giờ chọn; giới hạn 4.000; đếm bằng script, tính cả dấu `**`).
 
 ### Tiếng Việt
 Ví Gọn giúp bạn ghi chép thu chi hằng ngày thật nhanh và biết tiền của mình đi đâu.
@@ -51,7 +51,7 @@ Ví Gọn giúp bạn ghi chép thu chi hằng ngày thật nhanh và biết ti�
 
 **Sao lưu**
 • Tự xuất file sao lưu và khôi phục khi đổi máy; xuất CSV để mở bằng Excel hoặc Google Sheets. Có thể đặt mật khẩu cho file sao lưu (mã hóa AES-256-GCM); không đặt mật khẩu thì file không được mã hóa, hãy cất ở nơi an toàn.
-• Sao lưu tự động (tùy chọn, mặc định tắt): bạn chọn một thư mục, app tự ghi file sao lưu vào đó tối đa mỗi ngày một lần khi dữ liệu có thay đổi, giữ 7 file gần nhất. File luôn được mã hóa bằng mật khẩu bạn đặt; mật khẩu chỉ nằm trong kho khóa an toàn của điện thoại. Nếu bạn chọn thư mục của Google Drive hay dịch vụ tương tự, việc tải lên do app đó thực hiện; Ví Gọn không tự tải file lên.
+• Sao lưu tự động (tùy chọn, mặc định tắt): bạn chọn một thư mục và giờ sao lưu, đến giờ app tự ghi file sao lưu vào đó kể cả khi không mở app, mỗi ngày tối đa một lần khi dữ liệu có thay đổi, giữ 7 file gần nhất. File luôn được mã hóa bằng mật khẩu bạn đặt; mật khẩu chỉ nằm trong kho khóa an toàn của điện thoại. Nếu bạn chọn thư mục của Google Drive hay dịch vụ tương tự, việc tải lên do app đó thực hiện; Ví Gọn không tự tải file lên.
 • Quên mật khẩu sao lưu thì không ai lấy lại được, kể cả nhà phát triển.
 
 **Dễ dùng**
@@ -92,7 +92,7 @@ Ví Gọn is a fast personal income and expense tracker that shows where your mo
 
 **Backup**
 • Export a backup file and restore it on a new phone; export CSV for Excel or Google Sheets. You can protect a backup file with a password (AES-256-GCM encryption); without a password the file is not encrypted, so keep it somewhere safe.
-• Optional automatic backup (off by default): choose a folder and the app writes a backup there at most once a day when your data has changed, keeping the 7 most recent files. Files are always encrypted with a password you set, kept only in your phone's secure key store. If you pick a folder of Google Drive or a similar service, that app does the uploading; Ví Gọn does not upload anything.
+• Optional automatic backup (off by default): choose a folder and a time, and the app writes a backup there at that time even when it is closed, at most once a day when your data has changed, keeping the 7 most recent files. Files are always encrypted with a password you set, kept only in your phone's secure key store. If you pick a folder of Google Drive or a similar service, that app does the uploading; Ví Gọn does not upload anything.
 • A forgotten backup password cannot be recovered by anyone, including the developer.
 
 **Easy to use**
@@ -105,7 +105,7 @@ Khác bản App Store có chủ đích: Android tắt sao lưu hệ thống (`al
 iOS cũng loại dữ liệu khỏi sao lưu iCloud/máy tính (D-021), mô tả App Store nói rõ điều này. TalkBack ↔ VoiceOver.
 Theo D-022 (2026-11-05, thay phần iOS của D-019) widget, sao lưu tự động và che nội dung có ở **cả hai** store, nhưng cách chạy khác nhau nên chữ khác nhau:
 che nội dung — Android chặn chụp màn hình + ẩn ảnh xem trước; iPhone chỉ che ở màn chuyển app, không chặn chụp màn hình;
-sao lưu tự động — Android chạy tối đa mỗi ngày một lần khi dữ liệu đổi; iPhone chạy khi mở app (iPhone không cho app chạy theo giờ), thư mục chọn trong app Tệp;
+sao lưu tự động (D-026, 2026-11-06) — Android tự chạy nền đúng giờ chọn kể cả khi app đóng; iPhone hiện thông báo đúng giờ, chạm hoặc mở app thì sao lưu (iPhone không cho app đóng tự chạy), thư mục chọn trong app Tệp; cả hai bù khi lỡ giờ, tối đa mỗi ngày một lần khi dữ liệu đổi;
 bản App Store cần iOS 16.0 trở lên (D-024). Chỉ **icon đơn sắc** (F-23) là của riêng Android.
 Nhắc ghi chép, mật khẩu file sao lưu, tìm kiếm, ẩn tài khoản, ngân sách theo danh mục, đủ tiền tệ ISO cũng có ở cả hai.
 

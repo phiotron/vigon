@@ -102,7 +102,7 @@ PRIVATE BY DESIGN
 
 BACKUP
 • Export a backup file and restore it on a new phone; export CSV for Numbers, Excel or Google Sheets. You can protect a backup file with a password (AES-256 encryption); if you forget the password, the file cannot be opened. Without a password the file is not encrypted, so keep it somewhere safe.
-• Optional automatic backup (off by default): choose a folder in the Files app, for example in iCloud Drive. When you open Ví Gọn, it writes an encrypted backup there at most once a day if your data has changed, keeping the 7 most recent files. The password stays in your iPhone's Keychain; if you forget it, nobody can recover the files, including the developer.
+• Optional automatic backup (off by default): choose a folder in the Files app, for example in iCloud Drive, and a backup time. At that time a notification reminds you; tap it or open Ví Gọn and it writes an encrypted backup there, at most once a day and only if your data has changed, keeping the 7 most recent files. Missed the time? It catches up next time you open the app. The password stays in your iPhone's Keychain; if you forget it, nobody can recover the files, including the developer.
 
 EASY TO USE
 • Vietnamese and English, light and dark themes.
@@ -159,7 +159,7 @@ RIÊNG TƯ
 
 SAO LƯU
 • Tự xuất file sao lưu và khôi phục khi đổi máy; xuất CSV để mở bằng Numbers, Excel hoặc Google Sheets. Có thể đặt mật khẩu cho file sao lưu (mã hóa AES-256); quên mật khẩu thì không mở được file. Không đặt mật khẩu thì file không được mã hóa, hãy cất ở nơi an toàn.
-• Sao lưu tự động (tùy chọn, mặc định tắt): chọn một thư mục trong app Tệp, ví dụ trong iCloud Drive. Khi bạn mở Ví Gọn, app ghi một file sao lưu đã mã hóa vào đó, mỗi ngày tối đa một lần nếu dữ liệu có thay đổi, giữ 7 file gần nhất. Mật khẩu nằm trong Keychain của iPhone; quên mật khẩu thì không ai lấy lại được file, kể cả nhà phát triển.
+• Sao lưu tự động (tùy chọn, mặc định tắt): chọn một thư mục trong app Tệp, ví dụ trong iCloud Drive, và giờ sao lưu. Đến giờ, app gửi thông báo; chạm vào hoặc mở Ví Gọn thì app ghi một file sao lưu đã mã hóa vào đó, mỗi ngày tối đa một lần nếu dữ liệu có thay đổi, giữ 7 file gần nhất. Lỡ giờ thì app sao lưu bù khi bạn mở lại. Mật khẩu nằm trong Keychain của iPhone; quên mật khẩu thì không ai lấy lại được file, kể cả nhà phát triển.
 
 DỄ DÙNG
 • Tiếng Việt và tiếng Anh, giao diện sáng và tối.
@@ -177,8 +177,9 @@ nêu rõ dữ liệu không nằm trong sao lưu iPhone và đổi máy phải t
 Theo D-022 (2026-11-05) bản App Store CÓ widget, sao lưu tự động, che nội dung; chỉ **icon đơn sắc** (F-23) là của riêng Android nên
 không nhắc. Khác bản Play có chủ đích ở ba tính năng này, theo đúng chữ trong app (`*Ios` trong `.arb`):
 che nội dung — iPhone chỉ che ở màn chuyển app, **không** viết "chặn chụp màn hình" (`secureWindowNoteIos`);
-sao lưu tự động — chọn thư mục trong app Tệp, chạy **khi mở app**, mỗi ngày tối đa một lần (`autoBackupNoteIos`, `autoBackupRunsOnOpenIos`),
-không hứa chạy nền theo giờ. Không ghi "widget cần iOS 16" vì cả app cần iOS 16.0 trở lên (D-024) — App Store tự hiện yêu
+sao lưu tự động — chọn thư mục trong app Tệp; theo D-026 (2026-11-06) đúng giờ chọn hiện **thông báo**, chạm hoặc mở app thì
+sao lưu, lỡ giờ thì bù khi mở app, mỗi ngày tối đa một lần (`autoBackupNoteIos`, `autoBackupRunsOnOpenIos`), không hứa tự chạy nền khi
+app đóng. Không ghi "widget cần iOS 16" vì cả app cần iOS 16.0 trở lên (D-024) — App Store tự hiện yêu
 cầu hệ thống. Mật khẩu sao lưu tự động: "Keychain" (Play: "kho khóa an toàn").
 
 ## Age Rating (bảng câu hỏi mới của Apple, từ 2025: 4+, 9+, 13+, 16+, 18+)
@@ -289,7 +290,7 @@ sau không — KHÔNG tự bỏ (trái D-020).
   PIN lock: Settings > Lock with PIN (4 digits, entered twice). The PIN only hides the app UI; data is not encrypted, and the app says so.
   Backup: Settings > Export backup opens the iOS share sheet (Save to Files); you can optionally turn on "Protect file with a password", which encrypts the file on the device (AES-256-GCM). Settings > Restore from backup opens the Files picker for a .vigon file.
   Daily reminder (off by default): Settings > Daily reminder shows a short explanation, then the iOS notification permission prompt. The notification is scheduled locally on the device and contains no figures.
-  Automatic backup (off by default): Settings > Automatic backup asks you to pick a folder in the Files app (for example iCloud Drive) and set a password. Because iOS does not run apps on a schedule, the encrypted backup is written when the app is opened, at most once a day and only if data changed; "Back up now" writes one immediately. The app itself makes no network connection for this.
+  Automatic backup (off by default): Settings > Automatic backup asks you to pick a folder in the Files app (for example iCloud Drive) and set a password. It then asks for a backup time (21:00 by default). Because iOS does not let a closed app run on its own, at that time a local notification ("Time to back up Ví Gọn. Tap to back up.") appears; the encrypted backup is written when the notification is tapped or the app is opened after that time (a missed time is caught up on next open), at most once a day and only if data changed; "Back up now" writes one immediately. Notification permission is requested after an explanation; if declined, the backup still runs when the app is opened. The app itself makes no network connection for this.
   Home screen widget: add "Ví Gọn" from the widget gallery. Its Expense and Income buttons open the entry screen. Amounts appear only if Settings > "Show amounts on widget" is on and the PIN lock is off.
   Hide content when switching apps: Settings > Hide content when switching apps covers the app's content in the app switcher. It does not block screenshots.
   The app is free, has no in-app purchases and no ads.
