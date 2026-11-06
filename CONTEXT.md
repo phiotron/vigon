@@ -5,13 +5,13 @@
 > Nguồn: `docs/SPEC.md` (F-01..F-26), `docs/DECISIONS.md` (D-001..D-019), `lib/src/**`, `lib/l10n/*.arb`,
 > `design/current/ui-spec.md` — bản sau khi gộp v1.2 + PLAN-001 (2026-11-05). 🤖 = chỉ Android (ẩn trên iOS, D-019).
 > ⚠ = code, SPEC hoặc thiết kế đang lệch nhau — xem mục "Chỗ lệch" ở cuối.
-> **2.0** = thuật ngữ của SPEC 3d (F-27..F-44, D-030..D-035), thêm 2026-11-06, **SPEC 3d chưa duyệt**: chưa có trong code; chữ UI (VI) là đề xuất, chốt khi viết `.arb`.
+> **2.0** = thuật ngữ của SPEC 3d (F-27..F-42, D-030..D-035), thêm 2026-11-06 và thu hẹp cùng ngày (chỉ nhập khoản chi từ email MB qua hàng đợi; không đọc thông báo, không quét/ảnh hoá đơn), **SPEC 3d chưa duyệt**: chưa có trong code; chữ UI (VI) là đề xuất, chốt khi viết `.arb`.
 
 ## Ghi chép và phân loại
 
 | Term (code) | VI | Định nghĩa | Tránh dùng |
 |---|---|---|---|
-| **Entry** ⚠ | Khoản (khoản ghi) — EN UI: *Record* | Một lần ghi tiền: loại, số tiền > 0, ngày, **Entry time** (2.0, có thể trống), tài khoản, ghi chú ≤ 200 ký tự; Expense/Income có Category. 2.0: có **Import source** (ghi tay hoặc nguồn nhập; một khoản có thể mang tối đa một tin mỗi loại nguồn sau khi Match) và có thể có một Receipt photo. Đơn vị dữ liệu chính. | "transaction", "giao dịch" (giao dịch = DB transaction) |
+| **Entry** ⚠ | Khoản (khoản ghi) — EN UI: *Record* | Một lần ghi tiền: loại, số tiền > 0, ngày, **Entry time** (2.0, có thể trống), tài khoản, ghi chú ≤ 200 ký tự; Expense/Income có Category. 2.0: có **Import source** (ghi tay hoặc Email MB) và, nếu đến từ email, một **Reference number**. Mục trong Import queue **chưa phải** Entry. Đơn vị dữ liệu chính. | "transaction", "giao dịch" (giao dịch = DB transaction) |
 | **Entry time** (2.0) | Giờ | Giờ `HH:mm` của khoản theo giờ máy; khoản mới mặc định lúc mở màn nhập. Khoản có từ trước 2.0 và khoản sinh từ định kỳ không có giờ; khi Match được coi là 12:00. | "timestamp", "thời gian tạo" (`createdAt` là lúc ghi vào máy, khác giờ của khoản) |
 | **Entry type** | Loại khoản | `expense` · `income` · `transfer`. Không đổi được loại của khoản đã lưu. | |
 | **Expense** ⚠ | Chi (khoản chi) — EN UI: *Expenses* | Entry làm giảm tiền, có danh mục chi. Ghi qua nút "−", icon danh mục quanh vòng, ô "Danh mục khác", nút Chi của Widget hoặc chạm Reminder. | "spending" trong nhãn |
@@ -35,9 +35,9 @@
 
 | Term (code) | VI | Định nghĩa | Tránh dùng |
 |---|---|---|---|
-| **Account** | Tài khoản | Nơi giữ tiền (Tiền mặt, Thẻ, Ví điện tử…): tên, Starting balance, trạng thái hiện/ẩn. Mỗi Entry thuộc một Account. 2.0: Account có thể do app **tự tạo** từ Detected transaction — mỗi cặp (ngân hàng/ví, 4 số cuối tài khoản hoặc thẻ) một Account, tên "Vietcombank …1234" (ví: "MoMo"); liên kết theo ngân hàng + 4 số cuối, không theo tên. Chỉ giữ 4 số cuối. | "ví" trong chữ (chỉ là icon), "wallet", "số tài khoản" (app không lưu số đầy đủ) |
-| **Auto-created account** (2.0) | Tài khoản tự tạo | Account app tạo khi gặp tin đầu tiên của một tài khoản/thẻ chưa có; Starting balance = số dư trong tin trừ ngược biến động của chính tin đó. Sau đó là Account bình thường (đổi tên, ẩn được). | "tài khoản ngân hàng liên kết", "kết nối ngân hàng" (app không kết nối ngân hàng) |
-| **Total balance** (2.0) | Tổng số dư | Tổng Account balance của **mọi** Account, kể cả Hidden account, không theo Account filter; ô trên Dashboard. Khác Period balance (thu − chi của kỳ). | "số dư" trơn, "tài sản ròng" |
+| **Account** | Tài khoản | Nơi giữ tiền (Tiền mặt, Thẻ, Ví điện tử…): tên, Starting balance, trạng thái hiện/ẩn. Mỗi Entry thuộc một Account. 2.0: Account có thể **liên kết** với một tài khoản trích nợ MB (theo 4 số cuối) — do app tự tạo hoặc người dùng gắn vào Account có sẵn; liên kết theo (MB, 4 số cuối), không theo tên. Chỉ giữ 4 số cuối. | "ví" trong chữ (chỉ là icon), "wallet", "số tài khoản" (app không lưu số đầy đủ) |
+| **Auto-created account** (2.0) | Tài khoản tự tạo | Account "MB Bank …1234" app tạo khi gặp email thành công đầu tiên của một Debit account chưa liên kết; Starting balance 0; người dùng có thể "Gắn vào tài khoản có sẵn" thay cho nó. Sau đó là Account bình thường. | "tài khoản ngân hàng liên kết", "kết nối ngân hàng" (app không kết nối ngân hàng) |
+| **Total balance** (2.0) | Tổng số dư | Tổng Account balance của **mọi** Account, kể cả Hidden account; ô trên màn Overview. Khác Period balance (thu − chi của kỳ). Không gồm mục Import queue. | "số dư" trơn, "tài sản ròng" |
 | **Default account** ⚠ | Tài khoản mặc định | Tài khoản điền sẵn khi ghi khoản mới = tài khoản **hiện** đầu tiên theo thứ tự (lúc cài là "Tiền mặt"). Không có cài đặt riêng. | |
 | **Hidden account** (code `archived`) | Tài khoản đã ẩn | Tài khoản bị **Ẩn tài khoản**: không hiện ở bảng chọn tài khoản khi ghi khoản, menu lọc, ô Từ/Đến của Chuyển tiền (trừ lần chuyển cũ của nó). Khoản cũ vẫn trong danh sách và vẫn tính vào tổng; số dư vẫn tính. Liệt kê trong mục thu gọn "Tài khoản đã ẩn", **Hiện lại** được. Trạng thái ẩn đi theo file sao lưu. | "archived", "lưu trữ", "đã xóa" |
 | **Delete account** | Xóa tài khoản | Chỉ được khi tài khoản chưa có khoản nào (kể cả chuyển tiền đến) và không Recurring series nào trỏ tới; nếu không thì chỉ ẩn được. Có hộp xác nhận. | |
@@ -61,33 +61,30 @@
 | **Over budget** | Vượt (ngân sách / hạn mức) | Đã chi > hạn mức: chữ "Vượt X" + icon cảnh báo + màu lỗi, không chỉ dựa vào màu. | "cháy túi" |
 | **Near budget** (2.0) | Sắp vượt | Đã chi ≥ **Near-budget threshold** × hạn mức và chưa vượt: icon + "Đã dùng 82%", màu cảnh báo khác màu Vượt. Áp cho Budget và Category budget. | "gần hết" trong nhãn, "cảnh báo đỏ" |
 | **Near-budget threshold** (2.0) | Ngưỡng sắp vượt | Phần trăm hạn mức bắt đầu "Sắp vượt": mặc định 80%, chỉnh 50–95% bước 5%. | |
-| **Budget alert** (2.0) | Thông báo ngân sách | Thông báo cục bộ (công tắc, mặc định tắt) khi đã chi tháng hiện tại vượt qua mốc ngưỡng hoặc 100%; mỗi mốc mỗi ngân sách một lần mỗi tháng; PIN bật thì không số. Khác Reminder. | "nhắc nhở", "push" |
-| **Remaining budget** (2.0) | Ngân sách còn lại | Hạn mức Budget của tháng − đã chi (mọi tài khoản); âm thì hiện "Vượt X". Ô trên Dashboard. | "số dư ngân sách" |
+| **Budget alert** (2.0) | Thông báo ngân sách | Thông báo cục bộ (công tắc, mặc định tắt) khi đã chi tháng hiện tại vượt qua mốc ngưỡng hoặc 100%; mỗi mốc mỗi ngân sách một lần mỗi tháng; **chỉ có phần trăm, không bao giờ có số tiền**. Khác Reminder. | "nhắc nhở", "push" |
+| **Remaining budget** (2.0) | Ngân sách còn lại | Hạn mức Budget của tháng − đã chi (mọi tài khoản); âm thì hiện "Vượt X". Ô trên màn Overview. | "số dư ngân sách" |
 | **Recurring series** ⚠ | Khoản định kỳ (chuỗi định kỳ) — EN UI: *Repeating records*; code: `RecurringRule` | Quy tắc lặp của một khoản mẫu: loại, số tiền, danh mục, tài khoản, ghi chú, Frequency, ngày bắt đầu, chạy/dừng. Chỉ tạo từ màn Nhập khoản mới (chip Lặp lại). Sửa được số tiền, ghi chú, tần suất, danh mục, tài khoản (F-16). | "subscription", "nhắc nhở" |
 | **Frequency** | Chu kỳ lặp (Lặp lại) | `daily` Hằng ngày · `weekly` Hằng tuần · `monthly` Hằng tháng · `yearly` Hằng năm. Đổi tần suất thì chuỗi bắt đầu lại từ ngày tới hạn kế tiếp theo lịch cũ, không sinh bù. | "period" (đã dùng cho Kỳ) |
 | **Generated entry** | Khoản sinh tự động | Entry do Recurring series tạo khi mở app hoặc quay lại từ nền, bù mọi lần tới hạn tới hết hôm nay, không trùng; sau đó là Entry bình thường. | |
 | **Stop / Resume series** | Dừng / Chạy lại | Dừng: không sinh thêm ("Đã dừng"). Chạy lại: tiếp từ **hôm nay**, không sinh bù. | "xóa chuỗi" |
 | **Undo** | Hoàn tác | Thanh "Đã xóa · Hoàn tác" 5 giây sau khi xóa một Entry/Transfer. | "khôi phục" (dành cho Restore) |
 
-## Nhập tự động (2.0)
+## Nhập từ email (2.0)
 
 | Term (code) | VI | Định nghĩa | Tránh dùng |
 |---|---|---|---|
-| **Import source** | Nguồn nhập (nguồn) | Nơi một khoản đến từ: **ghi tay**, **thông báo** 🤖 (app ngân hàng/ví đã chọn), **email** (IMAP), **hoá đơn** (Receipt scan). Hiện thành biểu tượng/nhãn trên khoản; cột "Nguồn" trong CSV/Excel. | "đồng bộ ngân hàng", "kết nối ngân hàng", "SMS" (app không đọc SMS) |
-| **Source app** 🤖 | App nguồn | Một trong 10 app ngân hàng/ví mà app được phép đọc thông báo (người dùng chọn). Thông báo của app khác bị bỏ ngay. | "app liên kết" |
-| **Notification access** 🤖 | Quyền truy cập thông báo | Quyền hệ thống người dùng tự bật trong cài đặt Android (sau màn giải thích của app) để app đọc thông báo. Khác **Notification permission** (quyền *gửi* thông báo). | "quyền thông báo" trơn (dễ nhầm hai quyền) |
-| **Mailbox** | Hộp thư | Hộp thư Gmail/Yahoo/iCloud người dùng thêm để app đọc thư ngân hàng qua IMAP, chỉ đọc, không đánh dấu đã đọc. Cấu hình theo máy, không theo file sao lưu. | "tài khoản email" (dễ nhầm Account) |
+| **Import source** | Nguồn (nguồn nhập) | Nơi một khoản đến từ: **Ghi tay** hoặc **Email MB**. Hiện thành biểu tượng/nhãn trên khoản; cột "Nguồn" trong CSV/Excel. | "đồng bộ ngân hàng", "kết nối ngân hàng", "SMS", "thông báo" (app không đọc SMS hay thông báo) |
+| **Mailbox** | Hộp thư | Hộp thư Gmail/Yahoo/iCloud người dùng thêm để app đọc email biên lai qua IMAP, chỉ xem, không đánh dấu đã đọc. Cấu hình theo máy, không theo file sao lưu. | "tài khoản email" (dễ nhầm Account) |
 | **App password** | Mật khẩu ứng dụng | Mật khẩu riêng nhà cung cấp email cấp cho một app (không phải mật khẩu đăng nhập chính); chỉ lưu trong Keystore/Keychain. Khác Backup password và PIN. | "mật khẩu email", "mật khẩu Gmail" |
-| **Detected transaction** | Tin biến động | Một thông báo hoặc thư mà bộ đọc nhận ra là tiền ra/vào: chiều, số tiền, tiền tệ, số dư sau (nếu có), nội dung, 4 số cuối, thời điểm. Chưa phải Entry: nó tạo Entry mới, Match vào Entry có sẵn, hoặc vào Pending review. Tin OTP, quảng cáo không phải tin biến động. | "giao dịch" (dành cho DB transaction), "SMS", "tin nhắn" |
-| **Parser** / **Bank template** | Bộ đọc / Mẫu tin | Bộ đọc chung + mẫu riêng của từng ngân hàng/ví biến chữ của tin thành Detected transaction. | "AI", "nhận dạng thông minh" |
-| **Pending review** | Hàng chờ duyệt | Nơi giữ tin bộ đọc **không chắc** số tiền hoặc chiều tiền (hoặc lệch tiền tệ của app), nội dung đã che số tài khoản; người dùng "Ghi thành khoản" hoặc "Bỏ qua". Tin chắc chắn không bao giờ vào đây (được lưu thẳng). | "nháp", "hộp thư đến" |
-| **Match** | Ghép | Gắn một Detected transaction vào Entry có sẵn thay vì tạo mới: cùng Account, cùng chiều, cùng số tiền, chênh ≤ 2 giờ. Entry giữ nguyên dữ liệu, chỉ thêm nguồn; mỗi Entry nhận tối đa một tin mỗi loại nguồn. | "gộp" (dành cho Internal transfer match), "trùng lặp", "khớp" (dành cho Balance adjustment) |
-| **Internal transfer match** | Ghép chuyển tiền (tự ghép chuyển tiền) | Tin ra ở Account A + tin vào ở Account B, cùng số tiền, ±2 giờ → một Transfer A→B; tách lại được thành chi và thu. | "chuyển khoản nội bộ" (xem Transfer) |
-| **Balance adjustment** | Điều chỉnh số dư | Khoản app tạo để số dư Account **khớp** số dư trong tin: lệch âm → khoản chi danh mục "Khác", lệch dương → "Thu khác", ghi chú "Điều chỉnh số dư". **Là khoản chi/thu bình thường, không phải một Entry type**: vào tổng, biểu đồ, ngân sách; sửa/xoá như khoản thường. | "loại điều chỉnh", "adjustment type", "khoản hệ thống" |
-| **Merchant rule** | Quy tắc danh mục (quy tắc nơi bán) | Cặp *khoá nơi bán → Category* app nhớ khi người dùng đổi danh mục của một khoản tự nhập; tin sau cùng khoá, cùng chiều tự vào danh mục đó. Đi theo file sao lưu; xem và xoá ở Cài đặt. | "tag tự động", "AI phân loại" |
-| **Merchant key** | Khoá nơi bán | Nội dung tin (hoặc tên cửa hàng trên hoá đơn) đã bỏ dấu, viết thường, bỏ dãy số dài — dùng để so Merchant rule. | |
-| **Receipt scan** | Quét hoá đơn | Chụp/chọn ảnh hoá đơn → nhận chữ trên máy (ML Kit) → điền sẵn màn Nhập khoản chi; người dùng bấm Lưu. | "OCR" trong chữ UI, "AI đọc hoá đơn" |
-| **Receipt photo** | Ảnh hoá đơn | Ảnh đính vào một khoản (tối đa 1), nằm trong album "Ví Gọn" của **thư viện ảnh của máy** (ngoài app), tên `vigon-<uuid>.jpg`; app chỉ giữ tên file. Không vào Backup, không được PIN che; sau Restore app gắn lại theo tên file. | "tệp đính kèm", "chứng từ" |
+| **Supported bank** | Ngân hàng hỗ trợ | Ngân hàng đã có email mẫu thật và test đạt; bản đầu chỉ **MB Bank**. Ngân hàng khác không hiện trong app. | "mọi ngân hàng" |
+| **Bank receipt email** | Email biên lai | Email MB báo một lần chuyển tiền **đi**: ngày giờ, loại giao dịch, số tham chiếu, tài khoản trích nợ, người thụ hưởng, số tiền, nội dung chuyển tiền, cách thức lệnh, ngày nhập lệnh, thời gian, tình trạng. Không có số dư, không có tiền vào. Chỉ email tình trạng thành công tạo khoản chi. | "giao dịch", "sao kê", "tin nhắn" |
+| **Reference number** | Số tham chiếu | Mã của MB trên email biên lai; một số tham chiếu chỉ được nhập **một lần** (kể cả khi đã bỏ qua hay xoá khoản). | "mã giao dịch" (tránh chữ "giao dịch"), "ID" |
+| **Debit account** | Tài khoản trích nợ | Tài khoản MB bị trừ tiền ghi trên email; app chỉ giữ 4 số cuối và dùng nó để chọn Account liên kết. | "số tài khoản" (không lưu số đầy đủ) |
+| **Payee** | Người thụ hưởng | Người/đơn vị nhận tiền ghi trên email; cùng nội dung chuyển tiền tạo thành ghi chú của khoản ("<người thụ hưởng> · <nội dung>"). | "nơi bán", "merchant" |
+| **Import queue** | Hàng đợi (khoản chờ chọn danh mục) | Nơi mọi email thành công **không ghép** được nằm chờ người dùng chọn danh mục, "Chuyển sang tài khoản của tôi" hoặc "Bỏ qua". Mục hàng đợi **chưa là khoản**: không vào tổng, biểu đồ, ngân sách, số dư. Màn chính hiện "N khoản chờ chọn danh mục". | "nháp", "hộp thư đến", "hàng chờ duyệt" |
+| **Match** | Ghép | Gắn email vào khoản ghi tay có sẵn thay vì đưa vào hàng đợi: **cùng Account** (liên kết với tài khoản trích nợ), khoản chi hoặc chuyển tiền đi, cùng số tiền, chênh ≤ 2 giờ; mỗi khoản tối đa một email. Khoản giữ nguyên dữ liệu, chỉ thêm nguồn và số tham chiếu. | "gộp", "trùng lặp", "khớp" |
+| **Payee suggestion** | Gợi ý (theo người thụ hưởng) | Lựa chọn lần gần nhất cho cùng người thụ hưởng (một danh mục, hoặc chuyển sang tài khoản X) được chọn sẵn cho mục hàng đợi sau; người dùng vẫn phải chạm xác nhận. Đi theo file sao lưu; xem và xoá ở "Gợi ý đã nhớ". | "quy tắc tự động", "AI phân loại" |
+| **Move to my account** | Chuyển sang tài khoản của tôi | Lựa chọn trong hàng đợi biến mục thành một **Transfer** từ Account trích nợ sang Account khác của người dùng (vd sang MoMo, sang Account tiết kiệm). Không phải thu/chi. | "chuyển khoản nội bộ" |
 
 ## Tiết kiệm, nợ, xem (2.0)
 
@@ -97,7 +94,7 @@
 | **Contribution** | Góp tiền | Một **Transfer** vào Account của Savings goal. Không phải thu/chi; không đổi tổng thu/chi, ngân sách, Total balance. | "nạp", "gửi tiết kiệm", "thu" |
 | **Debt record** | Khoản nợ | Sổ ghi nhớ: người, chiều **Cho vay** (người khác nợ bạn) / **Đi vay** (bạn nợ), số tiền, ngày, hạn, ghi chú, các **Debt payment** (Lần trả); còn lại = số tiền − đã trả; về 0 là "Đã xong". **Không phải Entry**: không đụng Account, không tính thu/chi. | "khoản vay" (dễ nhầm Entry), "tài khoản nợ" |
 | **Debt payment** | Lần trả | Một lần trả của Debt record (số tiền, ngày); không vượt số còn lại; không tạo Entry. | "thanh toán" |
-| **Dashboard** | Màn chính (tổng quan) | Màn chính hiện có (vòng danh mục, thu/chi/số dư của kỳ, ngân sách) mở rộng thêm Total balance, "Thu − chi tháng", Remaining budget, cột thu–chi 6 tháng, "So với tháng trước". | "trang chủ" trong tài liệu kỹ thuật |
+| **Overview** (Dashboard) | Tổng quan | **Màn riêng** (màn chính giữ nguyên), có chọn tháng riêng: Total balance, "Thu − chi tháng", Remaining budget, cột thu–chi 6 tháng, "So với tháng trước". | "màn chính", "trang chủ" (màn chính là màn ghi nhanh hiện có) |
 | **Statistics** | Thống kê | Màn phân tích theo Period: cột thu/chi theo kỳ con, 5 danh mục chi nhiều nhất, ngày chi nhiều nhất, đường lịch sử Total balance. | "báo cáo" (dành cho PDF) |
 | **Spending calendar** | Lịch (lịch chi tiêu) | Lưới tháng, mỗi ngày hiện tổng chi rút gọn và chấm nếu có thu; chạm ngày mở các khoản của ngày đó. | "lịch hẹn", "Custom range" |
 | **Advanced filter** | Lọc nâng cao (Lọc) | Lọc Các khoản theo khoảng số tiền, nhiều danh mục, khoảng ngày; kết hợp VÀ với Search và Account filter; chỉ sống trong phiên chạy. | "tìm kiếm" (dành cho Search) |
@@ -117,8 +114,8 @@
 | **Backup folder** 🤖 | Thư mục (sao lưu) | Thư mục người dùng chọn bằng bộ chọn thư mục của Android (Drive, Dropbox, thẻ nhớ, bộ nhớ máy). Việc tải lên đám mây do app sở hữu thư mục làm. "Chọn lại thư mục" khi quyền bị thu hồi hoặc thư mục mất. | "tài khoản Google Drive" |
 | **Auto backup status** 🤖 | Trạng thái sao lưu | "Chưa sao lưu lần nào" / "Lần cuối: …" / "Lần thử …: <lỗi>". | |
 | **CSV export** | Xuất CSV | File bảng tính (ngày, loại, số tiền, tiền tệ, danh mục, tài khoản, đến tài khoản, ghi chú), tiêu đề và tên loại theo ngôn ngữ app (vi: `;` và dấu `,` thập phân; en: `,` và `.`), UTF-8 có BOM. Chỉ xuất. | "báo cáo" |
-| **Device-only setting** | Cài đặt theo máy | Cài đặt không đi theo file sao lưu: công tắc Widget amounts, công tắc Reminder (về TẮT sau khôi phục), cấu hình Auto backup. Giờ nhắc thì có đi theo file. 2.0 thêm: Source app đã chọn, Mailbox + App password, thư đã đọc; Pending review cũng không theo file. | |
-| **Delete all data** | Xóa toàn bộ dữ liệu | Xóa mọi khoản, danh mục, tài khoản, cài đặt, tắt PIN và Auto backup (file đã ghi giữ nguyên); tạo lại mặc định như mới cài. Hai hộp xác nhận. 2.0: xoá thêm mục tiêu, nợ, quy tắc, hàng chờ, hộp thư; **không** xoá Receipt photo trong thư viện ảnh. | "reset", "đăng xuất" |
+| **Device-only setting** | Cài đặt theo máy | Cài đặt không đi theo file sao lưu: công tắc Widget amounts, công tắc Reminder (về TẮT sau khôi phục), cấu hình Auto backup. Giờ nhắc thì có đi theo file. 2.0 thêm: Mailbox + App password, thư đã đọc; Import queue cũng không theo file (số tham chiếu đã gặp thì có). | |
+| **Delete all data** | Xóa toàn bộ dữ liệu | Xóa mọi khoản, danh mục, tài khoản, cài đặt, tắt PIN và Auto backup (file đã ghi giữ nguyên); tạo lại mặc định như mới cài. Hai hộp xác nhận. 2.0: xoá thêm mục tiêu, nợ, gợi ý, hàng đợi, số tham chiếu đã gặp, hộp thư + mật khẩu ứng dụng; tắt sinh trắc. | "reset", "đăng xuất" |
 
 ## Bảo mật, quyền riêng tư, ngoài app
 
