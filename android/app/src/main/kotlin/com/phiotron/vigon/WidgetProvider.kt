@@ -149,6 +149,8 @@ class VigonWidgetProvider : AppWidgetProvider() {
                 R.id.widget_income,
                 openEntry(context, 1, "/entry/new?type=income"),
             )
+            // Chạm phần tên/dòng trạng thái: mở màn chính (D9; trước đây chạm vào không có gì).
+            views.setOnClickPendingIntent(R.id.widget_header, openEntry(context, 2, "/"))
             return views
         }
 

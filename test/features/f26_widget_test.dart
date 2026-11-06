@@ -153,6 +153,10 @@ void main() {
       allowedDeepLinkRoute('https://x.test/entry/new?type=expense'),
       isNull,
     );
+    // D9: chạm phần tên/dòng trạng thái của widget mở màn chính.
+    expect(allowedDeepLinkRoute('/'), '/');
+    expect(allowedDeepLinkRoute('/?x=1'), isNull);
+    expect(allowedDeepLinkRoute('https://x.test/'), isNull);
   });
 
   testWidgets('kênh bridge gửi đúng lệnh ghi và lệnh xóa', (tester) async {

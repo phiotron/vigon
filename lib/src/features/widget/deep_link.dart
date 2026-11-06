@@ -43,11 +43,13 @@ final deepLinkChannelProvider = Provider<DeepLinkChannel>(
   (ref) => DeepLinkChannel(),
 );
 
-/// Chỉ nhận đúng hai route nhập khoản mới; route lạ (intent từ app khác) bị bỏ.
+/// Chỉ nhận đúng hai route nhập khoản mới và màn chính `/` (chạm phần tên/dòng
+/// trạng thái của widget, D9); route lạ (intent từ app khác) bị bỏ.
 String? allowedDeepLinkRoute(String? route) {
   if (route == null) return null;
   final uri = Uri.tryParse(route);
   if (uri == null || uri.hasScheme || uri.hasAuthority) return null;
+  if (route == '/') return '/';
   if (uri.path != '/entry/new') return null;
   final type = uri.queryParameters['type'];
   if (type != 'expense' && type != 'income') return null;
