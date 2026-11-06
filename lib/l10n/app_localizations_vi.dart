@@ -1175,4 +1175,219 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get csvSourceEmailMb => 'Email MB';
+
+  @override
+  String get savings => 'Tiết kiệm';
+
+  @override
+  String get savingsEmpty =>
+      'Chưa có mục tiêu tiết kiệm. Đặt một mục tiêu rồi góp tiền vào dần.';
+
+  @override
+  String get savingsAdd => 'Thêm mục tiêu';
+
+  @override
+  String get savingsEdit => 'Sửa mục tiêu';
+
+  @override
+  String get savingsTarget => 'Số tiền mục tiêu';
+
+  @override
+  String get savingsDue => 'Hạn (tuỳ chọn)';
+
+  @override
+  String get savingsNoDue => 'Không đặt hạn';
+
+  @override
+  String get savingsClearDue => 'Bỏ hạn';
+
+  @override
+  String get savingsAccount => 'Tài khoản gắn';
+
+  @override
+  String get savingsNewAccount => 'Tạo tài khoản mới';
+
+  @override
+  String get savingsNewAccountNote =>
+      'Tài khoản mới có tên giống mục tiêu, số dư ban đầu 0.';
+
+  @override
+  String get savingsAccountFixed =>
+      'Tài khoản gắn không đổi được. Muốn gắn tài khoản khác, hãy xoá mục tiêu rồi tạo lại.';
+
+  @override
+  String get savingsAccountTaken => 'Tài khoản này đã gắn một mục tiêu khác';
+
+  @override
+  String savingsProgress(String have, String target) {
+    return 'Đã có $have / $target';
+  }
+
+  @override
+  String savingsMissing(String amount) {
+    return 'Còn thiếu $amount';
+  }
+
+  @override
+  String get savingsReached => 'Đã đạt';
+
+  @override
+  String savingsDaysLeft(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Còn $count ngày',
+      zero: 'Hạn là hôm nay',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String savingsOverdue(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Quá hạn $count ngày',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get savingsContribute => 'Góp tiền';
+
+  @override
+  String get savingsNeedOtherAccount =>
+      'Cần có thêm một tài khoản khác để góp tiền';
+
+  @override
+  String get savingsDelete => 'Xoá mục tiêu';
+
+  @override
+  String get savingsDeleteTitle => 'Xoá mục tiêu?';
+
+  @override
+  String get savingsDeleteBody =>
+      'Tài khoản gắn và mọi khoản vẫn giữ nguyên. Chỉ mục tiêu bị xoá.';
+
+  @override
+  String get savingsDeleted => 'Đã xoá mục tiêu';
+
+  @override
+  String get debts => 'Khoản nợ';
+
+  @override
+  String get debtsEmpty =>
+      'Chưa có khoản nợ nào. Ghi lại ai nợ bạn, hoặc bạn nợ ai, để khỏi quên.';
+
+  @override
+  String get debtsNote =>
+      'Chỉ là sổ ghi nhớ: không tính vào thu, chi hay số dư tài khoản.';
+
+  @override
+  String get debtAdd => 'Thêm khoản nợ';
+
+  @override
+  String get debtEdit => 'Sửa khoản nợ';
+
+  @override
+  String get debtPerson => 'Người';
+
+  @override
+  String get debtDirection => 'Chiều';
+
+  @override
+  String get debtLent => 'Cho vay';
+
+  @override
+  String get debtBorrowed => 'Đi vay';
+
+  @override
+  String get debtGroupLent => 'Người khác nợ bạn';
+
+  @override
+  String get debtGroupBorrowed => 'Bạn nợ người khác';
+
+  @override
+  String debtGroupTotal(String amount) {
+    return 'Còn lại $amount';
+  }
+
+  @override
+  String debtDoneSection(int count) {
+    return 'Đã xong ($count)';
+  }
+
+  @override
+  String get debtDone => 'Đã xong';
+
+  @override
+  String get debtAmount => 'Số tiền';
+
+  @override
+  String get debtDate => 'Ngày';
+
+  @override
+  String get debtDue => 'Hạn (tuỳ chọn)';
+
+  @override
+  String debtDueOn(String date) {
+    return 'Hạn $date';
+  }
+
+  @override
+  String get debtClearDue => 'Bỏ hạn';
+
+  @override
+  String get debtOverdue => 'Quá hạn';
+
+  @override
+  String debtRemaining(String amount) {
+    return 'Còn lại $amount';
+  }
+
+  @override
+  String debtPaidOf(String paid, String total) {
+    return 'Đã trả $paid / $total';
+  }
+
+  @override
+  String get debtPayments => 'Các lần trả';
+
+  @override
+  String get debtNoPayments => 'Chưa có lần trả nào';
+
+  @override
+  String get debtAddPayment => 'Thêm lần trả';
+
+  @override
+  String get debtPaymentAmount => 'Số tiền trả';
+
+  @override
+  String get debtDeletePayment => 'Xoá lần trả';
+
+  @override
+  String debtOverpay(String remaining) {
+    return 'Vượt số còn lại ($remaining)';
+  }
+
+  @override
+  String debtAmountBelowPaid(String paid) {
+    return 'Không được nhỏ hơn số đã trả ($paid)';
+  }
+
+  @override
+  String get debtDelete => 'Xoá khoản nợ';
+
+  @override
+  String get debtDeleteTitle => 'Xoá khoản nợ?';
+
+  @override
+  String get debtDeleteBody =>
+      'Các lần trả cũng bị xoá. Không ảnh hưởng khoản nào khác hay số dư tài khoản.';
+
+  @override
+  String get debtDeleted => 'Đã xoá khoản nợ';
+
+  @override
+  String get debtRemainingLabel => 'Còn lại';
 }

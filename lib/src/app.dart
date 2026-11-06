@@ -9,6 +9,7 @@ import 'features/about/about_screen.dart';
 import 'features/accounts/accounts_screen.dart';
 import 'features/accounts/transfer_screen.dart';
 import 'features/categories/categories_screen.dart';
+import 'features/debts/debts_screen.dart';
 import 'features/entries/entries_screen.dart';
 import 'features/entry/entry_editor_screen.dart';
 import 'features/home/home_screen.dart';
@@ -16,6 +17,7 @@ import 'features/lock/app_lock.dart';
 import 'features/lock/lock_screen.dart';
 import 'features/recurring/recurring_screen.dart';
 import 'features/reminder/reminder_providers.dart';
+import 'features/savings/savings_screen.dart';
 import 'features/settings/email_import_screen.dart';
 import 'features/settings/email_mailbox_form.dart';
 import 'features/settings/secure_window.dart';
@@ -60,7 +62,10 @@ GoRouter createRouter() => GoRouter(
         ),
         GoRoute(
           path: 'transfer',
-          builder: (context, state) => const TransferScreen(),
+          builder: (context, state) => TransferScreen(
+            // `?to=` điền sẵn ô Đến (Góp tiền, AC-102); chỉ nhận số nguyên.
+            toAccountId: int.tryParse(state.uri.queryParameters['to'] ?? ''),
+          ),
         ),
         GoRoute(
           path: 'transfer/:id',
@@ -90,6 +95,16 @@ GoRouter createRouter() => GoRouter(
           builder: (context, state) => EntryEditorScreen(
             entryId: int.parse(state.pathParameters['id']!),
           ),
+        ),
+        // F-34: Khoản nợ.
+        GoRoute(
+          path: 'debts',
+          builder: (context, state) => const DebtsScreen(),
+        ),
+        // F-33: Tiết kiệm.
+        GoRoute(
+          path: 'savings',
+          builder: (context, state) => const SavingsScreen(),
         ),
         // F-28: hộp thư email; `?id=` chỉ nhận id ô có thật (nhập lại mật khẩu).
         GoRoute(

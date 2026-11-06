@@ -3,6 +3,7 @@ import 'package:drift/native.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:go_router/go_router.dart';
 import 'package:vigon/src/app.dart';
 import 'package:vigon/src/data/database.dart';
 import 'package:vigon/src/data/pin_service.dart';
@@ -120,4 +121,10 @@ Future<int> insertEntry(
   );
   await settle(tester);
   return id!;
+}
+
+/// Đi thẳng tới [route] của app đang chạy (đường dẫn gốc, ví dụ `/savings`).
+Future<void> goTo(WidgetTester tester, String route) async {
+  GoRouter.of(tester.element(find.byType(Scaffold).first)).go(route);
+  await settle(tester);
 }

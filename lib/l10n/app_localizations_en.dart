@@ -1190,4 +1190,222 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get csvSourceEmailMb => 'MB email';
+
+  @override
+  String get savings => 'Savings';
+
+  @override
+  String get savingsEmpty =>
+      'No savings goals yet. Set a goal, then add money to it over time.';
+
+  @override
+  String get savingsAdd => 'Add goal';
+
+  @override
+  String get savingsEdit => 'Edit goal';
+
+  @override
+  String get savingsTarget => 'Target amount';
+
+  @override
+  String get savingsDue => 'Deadline (optional)';
+
+  @override
+  String get savingsNoDue => 'No deadline';
+
+  @override
+  String get savingsClearDue => 'Remove deadline';
+
+  @override
+  String get savingsAccount => 'Linked account';
+
+  @override
+  String get savingsNewAccount => 'Create a new account';
+
+  @override
+  String get savingsNewAccountNote =>
+      'The new account is named like the goal and starts at 0.';
+
+  @override
+  String get savingsAccountFixed =>
+      'The linked account can\'t be changed. To link a different account, delete the goal and create it again.';
+
+  @override
+  String get savingsAccountTaken =>
+      'This account is already linked to another goal';
+
+  @override
+  String savingsProgress(String have, String target) {
+    return 'Saved $have of $target';
+  }
+
+  @override
+  String savingsMissing(String amount) {
+    return '$amount to go';
+  }
+
+  @override
+  String get savingsReached => 'Reached';
+
+  @override
+  String savingsDaysLeft(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count days left',
+      one: '1 day left',
+      zero: 'Due today',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String savingsOverdue(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count days overdue',
+      one: '1 day overdue',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get savingsContribute => 'Add money';
+
+  @override
+  String get savingsNeedOtherAccount =>
+      'You need another account to add money from';
+
+  @override
+  String get savingsDelete => 'Delete goal';
+
+  @override
+  String get savingsDeleteTitle => 'Delete this goal?';
+
+  @override
+  String get savingsDeleteBody =>
+      'The linked account and all records stay. Only the goal is deleted.';
+
+  @override
+  String get savingsDeleted => 'Goal deleted';
+
+  @override
+  String get debts => 'Debts';
+
+  @override
+  String get debtsEmpty =>
+      'No debts yet. Note who owes you, or whom you owe, so you don\'t forget.';
+
+  @override
+  String get debtsNote =>
+      'A reminder list only: it doesn\'t count in income, expenses or account balances.';
+
+  @override
+  String get debtAdd => 'Add debt';
+
+  @override
+  String get debtEdit => 'Edit debt';
+
+  @override
+  String get debtPerson => 'Person';
+
+  @override
+  String get debtDirection => 'Direction';
+
+  @override
+  String get debtLent => 'I lent';
+
+  @override
+  String get debtBorrowed => 'I borrowed';
+
+  @override
+  String get debtGroupLent => 'Owed to you';
+
+  @override
+  String get debtGroupBorrowed => 'You owe';
+
+  @override
+  String debtGroupTotal(String amount) {
+    return '$amount remaining';
+  }
+
+  @override
+  String debtDoneSection(int count) {
+    return 'Settled ($count)';
+  }
+
+  @override
+  String get debtDone => 'Settled';
+
+  @override
+  String get debtAmount => 'Amount';
+
+  @override
+  String get debtDate => 'Date';
+
+  @override
+  String get debtDue => 'Due date (optional)';
+
+  @override
+  String debtDueOn(String date) {
+    return 'Due $date';
+  }
+
+  @override
+  String get debtClearDue => 'Remove due date';
+
+  @override
+  String get debtOverdue => 'Overdue';
+
+  @override
+  String debtRemaining(String amount) {
+    return '$amount remaining';
+  }
+
+  @override
+  String debtPaidOf(String paid, String total) {
+    return 'Paid $paid of $total';
+  }
+
+  @override
+  String get debtPayments => 'Payments';
+
+  @override
+  String get debtNoPayments => 'No payments yet';
+
+  @override
+  String get debtAddPayment => 'Add payment';
+
+  @override
+  String get debtPaymentAmount => 'Payment amount';
+
+  @override
+  String get debtDeletePayment => 'Delete payment';
+
+  @override
+  String debtOverpay(String remaining) {
+    return 'More than the remaining $remaining';
+  }
+
+  @override
+  String debtAmountBelowPaid(String paid) {
+    return 'Can\'t be less than the $paid already paid';
+  }
+
+  @override
+  String get debtDelete => 'Delete debt';
+
+  @override
+  String get debtDeleteTitle => 'Delete this debt?';
+
+  @override
+  String get debtDeleteBody =>
+      'Its payments are deleted too. No record or account balance is affected.';
+
+  @override
+  String get debtDeleted => 'Debt deleted';
+
+  @override
+  String get debtRemainingLabel => 'Remaining';
 }

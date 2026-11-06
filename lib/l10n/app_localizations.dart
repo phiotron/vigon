@@ -2137,6 +2137,354 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'MB email'**
   String get csvSourceEmailMb;
+
+  /// No description provided for @savings.
+  ///
+  /// In en, this message translates to:
+  /// **'Savings'**
+  String get savings;
+
+  /// No description provided for @savingsEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No savings goals yet. Set a goal, then add money to it over time.'**
+  String get savingsEmpty;
+
+  /// No description provided for @savingsAdd.
+  ///
+  /// In en, this message translates to:
+  /// **'Add goal'**
+  String get savingsAdd;
+
+  /// No description provided for @savingsEdit.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit goal'**
+  String get savingsEdit;
+
+  /// No description provided for @savingsTarget.
+  ///
+  /// In en, this message translates to:
+  /// **'Target amount'**
+  String get savingsTarget;
+
+  /// No description provided for @savingsDue.
+  ///
+  /// In en, this message translates to:
+  /// **'Deadline (optional)'**
+  String get savingsDue;
+
+  /// No description provided for @savingsNoDue.
+  ///
+  /// In en, this message translates to:
+  /// **'No deadline'**
+  String get savingsNoDue;
+
+  /// No description provided for @savingsClearDue.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove deadline'**
+  String get savingsClearDue;
+
+  /// No description provided for @savingsAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Linked account'**
+  String get savingsAccount;
+
+  /// No description provided for @savingsNewAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Create a new account'**
+  String get savingsNewAccount;
+
+  /// No description provided for @savingsNewAccountNote.
+  ///
+  /// In en, this message translates to:
+  /// **'The new account is named like the goal and starts at 0.'**
+  String get savingsNewAccountNote;
+
+  /// No description provided for @savingsAccountFixed.
+  ///
+  /// In en, this message translates to:
+  /// **'The linked account can\'t be changed. To link a different account, delete the goal and create it again.'**
+  String get savingsAccountFixed;
+
+  /// No description provided for @savingsAccountTaken.
+  ///
+  /// In en, this message translates to:
+  /// **'This account is already linked to another goal'**
+  String get savingsAccountTaken;
+
+  /// No description provided for @savingsProgress.
+  ///
+  /// In en, this message translates to:
+  /// **'Saved {have} of {target}'**
+  String savingsProgress(String have, String target);
+
+  /// No description provided for @savingsMissing.
+  ///
+  /// In en, this message translates to:
+  /// **'{amount} to go'**
+  String savingsMissing(String amount);
+
+  /// No description provided for @savingsReached.
+  ///
+  /// In en, this message translates to:
+  /// **'Reached'**
+  String get savingsReached;
+
+  /// No description provided for @savingsDaysLeft.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =0{Due today} =1{1 day left} other{{count} days left}}'**
+  String savingsDaysLeft(int count);
+
+  /// No description provided for @savingsOverdue.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 day overdue} other{{count} days overdue}}'**
+  String savingsOverdue(int count);
+
+  /// No description provided for @savingsContribute.
+  ///
+  /// In en, this message translates to:
+  /// **'Add money'**
+  String get savingsContribute;
+
+  /// No description provided for @savingsNeedOtherAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'You need another account to add money from'**
+  String get savingsNeedOtherAccount;
+
+  /// No description provided for @savingsDelete.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete goal'**
+  String get savingsDelete;
+
+  /// No description provided for @savingsDeleteTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete this goal?'**
+  String get savingsDeleteTitle;
+
+  /// No description provided for @savingsDeleteBody.
+  ///
+  /// In en, this message translates to:
+  /// **'The linked account and all records stay. Only the goal is deleted.'**
+  String get savingsDeleteBody;
+
+  /// No description provided for @savingsDeleted.
+  ///
+  /// In en, this message translates to:
+  /// **'Goal deleted'**
+  String get savingsDeleted;
+
+  /// No description provided for @debts.
+  ///
+  /// In en, this message translates to:
+  /// **'Debts'**
+  String get debts;
+
+  /// No description provided for @debtsEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No debts yet. Note who owes you, or whom you owe, so you don\'t forget.'**
+  String get debtsEmpty;
+
+  /// No description provided for @debtsNote.
+  ///
+  /// In en, this message translates to:
+  /// **'A reminder list only: it doesn\'t count in income, expenses or account balances.'**
+  String get debtsNote;
+
+  /// No description provided for @debtAdd.
+  ///
+  /// In en, this message translates to:
+  /// **'Add debt'**
+  String get debtAdd;
+
+  /// No description provided for @debtEdit.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit debt'**
+  String get debtEdit;
+
+  /// No description provided for @debtPerson.
+  ///
+  /// In en, this message translates to:
+  /// **'Person'**
+  String get debtPerson;
+
+  /// No description provided for @debtDirection.
+  ///
+  /// In en, this message translates to:
+  /// **'Direction'**
+  String get debtDirection;
+
+  /// No description provided for @debtLent.
+  ///
+  /// In en, this message translates to:
+  /// **'I lent'**
+  String get debtLent;
+
+  /// No description provided for @debtBorrowed.
+  ///
+  /// In en, this message translates to:
+  /// **'I borrowed'**
+  String get debtBorrowed;
+
+  /// No description provided for @debtGroupLent.
+  ///
+  /// In en, this message translates to:
+  /// **'Owed to you'**
+  String get debtGroupLent;
+
+  /// No description provided for @debtGroupBorrowed.
+  ///
+  /// In en, this message translates to:
+  /// **'You owe'**
+  String get debtGroupBorrowed;
+
+  /// No description provided for @debtGroupTotal.
+  ///
+  /// In en, this message translates to:
+  /// **'{amount} remaining'**
+  String debtGroupTotal(String amount);
+
+  /// No description provided for @debtDoneSection.
+  ///
+  /// In en, this message translates to:
+  /// **'Settled ({count})'**
+  String debtDoneSection(int count);
+
+  /// No description provided for @debtDone.
+  ///
+  /// In en, this message translates to:
+  /// **'Settled'**
+  String get debtDone;
+
+  /// No description provided for @debtAmount.
+  ///
+  /// In en, this message translates to:
+  /// **'Amount'**
+  String get debtAmount;
+
+  /// No description provided for @debtDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Date'**
+  String get debtDate;
+
+  /// No description provided for @debtDue.
+  ///
+  /// In en, this message translates to:
+  /// **'Due date (optional)'**
+  String get debtDue;
+
+  /// No description provided for @debtDueOn.
+  ///
+  /// In en, this message translates to:
+  /// **'Due {date}'**
+  String debtDueOn(String date);
+
+  /// No description provided for @debtClearDue.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove due date'**
+  String get debtClearDue;
+
+  /// No description provided for @debtOverdue.
+  ///
+  /// In en, this message translates to:
+  /// **'Overdue'**
+  String get debtOverdue;
+
+  /// No description provided for @debtRemaining.
+  ///
+  /// In en, this message translates to:
+  /// **'{amount} remaining'**
+  String debtRemaining(String amount);
+
+  /// No description provided for @debtPaidOf.
+  ///
+  /// In en, this message translates to:
+  /// **'Paid {paid} of {total}'**
+  String debtPaidOf(String paid, String total);
+
+  /// No description provided for @debtPayments.
+  ///
+  /// In en, this message translates to:
+  /// **'Payments'**
+  String get debtPayments;
+
+  /// No description provided for @debtNoPayments.
+  ///
+  /// In en, this message translates to:
+  /// **'No payments yet'**
+  String get debtNoPayments;
+
+  /// No description provided for @debtAddPayment.
+  ///
+  /// In en, this message translates to:
+  /// **'Add payment'**
+  String get debtAddPayment;
+
+  /// No description provided for @debtPaymentAmount.
+  ///
+  /// In en, this message translates to:
+  /// **'Payment amount'**
+  String get debtPaymentAmount;
+
+  /// No description provided for @debtDeletePayment.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete payment'**
+  String get debtDeletePayment;
+
+  /// No description provided for @debtOverpay.
+  ///
+  /// In en, this message translates to:
+  /// **'More than the remaining {remaining}'**
+  String debtOverpay(String remaining);
+
+  /// No description provided for @debtAmountBelowPaid.
+  ///
+  /// In en, this message translates to:
+  /// **'Can\'t be less than the {paid} already paid'**
+  String debtAmountBelowPaid(String paid);
+
+  /// No description provided for @debtDelete.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete debt'**
+  String get debtDelete;
+
+  /// No description provided for @debtDeleteTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete this debt?'**
+  String get debtDeleteTitle;
+
+  /// No description provided for @debtDeleteBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Its payments are deleted too. No record or account balance is affected.'**
+  String get debtDeleteBody;
+
+  /// No description provided for @debtDeleted.
+  ///
+  /// In en, this message translates to:
+  /// **'Debt deleted'**
+  String get debtDeleted;
+
+  /// No description provided for @debtRemainingLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Remaining'**
+  String get debtRemainingLabel;
 }
 
 class _AppLocalizationsDelegate

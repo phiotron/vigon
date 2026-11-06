@@ -20,9 +20,12 @@ import '../entry/keypad.dart';
 
 /// Chuyển tiền giữa hai tài khoản (AC-19); sửa hoặc xóa lần chuyển có sẵn.
 class TransferScreen extends ConsumerStatefulWidget {
-  const TransferScreen({super.key, this.entryId});
+  const TransferScreen({super.key, this.entryId, this.toAccountId});
 
   final int? entryId;
+
+  /// Điền sẵn ô Đến (AC-102: "Góp tiền" vào tài khoản của mục tiêu tiết kiệm).
+  final int? toAccountId;
 
   @override
   ConsumerState<TransferScreen> createState() => _TransferScreenState();
@@ -31,7 +34,7 @@ class TransferScreen extends ConsumerStatefulWidget {
 class _TransferScreenState extends ConsumerState<TransferScreen> {
   Entry? _original;
   int? _from;
-  int? _to;
+  late int? _to = widget.toAccountId;
   String _expression = '';
   late DateTime _date = dateOnly(ref.read(clockProvider)());
   late String? _time = nowTimeKey(ref.read(clockProvider)());
@@ -75,9 +78,18 @@ class _TransferScreenState extends ConsumerState<TransferScreen> {
     _expression = applyKeypadKey(_expression, key, decimalDigits: _digits);
   });
 
+  /// Tài khoản Từ mặc định: tài khoản hiện đầu tiên, trừ tài khoản Đến đã điền
+  /// sẵn (AC-102: Từ = tài khoản mặc định).
+  int? _defaultFrom(List<Account> accounts) {
+    if (accounts.isEmpty) return null;
+    return accounts
+        .firstWhere((a) => a.id != _to, orElse: () => accounts.first)
+        .id;
+  }
+
   Future<void> _save(List<Account> accounts) async {
     final l = AppLocalizations.of(context);
-    final from = _from ?? accounts.first.id;
+    final from = _from ?? _defaultFrom(accounts)!;
     final to = _to ?? accounts[1].id;
     final amount = evaluateToMinorUnits(_expression, decimalDigits: _digits);
     if (from == to) {
@@ -141,7 +153,7 @@ class _TransferScreenState extends ConsumerState<TransferScreen> {
     final accounts = ref.watch(accountsProvider).value ?? const <Account>[];
     final all = ref.watch(allAccountsProvider).value ?? accounts;
     final value = evaluateToMinorUnits(_expression, decimalDigits: digits);
-    final from = _from ?? (accounts.isEmpty ? null : accounts.first.id);
+    final from = _from ?? _defaultFrom(accounts);
     final to = _to ?? (accounts.length < 2 ? null : accounts[1].id);
     // Hai tài khoản giống nhau: báo ngay, ô Đến viền `error` (6.7).
     final same = from != null && from == to;
@@ -207,7 +219,10 @@ class _TransferScreenState extends ConsumerState<TransferScreen> {
             ),
         ],
       ),
-      body: accounts.length < 2 && _original == null
+      body:
+          accounts.length < 2 &&
+              _original == null &&
+              !(widget.toAccountId != null && accounts.isNotEmpty)
           ? const SizedBox.shrink()
           : SafeArea(
               child: Column(
