@@ -111,7 +111,10 @@ class _EntryEditorScreenState extends ConsumerState<EntryEditorScreen> {
       setState(() => _error = l.invalidExpression);
       return null;
     }
-    if (v == null || v <= 0) {
+    // Khoản đang 0 (quy đổi tiền tệ làm tròn một số rất nhỏ, D-029) mở ra mà
+    // giữ nguyên số tiền thì vẫn lưu được; AC-05 chặn số 0 do người dùng gõ.
+    final unchangedZero = v == 0 && _original?.amount == 0;
+    if (v == null || (v <= 0 && !unchangedZero)) {
       setState(() => _error = l.amountMustBePositive);
       return null;
     }

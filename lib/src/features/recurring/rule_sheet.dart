@@ -108,7 +108,9 @@ class _RuleSheetState extends State<RuleSheet> {
   void _save() {
     final l = AppLocalizations.of(context);
     final v = parseAmountField(context, _amount.text.trim(), widget.digits);
-    if (v == null || v <= 0) {
+    // Chuỗi đang 0 (do quy đổi tiền tệ, D-029) giữ nguyên thì vẫn lưu được.
+    final unchangedZero = v == 0 && widget.rule.amount == 0;
+    if (v == null || (v <= 0 && !unchangedZero)) {
       setState(() => _error = l.amountMustBePositive);
       return;
     }

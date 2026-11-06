@@ -81,7 +81,9 @@ class _TransferScreenState extends ConsumerState<TransferScreen> {
       setState(() => _error = l.sameAccountError);
       return;
     }
-    if (amount == null || amount <= 0) {
+    // Khoản đang 0 (do quy đổi tiền tệ, D-029) giữ nguyên thì vẫn lưu được.
+    final unchangedZero = amount == 0 && _original?.amount == 0;
+    if (amount == null || (amount <= 0 && !unchangedZero)) {
       setState(() => _error = l.amountMustBePositive);
       return;
     }
