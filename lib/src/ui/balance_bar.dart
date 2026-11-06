@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:material_symbols_icons/symbols.dart';
 
 import '../../l10n/app_localizations.dart';
+import 'format.dart';
 import 'tokens.g.dart';
 
 /// Thanh Số dư (`.vg-balance` v2, ChartRing.html, 2.1, SCR-01): nền
@@ -52,43 +53,47 @@ class BalanceBar extends StatelessWidget {
               // chữ); phần còn lại cho "Số dư" + tên kỳ để tên kỳ không bị bẻ
               // giữa chữ ("Novemb/er 2026" khi chia cố định 1:3).
               child: LayoutBuilder(
-                builder: (context, box) => Row(
-                  children: [
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisSize: MainAxisSize.min,
+                builder: (context, box) => isLargeText(context)
+                    ? _stacked(l, scheme, muted)
+                    : Row(
                         children: [
-                          Text(
-                            l.balance,
-                            style: VgType.bodyMd.copyWith(color: muted),
-                          ),
-                          if (periodTitle != null)
-                            Text(
-                              periodTitle!,
-                              style: VgType.bodySm.copyWith(color: muted),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Text(
+                                  l.balance,
+                                  style: VgType.bodyMd.copyWith(color: muted),
+                                ),
+                                if (periodTitle != null)
+                                  Text(
+                                    periodTitle!,
+                                    style: VgType.bodySm.copyWith(color: muted),
+                                  ),
+                              ],
                             ),
+                          ),
+                          const SizedBox(width: VgSpace.s2),
+                          ConstrainedBox(
+                            constraints: BoxConstraints(
+                              maxWidth: box.maxWidth * 0.6,
+                            ),
+                            child: FittedBox(
+                              fit: BoxFit.scaleDown,
+                              alignment: Alignment.centerRight,
+                              child: Text(
+                                amount,
+                                style: VgType.amountMd.copyWith(
+                                  color: scheme.onSurface,
+                                ),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: VgSpace.s2),
+                          Icon(Symbols.chevron_right_rounded, color: muted),
                         ],
                       ),
-                    ),
-                    const SizedBox(width: VgSpace.s2),
-                    ConstrainedBox(
-                      constraints: BoxConstraints(maxWidth: box.maxWidth * 0.6),
-                      child: FittedBox(
-                        fit: BoxFit.scaleDown,
-                        alignment: Alignment.centerRight,
-                        child: Text(
-                          amount,
-                          style: VgType.amountMd.copyWith(
-                            color: scheme.onSurface,
-                          ),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: VgSpace.s2),
-                    Icon(Symbols.chevron_right_rounded, color: muted),
-                  ],
-                ),
               ),
             ),
           ),
@@ -96,4 +101,33 @@ class BalanceBar extends StatelessWidget {
       ),
     );
   }
+
+  /// Chữ ≥ 130%: "Số dư", tên kỳ rồi số tiền xếp dọc cả bề rộng. Xếp ngang
+  /// thì số tiền chiếm tới 60% hàng và cột chữ còn lại hẹp tới mức tên kỳ bị
+  /// bẻ giữa chữ ("Thán/g 11", D9 Galaxy A13 cỡ chữ 200% + thu phóng).
+  Widget _stacked(AppLocalizations l, ColorScheme scheme, Color muted) => Row(
+    children: [
+      Expanded(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(l.balance, style: VgType.bodyMd.copyWith(color: muted)),
+            if (periodTitle != null)
+              Text(periodTitle!, style: VgType.bodySm.copyWith(color: muted)),
+            FittedBox(
+              fit: BoxFit.scaleDown,
+              alignment: AlignmentDirectional.centerStart,
+              child: Text(
+                amount,
+                style: VgType.amountMd.copyWith(color: scheme.onSurface),
+              ),
+            ),
+          ],
+        ),
+      ),
+      const SizedBox(width: VgSpace.s2),
+      Icon(Symbols.chevron_right_rounded, color: muted),
+    ],
+  );
 }

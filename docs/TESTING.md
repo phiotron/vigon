@@ -120,6 +120,13 @@ So giao diện với ảnh `tool/shots/out/android/<theme>/<frame>.png` (chạy 
 | H-14 | 2026-11-05 | Không thử TalkBack thật (adb không nghe được); nhãn qua uiautomator đủ. Gợi ý: Sửa danh mục đọc "Biểu tượng 1..31", "Màu 1..16" (không tên) |
 | H-16 | 2026-11-05 | Đạt (màn chính, Các khoản ở chủ đề tối) |
 | AC-56 | 2026-11-05 | Đạt phần chặn chụp: bật "Che nội dung" → `screencap` rỗng (FLAG_SECURE) |
+| Crash | 2026-11-06 | **Lỗi → đã sửa** (`4347621`): 14 FATAL `Unsupported value: 'kotlin.Unit'` sau mỗi lần sao lưu tự động ghi/xóa file. APK mới: 0 FATAL sau khi đi mọi màn chính |
+| H-10 | 2026-11-06 | PIN tạm: ra nền < 1 phút không khóa (đúng AC-32), mở nguội hiện màn khóa, mở khóa được, tắt PIN. Widget 2×2/4×2: người dùng tự thêm (phải chạm launcher) |
+| H-12 | 2026-11-06 | Một phần: "Sao lưu ngay" → nút tắt khi chạy → "Lần cuối: 6 thg 11, 8:48" ✓ (thư mục "Chi tiêu" người dùng đã chọn). Không thử tắt/bật lại, thu hồi quyền, mật khẩu 5 ký tự: tắt sẽ xóa mật khẩu sao lưu của người dùng |
+| H-13 | 2026-11-06 | Đạt: lúc mã hóa nút "Đang xử lý", Hủy và hai ô tắt; Back ở bảng chia sẻ, dữ liệu không đổi. Màu nút: không chụp được (lúc đó FLAG_SECURE) |
+| H-15 | 2026-11-06 | Cỡ chữ 2,0 + mật độ 506. **Lỗi → đã sửa**: thanh Số dư bẻ giữa chữ ("Thán/g 11") → xếp dọc khi chữ lớn. Cài đặt nút chọn xếp dọc căn trái, Các khoản, tìm kiếm, sheet sửa danh mục (footer dọc): đạt. Điểm nhỏ chưa sửa: tiêu đề AppBar Các khoản "Tháng 11 năm …", nhãn ô hạn mức "Ngân sách thán…" |
+| M-4 | 2026-11-06 | Đạt: hộp giải thích → Tiếp tục → hộp quyền Android → Không cho phép → công tắc tắt, thanh "Chưa có quyền…" + "Mở cài đặt". Bấm "Mở cài đặt": chưa thử được (thanh tự ẩn; từ chối lần hai sẽ khóa hẳn quyền) |
+| M-1..M-3, M-5..M-7 | 2026-11-06 | Người dùng: chọn thư mục Drive (đã làm ~23:11 05/11), file trong Drive, chạm thông báo, widget trên launcher |
 
 Tự động đã có (2026-11-05, D5): `test/features/hifi_d5_accessibility_test.dart` — 16 trạng thái Hi-Fi × sáng/tối × 100/200 %
 (`androidTapTargetGuideline`, `labeledTapTargetGuideline`, `textContrastGuideline`, không lỗi vẽ ở 200 %), 64 test đạt.
@@ -142,7 +149,7 @@ cho phép rõ; nếu Claude chạm máy bằng adb mà chưa được phép thì
 | Q-6 | **Chữ 200 %.** Cài đặt hệ thống → cỡ chữ lớn nhất (Android 14 tới 200 %; máy không tới thì ghi mức đạt được) + thu phóng màn hình lớn nhất. Mở hộp quy đổi khi có mạng (hộp xác nhận) và khi bật máy bay (hộp nhập tay) | Không chữ bị cắt/che, tỉ giá dài ("0,0000389084") không tràn; nội dung cuộn được tới hết nút; các nút xếp dọc khi chật, vùng chạm đủ lớn; ô nhập tỉ giá và nút "Đổi chiều tỉ giá" dùng được. Bấm Hủy, trả cỡ chữ về như cũ |
 | Q-7 | **Khôi phục.** Cài đặt → Dữ liệu → Khôi phục từ bản sao lưu → chọn file ở Q-0 → xác nhận | Tiền tệ về VND, 6 số mẫu khớp đúng ảnh Q-0 (không lệch làm tròn); ghi "đã khôi phục" vào biên bản. Chỉ làm khi đã được phép khôi phục đè (xem trên) |
 
-**Kết quả D9:** Q-1 2026-11-05 đạt (1 USD = 25.701,4 VND, khớp `open.er-api.com` cùng ngày 25.701,376; ngày, nguồn, ví dụ 180.000 ₫ → 7,00 $ đúng; Hủy). Q-4 2026-11-05 đạt (lỗi + điền sẵn tỉ giá gần nhất, Đổi chiều, bàn phím số có `.`/`,`, 0 → lỗi, Thử lại không treo, Tiếp tục → "Tỉ giá bạn tự nhập" → Hủy, vẫn VND). Lưu ý Samsung: bật máy bay vẫn giữ Wi-Fi (`wifi_on=2`), phải tắt Wi-Fi riêng.
+**Kết quả D9:** Q-1 2026-11-05 đạt (1 USD = 25.701,4 VND, khớp `open.er-api.com` cùng ngày 25.701,376; ngày, nguồn, ví dụ 180.000 ₫ → 7,00 $ đúng; Hủy). Q-4 2026-11-05 đạt (lỗi + điền sẵn tỉ giá gần nhất, Đổi chiều, bàn phím số có `.`/`,`, 0 → lỗi, Thử lại không treo, Tiếp tục → "Tỉ giá bạn tự nhập" → Hủy, vẫn VND). Lưu ý Samsung: bật máy bay vẫn giữ Wi-Fi (`wifi_on=2`), phải tắt Wi-Fi riêng. Q-5 2026-11-06 đạt (Chrome mở `exchangerate-api.com`, Back về hộp còn nguyên, Hủy). Q-6 2026-11-06 đạt (cỡ chữ 2,0 + mật độ 506: hộp xác nhận cuộn tới hết, tỉ giá dài xuống dòng, nút đủ chỗ; hộp nhập tay nút xếp hai hàng, Đổi chiều được; ô nhập hiện "0,0000389…" cắt trong ô, cuộn ngang khi gõ). Q-0: bảng chia sẻ máy không có đích "Lưu vào thiết bị" → điểm khôi phục đề xuất `/sdcard/Download/vigon-demo.vigon` (khớp dữ liệu mẫu); Q-2, Q-3: chờ phiên chính.
 
 Tự động đã có (D7): `test/features/currency_conversion_flow_test.dart` (luồng + trợ năng 100/200 % sáng/tối), `test/data/currency_conversion_test.dart`,
 `test/data/exchange_rate_source_test.dart` (HTTP giả), `test/manifest_test.dart`. Kiểm API thật từ máy dev: `dart run tool/fx_probe.dart`.

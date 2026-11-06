@@ -29,6 +29,21 @@ Máy SM-A135F, Android 14, armeabi-v7a; cỡ chữ máy 0,8, **Chữ đậm bậ
 1. Chữ đậm hệ thống: `lib/src/ui/text_measure.dart` (mới, đo có `MediaQuery.boldText`), dùng ở `choice_segments.dart`, `messenger.dart`; test `test/ui/bold_text_measure_test.dart` (4 test, đỏ khi bỏ sửa).
 2. Nhắc không chạy bản release: `android/app/src/main/res/raw/keep.xml` (`tools:keep="@drawable/ic_stat_vigon"`); test `test/release_resources_test.dart`. Đã kiểm `aapt2`: APK mới có `ic_stat_vigon`, có báo thức.
 3. `.gitignore`: `notes/d9-shots/`.
+4. **Crash (2026-11-06, người dùng báo "thường xuyên lỗi, vào vài chức năng bị đẩy ra")**: `logcat -b crash` 14 FATAL
+   (2026-11-05 23:11 → 2026-11-06 07:28), tất cả `IllegalArgumentException: Unsupported value: 'kotlin.Unit'`.
+   Nguyên nhân: `BackupFolderChannel.runAsync` gửi `result.success(block())`, mà `writeFile`/`deleteFile`/`releaseFolder`
+   trả `Unit` → codec ném lỗi trên luồng chính. Crash khi "Sao lưu ngay", tắt sao lưu tự động, dọn file cũ và mỗi lần ra nền
+   có sao lưu tự động (dữ liệu mẫu đã được bật sao lưu tự động khoảng 23:11). Rà mọi kênh Kotlin + Swift: chỉ chỗ này.
+   Sửa: Unit → null; test `test/kotlin_channel_unit_test.dart` (đỏ khi bỏ sửa). Commit `4347621`. Hai sửa trên: commit `1928e52`.
+
+5. **Thanh Số dư ở chữ 200% + thu phóng** (2026-11-06): tên kỳ bẻ giữa chữ "Thán/g 11" vì số tiền chiếm 60% hàng →
+   `lib/src/ui/balance_bar.dart` xếp dọc khi `isLargeText`; test `test/ui/balance_bar_large_text_test.dart` (đỏ khi bỏ sửa).
+
+## Kết quả ngày 2026-11-06 (APK `4347621` + sửa Số dư)
+0 crash sau khi đi mọi màn; H-10 PIN, H-13, Q-5, Q-6, M-4 đạt; H-12 một phần; H-15 lỗi Số dư đã sửa + 2 điểm nhỏ
+(tiêu đề AppBar "…", nhãn ô hạn mức "…"). Q-0: máy không có đích lưu file trong bảng chia sẻ → đề xuất
+dùng `/sdcard/Download/vigon-demo.vigon` (16 khoản, khớp dữ liệu mẫu) làm điểm khôi phục; Q-2/Q-3 chờ phiên chính.
+Mốc cài đặt người dùng tự đổi sau 05/11 (giữ nguyên): Che nội dung tắt, nhắc tắt 23:06, sao lưu tự động bật (Chi tiêu).
 
 ## Máy đã trả về như cũ
 Che nội dung bật; nhắc tắt, 20:00; chủ đề Sáng; quyền thông báo thu hồi; máy bay tắt, Wi-Fi bật; cỡ chữ 0,8 (không đổi). Một thông báo nhắc Ví Gọn còn trong khay (người dùng vuốt bỏ).
