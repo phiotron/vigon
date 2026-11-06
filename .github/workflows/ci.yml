@@ -2,6 +2,7 @@
 # 2026-11-05: hết phút Actions → CHỈ chạy khi push lên `main` (đã kiểm cục bộ trên nhánh `dev` rồi mới gộp),
 # bỏ qua commit chỉ đổi tài liệu; nhánh khác muốn chạy thì bấm tay (workflow_dispatch). Không chạy theo PR.
 # Ghim Flutter 3.47.8 cho khớp máy phát triển (D-003). iOS ở ios.yml (macOS, chỉ nhánh main).
+# 2026-11-06: có bản sao tại sun-moonstars/A002 để build/test khi repo chính hết phút Actions; chạy tay (workflow_dispatch) trên nhánh `dev`.
 name: CI
 on:
   push:
