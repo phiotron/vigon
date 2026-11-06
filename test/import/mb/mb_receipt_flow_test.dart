@@ -325,9 +325,6 @@ void main() {
 
   test('thư không đọc được → chỉ đếm, KHÔNG lưu nội dung', () async {
     rig.deliver(
-      receiptBody(status: 'Giao dịch thất bại', payee: 'SECRETPAYEE1'),
-    );
-    rig.deliver(
       receiptBody(
         ref: 'REF000000000CCC',
         payee: 'SECRETPAYEE2',
@@ -350,13 +347,39 @@ void main() {
       ),
     );
     final out = await rig.check();
-    expect(out.delivered, 5);
-    expect(await rig.unreadable(), 5);
+    expect(out.delivered, 4);
+    expect(await rig.unreadable(), 4);
     expect(await rig.queue.all(), isEmpty);
     final dump = await rig.dump();
     expect(dump, isNot(contains('SECRETPAYEE')));
     expect(dump, isNot(contains('4821'))); // không cả tài khoản được tạo
     expect(await rig.seen.isSeen(Bank.mb, 'REF000000000DDD'), isFalse);
+  });
+
+  test('tình trạng đọc được nhưng không phải thành công (thất bại, đang xử '
+      'lý, chữ khác) → chỉ bỏ: không lưu, KHÔNG tăng bộ đếm (AC-85)', () async {
+    for (final (i, s) in [
+      'Giao dịch thất bại',
+      'Giao dịch đang xử lý',
+      'Giao dịch không thành công',
+    ].indexed) {
+      rig.deliver(
+        receiptBody(ref: 'REF00000000FAIL$i', status: s, payee: 'SECRETFAIL'),
+      );
+    }
+    // Thiếu số tiền nhưng tình trạng thất bại: vẫn chỉ là thư thất bại.
+    rig.deliver(receiptBody(status: 'Giao dịch thất bại', amount: ''));
+    final out = await rig.check();
+    expect(out.delivered, 4);
+    expect(await rig.unreadable(), 0);
+    expect(await rig.queue.all(), isEmpty);
+    final dump = await rig.dump();
+    expect(dump, isNot(contains('SECRETFAIL')));
+    expect(dump, isNot(contains('4821')));
+    // Thiếu số tiền khi tình trạng thành công → đếm +1.
+    rig.deliver(receiptBody(ref: 'REF00000000NOAMT', amount: ''));
+    await rig.check();
+    expect(await rig.unreadable(), 1);
   });
 
   test(
