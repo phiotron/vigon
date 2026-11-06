@@ -30,7 +30,7 @@ void main() {
 
   test('Info.plist: tên, ngôn ngữ, chỉ dọc, không xin quyền, khai mã hóa', () {
     final plist = read('ios/Runner/Info.plist');
-    expect(valueOf(plist, 'CFBundleDisplayName'), '<string>Ví Gọn</string>');
+    expect(valueOf(plist, 'CFBundleDisplayName'), '<string>Vigon</string>');
     final locales = valueOf(plist, 'CFBundleLocalizations')!;
     expect(locales, contains('<string>vi</string>'));
     expect(locales, contains('<string>en</string>'));

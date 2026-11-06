@@ -42,7 +42,7 @@ class CategoryBudgetBar extends ConsumerWidget {
     if (limit == null) return const SizedBox.shrink();
     final l = AppLocalizations.of(context);
     final spent = ref.watch(categorySpentProvider).value?[category.id] ?? 0;
-    final currency = ref.watch(currencyProvider).value ?? 'VND';
+    final currency = ref.watch(currencyProvider).value ?? 'USD';
     final over = spent > limit;
     final status = over
         ? l.budgetOver(money(context, currency, spent - limit))

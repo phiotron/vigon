@@ -38,7 +38,7 @@ class SettingsScreen extends ConsumerWidget {
     final repo = ref.watch(settingsRepositoryProvider);
     final themeMode = ref.watch(themeModeProvider).value ?? ThemeMode.system;
     final localeCode = ref.watch(localeCodeProvider).value ?? '';
-    final currency = ref.watch(currencyProvider).value ?? 'VND';
+    final currency = ref.watch(currencyProvider).value ?? 'USD';
     final weekStart = ref.watch(weekStartProvider).value ?? DateTime.monday;
     final monthStartDay = ref.watch(monthStartDayProvider).value ?? 1;
     final budget = ref.watch(budgetProvider).value;
@@ -75,13 +75,11 @@ class SettingsScreen extends ConsumerWidget {
               SettingsSegmentRow(
                 segments: ChoiceSegments<String>(
                   options: [
-                    ('', l.languageSystem),
-                    ('vi', 'Tiếng Việt'),
                     ('en', 'English'),
+                    ('vi', 'Tiếng Việt'),
                   ],
-                  selected: localeCode,
-                  onChanged: (code) =>
-                      repo.setLocaleCode(code.isEmpty ? null : code),
+                  selected: localeCode.isEmpty ? 'en' : localeCode,
+                  onChanged: repo.setLocaleCode,
                 ),
               ),
             ],

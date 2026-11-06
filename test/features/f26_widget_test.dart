@@ -526,7 +526,7 @@ void main() {
                 .readAsStringSync();
         expect(res('values-vi'), contains('>Thêm khoản chi<'));
         expect(res('values-vi'), contains('>Thêm khoản thu<'));
-        expect(res('values-en'), contains('>Add expense<'));
+        expect(res('values'), contains('>Add expense<'));
       },
     );
 

@@ -193,7 +193,7 @@ class _ItemCard extends ConsumerWidget {
     final categories =
         ref.watch(categoriesProvider(CategoryType.expense)).value ??
         const <Category>[];
-    final appCurrency = ref.watch(currencyProvider).value ?? 'VND';
+    final appCurrency = ref.watch(currencyProvider).value ?? 'USD';
     final suggestions =
         ref.watch(payeeSuggestionsProvider).value ?? const <PayeeSuggestion>[];
 

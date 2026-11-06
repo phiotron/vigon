@@ -155,23 +155,16 @@ final periodSummaryProvider = Provider<PeriodSummary>(
       PeriodSummary.empty,
 );
 
-/// Ngôn ngữ và vùng của máy, ví dụ `vi_VN`; test ghi đè.
-final deviceLocaleProvider = Provider<String>(
-  (ref) => WidgetsBinding.instance.platformDispatcher.locale.toString(),
-);
-
 /// Phiên bản app cho màn Giới thiệu, ví dụ "1.0.0 (1)"; test ghi đè.
 final appVersionProvider = FutureProvider<String>((ref) async {
   final info = await PackageInfo.fromPlatform();
   return '${info.version} (${info.buildNumber})';
 });
 
-/// Việc chạy một lần khi mở app: chọn tiền tệ theo vùng nếu chưa có (AC-21),
+/// Việc chạy một lần khi mở app: đặt tiền tệ mặc định USD nếu chưa có (AC-21, D-036),
 /// tạo các khoản định kỳ tới hạn (AC-24).
 final startupProvider = FutureProvider<void>((ref) async {
-  await ref
-      .read(settingsRepositoryProvider)
-      .ensureCurrency(ref.read(deviceLocaleProvider));
+  await ref.read(settingsRepositoryProvider).ensureCurrency();
   await ref
       .read(recurringRepositoryProvider)
       .generateDue(ref.read(clockProvider)());

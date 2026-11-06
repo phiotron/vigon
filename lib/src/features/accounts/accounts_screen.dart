@@ -32,7 +32,7 @@ class AccountsScreen extends ConsumerWidget {
     final accounts = ref.watch(accountsProvider).value ?? const <Account>[];
     final balances =
         ref.watch(accountBalancesProvider).value ?? const <int, int>{};
-    final currency = ref.watch(currencyProvider).value ?? 'VND';
+    final currency = ref.watch(currencyProvider).value ?? 'USD';
     final large = isLargeText(context);
     Widget balance(Account a) => Text(
       money(context, currency, balances[a.id] ?? a.initialBalance),
@@ -123,7 +123,7 @@ class _AccountEditorState extends ConsumerState<_AccountEditor> {
     if (a != null && _name.text.isEmpty) {
       _name.text = accountLabel(AppLocalizations.of(context), a);
       final digits = currencyDecimalDigits(
-        ref.read(currencyProvider).value ?? 'VND',
+        ref.read(currencyProvider).value ?? 'USD',
       );
       final abs = amountInput(context, a.initialBalance.abs(), digits);
       _balance.text = a.initialBalance < 0 ? '-$abs' : abs;
@@ -143,7 +143,7 @@ class _AccountEditorState extends ConsumerState<_AccountEditor> {
     final text = _balance.text.trim();
     final negative = text.startsWith('-');
     final digits = currencyDecimalDigits(
-      ref.read(currencyProvider).value ?? 'VND',
+      ref.read(currencyProvider).value ?? 'USD',
     );
     final abs = text.isEmpty
         ? 0
@@ -171,7 +171,7 @@ class _AccountEditorState extends ConsumerState<_AccountEditor> {
   @override
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context);
-    final currency = ref.watch(currencyProvider).value ?? 'VND';
+    final currency = ref.watch(currencyProvider).value ?? 'USD';
     final account = widget.account;
     return SafeArea(
       child: Column(

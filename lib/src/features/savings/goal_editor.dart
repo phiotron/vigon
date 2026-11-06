@@ -65,7 +65,7 @@ class _GoalEditorState extends ConsumerState<_GoalEditor> {
     if (g != null && _name.text.isEmpty) {
       _name.text = g.name;
       final digits = currencyDecimalDigits(
-        ref.read(currencyProvider).value ?? 'VND',
+        ref.read(currencyProvider).value ?? 'USD',
       );
       _target.text = amountInput(context, g.targetAmount, digits);
       _due = g.dueDate == null ? null : parseDateKey(g.dueDate!);
@@ -128,7 +128,7 @@ class _GoalEditorState extends ConsumerState<_GoalEditor> {
     final l = AppLocalizations.of(context);
     final name = _name.text.trim();
     final digits = currencyDecimalDigits(
-      ref.read(currencyProvider).value ?? 'VND',
+      ref.read(currencyProvider).value ?? 'USD',
     );
     final text = _target.text.trim();
     final amount = text.isEmpty
@@ -202,7 +202,7 @@ class _GoalEditorState extends ConsumerState<_GoalEditor> {
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context);
     final scheme = Theme.of(context).colorScheme;
-    final currency = ref.watch(currencyProvider).value ?? 'VND';
+    final currency = ref.watch(currencyProvider).value ?? 'USD';
     final goal = widget.goal;
     final visible = ref.watch(accountsProvider).value ?? const <Account>[];
     final all = ref.watch(allAccountsProvider).value ?? visible;

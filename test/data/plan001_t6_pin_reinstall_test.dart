@@ -138,7 +138,7 @@ void main() {
   group('sao lưu không mang mã cài đặt (D-006)', () {
     test('file xuất không chứa mã cài đặt', () async {
       final db = newDatabase();
-      await SettingsRepository(db).ensureCurrency('vi_VN');
+      await SettingsRepository(db).ensureCurrency(defaultCode: 'VND');
       await service(db).setPin('2468');
       final id = (await SettingsRepository(db).readPinInstallId())!;
       final json = await exportBackup(db, now: DateTime(2026, 11, 4));

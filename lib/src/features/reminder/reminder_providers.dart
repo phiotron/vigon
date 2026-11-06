@@ -50,15 +50,9 @@ final reminderReadyProvider = FutureProvider<void>((ref) async {
   if (launch != null) tap.tapped(launch);
 });
 
-/// Chữ của thông báo theo ngôn ngữ app (đã chọn hoặc theo máy), lấy từ `.arb`.
-AppLocalizations reminderStrings(String? localeCode, String deviceLocale) {
-  final supported = AppLocalizations.supportedLocales
-      .map((l) => l.languageCode)
-      .toSet();
-  final device = deviceLocale.split(RegExp('[-_]')).first;
-  final code = localeCode ?? (supported.contains(device) ? device : 'en');
-  return lookupAppLocalizations(Locale(code));
-}
+/// Chữ của thông báo theo ngôn ngữ app (đã chọn, chưa chọn = English, D-036), lấy từ `.arb`.
+AppLocalizations reminderStrings(String? localeCode) =>
+    lookupAppLocalizations(Locale(localeCode ?? 'en'));
 
 /// Giữ lịch nhắc khớp với cài đặt đã lưu: chạy khi mở app (đặt lại lịch sau khi
 /// máy khởi động lại hay app bị cập nhật) và mỗi khi bật/tắt, đổi giờ hoặc đổi
@@ -79,7 +73,7 @@ final reminderSyncProvider = Provider<void>((ref) {
     unawaited(scheduler.cancel());
     return;
   }
-  final l = reminderStrings(localeCode.value, ref.read(deviceLocaleProvider));
+  final l = reminderStrings(localeCode.value);
   unawaited(
     scheduler.schedule(
       time: time,

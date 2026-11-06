@@ -40,7 +40,12 @@ Future<AppDatabase> pumpApp(
   usePhoneScreen(tester);
   final database = db ?? memoryDatabase();
   await tester.runAsync(
-    () => SettingsRepository(database).setLocaleCode(localeCode),
+    () async {
+      final settings = SettingsRepository(database);
+      await settings.setLocaleCode(localeCode);
+      // Test mặc định VND (app thật mặc định USD, D-036).
+      await settings.ensureCurrency(defaultCode: 'VND');
+    },
   );
   await tester.pumpWidget(
     ProviderScope(
@@ -48,7 +53,6 @@ Future<AppDatabase> pumpApp(
         databaseProvider.overrideWithValue(database),
         clockProvider.overrideWithValue(clock ?? () => testToday),
         secretStoreProvider.overrideWithValue(secrets ?? MemorySecretStore()),
-        deviceLocaleProvider.overrideWithValue('vi_VN'),
         appVersionProvider.overrideWith((ref) async => '1.0.0 (1)'),
         ...overrides.cast(),
       ],

@@ -65,7 +65,7 @@ class _DebtEditorState extends ConsumerState<_DebtEditor> {
       _date = parseDateKey(d.date);
       _due = d.dueDate == null ? null : parseDateKey(d.dueDate!);
       final digits = currencyDecimalDigits(
-        ref.read(currencyProvider).value ?? 'VND',
+        ref.read(currencyProvider).value ?? 'USD',
       );
       _amount.text = amountInput(context, d.amount, digits);
     }
@@ -95,7 +95,7 @@ class _DebtEditorState extends ConsumerState<_DebtEditor> {
   Future<void> _save() async {
     if (_saving) return;
     final l = AppLocalizations.of(context);
-    final currency = ref.read(currencyProvider).value ?? 'VND';
+    final currency = ref.read(currencyProvider).value ?? 'USD';
     final digits = currencyDecimalDigits(currency);
     final person = _person.text.trim();
     final text = _amount.text.trim();
@@ -149,7 +149,7 @@ class _DebtEditorState extends ConsumerState<_DebtEditor> {
   @override
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context);
-    final currency = ref.watch(currencyProvider).value ?? 'VND';
+    final currency = ref.watch(currencyProvider).value ?? 'USD';
     final today = ref.watch(todayProvider);
     EdgeInsets pad([double top = VgSpace.s2]) =>
         EdgeInsets.fromLTRB(VgSpace.s4, top, VgSpace.s4, 0);

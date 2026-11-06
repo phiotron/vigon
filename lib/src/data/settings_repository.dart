@@ -1,7 +1,6 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 
 import 'database.dart';
 import 'exchange_rate.dart';
@@ -66,25 +65,24 @@ class SettingsRepository {
 
   Future<void> setThemeMode(ThemeMode mode) => _write(themeModeKey, mode.name);
 
-  /// Mã ngôn ngữ đã chọn; null là theo ngôn ngữ máy (AC-36).
+  /// Mã ngôn ngữ đã chọn; null là chưa chọn = English (D-036, AC-36).
   Stream<String?> watchLocaleCode() => _watch(localeKey);
 
   Future<void> setLocaleCode(String? code) =>
       code == null ? _remove(localeKey) : _write(localeKey, code);
 
-  /// Mã tiền tệ ISO 4217 (AC-21). Lần đầu chưa có thì lấy theo vùng của máy
-  /// [deviceLocale] và lưu lại, để đổi ngôn ngữ máy sau này không làm đổi tiền tệ.
-  Future<String> ensureCurrency(String deviceLocale) async {
+  /// Mã tiền tệ ISO 4217 (AC-21). Lần đầu chưa có thì lưu [defaultCode] (mặc
+  /// định USD, D-036: không đoán theo vùng/ngôn ngữ máy).
+  Future<String> ensureCurrency({String defaultCode = 'USD'}) async {
     final saved = await _read(currencyKey);
     if (saved != null) return saved;
-    final code = currencyForLocale(deviceLocale);
-    await _write(currencyKey, code);
-    return code;
+    await _write(currencyKey, defaultCode);
+    return defaultCode;
   }
 
-  Stream<String> watchCurrency() => _watch(currencyKey).map((v) => v ?? 'VND');
+  Stream<String> watchCurrency() => _watch(currencyKey).map((v) => v ?? 'USD');
 
-  Future<String> readCurrency() => _read(currencyKey).then((v) => v ?? 'VND');
+  Future<String> readCurrency() => _read(currencyKey).then((v) => v ?? 'USD');
 
   /// Chỉ ghi mã tiền tệ. Đổi tiền tệ trong app phải qua `convertCurrency`
   /// (quy đổi mọi số tiền, D-025); hàm này dùng khi chưa có số tiền nào.
@@ -225,16 +223,4 @@ TimeOfDay parseReminderTime(String? value) {
   final min = int.parse(m[2]!);
   if (h > 23 || min > 59) return defaultReminderTime;
   return TimeOfDay(hour: h, minute: min);
-}
-
-/// Tiền tệ theo vùng trong mã ngôn ngữ máy, ví dụ `vi_VN` → VND.
-/// Không có vùng thì: tiếng Việt → VND, còn lại → USD.
-String currencyForLocale(String locale) {
-  final parts = locale.split(RegExp('[-_]'));
-  if (parts.length < 2) return parts.first == 'vi' ? 'VND' : 'USD';
-  try {
-    return NumberFormat.simpleCurrency(locale: locale).currencyName ?? 'USD';
-  } catch (_) {
-    return 'USD';
-  }
 }

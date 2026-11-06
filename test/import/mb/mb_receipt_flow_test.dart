@@ -175,6 +175,8 @@ void main() {
   late _Rig rig;
   setUp(() async {
     rig = _Rig();
+    // Email MB bằng VND; app mới mặc định USD (D-036).
+    await SettingsRepository(rig.db).setCurrency('VND');
     await rig.connect();
   });
   tearDown(() => rig.db.close());

@@ -160,7 +160,7 @@ class EntrySearchResults extends ConsumerWidget {
     final source = search.allTime
         ? ref.watch(_allTimeEntriesProvider)
         : ref.watch(periodEntriesProvider);
-    final currency = ref.watch(currencyProvider).value ?? 'VND';
+    final currency = ref.watch(currencyProvider).value ?? 'USD';
     final accounts = {
       for (final a in ref.watch(allAccountsProvider).value ?? const <Account>[])
         a.id: a,

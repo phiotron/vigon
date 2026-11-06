@@ -16,6 +16,7 @@ import 'package:vigon/src/data/auto_backup_service.dart';
 import 'package:vigon/src/data/backup_folder_service.dart';
 import 'package:vigon/src/data/backup_schedule.dart';
 import 'package:vigon/src/data/pin_service.dart';
+import 'package:vigon/src/data/settings_repository.dart';
 import 'package:vigon/src/features/reminder/reminder_scheduler.dart';
 import 'package:vigon/src/features/settings/auto_backup_providers.dart';
 import 'package:vigon/src/providers.dart';
@@ -177,12 +178,12 @@ void main() {
     test('bật → đặt lịch theo giờ; đổi giờ → đặt lại; tắt → hủy', () async {
       final db = memoryDatabase();
       addTearDown(db.close);
+      await SettingsRepository(db).setLocaleCode('vi');
       final secrets = MemorySecretStore();
       final fake = FakeAutoBackupScheduler();
       final container = ProviderContainer(
         overrides: [
           databaseProvider.overrideWithValue(db),
-          deviceLocaleProvider.overrideWithValue('vi_VN'),
           autoBackupSchedulerProvider.overrideWithValue(fake),
           autoBackupServiceProvider.overrideWith(
             (ref) => AutoBackupService(

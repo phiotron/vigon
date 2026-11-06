@@ -47,7 +47,7 @@ class _EntriesScreenState extends ConsumerState<EntriesScreen> {
     final period = ref.watch(periodProvider);
     final rows = ref.watch(periodEntriesProvider).value ?? const <EntryView>[];
     final summary = ref.watch(periodSummaryProvider);
-    final currency = ref.watch(currencyProvider).value ?? 'VND';
+    final currency = ref.watch(currencyProvider).value ?? 'USD';
     final accounts = {
       for (final a in ref.watch(allAccountsProvider).value ?? const <Account>[])
         a.id: a,

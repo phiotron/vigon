@@ -67,7 +67,7 @@ final autoBackupScheduleSyncProvider = Provider<void>((ref) {
     unawaited(scheduler.cancel());
     return;
   }
-  final l = reminderStrings(localeCode.value, ref.read(deviceLocaleProvider));
+  final l = reminderStrings(localeCode.value);
   unawaited(
     scheduler.schedule(
       s.time,

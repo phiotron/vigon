@@ -193,7 +193,7 @@ class _CategoryEditorState extends ConsumerState<_CategoryEditor> {
   late String _icon = widget.category?.icon ?? 'more_horiz';
   late int _color = widget.category?.color ?? categoryColors.first;
   late final int _digits = currencyDecimalDigits(
-    ref.read(currencyProvider).value ?? 'VND',
+    ref.read(currencyProvider).value ?? 'USD',
   );
   late final _budget = TextEditingController(
     text: widget.category?.budget == null
@@ -422,7 +422,7 @@ class _CategoryEditorState extends ConsumerState<_CategoryEditor> {
                         decoration: InputDecoration(
                           labelText: l.categoryBudget,
                           suffixText: currencySymbol(
-                            ref.watch(currencyProvider).value ?? 'VND',
+                            ref.watch(currencyProvider).value ?? 'USD',
                           ),
                           helperText: l.categoryBudgetHint,
                           helperMaxLines: 3,

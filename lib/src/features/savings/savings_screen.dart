@@ -114,7 +114,7 @@ class GoalCard extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final l = AppLocalizations.of(context);
     final scheme = Theme.of(context).colorScheme;
-    final currency = ref.watch(currencyProvider).value ?? 'VND';
+    final currency = ref.watch(currencyProvider).value ?? 'USD';
     final balances =
         ref.watch(accountBalancesProvider).value ?? const <int, int>{};
     final accounts = ref.watch(allAccountsProvider).value ?? const <Account>[];

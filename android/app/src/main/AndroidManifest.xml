@@ -10,7 +10,7 @@
     <!-- Plugin thông báo tự thêm VIBRATE; app không rung nên gỡ để khỏi thêm quyền ngoài danh sách. -->
     <uses-permission android:name="android.permission.VIBRATE" tools:node="remove"/>
     <application
-        android:label="Ví Gọn"
+        android:label="@string/app_name"
         android:allowBackup="false"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">

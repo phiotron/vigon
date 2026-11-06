@@ -161,7 +161,7 @@ void main() {
         );
 
     Future<void> seedVnd() async {
-      await settings.ensureCurrency('vi_VN');
+      await settings.ensureCurrency(defaultCode: 'VND');
       final second = await db
           .into(db.accounts)
           .insert(AccountsCompanion.insert(name: const Value('Thẻ')));
@@ -231,7 +231,7 @@ void main() {
     });
 
     test('USD → VND rồi JPY (0 chữ số thập phân)', () async {
-      await settings.ensureCurrency('en_US');
+      await settings.ensureCurrency();
       await entry(EntryType.expense, 1234); // 12,34 US$
       await convertCurrency(db, 'VND', rate('25974'));
       expect((await db.select(db.entries).getSingle()).amount, 320519);
@@ -246,7 +246,7 @@ void main() {
 
     test('khoản nhỏ hơn 1 đơn vị thành 0 (giữ số chính xác); ngân sách và '
         'hạn mức tối thiểu 1 (D-029)', () async {
-      await settings.ensureCurrency('vi_VN');
+      await settings.ensureCurrency(defaultCode: 'VND');
       await entry(EntryType.expense, 1); // 1 ₫
       await settings.setBudget(5);
       await CategoryRepository(db).setBudget(1, 5);
@@ -275,7 +275,7 @@ void main() {
     });
 
     test('số âm vượt giới hạn (số dư ban đầu) cũng bị chặn', () async {
-      await settings.ensureCurrency('vi_VN');
+      await settings.ensureCurrency(defaultCode: 'VND');
       await (db.update(db.accounts)..where((a) => a.id.equals(1))).write(
         const AccountsCompanion(initialBalance: Value(-maxMinorUnits)),
       );
@@ -310,7 +310,7 @@ void main() {
     });
 
     test('số ví dụ: khoản mới nhất, không có thì ngân sách', () async {
-      await settings.ensureCurrency('vi_VN');
+      await settings.ensureCurrency(defaultCode: 'VND');
       expect(await conversionExampleAmount(db), isNull);
       await settings.setBudget(700);
       expect(await conversionExampleAmount(db), (minor: 700, exact: 700000000));

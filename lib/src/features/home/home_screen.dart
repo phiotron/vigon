@@ -301,7 +301,7 @@ class _ChartWithCategories extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final l = AppLocalizations.of(context);
     final summary = ref.watch(periodSummaryProvider);
-    final currency = ref.watch(currencyProvider).value ?? 'VND';
+    final currency = ref.watch(currencyProvider).value ?? 'USD';
     final categories =
         ref.watch(categoriesProvider(CategoryType.expense)).value ??
         const <Category>[];
@@ -415,7 +415,7 @@ class _BalanceBar extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final summary = ref.watch(periodSummaryProvider);
-    final currency = ref.watch(currencyProvider).value ?? 'VND';
+    final currency = ref.watch(currencyProvider).value ?? 'USD';
     return Padding(
       padding: const EdgeInsets.fromLTRB(VgSpace.s4, 0, VgSpace.s4, VgSpace.s3),
       child: BalanceBar(
@@ -525,7 +525,7 @@ class _TotalsList extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final l = AppLocalizations.of(context);
     final summary = ref.watch(periodSummaryProvider);
-    final currency = ref.watch(currencyProvider).value ?? 'VND';
+    final currency = ref.watch(currencyProvider).value ?? 'USD';
     final muted = Theme.of(context).colorScheme.onSurfaceVariant;
     if (summary.isEmpty) {
       return Padding(
@@ -712,7 +712,7 @@ class BudgetBar extends ConsumerWidget {
     }
     final l = AppLocalizations.of(context);
     final spent = spentValue.value ?? 0;
-    final currency = ref.watch(currencyProvider).value ?? 'VND';
+    final currency = ref.watch(currencyProvider).value ?? 'USD';
     final over = spent > limit;
     final text = over
         ? '${l.budget}: ${l.budgetOver(money(context, currency, spent - limit))}'

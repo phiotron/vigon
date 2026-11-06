@@ -52,7 +52,7 @@ class _TransferScreenState extends ConsumerState<TransferScreen> {
     final e = await ref.read(entryRepositoryProvider).find(id);
     if (!mounted || e == null) return;
     final digits = currencyDecimalDigits(
-      ref.read(currencyProvider).value ?? 'VND',
+      ref.read(currencyProvider).value ?? 'USD',
     );
     setState(() {
       _original = e;
@@ -72,7 +72,7 @@ class _TransferScreenState extends ConsumerState<TransferScreen> {
   }
 
   int get _digits =>
-      currencyDecimalDigits(ref.read(currencyProvider).value ?? 'VND');
+      currencyDecimalDigits(ref.read(currencyProvider).value ?? 'USD');
 
   void _onKey(String key) => setState(() {
     _error = null;
@@ -157,7 +157,7 @@ class _TransferScreenState extends ConsumerState<TransferScreen> {
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context);
     final scheme = Theme.of(context).colorScheme;
-    final currency = ref.watch(currencyProvider).value ?? 'VND';
+    final currency = ref.watch(currencyProvider).value ?? 'USD';
     final digits = currencyDecimalDigits(currency);
     final accounts = ref.watch(accountsProvider).value ?? const <Account>[];
     final all = ref.watch(allAccountsProvider).value ?? accounts;

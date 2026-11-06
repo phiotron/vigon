@@ -16,7 +16,7 @@ String currencySymbol(String code) =>
 /// Đặt hoặc bỏ hạn mức chi mỗi tháng (AC-26), theo 5.3 và 5.4: ô Số tiền tự
 /// focus, lỗi ngay dưới ô; Bỏ ngân sách (khi đang đặt), Hủy, Lưu.
 Future<void> showBudgetDialog(BuildContext context, WidgetRef ref) async {
-  final currency = ref.read(currencyProvider).value ?? 'VND';
+  final currency = ref.read(currencyProvider).value ?? 'USD';
   final current = ref.read(budgetProvider).value;
   final result = await showDialog<(int?,)>(
     context: context,

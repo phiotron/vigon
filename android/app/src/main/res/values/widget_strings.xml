@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Mặc định là tiếng Việt; values-vi và values-en ghi đè theo ngôn ngữ máy. -->
+<!-- Mặc định là English (D-036); values-vi ghi đè cho máy tiếng Việt. -->
 <resources>
-    <string name="widget_label">Ví Gọn</string>
-    <string name="widget_description">Thêm nhanh khoản chi hoặc thu</string>
-    <string name="widget_expense">Chi</string>
-    <string name="widget_income">Thu</string>
-    <string name="widget_expense_desc">Thêm khoản chi</string>
-    <string name="widget_income_desc">Thêm khoản thu</string>
-    <string name="widget_stale">Mở app để cập nhật</string>
+    <string name="app_name">Vigon</string>
+    <string name="widget_label">Vigon</string>
+    <string name="widget_description">Quickly add an expense or income</string>
+    <string name="widget_expense">Expense</string>
+    <string name="widget_income">Income</string>
+    <string name="widget_expense_desc">Add expense</string>
+    <string name="widget_income_desc">Add income</string>
+    <string name="widget_stale">Open the app to update</string>
 </resources>

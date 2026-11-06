@@ -152,7 +152,7 @@ class _ArchivedAccountsSectionState
     if (archived.isEmpty) return const SizedBox.shrink();
     final balances =
         ref.watch(accountBalancesProvider).value ?? const <int, int>{};
-    final currency = ref.watch(currencyProvider).value ?? 'VND';
+    final currency = ref.watch(currencyProvider).value ?? 'USD';
     final muted = scheme.onSurfaceVariant;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,

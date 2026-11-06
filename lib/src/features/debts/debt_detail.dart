@@ -50,7 +50,7 @@ class _DebtDetail extends ConsumerWidget {
       }
       return const SizedBox(height: 120);
     }
-    final currency = ref.watch(currencyProvider).value ?? 'VND';
+    final currency = ref.watch(currencyProvider).value ?? 'USD';
     final digits = currencyDecimalDigits(currency);
     final today = ref.watch(todayProvider);
     final d = view.debt;
@@ -299,7 +299,7 @@ class _PaymentSheetState extends ConsumerState<_PaymentSheet> {
   Future<void> _save() async {
     if (_saving) return;
     final l = AppLocalizations.of(context);
-    final currency = ref.read(currencyProvider).value ?? 'VND';
+    final currency = ref.read(currencyProvider).value ?? 'USD';
     final text = _amount.text.trim();
     final amount = text.isEmpty
         ? null
@@ -333,7 +333,7 @@ class _PaymentSheetState extends ConsumerState<_PaymentSheet> {
   @override
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context);
-    final currency = ref.watch(currencyProvider).value ?? 'VND';
+    final currency = ref.watch(currencyProvider).value ?? 'USD';
     final today = ref.watch(todayProvider);
     return SafeArea(
       child: Column(

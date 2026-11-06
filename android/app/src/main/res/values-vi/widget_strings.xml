@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="app_name">Ví Gọn</string>
     <string name="widget_label">Ví Gọn</string>
     <string name="widget_description">Thêm nhanh khoản chi hoặc thu</string>
     <string name="widget_expense">Chi</string>

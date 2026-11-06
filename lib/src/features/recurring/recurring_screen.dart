@@ -24,7 +24,7 @@ class RecurringScreen extends ConsumerWidget {
     final l = AppLocalizations.of(context);
     final rules =
         ref.watch(recurringRulesProvider).value ?? const <RecurringRule>[];
-    final currency = ref.watch(currencyProvider).value ?? 'VND';
+    final currency = ref.watch(currencyProvider).value ?? 'USD';
     final categories = {
       for (final type in CategoryType.values)
         for (final c
@@ -70,7 +70,7 @@ class RecurringScreen extends ConsumerWidget {
     WidgetRef ref,
     RecurringRule rule,
   ) async {
-    final currency = ref.read(currencyProvider).value ?? 'VND';
+    final currency = ref.read(currencyProvider).value ?? 'USD';
     final categories = switch (rule.type) {
       EntryType.transfer => const <Category>[],
       EntryType.income =>

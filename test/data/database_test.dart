@@ -81,7 +81,7 @@ void main() {
       expect(await repo.watchThemeMode().first, ThemeMode.dark);
     });
 
-    test('ngôn ngữ mặc định theo máy, chọn và bỏ chọn được (AC-36)', () async {
+    test('ngôn ngữ chưa chọn = null (app hiểu là English, D-036), chọn và bỏ chọn được (AC-36)', () async {
       final repo = SettingsRepository(db);
       expect(await repo.watchLocaleCode().first, isNull);
       await repo.setLocaleCode('en');

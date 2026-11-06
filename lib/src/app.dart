@@ -186,7 +186,8 @@ class VigonApp extends ConsumerWidget {
       themeMode: themeMode,
       theme: _lightTheme,
       darkTheme: _darkTheme,
-      locale: localeCode == null ? null : Locale(localeCode),
+      // D-036: mặc định English, không theo ngôn ngữ máy.
+      locale: Locale(localeCode ?? 'en'),
       supportedLocales: AppLocalizations.supportedLocales,
       localizationsDelegates: const [
         AppLocalizations.delegate,

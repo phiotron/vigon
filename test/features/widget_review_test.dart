@@ -94,13 +94,13 @@ void main() {
             .readAsStringSync();
         expect(manifest, isNot(contains('SCHEDULE_EXACT_ALARM')));
         expect(manifest, isNot(contains('USE_EXACT_ALARM')));
-        for (final dir in ['values', 'values-vi', 'values-en']) {
+        for (final dir in ['values', 'values-vi']) {
           final xml = File('android/app/src/main/res/$dir/widget_strings.xml')
               .readAsStringSync();
           expect(xml, contains('name="widget_stale"'), reason: dir);
         }
         expect(
-          File('android/app/src/main/res/values-en/widget_strings.xml')
+          File('android/app/src/main/res/values/widget_strings.xml')
               .readAsStringSync(),
           contains('>Open the app to update<'),
         );

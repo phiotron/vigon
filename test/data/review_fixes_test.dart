@@ -26,7 +26,7 @@ void main() {
     ExchangeRate rate(String r) => ExchangeRate.tryParse(r)!;
 
     test('VND sang USD rồi về VND theo tỉ giá ngược', () async {
-      await SettingsRepository(db).ensureCurrency('vi_VN');
+      await SettingsRepository(db).ensureCurrency(defaultCode: 'VND');
       await CategoryRepository(db).setBudget(1, 500000);
       await convertCurrency(db, 'USD', rate('0.00004'));
       expect(await budgetOfFood(), 2000); // 500.000 ₫ → 20,00 US$
@@ -35,7 +35,7 @@ void main() {
     });
 
     test('hạn mức chưa đặt vẫn là null', () async {
-      await SettingsRepository(db).ensureCurrency('vi_VN');
+      await SettingsRepository(db).ensureCurrency(defaultCode: 'VND');
       await CategoryRepository(db).setBudget(1, 500000);
       await convertCurrency(db, 'KWD', rate('0.0000118'));
       expect(await budgetOfFood(), 5900);
@@ -46,7 +46,7 @@ void main() {
     });
 
     test('làm tròn nhưng không về 0 (ràng buộc budget > 0)', () async {
-      await SettingsRepository(db).ensureCurrency('en_US');
+      await SettingsRepository(db).ensureCurrency();
       await CategoryRepository(db).setBudget(1, 1); // 0,01 USD
       await convertCurrency(db, 'JPY', rate('0.1')); // 0,001 ¥ → 0
       expect(await budgetOfFood(), 1);

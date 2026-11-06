@@ -41,6 +41,8 @@ void main() {
 
   setUp(() async {
     db = AppDatabase(NativeDatabase.memory());
+    // Email MB bằng VND; app mới mặc định USD (D-036) nên đặt VND cho các ca ghép.
+    await SettingsRepository(db).setCurrency('VND');
     service = MbImportService(db);
     accounts = AccountRepository(db);
     entries = EntryRepository(db);

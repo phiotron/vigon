@@ -95,11 +95,10 @@ final widgetSyncProvider = Provider<void>((ref) {
 
 String _never() => throw StateError('Không được tính số tiền khi PIN bật');
 
-/// Ngôn ngữ giao diện: lựa chọn trong app, hoặc ngôn ngữ máy; chỉ có vi và en.
+/// Ngôn ngữ giao diện: lựa chọn trong app, chưa chọn = English (D-036); chỉ có vi và en.
 String _language(Ref ref) {
   final chosen = ref.watch(localeCodeProvider).value;
-  final String code = chosen ?? ref.read(deviceLocaleProvider);
-  return code.toLowerCase().startsWith('vi') ? 'vi' : 'en';
+  return (chosen ?? 'en').toLowerCase().startsWith('vi') ? 'vi' : 'en';
 }
 
 void _push(HomeWidgetBridge bridge, WidgetContent content) {

@@ -54,7 +54,7 @@ void main() {
       RecurrenceFrequency.monthly,
     );
     final settings = SettingsRepository(db);
-    await settings.ensureCurrency('vi_VN');
+    await settings.ensureCurrency(defaultCode: 'VND');
     await settings.setBudget(9000000);
   }
 

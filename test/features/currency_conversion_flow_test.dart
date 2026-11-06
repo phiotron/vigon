@@ -109,7 +109,7 @@ Future<AppDatabase> start(WidgetTester tester, FakeRateSource source) async {
     tester,
     overrides: [exchangeRateSourceProvider.overrideWithValue(source)],
   );
-  await tester.runAsync(() => SettingsRepository(db).ensureCurrency('vi_VN'));
+  await tester.runAsync(() => SettingsRepository(db).ensureCurrency(defaultCode: 'VND'));
   await insertEntry(
     tester,
     db,

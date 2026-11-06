@@ -166,21 +166,19 @@ void main() {
 
   group('tiền tệ', () {
     test(
-      'lần đầu chọn theo vùng của máy và giữ nguyên về sau (AC-21)',
+      'lần đầu mặc định USD, không theo máy, và giữ nguyên về sau (AC-21, D-036)',
       () async {
-        expect(await settings.ensureCurrency('vi_VN'), 'VND');
-        expect(await settings.ensureCurrency('en_US'), 'VND');
-        expect(currencyForLocale('en_US'), 'USD');
-        expect(currencyForLocale('ja_JP'), 'JPY');
-        expect(currencyForLocale('vi'), 'VND');
-        expect(currencyForLocale('en'), 'USD');
+        expect(await settings.readCurrency(), 'USD');
+        expect(await settings.ensureCurrency(), 'USD');
+        await settings.setCurrency('VND');
+        expect(await settings.ensureCurrency(), 'VND');
       },
     );
 
     ExchangeRate rate(String r) => ExchangeRate.tryParse(r)!;
 
     test('đổi VND sang USD quy đổi theo tỉ giá (AC-21, D-025)', () async {
-      await settings.ensureCurrency('vi_VN');
+      await settings.ensureCurrency(defaultCode: 'VND');
       await expense(155000); // 155.000 ₫
       await accounts.edit(1, name: 'Ví', initialBalance: -2600000);
       await settings.setBudget(5000000);
@@ -194,7 +192,7 @@ void main() {
     });
 
     test('đổi USD sang VND làm tròn và vẫn lớn hơn 0', () async {
-      await settings.ensureCurrency('en_US');
+      await settings.ensureCurrency();
       await expense(1250); // $12.50
       await expense(1); // $0.01
       await convertCurrency(db, 'VND', rate('25974'));
@@ -206,7 +204,7 @@ void main() {
     });
 
     test('đổi VND sang KWD (0 sang 3 chữ số) (AC-53)', () async {
-      await settings.ensureCurrency('vi_VN');
+      await settings.ensureCurrency(defaultCode: 'VND');
       await expense(1000000);
       await convertCurrency(db, 'KWD', rate('0.0000118'));
       expect(await settings.watchCurrency().first, 'KWD');
@@ -219,7 +217,7 @@ void main() {
     });
 
     test('cùng mã tiền tệ thì không đổi gì', () async {
-      await settings.ensureCurrency('vi_VN');
+      await settings.ensureCurrency(defaultCode: 'VND');
       await expense(155);
       await convertCurrency(db, 'VND', rate('2'));
       expect((await db.select(db.entries).getSingle()).amount, 155);

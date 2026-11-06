@@ -84,7 +84,7 @@ CsvFormat csvFormatFor(AppLocalizations l) => CsvFormat.forLanguage(
 Future<void> exportCsvFile(BuildContext context, WidgetRef ref) async {
   final l = AppLocalizations.of(context);
   final db = ref.read(databaseProvider);
-  final currency = ref.read(currencyProvider).value ?? 'VND';
+  final currency = ref.read(currencyProvider).value ?? 'USD';
   final categories = {
     for (final c in await db.select(db.categories).get()) c.id: c,
   };
@@ -197,9 +197,7 @@ Future<bool> deleteEverything(BuildContext context, WidgetRef ref) async {
   ref.invalidate(autoBackupStateProvider);
   // AC-123: hộp thư, mật khẩu ứng dụng (Keystore/Keychain), tắt kiểm thư nền.
   await eraseEmailImport(ref);
-  await ref
-      .read(settingsRepositoryProvider)
-      .ensureCurrency(ref.read(deviceLocaleProvider));
+  await ref.read(settingsRepositoryProvider).ensureCurrency();
   ref.read(accountFilterProvider.notifier).select(null);
   HapticFeedback.lightImpact();
   showMessage(l.deleteAllDone);

@@ -86,7 +86,7 @@ class _EntryEditorScreenState extends ConsumerState<EntryEditorScreen> {
       context.pop();
       return;
     }
-    final currency = ref.read(currencyProvider).value ?? 'VND';
+    final currency = ref.read(currencyProvider).value ?? 'USD';
     final accountId = await ref
         .read(importQueueActionsProvider)
         .resolveAccount(item);
@@ -116,7 +116,7 @@ class _EntryEditorScreenState extends ConsumerState<EntryEditorScreen> {
       return;
     }
     final digits = currencyDecimalDigits(
-      ref.read(currencyProvider).value ?? 'VND',
+      ref.read(currencyProvider).value ?? 'USD',
     );
     final ruleId = entry.recurringRuleId;
     final rule = ruleId == null
@@ -144,7 +144,7 @@ class _EntryEditorScreenState extends ConsumerState<EntryEditorScreen> {
   }
 
   int get _digits =>
-      currencyDecimalDigits(ref.read(currencyProvider).value ?? 'VND');
+      currencyDecimalDigits(ref.read(currencyProvider).value ?? 'USD');
 
   void _onKey(String key) => setState(() {
     _error = null;
@@ -189,7 +189,7 @@ class _EntryEditorScreenState extends ConsumerState<EntryEditorScreen> {
       if (queueItem != null) {
         // Từ hàng đợi: tạo khoản chi có nguồn + số tham chiếu của email, mục
         // rời hàng đợi, nhớ gợi ý (AC-96). Giữ số chính xác nếu không đổi số.
-        final currency = ref.read(currencyProvider).value ?? 'VND';
+        final currency = ref.read(currencyProvider).value ?? 'USD';
         final same =
             queueItem.currency == currency && amount == queueItem.amount;
         await ref
@@ -343,7 +343,7 @@ class _EntryEditorScreenState extends ConsumerState<EntryEditorScreen> {
   @override
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context);
-    final currency = ref.watch(currencyProvider).value ?? 'VND';
+    final currency = ref.watch(currencyProvider).value ?? 'USD';
     final digits = currencyDecimalDigits(currency);
     final accounts = ref.watch(accountsProvider).value ?? const <Account>[];
     final scheme = Theme.of(context).colorScheme;

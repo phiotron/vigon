@@ -41,7 +41,7 @@ class _DebtsScreenState extends ConsumerState<DebtsScreen> {
     final l = AppLocalizations.of(context);
     final scheme = Theme.of(context).colorScheme;
     final debts = ref.watch(debtsProvider).value ?? const <DebtView>[];
-    final currency = ref.watch(currencyProvider).value ?? 'VND';
+    final currency = ref.watch(currencyProvider).value ?? 'USD';
     final digits = currencyDecimalDigits(currency);
     final today = ref.watch(todayProvider);
 

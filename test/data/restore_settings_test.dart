@@ -67,7 +67,7 @@ void main() {
       'gio nhac va cai dat khac van theo file', () async {
     final src = memoryDatabase();
     addTearDown(src.close);
-    await SettingsRepository(src).ensureCurrency('vi_VN');
+    await SettingsRepository(src).ensureCurrency(defaultCode: 'VND');
     final file = withSettings(await exportBackup(src, now: now), _hostile);
 
     final db = memoryDatabase();
