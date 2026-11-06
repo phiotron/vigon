@@ -239,9 +239,9 @@ String _lastText(BuildContext context, AppLocalizations l, AutoBackupState s) {
   final at = s.lastAt;
   final locale = Localizations.localeOf(context).languageCode;
   // A03: ngày ngắn theo ngôn ngữ app ("Nov 25, 21:04", "25 thg 11, 21:04").
-  final time = at == null
-      ? null
-      : '${DateFormat.MMMd(locale).format(at)}, ${DateFormat.Hm(locale).format(at)}';
+  String format(DateTime d) =>
+      '${DateFormat.MMMd(locale).format(d)}, ${DateFormat.Hm(locale).format(d)}';
+  final time = at == null ? null : format(at);
   if (s.lastFailed) {
     // AC-60: lỗi cũng hiện thời gian lần thử gần nhất.
     final error = switch (s.lastResult) {
@@ -252,6 +252,12 @@ String _lastText(BuildContext context, AppLocalizations l, AutoBackupState s) {
     return time == null ? error : l.autoBackupFailedAt(time, error);
   }
   if (time == null) return l.autoBackupNever;
+  // Mốc giờ đã xét nhưng dữ liệu không đổi nên không ghi file: nói rõ để
+  // không trông như "đến giờ mà không chạy" (D-027).
+  final checked = s.lastCheckAt;
+  if (checked != null && checked.isAfter(at!)) {
+    return l.autoBackupLastUnchanged(time, format(checked));
+  }
   return l.autoBackupLast(time);
 }
 

@@ -2,6 +2,12 @@
 
 Mỗi quyết định một mục, mới nhất ở trên cùng.
 
+## D-027 · Sao lưu tự động chỉ giữ 2 file; báo rõ khi bỏ qua vì dữ liệu không đổi (sửa D-014 (6), D-026) · 2026-11-06
+- Bối cảnh: người dùng thử trên Samsung A13: mỗi lần sao lưu thêm một file (giữ 7) làm rối thư mục; đặt giờ rồi chờ mà "không thấy sao lưu". Kiểm `adb`: báo thức nổ đúng giờ (10:05:19), job chạy và bỏ qua vì dữ liệu không đổi — đúng luật, nhưng Cài đặt không báo gì.
+- Quyết định (người dùng chốt 2026-11-06): (1) Giữ **2 file** `vigon-auto-*`: bản vừa ghi + 1 bản trước để phòng xoá nhầm dữ liệu rồi bị sao lưu đè. Chỉ xoá file cũ SAU khi file mới ghi xong; không giả định file vừa ghi mới nhất theo tên (đồng hồ lùi). (2) Đến mốc giờ mà dữ liệu không đổi: vẫn bỏ qua (giữ D-026), nhưng dòng trạng thái hiện "Lần cuối: … Đã kiểm …: dữ liệu không đổi, giữ bản cũ" (`autoBackupLastUnchanged`). (3) Android: job nền log `VigonBackup result=…` (chỉ tên kết quả) để chẩn đoán bằng `adb logcat -s VigonBackup`.
+- Lý do / phương án đã loại: chỉ 1 file (người dùng cân nhắc rồi loại: xoá nhầm là mất bản tốt); luôn ghi file mới kể cả khi dữ liệu không đổi (loại: tốn pin, không thêm gì).
+- Hệ quả: chính sách VI+EN, store (Play + App Store), SPEC AC-59, TESTING M-2 (g), SECURITY đổi "7" → "2".
+
 ## D-026 · Sao lưu tự động theo giờ người dùng chọn (giờ máy), có bù khi lỡ · 2026-11-06
 - Bối cảnh: F-24/D-014 sao lưu khi app ra nền (Android) hoặc khi mở app (iOS), tối đa 1 lần/ngày, không có giờ cố định. Người dùng muốn chọn giờ sao lưu theo múi giờ trên máy.
 - Quyết định (người dùng chốt 2026-11-06): (1) Bật sao lưu tự động → bộ chọn giờ điền sẵn **21:00**, đổi được bất cứ lúc nào trong Cài đặt; giờ tính theo múi giờ hiện tại của máy (đổi múi giờ thì theo giờ địa phương mới). (2) **Android:** app tự chạy nền vào giờ đã chọn kể cả khi không mở app (lịch không chính xác tuyệt đối, hệ thống có thể lùi vài phút — giữ tinh thần D-015, không xin quyền báo thức chính xác). (3) **iPhone:** iOS không cho app đóng tự chạy đúng giờ → đúng giờ đã chọn hiện **thông báo cục bộ** "Đến giờ sao lưu Ví Gọn"; chạm vào hoặc mở app bất kỳ lúc nào sau giờ đó thì sao lưu chạy. (4) **Bù khi lỡ** (cả hai nền tảng): nếu hôm đó đã qua giờ chọn mà chưa sao lưu được (máy tắt, hệ thống không cho chạy…) thì lần mở/thoát app kế tiếp sẽ sao lưu. (5) Giữ nguyên: tối đa 1 lần/ngày — hiểu là MỖI MỐC GIỜ một lần (người dùng xác nhận 2026-11-06: bù lúc sáng cho mốc tối hôm trước thì mốc tối nay vẫn chạy, có thể ra 2 file trong một ngày lịch), chỉ khi dữ liệu đổi, giữ 7 file, luôn mã hoá, "Sao lưu ngay" chạy bất kể.

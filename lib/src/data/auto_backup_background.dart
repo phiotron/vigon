@@ -9,7 +9,7 @@ import 'pin_service.dart';
 ///
 /// Mở cơ sở dữ liệu, đọc mật khẩu từ Keystore ([SecretStore]), mã hoá và ghi
 /// qua Storage Access Framework bằng đúng [AutoBackupService] mà app dùng
-/// (một lần mỗi mốc giờ, chỉ khi dữ liệu đổi, giữ 7 file, lỗi cũng ghi
+/// (một lần mỗi mốc giờ, chỉ khi dữ liệu đổi, giữ 2 file, lỗi cũng ghi
 /// `lastAt`). Lịch lần sau do phía Kotlin đặt ngay khi báo thức nổ, nên Dart
 /// lỗi hay bị dừng giữa chừng cũng không làm đứt chuỗi lịch.
 ///

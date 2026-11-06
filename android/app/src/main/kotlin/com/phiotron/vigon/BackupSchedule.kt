@@ -13,6 +13,7 @@ import android.content.Intent
 import android.os.Build
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import io.flutter.FlutterInjector
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.embedding.engine.dart.DartExecutor
@@ -31,7 +32,7 @@ import java.util.TimeZone
  * [BackupAlarmReceiver] đặt ngay báo thức ngày mai (chuỗi lịch không phụ thuộc Dart) và xếp
  * [BackupJobService] (expedited từ Android 12) → job dựng một FlutterEngine không giao diện, chạy
  * `autoBackupBackgroundMain` (lib/main.dart): mở DB, đọc mật khẩu từ Keystore, mã hoá, ghi qua SAF
- * bằng chung `AutoBackupService` (mỗi mốc giờ tối đa một lần, chỉ khi dữ liệu đổi, giữ 7 file).
+ * bằng chung `AutoBackupService` (mỗi mốc giờ tối đa một lần, chỉ khi dữ liệu đổi, giữ 2 file).
  *
  * Khởi động lại máy, cập nhật app, đổi giờ hay múi giờ: [BackupAlarmReceiver] tính lại mốc theo
  * giờ địa phương mới. Không thêm quyền: RECEIVE_BOOT_COMPLETED đã có (F-25); JobScheduler và
@@ -231,6 +232,9 @@ class BackupJobService : JobService() {
             folder = BackupFolderChannel(applicationContext, null, messenger)
             MethodChannel(messenger, JOB_CHANNEL).setMethodCallHandler { call, result ->
                 if (call.method == "done") {
+                    // Chỉ tên kết quả (ok, failed…; null = chưa tới mốc/dữ liệu không đổi),
+                    // không dữ liệu hay mật khẩu. Xem: adb logcat -s VigonBackup
+                    Log.i("VigonBackup", "scheduled backup result=${call.arguments}")
                     result.success(null)
                     main.post { finish() }
                 } else {

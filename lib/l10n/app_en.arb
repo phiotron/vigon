@@ -187,6 +187,8 @@
   "autoBackupFolderUnknown": "Chosen folder",
   "autoBackupLast": "Last: {time}",
   "@autoBackupLast": {"placeholders": {"time": {"type": "String"}}},
+  "autoBackupLastUnchanged": "Last: {time}. Checked {checked}: no changes, kept the last backup",
+  "@autoBackupLastUnchanged": {"placeholders": {"time": {"type": "String"}, "checked": {"type": "String"}}},
   "autoBackupNever": "No backup yet",
   "autoBackupErrorFolder": "Could not write to the folder. Choose the folder again",
   "autoBackupErrorOther": "Backup failed. Try again with Back up now",

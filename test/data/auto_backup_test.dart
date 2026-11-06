@@ -125,80 +125,121 @@ void main() {
     },
   );
 
-  test('giữ 7 file tự động gần nhất, không đụng file khác (AC-59)', () async {
-    // File người dùng và file sao lưu tay có sẵn trong thư mục.
-    final others = [
-      'notes.txt',
-      'vigon-20261101-0900.vigon',
-      'vigon-auto-20261101-1000 (1).vigon',
-      'vigon-auto-latest.vigon',
-      'vigon-auto-20261031-0900.vigon.bak',
-    ];
-    for (final n in others) {
-      folder.files[n] = Uint8List.fromList([1]);
-    }
+  test('ghi file mới lỗi thì file cũ không bị xóa (D-027)', () async {
     await enable();
-    for (var day = 1; day <= 10; day++) {
+    for (var day = 1; day <= 2; day++) {
       now = DateTime(2026, 10, day, 8, 5);
-      await service.backupNow();
+      expect(await service.backupNow(), AutoBackupResult.ok);
     }
-    final auto =
-        folder.files.keys
-            .where(AutoBackupService.fileNamePattern.hasMatch)
-            .toList()
-          ..sort();
-    expect(auto.length, 7);
-    expect(auto.first, 'vigon-auto-20261004-0805.vigon');
-    expect(auto.last, 'vigon-auto-20261010-0805.vigon');
-    for (final n in others) {
-      expect(folder.files.containsKey(n), isTrue, reason: '$n bị xóa');
-    }
+    final before = folder.files.keys.toSet();
+    expect(before.length, 2);
+    now = DateTime(2026, 10, 3, 8, 5);
+    folder.failWith = BackupFolderError.permissionDenied;
+    expect(await service.backupNow(), AutoBackupResult.permissionDenied);
+    folder.failWith = null;
+    expect(folder.files.keys.toSet(), before);
   });
+
+  test(
+    'đồng hồ máy bị lùi: vẫn còn đúng 2 file, có file vừa ghi (D-027)',
+    () async {
+      await enable();
+      for (var day = 5; day <= 7; day++) {
+        now = DateTime(2026, 10, day, 8, 5);
+        await service.backupNow();
+      }
+      now = DateTime(2026, 10, 1, 8, 5);
+      expect(await service.backupNow(), AutoBackupResult.ok);
+      final auto =
+          folder.files.keys
+              .where(AutoBackupService.fileNamePattern.hasMatch)
+              .toList()
+            ..sort();
+      expect(auto, [
+        'vigon-auto-20261001-0805.vigon',
+        'vigon-auto-20261007-0805.vigon',
+      ]);
+    },
+  );
+
+  test(
+    'giữ 2 file tự động gần nhất, không đụng file khác (AC-59, D-027)',
+    () async {
+      // File người dùng và file sao lưu tay có sẵn trong thư mục.
+      final others = [
+        'notes.txt',
+        'vigon-20261101-0900.vigon',
+        'vigon-auto-20261101-1000 (1).vigon',
+        'vigon-auto-latest.vigon',
+        'vigon-auto-20261031-0900.vigon.bak',
+      ];
+      for (final n in others) {
+        folder.files[n] = Uint8List.fromList([1]);
+      }
+      await enable();
+      for (var day = 1; day <= 10; day++) {
+        now = DateTime(2026, 10, day, 8, 5);
+        await service.backupNow();
+      }
+      final auto =
+          folder.files.keys
+              .where(AutoBackupService.fileNamePattern.hasMatch)
+              .toList()
+            ..sort();
+      expect(auto, [
+        'vigon-auto-20261009-0805.vigon',
+        'vigon-auto-20261010-0805.vigon',
+      ]);
+      for (final n in others) {
+        expect(folder.files.containsKey(n), isTrue, reason: '$n bị xóa');
+      }
+    },
+  );
 
   test(
     'mỗi mốc giờ tối đa một lần và chỉ khi dữ liệu đổi (AC-59, D-026)',
     () async {
       await enable(); // 18:30, giờ mặc định 21:00
       await service.maybeRunDaily();
-      expect(folder.files.length, 1, reason: 'chưa từng sao lưu: chạy');
+      expect(folder.writes, 1, reason: 'chưa từng sao lưu: chạy');
 
       // Trước 21:00, dù dữ liệu đổi: chưa tới mốc.
       await addEntry(2000);
       now = DateTime(2026, 11, 3, 20, 59);
       await service.maybeRunDaily();
-      expect(folder.files.length, 1);
+      expect(folder.writes, 1);
 
       // Qua 21:00, dữ liệu đã đổi: chạy.
       now = DateTime(2026, 11, 3, 21, 5);
       await service.maybeRunDaily();
-      expect(folder.files.length, 2);
+      expect(folder.writes, 2);
 
       // Cùng mốc, dữ liệu lại đổi: không chạy lần hai.
       await addEntry(3000);
       now = DateTime(2026, 11, 3, 23, 0);
       await service.maybeRunDaily();
-      expect(folder.files.length, 2);
+      expect(folder.writes, 2);
 
       // Mốc hôm sau: chạy.
       now = DateTime(2026, 11, 4, 21, 10);
       await service.maybeRunDaily();
-      expect(folder.files.length, 3);
+      expect(folder.writes, 3);
 
       // Mốc hôm sau nữa, dữ liệu không đổi: bỏ qua và ghi đã xét...
       now = DateTime(2026, 11, 5, 21, 10);
       await service.maybeRunDaily();
-      expect(folder.files.length, 3);
+      expect(folder.writes, 3);
       expect(secrets.values[AutoBackupService.lastCheckKey], isNotNull);
       // ...nên ra nền lần nữa cùng mốc không xuất lại dữ liệu để so.
       await addEntry(4000);
       now = DateTime(2026, 11, 5, 22, 0);
       await service.maybeRunDaily();
-      expect(folder.files.length, 3);
+      expect(folder.writes, 3);
 
       // Mốc kế tiếp: dữ liệu đã đổi từ lần sao lưu trước → chạy.
       now = DateTime(2026, 11, 6, 21, 0);
       await service.maybeRunDaily();
-      expect(folder.files.length, 4);
+      expect(folder.writes, 4);
     },
   );
 

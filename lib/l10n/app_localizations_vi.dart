@@ -541,6 +541,11 @@ class AppLocalizationsVi extends AppLocalizations {
   }
 
   @override
+  String autoBackupLastUnchanged(String time, String checked) {
+    return 'Lần cuối: $time. Đã kiểm $checked: dữ liệu không đổi, giữ bản cũ';
+  }
+
+  @override
   String get autoBackupNever => 'Chưa sao lưu lần nào';
 
   @override

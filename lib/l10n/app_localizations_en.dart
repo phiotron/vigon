@@ -551,6 +551,11 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String autoBackupLastUnchanged(String time, String checked) {
+    return 'Last: $time. Checked $checked: no changes, kept the last backup';
+  }
+
+  @override
   String get autoBackupNever => 'No backup yet';
 
   @override

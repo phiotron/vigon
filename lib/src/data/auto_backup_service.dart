@@ -127,8 +127,9 @@ class AutoBackupService {
   /// Lần xét mốc giờ mà bỏ qua vì dữ liệu không đổi.
   static const lastCheckKey = 'auto_backup_last_check';
 
-  /// Số file tự động giữ lại trong thư mục (AC-59).
-  static const keepFiles = 7;
+  /// Số file tự động giữ lại trong thư mục (AC-59, D-027): bản vừa ghi + một
+  /// bản trước đó để phòng xoá nhầm dữ liệu rồi bị sao lưu đè.
+  static const keepFiles = 2;
 
   /// Tên file do app tạo: `vigon-auto-AAAAMMDD-GGPP.vigon`. Chỉ file khớp đúng
   /// mẫu này mới bị dọn; file khác trong thư mục không bao giờ bị đụng.
@@ -352,16 +353,18 @@ class AutoBackupService {
     return result;
   }
 
-  /// Giữ [keepFiles] file tự động mới nhất (xếp theo tên, tên có ngày giờ).
-  /// Lỗi dọn dẹp không làm hỏng lần sao lưu đã ghi xong.
+  /// Chỉ chạy SAU khi file mới đã ghi xong: luôn giữ [justWritten] cộng
+  /// `keepFiles - 1` file tự động mới nhất còn lại (xếp theo tên, tên có ngày
+  /// giờ), xoá phần còn lại. Không giả định [justWritten] mới nhất theo tên
+  /// (đồng hồ máy có thể bị lùi). Lỗi dọn dẹp không làm hỏng lần sao lưu đã
+  /// ghi xong.
   Future<void> _prune(String uri, String justWritten) async {
     try {
-      final mine = [
+      final others = [
         for (final n in await _folder.listFiles(uri))
-          if (fileNamePattern.hasMatch(n)) n,
+          if (fileNamePattern.hasMatch(n) && n != justWritten) n,
       ]..sort((a, b) => b.compareTo(a));
-      for (final old in mine.skip(keepFiles)) {
-        if (old == justWritten) continue;
+      for (final old in others.skip(keepFiles - 1)) {
         await _folder.deleteFile(uri, old);
       }
     } catch (_) {}

@@ -102,7 +102,7 @@ PRIVATE BY DESIGN
 
 BACKUP
 • Export a backup file and restore it on a new phone; export CSV for Numbers, Excel or Google Sheets. You can protect a backup file with a password (AES-256 encryption); if you forget the password, the file cannot be opened. Without a password the file is not encrypted, so keep it somewhere safe.
-• Optional automatic backup (off by default): choose a folder in the Files app, for example in iCloud Drive, and a backup time. At that time a notification reminds you; tap it or open Ví Gọn and it writes an encrypted backup there, at most once a day and only if your data has changed, keeping the 7 most recent files. Missed the time? It catches up next time you open the app. The password stays in your iPhone's Keychain; if you forget it, nobody can recover the files, including the developer.
+• Optional automatic backup (off by default): choose a folder in the Files app, for example in iCloud Drive, and a backup time. At that time a notification reminds you; tap it or open Ví Gọn and it writes an encrypted backup there, at most once a day and only if your data has changed, keeping the 2 most recent files. Missed the time? It catches up next time you open the app. The password stays in your iPhone's Keychain; if you forget it, nobody can recover the files, including the developer.
 
 EASY TO USE
 • Vietnamese and English, light and dark themes.
@@ -159,7 +159,7 @@ RIÊNG TƯ
 
 SAO LƯU
 • Tự xuất file sao lưu và khôi phục khi đổi máy; xuất CSV để mở bằng Numbers, Excel hoặc Google Sheets. Có thể đặt mật khẩu cho file sao lưu (mã hóa AES-256); quên mật khẩu thì không mở được file. Không đặt mật khẩu thì file không được mã hóa, hãy cất ở nơi an toàn.
-• Sao lưu tự động (tùy chọn, mặc định tắt): chọn một thư mục trong app Tệp, ví dụ trong iCloud Drive, và giờ sao lưu. Đến giờ, app gửi thông báo; chạm vào hoặc mở Ví Gọn thì app ghi một file sao lưu đã mã hóa vào đó, mỗi ngày tối đa một lần nếu dữ liệu có thay đổi, giữ 7 file gần nhất. Lỡ giờ thì app sao lưu bù khi bạn mở lại. Mật khẩu nằm trong Keychain của iPhone; quên mật khẩu thì không ai lấy lại được file, kể cả nhà phát triển.
+• Sao lưu tự động (tùy chọn, mặc định tắt): chọn một thư mục trong app Tệp, ví dụ trong iCloud Drive, và giờ sao lưu. Đến giờ, app gửi thông báo; chạm vào hoặc mở Ví Gọn thì app ghi một file sao lưu đã mã hóa vào đó, mỗi ngày tối đa một lần nếu dữ liệu có thay đổi, giữ 2 file gần nhất. Lỡ giờ thì app sao lưu bù khi bạn mở lại. Mật khẩu nằm trong Keychain của iPhone; quên mật khẩu thì không ai lấy lại được file, kể cả nhà phát triển.
 
 DỄ DÙNG
 • Tiếng Việt và tiếng Anh, giao diện sáng và tối.

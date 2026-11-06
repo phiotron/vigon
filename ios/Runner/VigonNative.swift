@@ -425,7 +425,7 @@ final class BackupFolderChannel: NSObject, UIDocumentPickerDelegate {
   }
 
   /// Tên các mục trong thư mục. File iCloud chưa tải về có dạng `.<tên>.icloud`: trả tên thật
-  /// để việc giữ 7 file vẫn đếm và dọn được chúng.
+  /// để việc giữ 2 file vẫn đếm và dọn được chúng.
   private func list(uri: String) throws -> [String] {
     try withFolder(uri) { folder in
       var names: [String] = []

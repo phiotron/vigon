@@ -51,7 +51,7 @@ Ví Gọn giúp bạn ghi chép thu chi hằng ngày thật nhanh và biết ti�
 
 **Sao lưu**
 • Tự xuất file sao lưu và khôi phục khi đổi máy; xuất CSV để mở bằng Excel hoặc Google Sheets. Có thể đặt mật khẩu cho file sao lưu (mã hóa AES-256-GCM); không đặt mật khẩu thì file không được mã hóa, hãy cất ở nơi an toàn.
-• Sao lưu tự động (tùy chọn, mặc định tắt): bạn chọn một thư mục và giờ sao lưu, đến giờ app tự ghi file sao lưu vào đó kể cả khi không mở app, mỗi ngày tối đa một lần khi dữ liệu có thay đổi, giữ 7 file gần nhất. File luôn được mã hóa bằng mật khẩu bạn đặt; mật khẩu chỉ nằm trong kho khóa an toàn của điện thoại. Nếu bạn chọn thư mục của Google Drive hay dịch vụ tương tự, việc tải lên do app đó thực hiện; Ví Gọn không tự tải file lên.
+• Sao lưu tự động (tùy chọn, mặc định tắt): bạn chọn một thư mục và giờ sao lưu, đến giờ app tự ghi file sao lưu vào đó kể cả khi không mở app, mỗi ngày tối đa một lần khi dữ liệu có thay đổi, giữ 2 file gần nhất. File luôn được mã hóa bằng mật khẩu bạn đặt; mật khẩu chỉ nằm trong kho khóa an toàn của điện thoại. Nếu bạn chọn thư mục của Google Drive hay dịch vụ tương tự, việc tải lên do app đó thực hiện; Ví Gọn không tự tải file lên.
 • Quên mật khẩu sao lưu thì không ai lấy lại được, kể cả nhà phát triển.
 
 **Dễ dùng**
@@ -92,7 +92,7 @@ Ví Gọn is a fast personal income and expense tracker that shows where your mo
 
 **Backup**
 • Export a backup file and restore it on a new phone; export CSV for Excel or Google Sheets. You can protect a backup file with a password (AES-256-GCM encryption); without a password the file is not encrypted, so keep it somewhere safe.
-• Optional automatic backup (off by default): choose a folder and a time, and the app writes a backup there at that time even when it is closed, at most once a day when your data has changed, keeping the 7 most recent files. Files are always encrypted with a password you set, kept only in your phone's secure key store. If you pick a folder of Google Drive or a similar service, that app does the uploading; Ví Gọn does not upload anything.
+• Optional automatic backup (off by default): choose a folder and a time, and the app writes a backup there at that time even when it is closed, at most once a day when your data has changed, keeping the 2 most recent files. Files are always encrypted with a password you set, kept only in your phone's secure key store. If you pick a folder of Google Drive or a similar service, that app does the uploading; Ví Gọn does not upload anything.
 • A forgotten backup password cannot be recovered by anyone, including the developer.
 
 **Easy to use**

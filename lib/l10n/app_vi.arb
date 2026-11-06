@@ -179,6 +179,8 @@
   "autoBackupFolderUnknown": "Thư mục đã chọn",
   "autoBackupLast": "Lần cuối: {time}",
   "@autoBackupLast": {"placeholders": {"time": {"type": "String"}}},
+  "autoBackupLastUnchanged": "Lần cuối: {time}. Đã kiểm {checked}: dữ liệu không đổi, giữ bản cũ",
+  "@autoBackupLastUnchanged": {"placeholders": {"time": {"type": "String"}, "checked": {"type": "String"}}},
   "autoBackupNever": "Chưa sao lưu lần nào",
   "autoBackupErrorFolder": "Không ghi được vào thư mục. Chọn lại thư mục",
   "autoBackupErrorOther": "Sao lưu không thành công. Thử lại bằng Sao lưu ngay",

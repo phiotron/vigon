@@ -1094,6 +1094,12 @@ abstract class AppLocalizations {
   /// **'Last: {time}'**
   String autoBackupLast(String time);
 
+  /// No description provided for @autoBackupLastUnchanged.
+  ///
+  /// In en, this message translates to:
+  /// **'Last: {time}. Checked {checked}: no changes, kept the last backup'**
+  String autoBackupLastUnchanged(String time, String checked);
+
   /// No description provided for @autoBackupNever.
   ///
   /// In en, this message translates to:

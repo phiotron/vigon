@@ -28,7 +28,7 @@ import java.util.concurrent.Executors
  * Mọi việc đọc ghi chạy ở luồng nền; kết quả trả về luồng chính.
  *
  * Ghi file an toàn khi tiến trình bị giết giữa chừng: dữ liệu ghi vào file tạm
- * `vigon-auto-tmp-<ms>.part` (KHÔNG khớp mẫu `vigon-auto-AAAAMMDD-GGPP.vigon` mà bộ dọn 7 bản
+ * `vigon-auto-tmp-<ms>.part` (KHÔNG khớp mẫu `vigon-auto-AAAAMMDD-GGPP.vigon` mà bộ dọn file cũ
  * của Dart đếm), ghi xong và đóng stream mới đổi tên. File cũ trùng tên chỉ bị bỏ sau khi đổi
  * tên thành công (lỗi thì trả lại). File tạm mồ côi cũ hơn một ngày bị dọn. App chỉ ghi và xóa
  * tên khớp đúng mẫu của mình, không bao giờ chạm file khác của người dùng.
@@ -286,7 +286,7 @@ class BackupFolderChannel(
         val stamp = System.currentTimeMillis()
         val parent = rootDocument(tree)
         // 1) Ghi hết dữ liệu vào file tạm rồi đóng stream. Bị giết giữa chừng thì chỉ còn file
-        //    `.part` (không khớp mẫu tên nên không bị tính vào 7 bản; bị dọn sau một ngày).
+        //    `.part` (không khớp mẫu tên nên không bị tính vào số file giữ lại; bị dọn sau một ngày).
         val tmp = DocumentsContract.createDocument(resolver, parent, FILE_MIME, "$TMP_PREFIX$stamp.part")
             ?: throw FileNotFoundException("Không tạo được file trong thư mục")
         try {

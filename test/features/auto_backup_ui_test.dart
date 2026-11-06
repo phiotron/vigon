@@ -207,6 +207,42 @@ void main() {
     await disposeApp(tester, h.db);
   });
 
+  testWidgets(
+    'mốc giờ bỏ qua vì dữ liệu không đổi: dòng trạng thái nói rõ (D-027)',
+    (tester) async {
+      final h = await _open(tester);
+      await tester.tap(_switch);
+      await settle(tester);
+      await tester.enterText(find.byType(TextField).at(0), 'abcdef');
+      await tester.enterText(find.byType(TextField).at(1), 'abcdef');
+      await tester.tap(find.text('Bật'));
+      await settle(tester);
+      await _acceptTimePicker(tester);
+      await tester.pumpAndSettle(const Duration(milliseconds: 200));
+      await settle(tester);
+      expect(find.textContaining('Lần cuối: '), findsOneWidget);
+      expect(find.textContaining('dữ liệu không đổi'), findsNothing);
+
+      // Lịch nền xét mốc giờ sau đó, thấy dữ liệu không đổi nên không ghi file.
+      final lastAt = DateTime.parse(
+        h.secrets.values[AutoBackupService.lastAtKey]!,
+      );
+      h.secrets.values[AutoBackupService.lastCheckKey] = lastAt
+          .add(const Duration(hours: 1))
+          .toIso8601String();
+      ProviderScope.containerOf(tester.element(_switch))
+          .invalidate(autoBackupStateProvider);
+      await settle(tester);
+      expect(
+        find.textContaining('dữ liệu không đổi, giữ bản cũ'),
+        findsOneWidget,
+      );
+      expect(h.folder.writes, 1);
+
+      await disposeApp(tester, h.db);
+    },
+  );
+
   testWidgets('tắt: xóa mật khẩu, bỏ quyền thư mục, giữ file (AC-60)', (
     tester,
   ) async {
