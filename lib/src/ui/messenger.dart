@@ -3,6 +3,7 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 
+import 'text_measure.dart';
 import 'theme.dart';
 import 'tokens.g.dart';
 
@@ -201,19 +202,8 @@ class _VgSnackContentState extends State<VgSnackContent> {
           );
         }
         // Xếp chồng khi chữ + nút không vừa một dòng.
-        final scaler = MediaQuery.textScalerOf(context);
-        final dir = Directionality.of(context);
-        double width(String s, TextStyle style) {
-          final painter = TextPainter(
-            text: TextSpan(text: s, style: style),
-            textScaler: scaler,
-            textDirection: dir,
-            maxLines: 1,
-          )..layout();
-          final w = painter.width;
-          painter.dispose();
-          return w;
-        }
+        double width(String s, TextStyle style) =>
+            measureTextWidth(context, s, style);
 
         final need =
             width(widget.message, textStyle) +

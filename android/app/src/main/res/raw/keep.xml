@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Resources referenced only by name from Dart (no R.drawable reference), so the
+     release resource shrinker would drop them. D9 2026-11-05: without this the
+     notification icon is missing in release, flutter_local_notifications'
+     initialize() fails and the daily reminder (F-25) never fires. -->
+<resources xmlns:tools="http://schemas.android.com/tools"
+    tools:keep="@drawable/ic_stat_vigon" />

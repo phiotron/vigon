@@ -58,3 +58,6 @@ tool/shots/out/
 design/*.zip
 design/hifi/*.zip
 design/hifi/**/*.png
+
+# Device test screenshots (D9, heavy; stay local)
+notes/d9-shots/

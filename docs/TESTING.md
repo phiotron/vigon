@@ -104,6 +104,23 @@ So giao diện với ảnh `tool/shots/out/android/<theme>/<frame>.png` (chạy 
 | H-17 | M-1..M-7 ở mục "Kiểm tay bản 1.2" phía trên | Như mô tả từng bước; riêng M-3 bước khôi phục và M-7 bước khôi phục: CHỈ làm nếu người dùng đồng ý đè dữ liệu mẫu |
 | H-18 | Đổi tiền tệ có quy đổi (D-025): Q-0..Q-7 ở mục "Thử máy: đổi tiền tệ có quy đổi tỉ giá" bên dưới | Như mô tả từng bước; xuất `.vigon` trước (Q-0), khôi phục sau (Q-7) — Q-7 CHỈ làm nếu được phép đè dữ liệu mẫu |
 
+**Kết quả D9 (Claude qua adb, Galaxy A13 Android 14, cỡ chữ máy 0,8, Chữ đậm bật; biên bản `notes/2026-11-05-d9-device-test.md`):**
+| # | Ngày | Kết quả |
+|---|------|---------|
+| H-1 | 2026-11-05 | Đạt: `install -r` giữ dữ liệu; mở nguội 1551/832/646/780/597 ms, trung vị 780 ms |
+| H-2 | 2026-11-05 | Đạt (vòng, Thu/Chi giữa vòng, Số dư + kỳ không bẻ chữ). Ô ⋯ nét đứt: không thử được (dữ liệu mẫu 10 danh mục) |
+| H-3 | 2026-11-05 | Không thử được: cần > 16 danh mục, không thêm để giữ dữ liệu mẫu |
+| H-4 | 2026-11-05 | Đạt: số khoản con thẳng mép tổng; ⚠ "Vượt 32.000 ₫" đỏ + thanh (hạn mức tạm, đã xóa lại). "Hôm nay": không có khoản hôm nay |
+| H-5 | 2026-11-05 | Đạt |
+| H-6 | 2026-11-05 | Đạt (0 → "Số tiền phải lớn hơn 0"; tiêu đề đứng yên; lưu; đã trả về trống) |
+| H-7 | 2026-11-05 | Đạt (ẩn/hiện lại Techcombank; đã dùng chỉ có Ẩn + gợi ý). Tài khoản chưa dùng: không có trong mẫu |
+| H-8 | 2026-11-05 | Không thử được: mẫu không có khoản định kỳ |
+| H-9 | 2026-11-05 | **Lỗi → đã sửa**: "Thứ Hai" bẻ 2 dòng khi máy bật Chữ đậm (đo chữ không tính `boldText`); bản sửa thấy một dòng trên máy |
+| H-11 | 2026-11-05 | **Lỗi → đã sửa**: bản release không đặt được lịch (icon `ic_stat_vigon` bị thu gọn tài nguyên xóa). Sau sửa: hộp giải thích trước; giờ 17:31 → thông báo thật 17:32:14 "Ví Gọn"/"Hôm nay bạn đã ghi chi tiêu chưa?", không số; tự đặt lại ngày sau (cửa sổ +1 h vì lịch không chính xác). Hộp quyền hệ thống và chạm thông báo: người dùng (M-4, M-5) |
+| H-14 | 2026-11-05 | Không thử TalkBack thật (adb không nghe được); nhãn qua uiautomator đủ. Gợi ý: Sửa danh mục đọc "Biểu tượng 1..31", "Màu 1..16" (không tên) |
+| H-16 | 2026-11-05 | Đạt (màn chính, Các khoản ở chủ đề tối) |
+| AC-56 | 2026-11-05 | Đạt phần chặn chụp: bật "Che nội dung" → `screencap` rỗng (FLAG_SECURE) |
+
 Tự động đã có (2026-11-05, D5): `test/features/hifi_d5_accessibility_test.dart` — 16 trạng thái Hi-Fi × sáng/tối × 100/200 %
 (`androidTapTargetGuideline`, `labeledTapTargetGuideline`, `textContrastGuideline`, không lỗi vẽ ở 200 %), 64 test đạt.
 
@@ -124,6 +141,8 @@ cho phép rõ; nếu Claude chạm máy bằng adb mà chưa được phép thì
 | Q-5 | **Link ghi công.** Có mạng: mở lại hộp quy đổi sang USD, chạm **"Rates By Exchange Rate API"** | Trình duyệt mở `https://www.exchangerate-api.com`; Back về app thì hộp vẫn còn, chưa đổi gì; bấm Hủy. TalkBack (nếu bật) đọc dòng này là liên kết/nút có tên |
 | Q-6 | **Chữ 200 %.** Cài đặt hệ thống → cỡ chữ lớn nhất (Android 14 tới 200 %; máy không tới thì ghi mức đạt được) + thu phóng màn hình lớn nhất. Mở hộp quy đổi khi có mạng (hộp xác nhận) và khi bật máy bay (hộp nhập tay) | Không chữ bị cắt/che, tỉ giá dài ("0,0000389084") không tràn; nội dung cuộn được tới hết nút; các nút xếp dọc khi chật, vùng chạm đủ lớn; ô nhập tỉ giá và nút "Đổi chiều tỉ giá" dùng được. Bấm Hủy, trả cỡ chữ về như cũ |
 | Q-7 | **Khôi phục.** Cài đặt → Dữ liệu → Khôi phục từ bản sao lưu → chọn file ở Q-0 → xác nhận | Tiền tệ về VND, 6 số mẫu khớp đúng ảnh Q-0 (không lệch làm tròn); ghi "đã khôi phục" vào biên bản. Chỉ làm khi đã được phép khôi phục đè (xem trên) |
+
+**Kết quả D9:** Q-1 2026-11-05 đạt (1 USD = 25.701,4 VND, khớp `open.er-api.com` cùng ngày 25.701,376; ngày, nguồn, ví dụ 180.000 ₫ → 7,00 $ đúng; Hủy). Q-4 2026-11-05 đạt (lỗi + điền sẵn tỉ giá gần nhất, Đổi chiều, bàn phím số có `.`/`,`, 0 → lỗi, Thử lại không treo, Tiếp tục → "Tỉ giá bạn tự nhập" → Hủy, vẫn VND). Lưu ý Samsung: bật máy bay vẫn giữ Wi-Fi (`wifi_on=2`), phải tắt Wi-Fi riêng.
 
 Tự động đã có (D7): `test/features/currency_conversion_flow_test.dart` (luồng + trợ năng 100/200 % sáng/tối), `test/data/currency_conversion_test.dart`,
 `test/data/exchange_rate_source_test.dart` (HTTP giả), `test/manifest_test.dart`. Kiểm API thật từ máy dev: `dart run tool/fx_probe.dart`.

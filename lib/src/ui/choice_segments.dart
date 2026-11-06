@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:material_symbols_icons/symbols.dart';
 
 import 'format.dart';
+import 'text_measure.dart';
 import 'tokens.g.dart';
 
 /// Nút chọn một (`.vg-seg`, SettingsRows.html, 5.1): viền `outline`, bo tròn, cao 40
@@ -71,23 +72,12 @@ class ChoiceSegments<T> extends StatelessWidget {
 
     return LayoutBuilder(
       builder: (context, constraints) {
-        final scaler = MediaQuery.textScalerOf(context);
-        final direction = Directionality.of(context);
-        double natural((T, String) o) {
-          final painter = TextPainter(
-            text: TextSpan(text: o.$2, style: style),
-            textScaler: scaler,
-            textDirection: direction,
-            maxLines: 1,
-          )..layout();
-          final width =
-              painter.width +
-              2 * VgSpace.s2 +
-              (o.$1 == selected ? _check + _gap : 0) +
-              1;
-          painter.dispose();
-          return width;
-        }
+        // Đo như `Text` sẽ vẽ, kể cả chữ đậm hệ thống (D9).
+        double natural((T, String) o) =>
+            measureTextWidth(context, o.$2, style) +
+            2 * VgSpace.s2 +
+            (o.$1 == selected ? _check + _gap : 0) +
+            1;
 
         final widths = [for (final o in options) natural(o)];
         final inner = constraints.maxWidth - 2;
