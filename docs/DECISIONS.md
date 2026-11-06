@@ -2,6 +2,11 @@
 
 Mỗi quyết định một mục, mới nhất ở trên cùng.
 
+## D-028 · Thanh ngân sách ở màn chính tính theo tháng đang xem (sửa ui-spec dòng 613) · 2026-11-06
+- Bối cảnh: thử trên máy, xem Tháng 10 (không có khoản nào) vẫn hiện "Ngân sách tháng: Vượt 3.523.179 ₫" — số của tháng hiện tại, vì `BudgetBar` dùng `budgetSpentProvider` (theo `todayProvider`). Đúng ui-spec cũ nhưng dễ hiểu nhầm.
+- Quyết định (người dùng chốt 2026-11-06): thanh tính theo tháng của kỳ đang xem — tháng → tháng đó; ngày/tuần → tháng chứa ngày cuối của kỳ (tuần vắt hai tháng tính tháng sau); năm, tất cả, khoảng tùy chọn → ẩn thanh. Hạn mức vẫn một số chung cho mọi tháng, vẫn mọi tài khoản (không theo bộ lọc tài khoản). Widget màn hình chờ (F-26) giữ tháng hiện tại.
+- Mã: `budgetMonthFor` + `viewedBudgetSpentProvider` trong `lib/src/providers.dart`; test trong `test/features/g4_screens_test.dart`.
+
 ## D-027 · Sao lưu tự động chỉ giữ 2 file; báo rõ khi bỏ qua vì dữ liệu không đổi (sửa D-014 (6), D-026) · 2026-11-06
 - Bối cảnh: người dùng thử trên Samsung A13: mỗi lần sao lưu thêm một file (giữ 7) làm rối thư mục; đặt giờ rồi chờ mà "không thấy sao lưu". Kiểm `adb`: báo thức nổ đúng giờ (10:05:19), job chạy và bỏ qua vì dữ liệu không đổi — đúng luật, nhưng Cài đặt không báo gì.
 - Quyết định (người dùng chốt 2026-11-06): (1) Giữ **2 file** `vigon-auto-*`: bản vừa ghi + 1 bản trước để phòng xoá nhầm dữ liệu rồi bị sao lưu đè. Chỉ xoá file cũ SAU khi file mới ghi xong; không giả định file vừa ghi mới nhất theo tên (đồng hồ lùi). (2) Đến mốc giờ mà dữ liệu không đổi: vẫn bỏ qua (giữ D-026), nhưng dòng trạng thái hiện "Lần cuối: … Đã kiểm …: dữ liệu không đổi, giữ bản cũ" (`autoBackupLastUnchanged`). (3) Android: job nền log `VigonBackup result=…` (chỉ tên kết quả) để chẩn đoán bằng `adb logcat -s VigonBackup`.

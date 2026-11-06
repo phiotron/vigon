@@ -208,37 +208,53 @@ void main() {
     await disposeApp(tester, db);
   });
 
-  testWidgets('app sống qua tháng mới thì thanh ngân sách tính tháng mới', (
-    tester,
-  ) async {
-    var now = DateTime(2026, 11, 30, 23, 0);
-    final db = memoryDatabase();
-    await tester.runAsync(() => SettingsRepository(db).setBudget(1000000));
-    await pumpApp(tester, db: db, clock: () => now);
-    await insertEntry(
-      tester,
-      db,
-      type: EntryType.expense,
-      amount: 250000,
-      categoryId: 1,
-      date: '2026-11-30',
-    );
-    expect(
-      findPlainText('Ngân sách tháng: Đã chi 250.000 ₫ / 1.000.000 ₫'),
-      findsOneWidget,
-    );
-    // Qua nửa đêm sang 1/12 rồi app quay lại từ nền.
-    now = DateTime(2026, 12, 1, 0, 5);
-    ProviderScope.containerOf(tester.element(find.byType(Scaffold).first))
-        .read(todayProvider.notifier)
-        .refresh();
-    await settle(tester);
-    expect(
-      findPlainText('Ngân sách tháng: Đã chi 0 ₫ / 1.000.000 ₫'),
-      findsOneWidget,
-    );
-    await disposeApp(tester, db);
-  });
+  testWidgets(
+    'app sống qua tháng mới: thanh theo tháng đang xem, số cho widget sang '
+    'tháng mới (D-028)',
+    (tester) async {
+      var now = DateTime(2026, 11, 30, 23, 0);
+      final db = memoryDatabase();
+      await tester.runAsync(() => SettingsRepository(db).setBudget(1000000));
+      await pumpApp(tester, db: db, clock: () => now);
+      await insertEntry(
+        tester,
+        db,
+        type: EntryType.expense,
+        amount: 250000,
+        categoryId: 1,
+        date: '2026-11-30',
+      );
+      expect(
+        findPlainText('Ngân sách tháng: Đã chi 250.000 ₫ / 1.000.000 ₫'),
+        findsOneWidget,
+      );
+      // Qua nửa đêm sang 1/12 rồi app quay lại từ nền.
+      now = DateTime(2026, 12, 1, 0, 5);
+      final container = ProviderScope.containerOf(
+        tester.element(find.byType(Scaffold).first),
+      );
+      final widgetSpent = container.listen(budgetSpentProvider, (_, _) {});
+      container.read(todayProvider.notifier).refresh();
+      await settle(tester);
+      // Kỳ đang xem vẫn là Tháng 11 (không tự nhảy) nên thanh vẫn số tháng 11.
+      expect(find.text('Tháng 11 năm 2026'), findsWidgets);
+      expect(
+        findPlainText('Ngân sách tháng: Đã chi 250.000 ₫ / 1.000.000 ₫'),
+        findsOneWidget,
+      );
+      // Số đẩy ra widget màn hình chờ thì đã sang tháng 12.
+      expect(widgetSpent.read().value, 0);
+      widgetSpent.close();
+      // Sang Tháng 12 trên màn chính: thanh tính tháng 12.
+      await tester.tap(find.byTooltip('Kỳ sau'));
+      await settle(tester);
+      expect(
+        findPlainText('Ngân sách tháng: Đã chi 0 ₫ / 1.000.000 ₫'),
+        findsOneWidget,
+      );
+      await disposeApp(tester, db);
+    },
+  );
 
   testWidgets('chọn Khoảng tùy chọn bằng lịch trong bảng kéo (AC-10)', (
     tester,

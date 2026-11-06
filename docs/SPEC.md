@@ -69,7 +69,7 @@ Quy ước kiểm chứng (áp dụng cho mọi mục 3, 3b, 3c): **[T]** = test
 
 ### F-09 · Ngân sách tháng
 - AC-26: Đặt được một hạn mức chi cho mỗi tháng (tổng, không theo danh mục). [T]
-- AC-27: Màn chính hiện thanh tiến độ "đã chi / hạn mức"; vượt 100% thì thanh đổi màu cảnh báo và có chữ "Vượt X" (không chỉ dựa vào màu). [M]
+- AC-27: Màn chính hiện thanh tiến độ "đã chi / hạn mức" của tháng ứng với kỳ đang xem (D-028: tháng → tháng đó; ngày/tuần → tháng chứa ngày cuối; năm/tất cả/tùy chọn → ẩn); vượt 100% thì thanh đổi màu cảnh báo và có chữ "Vượt X" (không chỉ dựa vào màu). [M]
 
 ### F-10 · Sao lưu và khôi phục bằng file
 - AC-28: "Xuất bản sao lưu" tạo một file `.vigon` (JSON có phiên bản định dạng) và mở bảng chia sẻ của hệ điều hành để người dùng tự lưu hoặc gửi; app không xin quyền bộ nhớ. [M]

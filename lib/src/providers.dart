@@ -228,3 +228,36 @@ final budgetSpentProvider = StreamProvider<int>((ref) async* {
       .watchEntries(month)
       .map((rows) => PeriodSummary.of(rows).expense);
 });
+
+/// Tháng mà thanh ngân sách ở màn chính tính theo, suy từ kỳ đang xem
+/// (D-028): xem tháng → chính tháng đó; xem ngày/tuần → tháng chứa ngày cuối
+/// của kỳ; xem năm, tất cả, khoảng tùy chọn → null (không ứng với một tháng,
+/// ẩn thanh).
+Period? budgetMonthFor(Period viewed, {required int monthStartDay}) =>
+    switch (viewed.type) {
+      PeriodType.month ||
+      PeriodType.day ||
+      PeriodType.week => Period.containing(
+        PeriodType.month,
+        viewed.end,
+        monthStartDay: monthStartDay,
+      ),
+      PeriodType.year || PeriodType.all || PeriodType.custom => null,
+    };
+
+/// Tổng chi của tháng ứng với kỳ đang xem trên màn chính, mọi tài khoản
+/// (AC-27, D-028); null khi kỳ đang xem không ứng với một tháng. Widget màn
+/// hình chờ vẫn dùng [budgetSpentProvider] (luôn tháng hiện tại).
+final viewedBudgetSpentProvider = StreamProvider<int?>((ref) async* {
+  final viewed = ref.watch(periodProvider);
+  final entries = ref.watch(entryRepositoryProvider);
+  final monthStartDay = await ref.watch(monthStartDayProvider.future);
+  final month = budgetMonthFor(viewed, monthStartDay: monthStartDay);
+  if (month == null) {
+    yield null;
+    return;
+  }
+  yield* entries
+      .watchEntries(month)
+      .map((rows) => PeriodSummary.of(rows).expense);
+});

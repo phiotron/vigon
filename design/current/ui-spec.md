@@ -145,7 +145,7 @@ Sơ đồ đường vào từ widget và thông báo, và chỗ màn khóa PIN c
 |---|-----------|---------|
 | 1 | **Thanh tiêu đề** "Ví Gọn" + 2 đến 3 nút bên phải | Xem dưới |
 | 2 | **Đầu kỳ** (`_PeriodHeader`): nút ‹ "Kỳ trước", tên kỳ ở giữa, nút › "Kỳ sau" | ‹ › đổi sang kỳ cùng loại liền trước/sau. Chạm tên kỳ mở bảng chọn kỳ (mục 4.1). Tên kỳ cao tối thiểu 48 dp |
-| 3 | **Thanh ngân sách** (`BudgetBar`) | Chỉ hiện khi đã đặt ngân sách. Dòng chữ "Ngân sách tháng: Đã chi X / Y" và thanh tiến độ. Chi quá thì chữ đổi màu lỗi, đậm, ghi "Ngân sách tháng: Vượt Z" và thanh đầy. Chạm mở hộp thoại ngân sách (mục 4.5) |
+| 3 | **Thanh ngân sách** (`BudgetBar`) | Chỉ hiện khi đã đặt ngân sách. Tính theo **tháng của kỳ đang xem** (D-028): xem tháng → tháng đó; xem ngày/tuần → tháng chứa ngày cuối của kỳ; xem năm, tất cả, khoảng tùy chọn → ẩn. Dòng chữ "Ngân sách tháng: Đã chi X / Y" và thanh tiến độ. Chi quá thì chữ đổi màu lỗi, đậm, ghi "Ngân sách tháng: Vượt Z" và thanh đầy. Chạm mở hộp thoại ngân sách (mục 4.5) |
 | 4 | **Vùng biểu đồ** (chiếm phần còn lại) | Vòng tròn ở giữa và icon danh mục chi xếp quanh (xem dưới). Vuốt ngang trong vùng này đổi kỳ |
 | 5 | **Thanh Số dư** | Nền xám nhạt, chữ "Số dư: X", cao tối thiểu 56 dp. Chạm mở "Các khoản" |
 | 6 | **Hai nút lớn** | Đỏ "−" bên trái (thêm khoản chi) và xanh "+" bên phải (thêm khoản thu), cao tối thiểu 64 dp, ở vùng ngón cái |
@@ -610,7 +610,7 @@ Ghi theo code hiện tại; chi tiết và mức độ nằm ở `APP.md` mục 
 
 - **Chưa có:** đồng bộ hai chiều giữa nhiều máy qua đám mây (cần khóa OAuth do người dùng tạo; chỉ có sao lưu một chiều vào thư mục đã chọn, F-24), widget hiện số tiền khi PIN bật (làm lộ số liệu), quy đổi tỉ giá nhiều tiền tệ, bản iOS của widget, sao lưu tự động và che nội dung (D-019) (xem `docs/SPEC.md` mục 4). Ẩn tài khoản không tự dừng các chuỗi định kỳ đang trỏ tới nó (chuỗi vẫn sinh khoản vào tài khoản ẩn).
 - **PIN:** không đếm lần nhập sai, không làm chậm; giờ ra nền lấy từ đồng hồ máy nên đổi giờ máy có thể qua được hạn 1 phút. PIN chỉ chặn người cầm máy, không mã hóa dữ liệu (D-007).
-- **Kỳ mặc định** ở màn chính là tháng lúc mở app; app sống qua nửa đêm thì kỳ đang xem không tự nhảy (thanh ngân sách thì tự sang tháng mới khi quay lại từ nền).
+- **Kỳ mặc định** ở màn chính là tháng lúc mở app; app sống qua nửa đêm thì kỳ đang xem không tự nhảy (thanh ngân sách đi theo kỳ đang xem, D-028; widget màn hình chờ thì luôn tháng hiện tại và tự sang tháng mới khi quay lại từ nền).
 - **Đổi tiền tệ** USD→VND làm tròn phần lẻ, đổi lại không hoàn được (hộp chọn tiền tệ đã nói rõ điều này).
 - **Số tiền một khoản tối đa 1.000.000.000.000 đơn vị nhỏ nhất**; vượt thì chỉ báo "Phép tính không hợp lệ" (chưa có thông báo riêng "quá lớn").
 - **Ô "Danh mục khác"** chỉ xuất hiện khi số danh mục chi nhiều hơn số icon xếp vừa quanh biểu đồ (khoảng 17 icon ở màn 360×800), nên với vài chục danh mục mới thấy.

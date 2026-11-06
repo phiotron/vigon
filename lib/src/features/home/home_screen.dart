@@ -696,7 +696,8 @@ class _TallAddButton extends StatelessWidget {
 
 /// Thanh ngân sách tháng (`.vg-budget`, 2.1/2.2): đã chi / hạn mức; vượt thì
 /// ⚠ + chữ đỏ đậm + thanh đầy màu lỗi, không chỉ dựa vào màu (AC-27). Vẽ
-/// bằng [LimitBar] dày 8. Chạm để đặt lại hạn mức.
+/// bằng [LimitBar] dày 8. Chạm để đặt lại hạn mức. Tính theo tháng của kỳ
+/// đang xem; kỳ năm/tất cả/tùy chọn thì ẩn (D-028).
 class BudgetBar extends ConsumerWidget {
   const BudgetBar({super.key});
 
@@ -704,8 +705,13 @@ class BudgetBar extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final limit = ref.watch(budgetProvider).value;
     if (limit == null) return const SizedBox.shrink();
+    final spentValue = ref.watch(viewedBudgetSpentProvider);
+    // Kỳ không ứng với một tháng: ẩn. Đang tải lần đầu: coi như 0 như trước.
+    if (spentValue.hasValue && spentValue.value == null) {
+      return const SizedBox.shrink();
+    }
     final l = AppLocalizations.of(context);
-    final spent = ref.watch(budgetSpentProvider).value ?? 0;
+    final spent = spentValue.value ?? 0;
     final currency = ref.watch(currencyProvider).value ?? 'VND';
     final over = spent > limit;
     final text = over
