@@ -5,8 +5,8 @@ import 'package:flutter/foundation.dart';
 import 'backup.dart';
 import 'backup_crypto.dart';
 import 'backup_folder_service.dart';
+import 'backup_schedule.dart';
 import 'database.dart';
-import 'dates.dart';
 import 'pin_service.dart';
 
 /// Kết quả lần sao lưu tự động gần nhất (AC-60).
@@ -38,6 +38,8 @@ class AutoBackupState {
     this.folderInICloud,
     this.lastAt,
     this.lastResult,
+    this.time = BackupTime.defaultTime,
+    this.lastCheckAt,
   });
 
   final bool enabled;
@@ -52,6 +54,29 @@ class AutoBackupState {
   /// Lần thử gần nhất (thành công hay không).
   final DateTime? lastAt;
   final AutoBackupResult? lastResult;
+
+  /// Giờ sao lưu hằng ngày theo giờ máy (D-026); chưa lưu thì 21:00.
+  final BackupTime time;
+
+  /// Lần gần nhất xét mốc giờ mà bỏ qua vì dữ liệu không đổi (không ghi file).
+  final DateTime? lastCheckAt;
+
+  /// Lần gần nhất mốc giờ được xử lý: thử sao lưu (được hay lỗi) hoặc xét thấy
+  /// dữ liệu không đổi.
+  DateTime? get handledAt {
+    final a = lastAt;
+    final b = lastCheckAt;
+    if (a == null) return b;
+    if (b == null) return a;
+    return a.isAfter(b) ? a : b;
+  }
+
+  /// Mốc đã qua mà chưa xử lý: lần mở/ra nền app kế tiếp sẽ bù (D-026).
+  bool isDue(DateTime now) =>
+      enabled && isBackupDue(now: now, time: time, handledAt: handledAt);
+
+  /// Lần chạy theo lịch kế tiếp (dòng "Lần tới" trong Cài đặt).
+  DateTime nextAt(DateTime now) => nextSlot(now, time);
 
   bool get lastFailed =>
       lastResult != null &&
@@ -95,6 +120,13 @@ class AutoBackupService {
   static const lastHashKey = 'auto_backup_last_hash';
   static const iCloudKey = 'auto_backup_icloud';
 
+  /// Giờ sao lưu `HH:MM` (D-026). Cùng chỗ với cấu hình F-24 (SecretStore,
+  /// không vào bảng `settings`, D-014).
+  static const timeKey = 'auto_backup_time';
+
+  /// Lần xét mốc giờ mà bỏ qua vì dữ liệu không đổi.
+  static const lastCheckKey = 'auto_backup_last_check';
+
   /// Số file tự động giữ lại trong thư mục (AC-59).
   static const keepFiles = 7;
 
@@ -110,12 +142,23 @@ class AutoBackupService {
         '-${two(d.hour)}${two(d.minute)}.vigon';
   }
 
+  /// Thời điểm lưu dạng UTC (`...Z`) để đổi múi giờ không làm lệch; bản cũ
+  /// không có `Z` được đọc theo giờ máy. Trả về giờ máy.
+  static DateTime? _readTime(String? text) =>
+      DateTime.tryParse(text ?? '')?.toLocal();
+
+  static String _writeTime(DateTime t) => t.toUtc().toIso8601String();
+
   Future<AutoBackupState> state() async {
     try {
-      final lastAt = DateTime.tryParse(await _secrets.read(lastAtKey) ?? '');
+      final lastAt = _readTime(await _secrets.read(lastAtKey));
       final result = await _secrets.read(lastResultKey);
       final iCloud = await _secrets.read(iCloudKey);
       return AutoBackupState(
+        time:
+            BackupTime.parse(await _secrets.read(timeKey)) ??
+            BackupTime.defaultTime,
+        lastCheckAt: _readTime(await _secrets.read(lastCheckKey)),
         enabled: await _secrets.read(enabledKey) == '1',
         folderUri: await _secrets.read(uriKey),
         folderName: await _secrets.read(nameKey),
@@ -128,20 +171,28 @@ class AutoBackupService {
     }
   }
 
-  /// Bật: lưu thư mục (đã chọn, đã giữ quyền) và mật khẩu. Chưa sao lưu; nơi
-  /// gọi chạy [backupNow] ngay sau đó.
+  /// Bật: lưu thư mục (đã chọn, đã giữ quyền), mật khẩu và giờ sao lưu. Chưa
+  /// sao lưu; nơi gọi chạy [backupNow] ngay sau đó.
   Future<void> enable({
     required PickedFolder folder,
     required String password,
+    BackupTime time = BackupTime.defaultTime,
   }) async {
     await _secrets.write(passwordKey, password);
     await _secrets.write(uriKey, folder.uri);
     await _saveFolderInfo(folder);
+    await _secrets.write(timeKey, time.encode());
     await _secrets.delete(lastAtKey);
     await _secrets.delete(lastResultKey);
     await _secrets.delete(lastHashKey);
+    await _secrets.delete(lastCheckKey);
     await _secrets.write(enabledKey, '1');
   }
+
+  /// Đổi giờ sao lưu (D-026). Không sao lưu ngay; lịch được đặt lại theo
+  /// trạng thái mới (`autoBackupScheduleSyncProvider`).
+  Future<void> setTime(BackupTime time) =>
+      _secrets.write(timeKey, time.encode());
 
   Future<void> _saveFolderInfo(PickedFolder folder) async {
     if (folder.name == null) {
@@ -181,6 +232,8 @@ class AutoBackupService {
       lastResultKey,
       lastHashKey,
       iCloudKey,
+      timeKey,
+      lastCheckKey,
     ]) {
       try {
         await _secrets.delete(key);
@@ -197,44 +250,41 @@ class AutoBackupService {
     }
   }
 
-  /// iOS không cho app chạy theo giờ và có thể treo app ngay khi ra nền, nên
-  /// trên iOS sao lưu tự động chạy khi MỞ hoặc QUAY LẠI app ([maybeRunOnOpen],
-  /// chữ `autoBackupRunsOnOpenIos`, D-022); Android chạy lúc ra nền (D-014).
-  /// Đọc mỗi lần gọi để test đổi được bằng `debugDefaultTargetPlatformOverride`.
-  static bool get runsOnOpen => defaultTargetPlatform == TargetPlatform.iOS;
-
-  /// Gọi khi app ra nền (Android): xem [_maybeRun]. Trên iOS không làm gì.
+  /// Đường bù khi app RA NỀN (Android, gọi từ `AppLifecycleWatcher`): xem
+  /// [maybeRunIfDue]. Trên iOS không làm gì vì iOS có thể treo app ngay khi ra
+  /// nền (D-022); iOS bù lúc mở/quay lại app ([maybeRunOnOpen]).
   Future<void> maybeRunDaily() async {
-    if (runsOnOpen) return;
-    await _maybeRun();
+    if (defaultTargetPlatform == TargetPlatform.iOS) return;
+    await maybeRunIfDue();
   }
 
-  /// Gọi khi app mở hoặc quay lại (iOS): xem [_maybeRun]. Trên Android không
-  /// làm gì (đã chạy lúc ra nền).
-  Future<void> maybeRunOnOpen() async {
-    if (!runsOnOpen) return;
-    await _maybeRun();
-  }
+  /// Đường bù khi app MỞ hoặc QUAY LẠI (cả hai nền tảng, D-026); trên iOS cũng
+  /// là lúc người dùng chạm thông báo "Đến giờ sao lưu". Xem [maybeRunIfDue].
+  Future<void> maybeRunOnOpen() => maybeRunIfDue();
 
-  /// Sao lưu nếu đã bật, hôm nay chưa thử lần nào và dữ liệu đã đổi kể từ lần
-  /// sao lưu thành công trước (AC-59, tối đa một lần mỗi ngày). Không ném lỗi.
-  Future<void> _maybeRun() async {
-    if (_running) return;
+  /// Sao lưu nếu đã bật, mốc giờ gần nhất (giờ người dùng chọn, D-026) chưa
+  /// được xử lý và dữ liệu đã đổi kể từ lần sao lưu thành công trước. Dùng chung
+  /// cho lịch chạy nền Android, thông báo iOS và đường bù khi mở/ra nền app.
+  /// Mỗi mốc xử lý tối đa một lần: lần thử LỖI cũng tính (D-014), lần thấy dữ
+  /// liệu không đổi ghi [lastCheckKey] để không xuất lại dữ liệu mỗi lần ra nền.
+  /// Trả kết quả nếu đã thử sao lưu, null nếu không làm gì. Không ném lỗi.
+  Future<AutoBackupResult?> maybeRunIfDue() async {
+    if (_running) return null;
     try {
       final s = await state();
-      if (!s.enabled) return;
       final now = _clock();
-      final last = s.lastAt;
-      if (last != null && dateOnly(last) == dateOnly(now)) return;
+      if (!s.isDue(now)) return null;
       final lastHash = await _secrets.read(lastHashKey);
       if (s.lastResult == AutoBackupResult.ok &&
           lastHash != null &&
           lastHash == await _dataHash()) {
-        return;
+        await _secrets.write(lastCheckKey, _writeTime(now));
+        return null;
       }
-      await backupNow();
+      return await backupNow();
     } catch (_) {
       // Không để lỗi chạy nền lọt ra ngoài.
+      return null;
     }
   }
 
@@ -291,7 +341,7 @@ class AutoBackupService {
       result = AutoBackupResult.failed;
     }
     try {
-      await _secrets.write(lastAtKey, now.toIso8601String());
+      await _secrets.write(lastAtKey, _writeTime(now));
       await _secrets.write(lastResultKey, result.name);
       if (result == AutoBackupResult.ok && hash != null) {
         await _secrets.write(lastHashKey, hash);

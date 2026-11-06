@@ -34,9 +34,14 @@ import java.util.concurrent.Executors
  * tên khớp đúng mẫu của mình, không bao giờ chạm file khác của người dùng.
  */
 class BackupFolderChannel(
-    hostActivity: Activity,
+    context: Context,
+    hostActivity: Activity?,
     messenger: BinaryMessenger,
 ) : MethodChannel.MethodCallHandler {
+    /** Trong app (có màn hình): mở được bộ chọn thư mục. */
+    constructor(hostActivity: Activity, messenger: BinaryMessenger) :
+        this(hostActivity.applicationContext, hostActivity, messenger)
+
     companion object {
         const val CHANNEL = "vigon/backup_folder"
         private const val REQUEST_PICK_FOLDER = 4201
@@ -55,7 +60,9 @@ class BackupFolderChannel(
 
     // Chỉ giữ Activity cho việc cần nó (mở bộ chọn); đọc ghi dùng applicationContext để luồng
     // nền không giữ Activity. Cả hai được bỏ khi Activity bị hủy (xem dispose).
-    private val appContext: Context = hostActivity.applicationContext
+    // Chạy nền (D-026, BackupJobService) thì không có Activity: chỉ ghi/liệt kê/xóa, không mở
+    // bộ chọn; nơi tạo tự gọi dispose() khi hủy engine.
+    private val appContext: Context = context.applicationContext
     private var activity: Activity? = hostActivity
     private val resolver: ContentResolver get() = appContext.contentResolver
     private val main = Handler(Looper.getMainLooper())
@@ -78,14 +85,16 @@ class BackupFolderChannel(
 
     init {
         channel.setMethodCallHandler(this)
-        (appContext as? Application)?.registerActivityLifecycleCallbacks(lifecycle)
+        if (hostActivity != null) {
+            (appContext as? Application)?.registerActivityLifecycleCallbacks(lifecycle)
+        }
     }
 
     /**
      * Gọi khi Activity bị hủy: thôi nhận lệnh, bỏ tham chiếu Activity, dừng luồng nền (việc đang
      * chạy vẫn xong, việc mới không nhận). Bản mới được dựng ở `configureFlutterEngine`.
      */
-    private fun dispose() {
+    fun dispose() {
         (appContext as? Application)?.unregisterActivityLifecycleCallbacks(lifecycle)
         channel.setMethodCallHandler(null)
         pendingPick?.error("io_error", "Màn hình đã đóng", null)

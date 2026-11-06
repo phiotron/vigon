@@ -1547,7 +1547,7 @@ abstract class AppLocalizations {
   /// No description provided for @autoBackupRunsOnOpenIos.
   ///
   /// In en, this message translates to:
-  /// **'iPhone does not run apps on a schedule, so the backup runs when you open Ví Gọn, at most once a day.'**
+  /// **'iPhone does not let closed apps run on their own. At the time you chose, Ví Gọn sends a notification; tap it or open the app to back up. If the time is missed, the backup catches up when you open the app, at most once a day.'**
   String get autoBackupRunsOnOpenIos;
 
   /// No description provided for @autoBackupLocalFolderWarningIos.
@@ -1555,6 +1555,60 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'This folder may be stored only on this iPhone. If so, losing the phone means losing these files. To keep them safe, choose a folder in iCloud Drive or Google Drive.'**
   String get autoBackupLocalFolderWarningIos;
+
+  /// No description provided for @autoBackupTime.
+  ///
+  /// In en, this message translates to:
+  /// **'Backup time'**
+  String get autoBackupTime;
+
+  /// No description provided for @autoBackupNextToday.
+  ///
+  /// In en, this message translates to:
+  /// **'Next: today, {time}'**
+  String autoBackupNextToday(String time);
+
+  /// No description provided for @autoBackupNextTomorrow.
+  ///
+  /// In en, this message translates to:
+  /// **'Next: tomorrow, {time}'**
+  String autoBackupNextTomorrow(String time);
+
+  /// No description provided for @autoBackupNextSoon.
+  ///
+  /// In en, this message translates to:
+  /// **'Next: when you leave Ví Gọn'**
+  String get autoBackupNextSoon;
+
+  /// No description provided for @autoBackupNextSoonIos.
+  ///
+  /// In en, this message translates to:
+  /// **'Next: when you open Ví Gọn again'**
+  String get autoBackupNextSoonIos;
+
+  /// No description provided for @autoBackupNotificationBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Time to back up Ví Gọn. Tap to back up.'**
+  String get autoBackupNotificationBody;
+
+  /// No description provided for @autoBackupNotifyTitleIos.
+  ///
+  /// In en, this message translates to:
+  /// **'Notify me at backup time'**
+  String get autoBackupNotifyTitleIos;
+
+  /// No description provided for @autoBackupNotifyBodyIos.
+  ///
+  /// In en, this message translates to:
+  /// **'iPhone does not let Ví Gọn run on its own while closed. At the time you chose, Ví Gọn sends a notification; tap it to back up. The notification never contains your figures.'**
+  String get autoBackupNotifyBodyIos;
+
+  /// No description provided for @autoBackupNotifyDeniedIos.
+  ///
+  /// In en, this message translates to:
+  /// **'No backup-time notification. Ví Gọn will still catch up when you open the app.'**
+  String get autoBackupNotifyDeniedIos;
 
   /// No description provided for @secureWindowNoteIos.
   ///

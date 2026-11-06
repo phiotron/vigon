@@ -155,32 +155,52 @@ void main() {
     }
   });
 
-  test('tối đa một lần mỗi ngày và chỉ khi dữ liệu đổi (AC-59)', () async {
-    await enable();
-    await service.maybeRunDaily();
-    expect(folder.files.length, 1, reason: 'lần đầu trong ngày chạy');
+  test(
+    'mỗi mốc giờ tối đa một lần và chỉ khi dữ liệu đổi (AC-59, D-026)',
+    () async {
+      await enable(); // 18:30, giờ mặc định 21:00
+      await service.maybeRunDaily();
+      expect(folder.files.length, 1, reason: 'chưa từng sao lưu: chạy');
 
-    // Cùng ngày, dù dữ liệu đổi: không chạy lại.
-    await addEntry(2000);
-    now = DateTime(2026, 11, 3, 23, 0);
-    await service.maybeRunDaily();
-    expect(folder.files.length, 1);
+      // Trước 21:00, dù dữ liệu đổi: chưa tới mốc.
+      await addEntry(2000);
+      now = DateTime(2026, 11, 3, 20, 59);
+      await service.maybeRunDaily();
+      expect(folder.files.length, 1);
 
-    // Hôm sau, dữ liệu đã đổi: chạy.
-    now = DateTime(2026, 11, 4, 9, 0);
-    await service.maybeRunDaily();
-    expect(folder.files.length, 2);
+      // Qua 21:00, dữ liệu đã đổi: chạy.
+      now = DateTime(2026, 11, 3, 21, 5);
+      await service.maybeRunDaily();
+      expect(folder.files.length, 2);
 
-    // Hôm sau nữa, dữ liệu không đổi: bỏ qua.
-    now = DateTime(2026, 11, 5, 9, 0);
-    await service.maybeRunDaily();
-    expect(folder.files.length, 2);
+      // Cùng mốc, dữ liệu lại đổi: không chạy lần hai.
+      await addEntry(3000);
+      now = DateTime(2026, 11, 3, 23, 0);
+      await service.maybeRunDaily();
+      expect(folder.files.length, 2);
 
-    // Đổi dữ liệu rồi ra nền lần nữa cùng ngày: chạy (chưa thử hôm nay).
-    await addEntry(3000);
-    await service.maybeRunDaily();
-    expect(folder.files.length, 3);
-  });
+      // Mốc hôm sau: chạy.
+      now = DateTime(2026, 11, 4, 21, 10);
+      await service.maybeRunDaily();
+      expect(folder.files.length, 3);
+
+      // Mốc hôm sau nữa, dữ liệu không đổi: bỏ qua và ghi đã xét...
+      now = DateTime(2026, 11, 5, 21, 10);
+      await service.maybeRunDaily();
+      expect(folder.files.length, 3);
+      expect(secrets.values[AutoBackupService.lastCheckKey], isNotNull);
+      // ...nên ra nền lần nữa cùng mốc không xuất lại dữ liệu để so.
+      await addEntry(4000);
+      now = DateTime(2026, 11, 5, 22, 0);
+      await service.maybeRunDaily();
+      expect(folder.files.length, 3);
+
+      // Mốc kế tiếp: dữ liệu đã đổi từ lần sao lưu trước → chạy.
+      now = DateTime(2026, 11, 6, 21, 0);
+      await service.maybeRunDaily();
+      expect(folder.files.length, 4);
+    },
+  );
 
   test('tắt thì không chạy nền', () async {
     await addEntry(1000);

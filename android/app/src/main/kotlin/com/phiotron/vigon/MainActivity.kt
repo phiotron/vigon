@@ -35,6 +35,8 @@ class MainActivity : FlutterActivity() {
         super.configureFlutterEngine(flutterEngine)
         // F-24: sao lưu tự động vào thư mục người dùng chọn (Storage Access Framework).
         backupFolder = BackupFolderChannel(this, flutterEngine.dartExecutor.binaryMessenger)
+        // D-026: lịch sao lưu theo giờ chọn (báo thức không chính xác → job chạy Dart nền).
+        BackupAlarm.registerChannel(flutterEngine.dartExecutor.binaryMessenger, this)
         // F-26: widget màn hình chính và liên kết sâu từ nút Chi/Thu.
         configureWidget(flutterEngine)
         // AC-56: bật/tắt FLAG_SECURE để chặn chụp màn hình và che màn đa nhiệm.

@@ -1,5 +1,6 @@
-// D4 (D-022): sao lưu tự động trên iOS chạy khi mở/quay lại app, cùng định
-// dạng file và luật một lần mỗi ngày như Android; kênh trả thêm `inICloud`.
+// D4 (D-022) + D10 (D-026): iOS bù khi mở/quay lại app (và khi chạm thông báo
+// giờ sao lưu), cùng định dạng file và luật mỗi mốc giờ một lần như Android;
+// kênh trả thêm `inICloud`.
 import 'package:drift/drift.dart' show driftRuntimeOptions;
 import 'package:drift/native.dart';
 import 'package:flutter/foundation.dart';
@@ -58,9 +59,8 @@ void main() {
     password: 'mat-khau-123',
   );
 
-  test('iOS: chạy khi mở app, KHÔNG chạy lúc ra nền', () async {
+  test('iOS: bù khi mở app, KHÔNG chạy lúc ra nền', () async {
     debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
-    expect(AutoBackupService.runsOnOpen, isTrue);
     await addEntry(50000);
     await enable();
     await service.maybeRunDaily(); // ra nền: iOS bỏ qua
@@ -70,34 +70,38 @@ void main() {
   });
 
   test(
-    'iOS: tối đa một lần mỗi ngày, hôm sau chạy lại khi dữ liệu đổi',
+    'iOS (D-026): mỗi mốc giờ tối đa một lần, chỉ khi dữ liệu đổi',
     () async {
       debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
       await addEntry(50000);
-      await enable();
+      await enable(); // giờ mặc định 21:00
       await service.maybeRunOnOpen();
       await addEntry(10000);
-      now = DateTime(2026, 11, 26, 21, 0);
-      await service.maybeRunOnOpen(); // cùng ngày: không chạy
+      now = DateTime(2026, 11, 26, 20, 0);
+      await service.maybeRunOnOpen(); // chưa tới 21:00: không chạy
       expect(folder.writes, 1);
-      now = DateTime(2026, 11, 27, 7, 30);
+      now = DateTime(2026, 11, 26, 21, 0); // chạm thông báo đúng giờ
       await service.maybeRunOnOpen();
       expect(folder.writes, 2);
-      now = DateTime(2026, 11, 28, 7, 30);
+      now = DateTime(2026, 11, 27, 7, 30);
+      await service.maybeRunOnOpen(); // mốc 21:00 hôm qua đã xử lý
+      expect(folder.writes, 2);
+      now = DateTime(2026, 11, 27, 21, 30);
       await service.maybeRunOnOpen(); // dữ liệu không đổi: bỏ qua
       expect(folder.writes, 2);
     },
   );
 
-  test('Android: vẫn chạy lúc ra nền, mở app không làm gì', () async {
+  test('Android (D-026): bù cả lúc mở app lẫn lúc ra nền', () async {
     debugDefaultTargetPlatformOverride = TargetPlatform.android;
-    expect(AutoBackupService.runsOnOpen, isFalse);
     await addEntry(50000);
     await enable(inICloud: null);
     await service.maybeRunOnOpen();
-    expect(folder.writes, 0);
-    await service.maybeRunDaily();
     expect(folder.writes, 1);
+    await addEntry(1);
+    now = DateTime(2026, 11, 27, 9, 0); // lỡ mốc 21:00 hôm qua
+    await service.maybeRunDaily();
+    expect(folder.writes, 2);
   });
 
   test('lưu inICloud của thư mục; đổi thư mục cập nhật; tắt thì xóa', () async {

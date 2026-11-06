@@ -73,6 +73,31 @@ tz.TZDateTime nextReminderInstant(
   return next;
 }
 
+bool _localZoneReady = false;
+
+/// Nạp dữ liệu múi giờ và đặt `tz.local` theo múi giờ của máy (một lần). Dùng
+/// chung cho lịch nhắc ghi chép (F-25) và thông báo giờ sao lưu iOS (D-026).
+Future<void> ensureLocalTimeZone() async {
+  if (_localZoneReady) return;
+  tzdata.initializeTimeZones();
+  tz.Location? found;
+  try {
+    final info = await FlutterTimezone.getLocalTimezone();
+    found = tz.getLocation(info.identifier);
+  } catch (_) {
+    // Múi giờ lạ hoặc không đọc được: chọn múi giờ cùng độ lệch hiện tại.
+    final offset = DateTime.now().timeZoneOffset;
+    for (final location in tz.timeZoneDatabase.locations.values) {
+      if (tz.TZDateTime.now(location).timeZoneOffset == offset) {
+        found = location;
+        break;
+      }
+    }
+  }
+  tz.setLocalLocation(found ?? tz.UTC);
+  _localZoneReady = true;
+}
+
 /// Bản thật dùng `flutter_local_notifications`. Lịch KHÔNG chính xác theo phút
 /// (`inexactAllowWhileIdle`) nên không cần quyền báo thức chính xác.
 class LocalNotificationsScheduler implements ReminderScheduler {
@@ -152,22 +177,7 @@ class LocalNotificationsScheduler implements ReminderScheduler {
 
   Future<void> _ensureZones() async {
     if (_zonesReady) return;
-    tzdata.initializeTimeZones();
-    tz.Location? found;
-    try {
-      final info = await FlutterTimezone.getLocalTimezone();
-      found = tz.getLocation(info.identifier);
-    } catch (_) {
-      // Múi giờ lạ hoặc không đọc được: chọn múi giờ cùng độ lệch hiện tại.
-      final offset = DateTime.now().timeZoneOffset;
-      for (final location in tz.timeZoneDatabase.locations.values) {
-        if (tz.TZDateTime.now(location).timeZoneOffset == offset) {
-          found = location;
-          break;
-        }
-      }
-    }
-    tz.setLocalLocation(found ?? tz.UTC);
+    await ensureLocalTimeZone();
     _zonesReady = true;
   }
 

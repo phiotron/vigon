@@ -808,11 +808,45 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get autoBackupRunsOnOpenIos =>
-      'iPhone không cho app chạy theo giờ, nên bản sao lưu được tạo khi bạn mở Ví Gọn, mỗi ngày tối đa một lần.';
+      'iPhone không cho app tự chạy khi đã đóng. Đúng giờ bạn chọn, Ví Gọn gửi thông báo; chạm vào hoặc mở app để sao lưu. Lỡ giờ thì sao lưu bù khi bạn mở app, mỗi ngày tối đa một lần.';
 
   @override
   String get autoBackupLocalFolderWarningIos =>
       'Thư mục này có thể chỉ nằm trên iPhone. Nếu vậy, mất máy là mất luôn các file này. Để giữ an toàn, hãy chọn thư mục trong iCloud Drive hoặc Google Drive.';
+
+  @override
+  String get autoBackupTime => 'Giờ sao lưu';
+
+  @override
+  String autoBackupNextToday(String time) {
+    return 'Lần tới: hôm nay, $time';
+  }
+
+  @override
+  String autoBackupNextTomorrow(String time) {
+    return 'Lần tới: ngày mai, $time';
+  }
+
+  @override
+  String get autoBackupNextSoon => 'Lần tới: khi bạn rời Ví Gọn';
+
+  @override
+  String get autoBackupNextSoonIos => 'Lần tới: khi bạn mở lại Ví Gọn';
+
+  @override
+  String get autoBackupNotificationBody =>
+      'Đến giờ sao lưu Ví Gọn. Chạm để sao lưu.';
+
+  @override
+  String get autoBackupNotifyTitleIos => 'Báo khi đến giờ sao lưu';
+
+  @override
+  String get autoBackupNotifyBodyIos =>
+      'iPhone không cho Ví Gọn tự chạy khi đã đóng. Đúng giờ bạn chọn, Ví Gọn gửi một thông báo; chạm vào để sao lưu. Thông báo không chứa số liệu của bạn.';
+
+  @override
+  String get autoBackupNotifyDeniedIos =>
+      'Không có thông báo giờ sao lưu. Ví Gọn vẫn sao lưu bù khi bạn mở app.';
 
   @override
   String get secureWindowNoteIos =>

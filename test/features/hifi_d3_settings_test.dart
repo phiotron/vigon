@@ -133,8 +133,9 @@ void main() {
         );
         expect(
           find.text(
-            'iPhone không cho app chạy theo giờ, nên bản sao lưu được tạo '
-            'khi bạn mở Ví Gọn, mỗi ngày tối đa một lần.',
+            'iPhone không cho app tự chạy khi đã đóng. Đúng giờ bạn chọn, '
+            'Ví Gọn gửi thông báo; chạm vào hoặc mở app để sao lưu. Lỡ giờ '
+            'thì sao lưu bù khi bạn mở app, mỗi ngày tối đa một lần.',
           ),
           findsOneWidget,
         );

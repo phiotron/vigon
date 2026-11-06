@@ -6,10 +6,15 @@ import 'package:material_symbols_icons/symbols.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../data/auto_backup_service.dart';
 import '../../data/backup_folder_service.dart';
+import '../../data/backup_schedule.dart';
+import '../../providers.dart';
+import '../../ui/confirm_dialog.dart';
+import '../../ui/dialog.dart';
 import '../../ui/hint.dart';
 import '../../ui/messenger.dart';
 import '../../ui/settings_rows.dart';
 import '../../ui/tokens.g.dart';
+import '../reminder/reminder_providers.dart';
 import 'auto_backup_providers.dart';
 import 'backup_password_dialogs.dart';
 import 'settings_lead.dart';
@@ -18,7 +23,8 @@ export 'backup_password_dialogs.dart' show AutoBackupPasswordDialog;
 
 /// Thẻ "Sao lưu tự động" trong Cài đặt → Dữ liệu (F-24, AC-58..60, SCR-31):
 /// công tắc + phụ đề; bật thì dưới là thư mục, dòng trạng thái (⏱ / ✓ / dải
-/// lỗi) và cặp nút. Trên iOS dùng chữ riêng (D-022).
+/// lỗi), dòng "Lần tới" và cặp nút, rồi hàng "Giờ sao lưu" (D-026, chọn giờ
+/// như A14). Trên iOS dùng chữ riêng (D-022).
 class AutoBackupSection extends ConsumerStatefulWidget {
   const AutoBackupSection({super.key});
 
@@ -80,7 +86,7 @@ class _AutoBackupSectionState extends ConsumerState<AutoBackupSection>
         : Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              // iOS (D-022): chạy khi mở app, không theo giờ.
+              // iOS (D-026): thông báo đúng giờ, chạm hoặc mở app thì sao lưu.
               if (ios)
                 VgHint(
                   l.autoBackupRunsOnOpenIos,
@@ -126,6 +132,7 @@ class _AutoBackupSectionState extends ConsumerState<AutoBackupSection>
                       : SettingsStatus.ok,
                   text: _lastText(context, l, state),
                 ),
+                _NextRunLine(state: state, ios: ios),
                 // Lỗi thư mục: cách sửa (Chọn lại thư mục) lên trước, tô tonal.
                 ButtonPair(
                   children: folderError
@@ -146,7 +153,62 @@ class _AutoBackupSectionState extends ConsumerState<AutoBackupSection>
               on ? enableAutoBackup(context, ref) : disableAutoBackup(ref, l),
           footer: footer,
         ),
+        if (state.enabled)
+          SettingsNavRow(
+            icon: Symbols.schedule_rounded,
+            title: l.autoBackupTime,
+            value: _timeOfDay(state.time).format(context),
+            onTap: running ? null : () => pickBackupTime(context, ref),
+          ),
       ],
+    );
+  }
+}
+
+TimeOfDay _timeOfDay(BackupTime t) => TimeOfDay(hour: t.hour, minute: t.minute);
+
+/// "Lần tới: hôm nay/ngày mai, 21:00" theo giờ máy (D-026). Mốc đã qua mà chưa
+/// sao lưu thì báo đường bù: Android khi rời app, iOS khi mở lại app.
+class _NextRunLine extends ConsumerWidget {
+  const _NextRunLine({required this.state, required this.ios});
+
+  final AutoBackupState state;
+  final bool ios;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l = AppLocalizations.of(context);
+    final now = ref.watch(clockProvider)();
+    final String text;
+    if (state.isDue(now)) {
+      text = ios ? l.autoBackupNextSoonIos : l.autoBackupNextSoon;
+    } else {
+      final next = state.nextAt(now);
+      final time = TimeOfDay.fromDateTime(next).format(context);
+      text = isToday(now, next)
+          ? l.autoBackupNextToday(time)
+          : l.autoBackupNextTomorrow(time);
+    }
+    final scheme = Theme.of(context).colorScheme;
+    return Padding(
+      padding: const EdgeInsets.only(top: VgSpace.s2),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Icon(
+            Symbols.event_upcoming_rounded,
+            size: 20,
+            color: scheme.onSurfaceVariant,
+          ),
+          const SizedBox(width: VgSpace.s2),
+          Expanded(
+            child: Text(
+              text,
+              style: VgType.bodySm.copyWith(color: scheme.onSurfaceVariant),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
@@ -220,8 +282,19 @@ Future<void> enableAutoBackup(BuildContext context, WidgetRef ref) async {
     await _releaseQuietly(folders, folder.uri);
     return;
   }
+  // D-026: chọn giờ ngay sau mật khẩu, điền sẵn 21:00 (24 h/12 h theo máy như
+  // A14). Đóng bộ chọn không hủy việc bật: giữ 21:00, đổi được sau.
+  var time = BackupTime.defaultTime;
+  if (context.mounted) {
+    final picked = await showTimePicker(
+      context: context,
+      initialTime: _timeOfDay(time),
+      helpText: l.autoBackupTime,
+    );
+    if (picked != null) time = BackupTime(picked.hour, picked.minute);
+  }
   try {
-    await service.enable(folder: folder, password: password);
+    await service.enable(folder: folder, password: password, time: time);
   } catch (_) {
     // Bộ nhớ an toàn (Keystore) lỗi: không bật được.
     await service.disable();
@@ -232,6 +305,67 @@ Future<void> enableAutoBackup(BuildContext context, WidgetRef ref) async {
   ref.invalidate(autoBackupStateProvider);
   if (!context.mounted) return;
   await backupNowFromSettings(context, ref);
+  // iOS: xin quyền thông báo SAU lần sao lưu đầu để lời báo bị từ chối không
+  // bị thanh "Đã sao lưu" che mất.
+  if (!context.mounted) return;
+  await ensureBackupNotificationPermission(context, ref);
+}
+
+/// Hàng "Giờ sao lưu": `showTimePicker` Material như A14 (giờ nhắc), lưu ngay,
+/// lịch được đặt lại qua `autoBackupScheduleSyncProvider` (D-026).
+Future<void> pickBackupTime(BuildContext context, WidgetRef ref) async {
+  final l = AppLocalizations.of(context);
+  final service = ref.read(autoBackupServiceProvider);
+  final current = (await service.state()).time;
+  if (!context.mounted) return;
+  final picked = await showTimePicker(
+    context: context,
+    initialTime: _timeOfDay(current),
+    helpText: l.autoBackupTime,
+  );
+  if (picked == null) return;
+  final time = BackupTime(picked.hour, picked.minute);
+  if (time != current) {
+    await service.setTime(time);
+    ref.invalidate(autoBackupStateProvider);
+  }
+  if (!context.mounted) return;
+  await ensureBackupNotificationPermission(context, ref);
+}
+
+/// iOS (D-026, S-40): thông báo giờ sao lưu cần quyền. Đã có thì thôi; chưa có
+/// thì giải thích trước, chỉ khi "Tiếp tục" mới hiện hộp thoại của iOS. Bị từ
+/// chối hay "Hủy": báo nhẹ, sao lưu tự động vẫn bật và vẫn bù khi mở app.
+/// Android chạy nền, không cần quyền thông báo: không làm gì.
+Future<void> ensureBackupNotificationPermission(
+  BuildContext context,
+  WidgetRef ref,
+) async {
+  final scheduler = ref.read(autoBackupSchedulerProvider);
+  if (!scheduler.usesNotification) return;
+  if (await scheduler.hasNotificationPermission()) return;
+  if (!context.mounted) return;
+  final l = AppLocalizations.of(context);
+  final agreed = await showConfirmDialog(
+    context,
+    icon: Symbols.notifications_rounded,
+    iconTone: VgDialogTone.neutral,
+    title: l.autoBackupNotifyTitleIos,
+    body: l.autoBackupNotifyBodyIos,
+    action: l.reminderContinue,
+  );
+  final reminders = ref.read(reminderSchedulerProvider);
+  if (agreed && await reminders.requestPermission()) {
+    // Đặt lại lịch để chắc thông báo dùng quyền mới.
+    ref.invalidate(autoBackupStateProvider);
+    return;
+  }
+  showVgSnackBar(
+    l.autoBackupNotifyDeniedIos,
+    actionLabel: agreed ? l.reminderOpenSettings : null,
+    onAction: agreed ? reminders.openSystemSettings : null,
+    long: agreed,
+  );
 }
 
 Future<void> _releaseQuietly(BackupFolderService folders, String uri) async {

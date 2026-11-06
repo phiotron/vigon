@@ -820,11 +820,45 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get autoBackupRunsOnOpenIos =>
-      'iPhone does not run apps on a schedule, so the backup runs when you open Ví Gọn, at most once a day.';
+      'iPhone does not let closed apps run on their own. At the time you chose, Ví Gọn sends a notification; tap it or open the app to back up. If the time is missed, the backup catches up when you open the app, at most once a day.';
 
   @override
   String get autoBackupLocalFolderWarningIos =>
       'This folder may be stored only on this iPhone. If so, losing the phone means losing these files. To keep them safe, choose a folder in iCloud Drive or Google Drive.';
+
+  @override
+  String get autoBackupTime => 'Backup time';
+
+  @override
+  String autoBackupNextToday(String time) {
+    return 'Next: today, $time';
+  }
+
+  @override
+  String autoBackupNextTomorrow(String time) {
+    return 'Next: tomorrow, $time';
+  }
+
+  @override
+  String get autoBackupNextSoon => 'Next: when you leave Ví Gọn';
+
+  @override
+  String get autoBackupNextSoonIos => 'Next: when you open Ví Gọn again';
+
+  @override
+  String get autoBackupNotificationBody =>
+      'Time to back up Ví Gọn. Tap to back up.';
+
+  @override
+  String get autoBackupNotifyTitleIos => 'Notify me at backup time';
+
+  @override
+  String get autoBackupNotifyBodyIos =>
+      'iPhone does not let Ví Gọn run on its own while closed. At the time you chose, Ví Gọn sends a notification; tap it to back up. The notification never contains your figures.';
+
+  @override
+  String get autoBackupNotifyDeniedIos =>
+      'No backup-time notification. Ví Gọn will still catch up when you open the app.';
 
   @override
   String get secureWindowNoteIos =>
