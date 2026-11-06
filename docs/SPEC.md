@@ -10,9 +10,9 @@ Phiên bản của tài liệu này:
 - **iOS + giao diện theo thiết kế** (duyệt 2026-11-04, PLAN-001, D-010, D-011): mục 5.
 - **Gộp** (2026-11-05, D-019): hai file bổ sung trên gộp vào đây (đã xóa), số F/AC giữ nguyên; tính năng 1.1/1.2 trên iOS theo mục 5 "iOS".
 - **D-022** (người dùng quyết 2026-11-05): F-22, F-24, F-26 có bản iOS ngay bản 1 (thay phần iOS của D-019) → thêm gạch "iOS (D-022)" dưới mỗi F, AC Android giữ nguyên chữ; F-23 vẫn chỉ Android. Mục 5 "iOS" đoạn "Tính năng gốc nền tảng".
-- **2.0 — chưa duyệt**: F-27..F-42, AC-74..AC-126 (mục 3d), D-030..D-035; sửa §4, §5, §5b, §6, §7, thêm §8b (các chỗ ghi "2.0"). Viết 2026-11-06 theo kế hoạch `notes/2026-11-06-ke-hoach-mo-rong.md`, thu hẹp cùng ngày theo quyết định của người dùng (chỉ nhập khoản chi từ email MB Bank qua hàng đợi; bỏ đọc thông báo, quét hoá đơn, ảnh hoá đơn).
+- **2.0** (duyệt 2026-11-06): F-27..F-42, AC-74..AC-126 (mục 3d), D-030..D-035; sửa §4, §5, §5b, §6, §7, thêm §8b (các chỗ ghi "2.0"). Viết 2026-11-06 theo kế hoạch `notes/2026-11-06-ke-hoach-mo-rong.md`, thu hẹp cùng ngày theo quyết định của người dùng (chỉ nhập khoản chi từ email MB Bank qua hàng đợi; bỏ đọc thông báo, quét hoá đơn, ảnh hoá đơn).
 <!-- Dòng duyệt bản 2.0: khi người dùng duyệt, đổi dòng trên thành "**2.0** (duyệt YYYY-MM-DD): …" và ghi ngày vào dòng "Đã duyệt 2.0" dưới đây. Chưa có ngày thì Claude không viết code cho F-27..F-42 (riêng phiên M0 schema cũng chờ dòng này). -->
-Đã duyệt 2.0: <!-- TRỐNG — chờ người dùng ghi ngày -->
+Đã duyệt 2.0: 2026-11-06
 
 ## 1. Vấn đề cần giải quyết
 Người muốn biết tiền đi đâu mỗi tháng thường bỏ ghi chép vì app quá nhiều bước, đòi tài khoản hoặc gửi dữ liệu lên mạng. Họ đang ghi vào sổ, ghi chú điện thoại hoặc bảng tính, rồi không tổng hợp được. Ví Gọn ghi một khoản chi trong vài giây và cho xem ngay chi tiêu theo danh mục. Chức năng tương đương Monefy, nhưng tên, biểu tượng, icon danh mục và giao diện do mình tự thiết kế.
