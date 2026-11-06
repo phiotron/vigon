@@ -6,6 +6,7 @@ import 'package:material_symbols_icons/symbols.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../data/database.dart';
 import '../../data/dates.dart';
+import '../../data/entry_filter.dart';
 import '../../data/entry_search.dart';
 import '../../data/period.dart';
 import '../../data/summary.dart';
@@ -18,6 +19,9 @@ import '../../ui/format.dart';
 import '../../ui/messenger.dart';
 import '../../ui/theme.dart';
 import '../../ui/tokens.g.dart';
+import 'entry_filter_chips.dart';
+import 'entry_filter_sheet.dart';
+import 'entry_filter_state.dart';
 
 /// Trạng thái tìm kiếm trên màn "Các khoản" (F-15).
 class EntrySearchState {
@@ -70,6 +74,14 @@ final _allTimeEntriesProvider = StreamProvider.autoDispose<List<EntryView>>(
       ),
 );
 
+/// Khoản trong khoảng ngày của bộ lọc nâng cao (F-39), thay kỳ đang xem.
+final _rangeEntriesProvider = StreamProvider.autoDispose
+    .family<List<EntryView>, Period>(
+      (ref, period) => ref
+          .watch(entryRepositoryProvider)
+          .watchEntries(period, accountId: ref.watch(accountFilterProvider)),
+    );
+
 /// Thanh tiêu đề của màn "Các khoản": tên kỳ và nút 🔍 "Tìm"; khi đang tìm
 /// (SCR-11) thành ← "Đóng tìm kiếm" + ô tìm viên thuốc [VgSearchField] có nút
 /// ✕ "Xóa nội dung tìm" (AC-48).
@@ -100,6 +112,28 @@ class _EntriesAppBarState extends ConsumerState<EntriesAppBar> {
     ref.read(entrySearchProvider.notifier).close();
   }
 
+  Future<void> _openFilter() async {
+    final result = await showEntryFilterSheet(
+      context,
+      ref.read(entryFilterProvider),
+    );
+    if (result != null) ref.read(entryFilterProvider.notifier).set(result);
+  }
+
+  /// Nút "Lọc" cạnh nút tìm (N-04); có chấm khi đang lọc.
+  Widget _filterButton(AppLocalizations l) {
+    final on = ref.watch(entryFilterProvider.select((f) => f.isActive));
+    return IconButton(
+      icon: Badge(
+        isLabelVisible: on,
+        smallSize: 8,
+        child: const Icon(Symbols.filter_list_rounded),
+      ),
+      tooltip: l.filter,
+      onPressed: _openFilter,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context);
@@ -113,6 +147,7 @@ class _EntriesAppBarState extends ConsumerState<EntriesAppBar> {
             tooltip: l.search,
             onPressed: () => ref.read(entrySearchProvider.notifier).open(),
           ),
+          _filterButton(l),
         ],
       );
     }
@@ -139,6 +174,7 @@ class _EntriesAppBarState extends ConsumerState<EntriesAppBar> {
             onChanged: ref.read(entrySearchProvider.notifier).setQuery,
           ),
         ),
+        actions: [_filterButton(l)],
       ),
     );
   }
@@ -157,7 +193,14 @@ class EntrySearchResults extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final l = AppLocalizations.of(context);
     final search = ref.watch(entrySearchProvider);
-    final source = search.allTime
+    final filter = ref.watch(entryFilterProvider);
+    // Khoảng ngày của bộ lọc thay kỳ đang xem (AC-115); không thì kỳ đang xem
+    // hoặc "Tất cả thời gian" của ô tìm.
+    final source = filter.hasDates
+        ? ref.watch(
+            _rangeEntriesProvider(Period.custom(filter.from!, filter.to!)),
+          )
+        : search.allTime
         ? ref.watch(_allTimeEntriesProvider)
         : ref.watch(periodEntriesProvider);
     final currency = ref.watch(currencyProvider).value ?? 'USD';
@@ -170,32 +213,34 @@ class EntrySearchResults extends ConsumerWidget {
     final query = search.query.trim();
 
     final children = <Widget>[
-      Padding(
-        padding: const EdgeInsets.fromLTRB(
-          VgSpace.s4,
-          VgSpace.s1,
-          VgSpace.s4,
-          VgSpace.s2,
-        ),
-        child: Align(
-          alignment: AlignmentDirectional.centerStart,
-          child: ScopeChips<bool>(
-            options: [
-              (false, periodTitle(context, ref.watch(periodProvider))),
-              (true, l.searchAllTime),
-            ],
-            selected: search.allTime,
-            onChanged: ref.read(entrySearchProvider.notifier).setAllTime,
+      if (!filter.hasDates)
+        Padding(
+          padding: const EdgeInsets.fromLTRB(
+            VgSpace.s4,
+            VgSpace.s1,
+            VgSpace.s4,
+            VgSpace.s2,
+          ),
+          child: Align(
+            alignment: AlignmentDirectional.centerStart,
+            child: ScopeChips<bool>(
+              options: [
+                (false, periodTitle(context, ref.watch(periodProvider))),
+                (true, l.searchAllTime),
+              ],
+              selected: search.allTime,
+              onChanged: ref.read(entrySearchProvider.notifier).setAllTime,
+            ),
           ),
         ),
-      ),
+      const EntryFilterChips(),
     ];
     if (rows != null) {
       String categoryName(EntryView r) =>
           r.category == null ? '' : categoryLabel(l, r.category!);
       final matches = [
         ...filterEntries(
-          rows,
+          applyEntryFilter(rows, filter),
           query,
           categoryNameOf: categoryName,
           amountTextOf: (row) => money(
@@ -204,7 +249,7 @@ class EntrySearchResults extends ConsumerWidget {
             row.entry.originalAmount ?? row.entry.amount,
           ),
         ),
-      ]..sort(_newestFirst);
+      ]..sort(newestFirst);
       if (matches.isEmpty) {
         children.add(
           Expanded(
@@ -240,7 +285,31 @@ class EntrySearchResults extends ConsumerWidget {
           ),
         );
       } else {
-        if (query.isNotEmpty) {
+        if (filter.isActive) {
+          // "N khoản · chi X · thu Y" (AC-115), cả khi ô tìm trống.
+          final totals = FilterTotals.of(matches);
+          children.add(
+            Semantics(
+              liveRegion: true,
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(
+                  VgSpace.s4,
+                  VgSpace.s1,
+                  VgSpace.s4,
+                  VgSpace.s2,
+                ),
+                child: Text(
+                  l.filterSummary(
+                    totals.count,
+                    money(context, currency, totals.expense),
+                    money(context, currency, totals.income),
+                  ),
+                  style: VgType.bodySm.copyWith(color: muted),
+                ),
+              ),
+            ),
+          );
+        } else if (query.isNotEmpty) {
           children.add(
             Semantics(
               liveRegion: true,
@@ -300,12 +369,6 @@ class EntrySearchResults extends ConsumerWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: children,
     );
-  }
-
-  /// Mới nhất trước: ngày giảm dần, cùng ngày thì khoản ghi sau đứng trước.
-  static int _newestFirst(EntryView a, EntryView b) {
-    final byDate = b.entry.date.compareTo(a.entry.date);
-    return byDate != 0 ? byDate : b.entry.id.compareTo(a.entry.id);
   }
 
   static String _titleOf(

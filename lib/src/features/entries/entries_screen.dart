@@ -19,6 +19,7 @@ import '../../ui/tokens.g.dart';
 import '../entry/entry_time.dart';
 import '../home/home_extras.dart';
 import 'category_budget.dart';
+import 'entry_filter_state.dart';
 import 'entry_search.dart';
 
 /// Lề ngang của dòng `.vg-row` (SCR-10): 16 hai bên.
@@ -195,7 +196,10 @@ class _EntriesScreenState extends ConsumerState<EntriesScreen> {
 
     return Scaffold(
       appBar: EntriesAppBar(title: periodTitle(context, period)),
-      body: ref.watch(entrySearchProvider.select((s) => s.active))
+      // Tìm hoặc lọc nâng cao (F-39) đang bật thì hiện danh sách phẳng kết quả.
+      body:
+          ref.watch(entrySearchProvider.select((s) => s.active)) ||
+              ref.watch(entryFilterProvider.select((f) => f.isActive))
           ? const EntrySearchResults()
           : Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
