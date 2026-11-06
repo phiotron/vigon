@@ -2,7 +2,7 @@
 
 > Nguồn: ảnh chụp màn hình Gmail trên điện thoại của người dùng, lấy qua adb với sự cho phép của họ. Mọi tên người và số
 > tài khoản dưới đây **đã che hoặc thay bằng giá trị giả cùng định dạng**. Ảnh gốc không đưa vào repo.
-> **Chưa đủ để viết M1:** còn thiếu địa chỉ người gửi đầy đủ và 3 dòng cuối email (xem "Còn thiếu").
+> **Gần đủ để viết M1:** đã có đủ các dòng của thân thư; còn thiếu **địa chỉ người gửi đầy đủ** (xem "Còn thiếu").
 
 ## Email "chuyển tiền nhanh ngoài MB" — thành công
 - **Người gửi:** hiển thị là `mbebanking@mbb…` (bị cắt). Rất có thể là `mbebanking@mbbank.com.vn` — **phải xác nhận**, đừng
@@ -21,11 +21,12 @@
 | Số tiền giao dịch | `(VND) 48,000.00` | tiền tệ trong ngoặc ở đầu; dấu `,` ngăn nghìn, dấu `.` thập phân |
 | Nội dung chuyển tiền | `<TÊN CHỦ TK> chuyen tien` | không dấu; có thể rỗng hoặc dài |
 | Cách thức lệnh | `Thanh toán ngay` | |
-| Ngày nhập lệnh | *(chưa thấy)* | |
-| Thời gian | *(chưa thấy)* | |
-| Tình trạng | *(chưa thấy)* | cần biết đúng chữ của trạng thái thành công / thất bại / đang xử lý |
+| Ngày nhập lệnh | `06-11-2026` | chỉ có ngày, định dạng `dd-MM-yyyy` |
+| Thời gian | `06-11-2026 12:11:42` | **trùng** với "Ngày, giờ giao dịch" ở đầu bảng (cùng giá trị trong mẫu này) |
+| Tình trạng | `Giao dịch thành công` | chữ của trạng thái thành công; chưa có mẫu thất bại/đang xử lý → **chỉ nhận đúng chữ này**, mọi chữ khác bỏ qua (an toàn) |
 
 - Câu mở đầu: "Cảm ơn Quý khách đã sử dụng dịch vụ MB eBanking. MB xin thông báo giao dịch của Quý khách đã được thực hiện như sau:".
+- Kết thư: "Xin chân thành cảm ơn." + ảnh banner chân thư (Ngân hàng TMCP Quân đội, hotline MB247, `mb247@mbbank.com.vn`, `www.mbbank.com.vn`) và đoạn địa chỉ trụ sở — bộ đọc bỏ qua. Địa chỉ `mb247@mbbank.com.vn` là **hộp liên hệ trong chân thư, không phải người gửi**; chỉ gợi ý tên miền của ngân hàng là `mbbank.com.vn`.
 - Đầu thư có ảnh banner MB (ảnh nhúng, bộ đọc bỏ qua).
 
 ## Điều rút ra cho thiết kế (đưa M1 đọc)
@@ -39,8 +40,7 @@
 6. Trường hợp riêng cần cân nhắc: người thụ hưởng **trùng tên chủ tài khoản** (tự chuyển cho mình) → gợi ý "Chuyển sang tài
    khoản của tôi".
 
-## Còn thiếu (người dùng cần cuộn email xuống và nhắn lại)
-- Địa chỉ người gửi **đầy đủ** (chạm "đến tôi ▾" trong Gmail).
-- Ba dòng cuối: **Ngày nhập lệnh, Thời gian, Tình trạng** (đúng chữ).
+## Còn thiếu
+- Địa chỉ người gửi **đầy đủ** (người dùng chạm "đến tôi ▾" trong Gmail rồi nhắn lại). Không thay bằng suy đoán trong code (AC-81 lọc đúng nguyên địa chỉ).
 - Nếu có: một email **thất bại** hoặc **đang xử lý**; một email loại khác (chuyển trong MB, QR, thanh toán hoá đơn) để
   biết nhãn có khác không.
