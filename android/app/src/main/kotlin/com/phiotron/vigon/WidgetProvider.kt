@@ -121,7 +121,7 @@ class VigonWidgetProvider : AppWidgetProvider() {
         private fun views(context: Context, layout: Int, state: State): RemoteViews {
             val views = RemoteViews(context.packageName, layout)
             if (state.line == null) {
-                views.setImageViewResource(R.id.widget_icon, R.mipmap.ic_launcher)
+                views.setImageViewResource(R.id.widget_icon, R.drawable.ic_widget_logo)
                 views.setViewVisibility(R.id.widget_icon, View.VISIBLE)
                 views.setViewVisibility(R.id.widget_brand, View.VISIBLE)
                 views.setViewVisibility(R.id.widget_status, View.GONE)

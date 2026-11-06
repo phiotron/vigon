@@ -1,23 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- Widget Ví Gọn khi kéo rộng 4×2 (EXT-01 4x2): hai nút cạnh nhau, dòng trạng thái 1 dòng.
-     Hàng trên: mặc định logo + "Ví Gọn" (không số); khi có dòng trạng thái thì hiện chữ đó, kèm icon
-     khóa (PIN) hoặc icon cập nhật (số kỳ cũ đã bỏ). Hai nút Chi/Thu: dấu −/+ và chữ, không chỉ dựa màu.
-     Màu cố định widget-* (token v2). Đây cũng là bản xem trước trong bộ chọn widget (trạng thái mặc định). -->
+     Kiểu "Ngọc lục bảo & vàng" (widget B, 2026-11-06): nền ngà / ngọc lục bảo sâu theo sáng-tối của
+     máy, viền vàng mảnh. Hàng trên: mặc định logo + "Ví Gọn" (không số); khi có dòng trạng thái thì
+     hiện chữ đó màu vàng, kèm icon khóa (PIN) hoặc icon cập nhật (số kỳ cũ đã bỏ). Hai nút Chi/Thu:
+     khối trong mờ, huy hiệu tròn −/+ và chữ, không chỉ dựa màu. Đây cũng là bản xem trước trong bộ
+     chọn widget (trạng thái mặc định). Chỉ dùng class RemoteViews cho phép (KHÔNG <Space>, D9). -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@android:id/background"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/vigon_widget_bg"
     android:orientation="vertical"
-    android:padding="8dp">
+    android:padding="10dp">
 
     <LinearLayout
         android:id="@+id/widget_header"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="6dp"
+        android:layout_marginBottom="8dp"
         android:gravity="center_vertical"
-        android:minHeight="20dp"
+        android:minHeight="24dp"
         android:orientation="horizontal"
         android:paddingStart="4dp"
         android:paddingTop="2dp"
@@ -25,30 +27,32 @@
 
         <ImageView
             android:id="@+id/widget_icon"
-            android:layout_width="16dp"
-            android:layout_height="16dp"
-            android:layout_marginEnd="6dp"
+            android:layout_width="18dp"
+            android:layout_height="18dp"
+            android:layout_marginEnd="8dp"
             android:importantForAccessibility="no"
-            android:src="@mipmap/ic_launcher" />
+            android:src="@drawable/ic_widget_logo" />
 
         <TextView
             android:id="@+id/widget_brand"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:fontFamily="sans-serif-medium"
+            android:letterSpacing="0.04"
             android:maxLines="1"
             android:text="@string/widget_label"
             android:textColor="@color/widget_ink"
-            android:textSize="13sp"
-            android:textStyle="bold" />
+            android:textSize="14sp" />
 
         <TextView android:id="@+id/widget_status"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:ellipsize="end"
+            android:fontFamily="sans-serif-medium"
             android:maxLines="1"
-            android:textColor="@color/widget_ink"
+            android:textColor="@color/widget_gold"
             android:textSize="12sp"
             android:visibility="gone" />
     </LinearLayout>
@@ -64,67 +68,75 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:background="@drawable/vigon_widget_btn_expense"
+            android:background="@drawable/vigon_widget_btn_action"
             android:contentDescription="@string/widget_expense_desc"
-            android:gravity="center"
+            android:gravity="center_vertical"
             android:minHeight="48dp"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:paddingStart="8dp"
+            android:paddingEnd="10dp">
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="6dp"
+            <ImageView
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:background="@drawable/vigon_widget_btn_expense"
                 android:importantForAccessibility="no"
-                android:text="@string/widget_glyph_expense"
-                android:textColor="@color/on_widget_action"
-                android:textSize="24sp" />
+                android:padding="6dp"
+                android:src="@drawable/ic_widget_minus" />
 
             <TextView
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_weight="1"
+                android:ellipsize="end"
+                android:fontFamily="sans-serif-medium"
                 android:importantForAccessibility="no"
                 android:maxLines="1"
                 android:text="@string/widget_expense"
-                android:textColor="@color/on_widget_action"
-                android:textSize="18sp"
-                android:textStyle="bold" />
+                android:textColor="@color/widget_ink"
+                android:textSize="15sp" />
         </LinearLayout>
 
         <!-- Khoảng cách giữa hai nút. KHÔNG dùng <Space>: RemoteViews không cho phép
              (launcher báo "Không thể thêm tiện ích", D9). -->
         <FrameLayout
-            android:layout_width="6dp"
-            android:layout_height="6dp" />
+            android:layout_width="8dp"
+            android:layout_height="8dp" />
 
         <LinearLayout
             android:id="@+id/widget_income"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:background="@drawable/vigon_widget_btn_income"
+            android:background="@drawable/vigon_widget_btn_action"
             android:contentDescription="@string/widget_income_desc"
-            android:gravity="center"
+            android:gravity="center_vertical"
             android:minHeight="48dp"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:paddingStart="8dp"
+            android:paddingEnd="10dp">
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="6dp"
+            <ImageView
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:background="@drawable/vigon_widget_btn_income"
                 android:importantForAccessibility="no"
-                android:text="@string/widget_glyph_income"
-                android:textColor="@color/on_widget_action"
-                android:textSize="24sp" />
+                android:padding="6dp"
+                android:src="@drawable/ic_widget_plus" />
 
             <TextView
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_weight="1"
+                android:ellipsize="end"
+                android:fontFamily="sans-serif-medium"
                 android:importantForAccessibility="no"
                 android:maxLines="1"
                 android:text="@string/widget_income"
-                android:textColor="@color/on_widget_action"
-                android:textSize="18sp"
-                android:textStyle="bold" />
+                android:textColor="@color/widget_ink"
+                android:textSize="15sp" />
         </LinearLayout>
     </LinearLayout>
 </LinearLayout>

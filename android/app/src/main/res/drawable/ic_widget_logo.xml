@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Logo nhỏ trên widget: ô vuông bo góc màu nền icon app + hình logo (ic_launcher_foreground).
+     Thay mipmap/ic_launcher (vuông góc nhọn trong RemoteViews, không cắt góc được trước Android 12). -->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item>
+        <shape android:shape="rectangle">
+            <solid android:color="@color/ic_launcher_background" />
+            <corners android:radius="6dp" />
+        </shape>
+    </item>
+    <item android:drawable="@drawable/ic_launcher_foreground" />
+</layer-list>

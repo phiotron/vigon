@@ -1,10 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Màu cố định của widget (token v2 widget-*, design/hifi/tokens): giống nhau ở nền sáng và
-     tối, không theo chủ đề app hay màu động Android 12. -->
+<!-- Màu widget "Ngọc lục bảo & vàng" (token v3 widget-*, design/hifi/tokens), chủ đề SÁNG:
+     nền ngà, viền vàng mảnh. Chủ đề tối ở values-night/. Theo chế độ sáng/tối của máy, không theo
+     chủ đề app hay màu động Android 12 (màu thương hiệu cố định). -->
 <resources>
-    <color name="widget_surface">#0E5244</color>
-    <color name="widget_ink">#F7FAF8</color>
-    <color name="widget_expense">#C62828</color>
-    <color name="widget_income">#2E7D32</color>
+    <color name="widget_surface">#FBF8F1</color>
+    <color name="widget_surface_end">#F3ECDD</color>
+    <color name="widget_ink">#0E3B32</color>
+    <color name="widget_gold">#6E5C34</color>
+    <color name="widget_outline">#D9C48F</color>
+    <color name="widget_action">#EFE5CF</color>
+    <color name="widget_expense">#C0463A</color>
+    <color name="widget_income">#1F7A5C</color>
     <color name="on_widget_action">#FFFFFF</color>
 </resources>

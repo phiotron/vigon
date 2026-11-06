@@ -33,11 +33,15 @@
   --brand-mint: #8cd5bf; /* v2. Thẻ sau của logo. Chỉ dùng trong logo. */
   --brand-paper: #f7faf8; /* v2. Thẻ trước của logo. Chỉ dùng trong logo. */
   --brand-dot: #e65100; /* v2. Nút tròn cam trên thẻ trước của logo. Chỉ dùng trong logo. */
-  --widget-surface: #0e5244; /* v2. Nền widget 2×2 / 4×2 trên màn hình chờ Android (cố định, không theo chủ đề app; bằng brand-deep). Đọc được trên hình nền sáng và tối. */
-  --widget-ink: #f7faf8; /* v2. Chữ dòng trạng thái và tên app trên widget-surface (8.9:1). */
-  --widget-expense: #c62828; /* v2. Nút Chi trên widget (cố định ở hai chủ đề, khác expense tối). Chữ on-widget-action 5.6:1. */
-  --widget-income: #2e7d32; /* v2. Nút Thu trên widget (cố định). Chữ on-widget-action 5.1:1. */
-  --on-widget-action: #ffffff; /* v2. Chữ và dấu − / + trên hai nút widget. */
+  --widget-surface: #fbf8f1; /* v3 (widget B). Nền widget 2×2 / 4×2 Android, iOS: đầu dải chuyển màu (góc trên trái). Sáng: ngà; tối: ngọc lục bảo sâu. Theo chế độ sáng/tối của máy, không theo chủ đề app hay màu động. */
+  --widget-surface-end: #f3ecdd; /* v3 (widget B). Cuối dải chuyển màu nền widget (góc dưới phải). */
+  --widget-ink: #0e3b32; /* v3 (widget B). Tên app và chữ hai nút trên widget. */
+  --widget-gold: #6e5c34; /* v3 (widget B). Điểm nhấn vàng: dòng trạng thái (chi tháng, khóa PIN, cập nhật) và icon đi kèm. ≥ 4.5:1 trên cả hai đầu nền. */
+  --widget-outline: #d9c48f; /* v3 (widget B). Viền vàng mảnh 1dp quanh widget. Chỉ trang trí. */
+  --widget-action: #efe5cf; /* v3 (widget B). Nền hai nút Chi/Thu (khối trong mờ trên nền widget). */
+  --widget-expense: #c0463a; /* v3 (widget B). Huy hiệu tròn dấu − của nút Chi (giống nhau ở hai chủ đề). Dấu on-widget-action ≥ 4.5:1. */
+  --widget-income: #1f7a5c; /* v3 (widget B). Huy hiệu tròn dấu + của nút Thu (giống nhau ở hai chủ đề). Dấu on-widget-action ≥ 4.5:1. */
+  --on-widget-action: #ffffff; /* v3 (widget B). Dấu − / + trên huy hiệu tròn của hai nút widget. */
   --on-cat: #ffffff; /* Icon trắng trên mọi màu danh mục cat-01 … cat-16 (đủ 3:1). */
   --cat-01: #c62828; /* Đỏ. Danh mục, ví dụ Sức khỏe. Giữ nguyên ở hai chủ đề; icon on-cat. */
   --cat-02: #ad1457; /* Hồng. Danh mục, ví dụ Mua sắm. Giữ nguyên ở hai chủ đề; icon on-cat. */
@@ -92,10 +96,14 @@
   --brand-mint: #8cd5bf;
   --brand-paper: #f7faf8;
   --brand-dot: #e65100;
-  --widget-surface: #0e5244;
-  --widget-ink: #f7faf8;
-  --widget-expense: #c62828;
-  --widget-income: #2e7d32;
+  --widget-surface: #0a2f27;
+  --widget-surface-end: #062019;
+  --widget-ink: #f4ebd3;
+  --widget-gold: #d6b66e;
+  --widget-outline: #7d6b3f;
+  --widget-action: #1b3e36;
+  --widget-expense: #c0463a;
+  --widget-income: #1f7a5c;
   --on-widget-action: #ffffff;
   --on-cat: #ffffff;
   --cat-01: #c62828;

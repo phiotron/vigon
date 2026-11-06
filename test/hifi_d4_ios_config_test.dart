@@ -46,7 +46,10 @@ void main() {
   group('F-22 che nội dung', () {
     test('phủ khi rời trạng thái hoạt động, gỡ khi quay lại', () {
       expect(native, contains('func sceneWillResignActive(_ scene: UIScene)'));
-      expect(native, contains('func sceneDidEnterBackground(_ scene: UIScene)'));
+      expect(
+        native,
+        contains('func sceneDidEnterBackground(_ scene: UIScene)'),
+      );
       expect(native, contains('func sceneDidBecomeActive(_ scene: UIScene)'));
       expect(native, contains('PrivacyCoverView'));
       expect(
@@ -122,11 +125,14 @@ void main() {
       expect(runnerPrivacy, contains('<string>CA92.1</string>'));
     });
 
-    test('màu widget-* trùng Android', () {
+    test('màu widget-* trùng Android (sáng = values, tối = values-night)', () {
       final xml = _read('android/app/src/main/res/values/widget_colors.xml');
-      String hex(String name) =>
+      final night = _read(
+        'android/app/src/main/res/values-night/widget_colors.xml',
+      );
+      String hex(String name, [String? from]) =>
           RegExp('<color name="$name">#([0-9A-F]{6})</color>')
-              .firstMatch(xml)!
+              .firstMatch(from ?? xml)!
               .group(1)!;
       String swift(String name) {
         final m = RegExp(
@@ -139,6 +145,27 @@ void main() {
       expect(swift('ink'), hex('widget_ink'));
       expect(swift('expense'), hex('widget_expense'));
       expect(swift('income'), hex('widget_income'));
+      for (final (s, a) in [
+        ('surfaceEnd', 'widget_surface_end'),
+        ('gold', 'widget_gold'),
+        ('outline', 'widget_outline'),
+        ('action', 'widget_action'),
+      ]) {
+        expect(swift(s), hex(a), reason: s);
+      }
+      for (final (s, a) in [
+        ('surface', 'widget_surface'),
+        ('surfaceEnd', 'widget_surface_end'),
+        ('ink', 'widget_ink'),
+        ('gold', 'widget_gold'),
+        ('outline', 'widget_outline'),
+        ('action', 'widget_action'),
+      ]) {
+        expect(swift('${s}Dark'), hex(a, night), reason: '${s}Dark');
+      }
+      // Huy hiệu Chi/Thu giống nhau ở hai chủ đề.
+      expect(hex('widget_expense', night), hex('widget_expense'));
+      expect(hex('widget_income', night), hex('widget_income'));
     });
 
     test('chữ widget EN + VI chép đúng từ .arb', () {

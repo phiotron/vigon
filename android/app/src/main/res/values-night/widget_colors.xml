@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Màu widget "Ngọc lục bảo & vàng" (token v3 widget-*), chủ đề TỐI: nền ngọc lục bảo sâu,
+     chữ ngà, điểm nhấn vàng. Huy hiệu Chi/Thu giống chủ đề sáng. -->
+<resources>
+    <color name="widget_surface">#0A2F27</color>
+    <color name="widget_surface_end">#062019</color>
+    <color name="widget_ink">#F4EBD3</color>
+    <color name="widget_gold">#D6B66E</color>
+    <color name="widget_outline">#7D6B3F</color>
+    <color name="widget_action">#1B3E36</color>
+    <color name="widget_expense">#C0463A</color>
+    <color name="widget_income">#1F7A5C</color>
+    <color name="on_widget_action">#FFFFFF</color>
+</resources>

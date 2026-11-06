@@ -8,6 +8,4 @@
     <string name="widget_expense_desc">Thêm khoản chi</string>
     <string name="widget_income_desc">Thêm khoản thu</string>
     <string name="widget_stale">Mở app để cập nhật</string>
-    <string name="widget_glyph_expense" translatable="false">−</string>
-    <string name="widget_glyph_income" translatable="false">+</string>
 </resources>

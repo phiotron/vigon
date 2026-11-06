@@ -17,13 +17,39 @@ enum VigonWidgetStore {
   static let pendingAtKey = "widget.pendingAt"
 }
 
-/// Màu cố định `widget-*` (token v2), giống Android `res/values/widget_colors.xml`.
+/// Màu `widget-*` (token v3, kiểu "Ngọc lục bảo & vàng"), giống Android: chủ đề sáng =
+/// `res/values/widget_colors.xml`, tối (`…Dark`) = `res/values-night/widget_colors.xml`.
 enum VigonWidgetColor {
-  static let surface = Color(red: 0x0E / 255, green: 0x52 / 255, blue: 0x44 / 255)
-  static let ink = Color(red: 0xF7 / 255, green: 0xFA / 255, blue: 0xF8 / 255)
-  static let expense = Color(red: 0xC6 / 255, green: 0x28 / 255, blue: 0x28 / 255)
-  static let income = Color(red: 0x2E / 255, green: 0x7D / 255, blue: 0x32 / 255)
+  static let surface = Color(red: 0xFB / 255, green: 0xF8 / 255, blue: 0xF1 / 255)
+  static let surfaceEnd = Color(red: 0xF3 / 255, green: 0xEC / 255, blue: 0xDD / 255)
+  static let ink = Color(red: 0x0E / 255, green: 0x3B / 255, blue: 0x32 / 255)
+  static let gold = Color(red: 0x6E / 255, green: 0x5C / 255, blue: 0x34 / 255)
+  static let outline = Color(red: 0xD9 / 255, green: 0xC4 / 255, blue: 0x8F / 255)
+  static let action = Color(red: 0xEF / 255, green: 0xE5 / 255, blue: 0xCF / 255)
+  static let expense = Color(red: 0xC0 / 255, green: 0x46 / 255, blue: 0x3A / 255)
+  static let income = Color(red: 0x1F / 255, green: 0x7A / 255, blue: 0x5C / 255)
+  static let surfaceDark = Color(red: 0x0A / 255, green: 0x2F / 255, blue: 0x27 / 255)
+  static let surfaceEndDark = Color(red: 0x06 / 255, green: 0x20 / 255, blue: 0x19 / 255)
+  static let inkDark = Color(red: 0xF4 / 255, green: 0xEB / 255, blue: 0xD3 / 255)
+  static let goldDark = Color(red: 0xD6 / 255, green: 0xB6 / 255, blue: 0x6E / 255)
+  static let outlineDark = Color(red: 0x7D / 255, green: 0x6B / 255, blue: 0x3F / 255)
+  static let actionDark = Color(red: 0x1B / 255, green: 0x3E / 255, blue: 0x36 / 255)
   static let onAction = Color.white
+}
+
+/// Bộ màu theo sáng/tối của máy (huy hiệu Chi/Thu giống nhau ở hai chủ đề).
+struct VigonWidgetPalette {
+  let surface, surfaceEnd, ink, gold, outline, action: Color
+
+  init(_ scheme: ColorScheme) {
+    let dark = scheme == .dark
+    surface = dark ? VigonWidgetColor.surfaceDark : VigonWidgetColor.surface
+    surfaceEnd = dark ? VigonWidgetColor.surfaceEndDark : VigonWidgetColor.surfaceEnd
+    ink = dark ? VigonWidgetColor.inkDark : VigonWidgetColor.ink
+    gold = dark ? VigonWidgetColor.goldDark : VigonWidgetColor.gold
+    outline = dark ? VigonWidgetColor.outlineDark : VigonWidgetColor.outline
+    action = dark ? VigonWidgetColor.actionDark : VigonWidgetColor.action
+  }
 }
 
 enum VigonWidgetState: Equatable {
@@ -118,20 +144,23 @@ struct OpenEntryIntent: AppIntent {
 
 struct VigonWidgetView: View {
   @Environment(\.widgetFamily) private var family
+  @Environment(\.colorScheme) private var scheme
   let entry: VigonEntry
+
+  private var palette: VigonWidgetPalette { VigonWidgetPalette(scheme) }
 
   private var wide: Bool { family != .systemSmall }
 
   var body: some View {
-    VStack(alignment: .leading, spacing: 6) {
+    VStack(alignment: .leading, spacing: 8) {
       header
       if wide {
-        HStack(spacing: 6) { buttons }
+        HStack(spacing: 8) { buttons }
       } else {
-        VStack(spacing: 6) { buttons }
+        VStack(spacing: 8) { buttons }
       }
     }
-    .vigonWidgetBackground()
+    .vigonWidgetBackground(palette)
     // Widget nhỏ trên iOS 15–16 là một vùng chạm duy nhất: mở màn nhập khoản chi.
     .widgetURL(VigonEntryKind.expense.url)
   }
@@ -146,7 +175,9 @@ struct VigonWidgetView: View {
           .clipShape(RoundedRectangle(cornerRadius: 5, style: .continuous))
           .accessibilityHidden(true)
         Text("appTitle")
-          .font(.system(size: 13, weight: .bold))
+          .font(.system(size: 14, weight: .semibold))
+          .kerning(0.5)
+          .foregroundColor(palette.ink)
       case .amount(let line):
         statusText(Text(line))
       case .locked(let line):
@@ -162,7 +193,8 @@ struct VigonWidgetView: View {
       }
       Spacer(minLength: 0)
     }
-    .foregroundColor(VigonWidgetColor.ink)
+    // Dòng trạng thái và icon đi kèm: vàng (widget-gold); tên app ghi đè sang widget-ink.
+    .foregroundColor(palette.gold)
     .padding(.horizontal, 4)
     .padding(.top, 2)
     .frame(minHeight: 20, alignment: .topLeading)
@@ -181,7 +213,7 @@ struct VigonWidgetView: View {
   }
 
   @ViewBuilder private func entryButton(_ kind: VigonEntryKind) -> some View {
-    let face = ButtonFace(kind: kind)
+    let face = ButtonFace(kind: kind, palette: palette)
     if wide {
       Link(destination: kind.url) { face }
     } else if #available(iOSApplicationExtension 17.0, *) {
@@ -193,25 +225,32 @@ struct VigonWidgetView: View {
   }
 }
 
-/// Mặt nút: dấu −/+ và chữ (không chỉ dựa vào màu), bo `radius-md` 12.
+/// Mặt nút: huy hiệu tròn −/+ và chữ (không chỉ dựa vào màu) trên khối widget-action, bo 16.
 struct ButtonFace: View {
   let kind: VigonEntryKind
+  let palette: VigonWidgetPalette
 
   var body: some View {
-    HStack(spacing: 6) {
-      Text(kind == .expense ? "−" : "+")
-        .font(.system(size: 24, weight: .medium))
+    HStack(spacing: 10) {
+      Image(systemName: kind == .expense ? "minus" : "plus")
+        .font(.system(size: 14, weight: .bold))
+        .foregroundColor(VigonWidgetColor.onAction)
+        .frame(width: 28, height: 28)
+        .background(Circle().fill(kind == .expense ? VigonWidgetColor.expense : VigonWidgetColor.income))
       Text(LocalizedStringKey(kind == .expense ? "widgetExpenseButton" : "widgetIncomeButton"))
-        .font(.system(size: 18, weight: .bold))
+        .font(.system(size: 15, weight: .semibold))
+        .foregroundColor(palette.ink)
         .lineLimit(1)
         .minimumScaleFactor(0.8)
+      Spacer(minLength: 0)
     }
-    .foregroundColor(VigonWidgetColor.onAction)
+    .padding(.leading, 8)
+    .padding(.trailing, 10)
     .frame(maxWidth: .infinity, maxHeight: .infinity)
     .frame(minHeight: 40)
     .background(
-      RoundedRectangle(cornerRadius: 12, style: .continuous)
-        .fill(kind == .expense ? VigonWidgetColor.expense : VigonWidgetColor.income)
+      RoundedRectangle(cornerRadius: 16, style: .continuous)
+        .fill(palette.action)
     )
     .accessibilityElement(children: .ignore)
     .accessibilityLabel(Text(LocalizedStringKey(kind == .expense ? "addExpense" : "addIncome")))
@@ -219,13 +258,30 @@ struct ButtonFace: View {
   }
 }
 
+/// Nền widget: dải chuyển màu rất nhẹ (trên trái → dưới phải) và viền vàng mảnh.
+struct VigonWidgetSurface: View {
+  let palette: VigonWidgetPalette
+
+  var body: some View {
+    ZStack {
+      LinearGradient(
+        colors: [palette.surface, palette.surfaceEnd],
+        startPoint: .topLeading,
+        endPoint: .bottomTrailing
+      )
+      // Nét 2pt trên mép hình: nửa ngoài bị cắt, còn 1pt bên trong.
+      ContainerRelativeShape().stroke(palette.outline, lineWidth: 2)
+    }
+  }
+}
+
 extension View {
   /// iOS 17 bắt buộc `containerBackground` (thiếu thì hệ thống hiện màn báo lỗi thay widget).
-  @ViewBuilder func vigonWidgetBackground() -> some View {
+  @ViewBuilder func vigonWidgetBackground(_ palette: VigonWidgetPalette) -> some View {
     if #available(iOSApplicationExtension 17.0, *) {
-      containerBackground(for: .widget) { VigonWidgetColor.surface }
+      containerBackground(for: .widget) { VigonWidgetSurface(palette: palette) }
     } else {
-      padding(8).background(VigonWidgetColor.surface)
+      padding(10).background(VigonWidgetSurface(palette: palette))
     }
   }
 }

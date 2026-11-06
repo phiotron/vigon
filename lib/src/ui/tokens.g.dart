@@ -40,7 +40,11 @@ class VgPalette {
     required this.brandPaper,
     required this.brandDot,
     required this.widgetSurface,
+    required this.widgetSurfaceEnd,
     required this.widgetInk,
+    required this.widgetGold,
+    required this.widgetOutline,
+    required this.widgetAction,
     required this.widgetExpense,
     required this.widgetIncome,
     required this.onWidgetAction,
@@ -82,7 +86,11 @@ class VgPalette {
   final Color brandPaper;
   final Color brandDot;
   final Color widgetSurface;
+  final Color widgetSurfaceEnd;
   final Color widgetInk;
+  final Color widgetGold;
+  final Color widgetOutline;
+  final Color widgetAction;
   final Color widgetExpense;
   final Color widgetIncome;
   final Color onWidgetAction;
@@ -145,7 +153,11 @@ class VgPalette {
     brandPaper: Color.lerp(a.brandPaper, b.brandPaper, t)!,
     brandDot: Color.lerp(a.brandDot, b.brandDot, t)!,
     widgetSurface: Color.lerp(a.widgetSurface, b.widgetSurface, t)!,
+    widgetSurfaceEnd: Color.lerp(a.widgetSurfaceEnd, b.widgetSurfaceEnd, t)!,
     widgetInk: Color.lerp(a.widgetInk, b.widgetInk, t)!,
+    widgetGold: Color.lerp(a.widgetGold, b.widgetGold, t)!,
+    widgetOutline: Color.lerp(a.widgetOutline, b.widgetOutline, t)!,
+    widgetAction: Color.lerp(a.widgetAction, b.widgetAction, t)!,
     widgetExpense: Color.lerp(a.widgetExpense, b.widgetExpense, t)!,
     widgetIncome: Color.lerp(a.widgetIncome, b.widgetIncome, t)!,
     onWidgetAction: Color.lerp(a.onWidgetAction, b.onWidgetAction, t)!,
@@ -188,10 +200,14 @@ const vgLight = VgPalette(
   brandMint: Color(0xFF8CD5BF),
   brandPaper: Color(0xFFF7FAF8),
   brandDot: Color(0xFFE65100),
-  widgetSurface: Color(0xFF0E5244),
-  widgetInk: Color(0xFFF7FAF8),
-  widgetExpense: Color(0xFFC62828),
-  widgetIncome: Color(0xFF2E7D32),
+  widgetSurface: Color(0xFFFBF8F1),
+  widgetSurfaceEnd: Color(0xFFF3ECDD),
+  widgetInk: Color(0xFF0E3B32),
+  widgetGold: Color(0xFF6E5C34),
+  widgetOutline: Color(0xFFD9C48F),
+  widgetAction: Color(0xFFEFE5CF),
+  widgetExpense: Color(0xFFC0463A),
+  widgetIncome: Color(0xFF1F7A5C),
   onWidgetAction: Color(0xFFFFFFFF),
   onCat: Color(0xFFFFFFFF),
   shadowSheet: [
@@ -235,10 +251,14 @@ const vgDark = VgPalette(
   brandMint: Color(0xFF8CD5BF),
   brandPaper: Color(0xFFF7FAF8),
   brandDot: Color(0xFFE65100),
-  widgetSurface: Color(0xFF0E5244),
-  widgetInk: Color(0xFFF7FAF8),
-  widgetExpense: Color(0xFFC62828),
-  widgetIncome: Color(0xFF2E7D32),
+  widgetSurface: Color(0xFF0A2F27),
+  widgetSurfaceEnd: Color(0xFF062019),
+  widgetInk: Color(0xFFF4EBD3),
+  widgetGold: Color(0xFFD6B66E),
+  widgetOutline: Color(0xFF7D6B3F),
+  widgetAction: Color(0xFF1B3E36),
+  widgetExpense: Color(0xFFC0463A),
+  widgetIncome: Color(0xFF1F7A5C),
   onWidgetAction: Color(0xFFFFFFFF),
   onCat: Color(0xFFFFFFFF),
   shadowSheet: [

@@ -1,3 +1,21 @@
+# Changelog — widget tokens v3 (2026-11-06)
+
+The home screen widget was redesigned ("Emerald & gold", direction B chosen by the user after seeing the 2×2 widget on the Galaxy A13). The `widget-*` tokens now have a light and a dark value (Android `values/` and `values-night/`, iOS `colorScheme`), following the device's light/dark mode. No dynamic color: the brand colors stay fixed. Other tokens are unchanged.
+
+| Token | Light | Dark | Use |
+|---|---|---|---|
+| `widget-surface` | `#FBF8F1` | `#0A2F27` | Background, start of a soft gradient (top left). Changed (was `#0E5244`) |
+| `widget-surface-end` | `#F3ECDD` | `#062019` | Background gradient end (bottom right). New |
+| `widget-ink` | `#0E3B32` | `#F4EBD3` | App name and button labels. Changed (was `#F7FAF8`) |
+| `widget-gold` | `#6E5C34` | `#D6B66E` | Status line and its lock/update icon. New |
+| `widget-outline` | `#D9C48F` | `#7D6B3F` | 1dp gold outline around the widget. New |
+| `widget-action` | `#EFE5CF` | `#1B3E36` | Background of the Expense/Income buttons. New |
+| `widget-expense` | `#C0463A` | same | Round badge behind "−" on Expense (white 4.98:1). Changed (was `#C62828` button fill) |
+| `widget-income` | `#1F7A5C` | same | Round badge behind "+" on Income (white 5.25:1). Changed (was `#2E7D32` button fill) |
+| `on-widget-action` | `#FFFFFF` | same | The − / + glyph on the badges |
+
+Widget buttons use `radius-lg` (16) instead of `radius-md`. Contrast pairs are checked in `test/ui/theme_test.dart`.
+
 # Changelog — tokens v1 → v2
 
 Tokens v2 keeps the v1 schema and every v1 token name and value. `tool/gen_tokens.py` keeps working; the new tokens only need to be added to `ColorScheme` / `ViGonColors` / `VgRadius` / `VgTap` (mapping below).
