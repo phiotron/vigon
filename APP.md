@@ -96,6 +96,7 @@ Flutter 3.47.8 ở `C:/src/flutter`, **chưa có trong PATH**. Git Bash: `export
 - **D-005** Tiền số nguyên, ngày dạng chữ, cài đặt trong DB. · **D-006** Sao lưu `.vigon` JSON có mã băm, khôi phục thay toàn bộ trong 1 giao dịch.
 - **D-007** PIN băm có muối trong bộ nhớ an toàn, màn khoá phủ lên app. · **D-008** Liên hệ ở `app_info.dart`; bố cục co theo cỡ chữ; test a11y tự động.
 - **D-009** Logo "hai thẻ xếp chồng".
+- **D-026** Sao lưu tự động theo giờ người dùng chọn (mặc định 21:00, giờ máy); Android chạy nền, iPhone thông báo; bù khi lỡ.
 - **D-025** Đổi tiền tệ = quy đổi toàn bộ số tiền theo tỉ giá lấy qua mạng (sửa D-002/AC-21; app có quyền mạng chỉ cho việc này).
 - **D-024** iOS tối thiểu 16.0 (widget cần iOS 16).
 - **D-022** iOS có đủ F-22/F-24/F-26 ngay bản 1 (thay phần iOS của D-019). **D-023** UI = Hi-Fi P1 + P2 theo CHANGELOG token v2; Ideas để sau.
