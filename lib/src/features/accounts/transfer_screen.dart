@@ -83,7 +83,10 @@ class _TransferScreenState extends ConsumerState<TransferScreen> {
   int? _defaultFrom(List<Account> accounts) {
     if (accounts.isEmpty) return null;
     return accounts
-        .firstWhere((a) => a.id != _to, orElse: () => accounts.first)
+        .firstWhere(
+          (a) => a.id != widget.toAccountId,
+          orElse: () => accounts.first,
+        )
         .id;
   }
 
