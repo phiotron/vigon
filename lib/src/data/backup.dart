@@ -32,11 +32,13 @@ const deviceOnlySettingKeys = {
   SettingsRepository.widgetShowAmountsKey,
   SettingsRepository.reminderEnabledKey,
 };
+
 /// Mã cài đặt đi kèm PIN (iOS-02) gắn với máy, không phải dữ liệu: không xuất,
 /// không nhận từ file, và khôi phục hay xóa toàn bộ dữ liệu vẫn giữ.
 const _installIdKey = SettingsRepository.pinInstallIdKey;
 
 /// Xuất toàn bộ khoản, danh mục, tài khoản, chuỗi định kỳ, cài đặt ra JSON (AC-28).
+/// Mỗi dòng mang cả số tiền chính xác (cột `*Micro`, khóa `budgetMicro`, D-029).
 /// File không mã hóa; mã PIN và mã cài đặt không nằm trong file.
 Future<String> exportBackup(AppDatabase db, {required DateTime now}) async {
   final tables = {
@@ -93,8 +95,10 @@ _Parsed _parseBackup(String content) {
   if (version is! int || version > backupVersion) {
     throw BackupFormatException('phiên bản $version không hỗ trợ');
   }
-  // File cũ (schema 1) không có cột budget của danh mục: vẫn đọc được. File từ
-  // bản app mới hơn schema hiện tại thì từ chối.
+  // File cũ vẫn đọc được: schema 1 không có cột budget của danh mục, schema 1/2
+  // không có cột số tiền chính xác `*Micro` và khóa `budgetMicro` (D-029) —
+  // thiếu thì null, tức số chính xác bằng đúng số đã làm tròn. File từ bản app
+  // mới hơn schema hiện tại thì từ chối.
   final schema = root['schemaVersion'];
   if (schema != null && (schema is! int || schema > currentSchemaVersion)) {
     throw BackupFormatException('schema $schema không hỗ trợ');
@@ -159,7 +163,7 @@ Future<void> importBackup(AppDatabase db, String content) async {
   } on BackupFormatException {
     rethrow;
   } catch (e) {
-    // Ví dụ khóa ngoại sai, số tiền ≤ 0: giao dịch đã quay lui.
+    // Ví dụ khóa ngoại sai, số tiền âm: giao dịch đã quay lui.
     throw BackupFormatException('dữ liệu không hợp lệ: $e');
   }
 }
