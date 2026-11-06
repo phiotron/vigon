@@ -2,6 +2,7 @@
 # Repo private → phút macOS tính ×10 quota. 2026-11-05 (hết phút Actions, luật xưởng "dev → main"): KHÔNG chạy theo push;
 # chỉ chạy khi gắn tag `v*` (bản phát hành) hoặc bấm tay (workflow_dispatch) khi có đổi phần iOS cần kiểm.
 # Máy làm việc là Windows, không có Mac/iPhone → đây là nơi DUY NHẤT build + thử iOS (A002 D-001).
+# 2026-11-06: bản sao sun-moonstars/A002 dùng để build/test iOS khi repo chính hết phút Actions; chạy tay (workflow_dispatch) trên nhánh `dev`.
 name: iOS
 
 on:
