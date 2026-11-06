@@ -15,6 +15,7 @@ import '../../ui/amount_display.dart';
 import '../../ui/format.dart';
 import '../../ui/messenger.dart';
 import '../../ui/tokens.g.dart';
+import '../entry/entry_time.dart';
 import '../entry/keypad.dart';
 
 /// Chuyển tiền giữa hai tài khoản (AC-19); sửa hoặc xóa lần chuyển có sẵn.
@@ -33,6 +34,7 @@ class _TransferScreenState extends ConsumerState<TransferScreen> {
   int? _to;
   String _expression = '';
   late DateTime _date = dateOnly(ref.read(clockProvider)());
+  late String? _time = nowTimeKey(ref.read(clockProvider)());
   final _note = TextEditingController();
   String? _error;
 
@@ -54,6 +56,7 @@ class _TransferScreenState extends ConsumerState<TransferScreen> {
       _to = e.toAccountId;
       _expression = minorUnitsToInput(e.amount, digits);
       _date = parseDateKey(e.date);
+      _time = e.time;
       _note.text = e.note ?? '';
     });
   }
@@ -96,6 +99,7 @@ class _TransferScreenState extends ConsumerState<TransferScreen> {
         toAccountId: to,
         amount: amount,
         date: dateKey(_date),
+        time: _time,
         note: note,
       );
     } else {
@@ -105,6 +109,7 @@ class _TransferScreenState extends ConsumerState<TransferScreen> {
           toAccountId: Value(to),
           amount: amount,
           date: dateKey(_date),
+          time: Value(_time),
           note: Value(note),
         ),
       );
@@ -268,30 +273,48 @@ class _TransferScreenState extends ConsumerState<TransferScreen> {
                             ),
                             child: Align(
                               alignment: AlignmentDirectional.centerStart,
-                              child: ActionChip(
-                                avatar: const Icon(
-                                  Symbols.calendar_today_rounded,
-                                  size: 18,
-                                ),
-                                label: Text(
-                                  _date == dateOnly(ref.read(clockProvider)())
-                                      ? l.today
-                                      : shortDate(context, _date),
-                                ),
-                                onPressed: () async {
-                                  final now = ref.read(clockProvider)();
-                                  final picked = await showDatePicker(
-                                    context: context,
-                                    initialDate: _date,
-                                    firstDate: _date.isBefore(DateTime(2000))
-                                        ? _date
-                                        : DateTime(2000),
-                                    lastDate: DateTime(now.year + 10),
-                                  );
-                                  if (picked != null) {
-                                    setState(() => _date = dateOnly(picked));
-                                  }
-                                },
+                              child: Wrap(
+                                spacing: VgSpace.s2,
+                                children: [
+                                  ActionChip(
+                                    avatar: const Icon(
+                                      Symbols.calendar_today_rounded,
+                                      size: 18,
+                                    ),
+                                    label: Text(
+                                      _date ==
+                                              dateOnly(
+                                                ref.read(clockProvider)(),
+                                              )
+                                          ? l.today
+                                          : shortDate(context, _date),
+                                    ),
+                                    onPressed: () async {
+                                      final now = ref.read(clockProvider)();
+                                      final picked = await showDatePicker(
+                                        context: context,
+                                        initialDate: _date,
+                                        firstDate:
+                                            _date.isBefore(DateTime(2000))
+                                            ? _date
+                                            : DateTime(2000),
+                                        lastDate: DateTime(now.year + 10),
+                                      );
+                                      if (picked != null) {
+                                        setState(
+                                          () => _date = dateOnly(picked),
+                                        );
+                                      }
+                                    },
+                                  ),
+                                  TimeChip(
+                                    time: _time,
+                                    fallback: nowTimeKey(
+                                      ref.read(clockProvider)(),
+                                    ),
+                                    onChanged: (t) => setState(() => _time = t),
+                                  ),
+                                ],
                               ),
                             ),
                           ),

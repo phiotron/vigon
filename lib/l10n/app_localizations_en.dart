@@ -1172,4 +1172,22 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get emailSaveReenter => 'Save and reconnect';
+
+  @override
+  String get entryTime => 'Time';
+
+  @override
+  String get timeNotSet => 'No time set';
+
+  @override
+  String get csvColTime => 'Time';
+
+  @override
+  String get csvColSource => 'Source';
+
+  @override
+  String get csvSourceManual => 'Manual';
+
+  @override
+  String get csvSourceEmailMb => 'MB email';
 }

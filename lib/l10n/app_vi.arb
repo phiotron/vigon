@@ -375,5 +375,11 @@
   "emailAppPasswordEmpty": "Nhập mật khẩu ứng dụng",
   "emailConnect": "Kết nối",
   "emailDuplicate": "Hộp thư này đã được thêm",
-  "emailSaveReenter": "Lưu và kết nối lại"
+  "emailSaveReenter": "Lưu và kết nối lại",
+  "entryTime": "Giờ",
+  "timeNotSet": "Chưa đặt giờ",
+  "csvColTime": "Giờ",
+  "csvColSource": "Nguồn",
+  "csvSourceManual": "Ghi tay",
+  "csvSourceEmailMb": "Email MB"
 }

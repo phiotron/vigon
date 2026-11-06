@@ -11,6 +11,8 @@ class EntryRepository {
   final AppDatabase _db;
 
   /// Các khoản trong [period], mới nhất trước; lọc theo tài khoản nếu có (AC-20).
+  /// Trong một ngày: khoản có giờ xếp trước, giờ mới nhất trước, rồi khoản
+  /// không giờ theo thứ tự tạo, mới trước (AC-76).
   Stream<List<EntryView>> watchEntries(Period period, {int? accountId}) {
     final e = _db.entries;
     final c = _db.categories;
@@ -22,7 +24,12 @@ class EntryRepository {
         e.accountId.equals(accountId) | e.toAccountId.equals(accountId),
       );
     }
-    query.orderBy([OrderingTerm.desc(e.date), OrderingTerm.desc(e.id)]);
+    query.orderBy([
+      OrderingTerm.desc(e.date),
+      OrderingTerm.asc(e.time.isNull()),
+      OrderingTerm.desc(e.time),
+      OrderingTerm.desc(e.id),
+    ]);
     return query.watch().map(
       (rows) => [
         for (final r in rows) EntryView(r.readTable(e), r.readTableOrNull(c)),
@@ -43,6 +50,7 @@ class EntryRepository {
     required int toAccountId,
     required int amount,
     required String date,
+    String? time,
     String? note,
   }) {
     if (fromAccountId == toAccountId) {
@@ -55,6 +63,7 @@ class EntryRepository {
         accountId: fromAccountId,
         toAccountId: Value(toAccountId),
         date: date,
+        time: Value(time),
         note: Value(note),
       ),
     );

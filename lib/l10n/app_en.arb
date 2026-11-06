@@ -386,5 +386,11 @@
   "emailAppPasswordEmpty": "Enter the app password",
   "emailConnect": "Connect",
   "emailDuplicate": "This mailbox is already added",
-  "emailSaveReenter": "Save and reconnect"
+  "emailSaveReenter": "Save and reconnect",
+  "entryTime": "Time",
+  "timeNotSet": "No time set",
+  "csvColTime": "Time",
+  "csvColSource": "Source",
+  "csvSourceManual": "Manual",
+  "csvSourceEmailMb": "MB email"
 }

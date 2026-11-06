@@ -57,6 +57,29 @@ Future<void> exportBackupFile(BuildContext context, WidgetRef ref) async {
   await _shareFile('vigon-${_stamp(now)}.vigon', content, 'application/json');
 }
 
+/// Định dạng CSV theo ngôn ngữ app: tiêu đề, tên loại, hai cột 2.0 Giờ và
+/// Nguồn (Ghi tay / Email MB, AC-124).
+CsvFormat csvFormatFor(AppLocalizations l) => CsvFormat.forLanguage(
+  l.localeName,
+  header: [
+    l.csvColDate,
+    l.csvColType,
+    l.csvColAmount,
+    l.csvColCurrency,
+    l.csvColCategory,
+    l.csvColAccount,
+    l.csvColToAccount,
+    l.csvColNote,
+  ],
+  expense: l.csvTypeExpense,
+  income: l.csvTypeIncome,
+  transfer: l.csvTypeTransfer,
+  timeHeader: l.csvColTime,
+  sourceHeader: l.csvColSource,
+  manualSource: l.csvSourceManual,
+  emailMbSource: l.csvSourceEmailMb,
+);
+
 /// Xuất CSV toàn bộ khoản (AC-30).
 Future<void> exportCsvFile(BuildContext context, WidgetRef ref) async {
   final l = AppLocalizations.of(context);
@@ -72,22 +95,7 @@ Future<void> exportCsvFile(BuildContext context, WidgetRef ref) async {
     entries: await db.select(db.entries).get(),
     currency: currency,
     decimalDigits: currencyDecimalDigits(currency),
-    format: CsvFormat.forLanguage(
-      l.localeName,
-      header: [
-        l.csvColDate,
-        l.csvColType,
-        l.csvColAmount,
-        l.csvColCurrency,
-        l.csvColCategory,
-        l.csvColAccount,
-        l.csvColToAccount,
-        l.csvColNote,
-      ],
-      expense: l.csvTypeExpense,
-      income: l.csvTypeIncome,
-      transfer: l.csvTypeTransfer,
-    ),
+    format: csvFormatFor(l),
     categoryName: (id) =>
         categories[id] == null ? '' : categoryLabel(l, categories[id]!),
     accountName: (id) =>

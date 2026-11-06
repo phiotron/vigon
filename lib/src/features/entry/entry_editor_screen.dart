@@ -19,6 +19,7 @@ import '../../ui/format.dart';
 import '../../ui/messenger.dart';
 import '../../ui/theme.dart';
 import '../../ui/tokens.g.dart';
+import 'entry_time.dart';
 import 'keypad.dart';
 
 /// Ghi khoản mới hoặc sửa khoản có sẵn (F-01, F-04).
@@ -45,6 +46,9 @@ class _EntryEditorScreenState extends ConsumerState<EntryEditorScreen> {
   String _expression = '';
   late DateTime _date = dateOnly(ref.read(clockProvider)());
   int? _accountId;
+  // Giờ `HH:mm`; khoản mới mặc định giờ lúc mở màn (AC-74), khoản cũ có thể
+  // chưa có giờ (AC-75).
+  late String? _time = nowTimeKey(ref.read(clockProvider)());
   final _note = TextEditingController();
   String? _error;
   bool _loading = false;
@@ -84,6 +88,7 @@ class _EntryEditorScreenState extends ConsumerState<EntryEditorScreen> {
       _expression = minorUnitsToInput(entry.amount, digits);
       _date = parseDateKey(entry.date);
       _accountId = entry.accountId;
+      _time = entry.time;
       _note.text = entry.note ?? '';
       _loading = false;
     });
@@ -143,6 +148,7 @@ class _EntryEditorScreenState extends ConsumerState<EntryEditorScreen> {
           categoryId: Value(_categoryId),
           accountId: accountId,
           date: dateKey(_date),
+          time: Value(_time),
           note: Value(note),
         );
         final repeat = _repeat;
@@ -161,6 +167,7 @@ class _EntryEditorScreenState extends ConsumerState<EntryEditorScreen> {
             categoryId: Value(_categoryId),
             accountId: accountId,
             date: dateKey(_date),
+            time: Value(_time),
             note: Value(note),
           ),
         );
@@ -366,6 +373,13 @@ class _EntryEditorScreenState extends ConsumerState<EntryEditorScreen> {
                                         : shortDate(context, _date),
                                   ),
                                   onPressed: _pickDate,
+                                ),
+                                TimeChip(
+                                  time: _time,
+                                  fallback: nowTimeKey(
+                                    ref.read(clockProvider)(),
+                                  ),
+                                  onChanged: (t) => setState(() => _time = t),
                                 ),
                                 if (_original == null)
                                   ActionChip(

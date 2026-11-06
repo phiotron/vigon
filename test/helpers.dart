@@ -99,6 +99,7 @@ Future<int> insertEntry(
   int accountId = 1,
   int? toAccountId,
   String date = '2026-11-03',
+  String? time,
   String? note,
 }) async {
   final id = await tester.runAsync(
@@ -112,6 +113,7 @@ Future<int> insertEntry(
             accountId: accountId,
             toAccountId: Value(toAccountId),
             date: date,
+            time: Value(time),
             note: Value(note),
           ),
         ),

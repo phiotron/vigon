@@ -1157,4 +1157,22 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get emailSaveReenter => 'Lưu và kết nối lại';
+
+  @override
+  String get entryTime => 'Giờ';
+
+  @override
+  String get timeNotSet => 'Chưa đặt giờ';
+
+  @override
+  String get csvColTime => 'Giờ';
+
+  @override
+  String get csvColSource => 'Nguồn';
+
+  @override
+  String get csvSourceManual => 'Ghi tay';
+
+  @override
+  String get csvSourceEmailMb => 'Email MB';
 }

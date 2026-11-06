@@ -2101,6 +2101,42 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Save and reconnect'**
   String get emailSaveReenter;
+
+  /// No description provided for @entryTime.
+  ///
+  /// In en, this message translates to:
+  /// **'Time'**
+  String get entryTime;
+
+  /// No description provided for @timeNotSet.
+  ///
+  /// In en, this message translates to:
+  /// **'No time set'**
+  String get timeNotSet;
+
+  /// No description provided for @csvColTime.
+  ///
+  /// In en, this message translates to:
+  /// **'Time'**
+  String get csvColTime;
+
+  /// No description provided for @csvColSource.
+  ///
+  /// In en, this message translates to:
+  /// **'Source'**
+  String get csvColSource;
+
+  /// No description provided for @csvSourceManual.
+  ///
+  /// In en, this message translates to:
+  /// **'Manual'**
+  String get csvSourceManual;
+
+  /// No description provided for @csvSourceEmailMb.
+  ///
+  /// In en, this message translates to:
+  /// **'MB email'**
+  String get csvSourceEmailMb;
 }
 
 class _AppLocalizationsDelegate

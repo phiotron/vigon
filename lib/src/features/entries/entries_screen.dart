@@ -14,6 +14,7 @@ import '../../ui/format.dart';
 import '../../ui/messenger.dart';
 import '../../ui/theme.dart';
 import '../../ui/tokens.g.dart';
+import '../entry/entry_time.dart';
 import '../home/home_extras.dart';
 import 'category_budget.dart';
 import 'entry_search.dart';
@@ -60,6 +61,8 @@ class _EntriesScreenState extends ConsumerState<EntriesScreen> {
       if (id != null) (byCategory[id] ??= []).add(r);
     }
     final theme = Theme.of(context);
+    String accountName(int id) =>
+        accounts[id] == null ? '' : accountLabel(l, accounts[id]!);
 
     // Mỗi phần tử là một hàm dựng dòng; ListView.builder chỉ gọi cho dòng đang hiện.
     final items = <Widget Function()>[
@@ -112,6 +115,7 @@ class _EntriesScreenState extends ConsumerState<EntriesScreen> {
                 row: r,
                 title: r.entry.note ?? categoryLabel(l, t.category),
                 amount: money(context, currency, r.entry.amount),
+                accountName: accountName(r.entry.accountId),
               ),
             );
           }
@@ -151,6 +155,7 @@ class _EntriesScreenState extends ConsumerState<EntriesScreen> {
             ),
             amount: money(context, currency, r.entry.amount),
             leading: const Icon(Symbols.swap_horiz_rounded),
+            accountName: name(r.entry.accountId),
           ),
         );
       }
@@ -331,12 +336,16 @@ class _EntryTile extends ConsumerWidget {
     required this.title,
     required this.amount,
     this.leading,
+    this.accountName = '',
   });
 
   final EntryView row;
   final String title;
   final String amount;
   final Widget? leading;
+
+  /// Tên tài khoản của khoản; chỉ hiện cạnh giờ khi khoản có giờ (AC-76).
+  final String accountName;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -350,6 +359,15 @@ class _EntryTile extends ConsumerWidget {
     final date = day == ref.watch(todayProvider)
         ? l.today
         : shortDate(context, day);
+    // Khoản có giờ: "<ngày> · <tài khoản> · <giờ>" (AC-76); không giờ: chỉ ngày.
+    final time = entry.time;
+    final when = time == null
+        ? date
+        : [
+            date,
+            if (accountName.isNotEmpty) accountName,
+            formatTimeKey(context, time),
+          ].join(' · ');
     return Dismissible(
       key: ValueKey('entry-${entry.id}'),
       direction: DismissDirection.endToStart,
@@ -381,7 +399,7 @@ class _EntryTile extends ConsumerWidget {
             ? null
             : SizedBox(width: 40, child: Center(child: leading)),
         title: Text(title, maxLines: 2, overflow: TextOverflow.ellipsis),
-        subtitle: Text(large ? '$date\n$amount' : date),
+        subtitle: Text(large ? '$when\n$amount' : when),
         // Số tiền khoản thẳng mép phải với tổng danh mục: rãnh 24 (+4) thay
         // chỗ mũi tên mở/thu (§10.1 #12, SCR-10).
         trailing: large
