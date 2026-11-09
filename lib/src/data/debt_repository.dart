@@ -101,6 +101,8 @@ class DebtRepository {
     required String date,
     String? dueDate,
     String? note,
+    int? originalAmount,
+    String? currency,
   }) {
     _checkPositive(amount);
     return _db
@@ -113,11 +115,14 @@ class DebtRepository {
             date: date,
             dueDate: Value(dueDate),
             note: Value(note),
+            currency: Value(currency ?? 'USD'),
+            originalAmount: Value(originalAmount ?? amount),
           ),
         );
   }
 
-  /// Sửa khoản nợ. Đổi số tiền thì bỏ số chính xác cũ (D-029).
+  /// Sửa khoản nợ. Đổi số tiền thì bỏ số chính xác cũ (D-029). Tiền tệ khóa
+  /// sau lần trả đầu (D-037): đã có lần trả thì giữ tiền tệ cũ.
   Future<void> edit(
     int id, {
     required String person,
@@ -126,12 +131,20 @@ class DebtRepository {
     required String date,
     String? dueDate,
     String? note,
+    int? originalAmount,
+    String? currency,
   }) async {
     _checkPositive(amount);
     final old = await (_db.select(
       _db.debts,
     )..where((d) => d.id.equals(id))).getSingleOrNull();
     if (old == null) return;
+    final hasPayments = await (_db.select(
+      _db.debtPayments,
+    )..where((p) => p.debtId.equals(id))).get().then((v) => v.isNotEmpty);
+    final effectiveCurrency = hasPayments
+        ? old.currency
+        : currency ?? old.currency;
     await (_db.update(_db.debts)..where((d) => d.id.equals(id))).write(
       DebtsCompanion(
         person: Value(person),
@@ -143,6 +156,8 @@ class DebtRepository {
         date: Value(date),
         dueDate: Value(dueDate),
         note: Value(note),
+        currency: Value(effectiveCurrency),
+        originalAmount: Value(originalAmount ?? amount),
       ),
     );
   }
@@ -152,10 +167,14 @@ class DebtRepository {
       (_db.delete(_db.debts)..where((d) => d.id.equals(id))).go();
 
   /// Thêm lần trả; ném [DebtOverpaymentException] nếu vượt số còn lại (AC-105).
+  /// [amount] là số quy về Tiền tệ chính; [originalAmount]/[currency] là số gốc
+  /// người dùng nhập (D-037).
   Future<int> addPayment(
     int debtId, {
     required int amount,
     required String date,
+    int? originalAmount,
+    String? currency,
   }) {
     _checkPositive(amount);
     return _db.transaction(() async {
@@ -173,6 +192,8 @@ class DebtRepository {
               debtId: debtId,
               amount: amount,
               date: date,
+              originalAmount: Value(originalAmount ?? amount),
+              currency: Value(currency ?? view.debt.currency),
             ),
           );
     });

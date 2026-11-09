@@ -13,7 +13,12 @@ class SettingsRepository {
 
   static const themeModeKey = 'themeMode';
   static const localeKey = 'locale';
+
+  /// Tiền tệ cũ của bản một-tiền-tệ; giữ để đọc dữ liệu trước schema 5.
   static const currencyKey = 'currency';
+
+  /// Tiền tệ chính (D-037): chỉ dùng để cộng/hiển thị, không ghi đè số gốc.
+  static const primaryCurrencyKey = 'primaryCurrency';
   static const weekStartKey = 'weekStart';
   static const monthStartDayKey = 'monthStartDay';
   static const budgetKey = 'monthlyBudget';
@@ -21,6 +26,11 @@ class SettingsRepository {
   /// Ngân sách tháng chính xác, phần triệu đơn vị chính (D-029); thiếu là
   /// đúng bằng [budgetKey].
   static const budgetMicroKey = 'budgetMicro';
+
+  /// Ngân sách tháng gốc + tiền tệ (D-037); thiếu là ngân sách cũ đang ở
+  /// Tiền tệ chính.
+  static const budgetOriginalKey = 'budgetOriginal';
+  static const budgetCurrencyKey = 'budgetCurrency';
 
   /// Tài khoản tự tạo từ email MB còn thẻ "Gắn vào tài khoản có sẵn" (AC-89):
   /// danh sách id cách nhau dấu phẩy. Theo máy, không vào file sao lưu.
@@ -35,6 +45,13 @@ class SettingsRepository {
 
   /// Tỉ giá người dùng tự nhập lần gần nhất: `{from, to, rate, date}`.
   static const exchangeRateManualKey = 'exchangeRateManual';
+
+  /// Ghi đè tỉ giá theo cặp (D-037): `{"USD>VND": "26000", ...}`.
+  static const exchangeRateOverridesKey = 'exchangeRateOverrides';
+
+  /// Ngày bảng tỉ giá đã áp dụng lần cuối, để quy đổi lại số dẫn xuất khi bảng
+  /// đổi mà không lặp mỗi lần mở app.
+  static const ratesAppliedDateKey = 'ratesAppliedDate';
 
   /// Mã ngẫu nhiên của lần cài đặt, ghi cùng mã PIN (iOS-02). Gắn với lần cài
   /// chứ không với dữ liệu: không xuất ra file sao lưu, khôi phục hay xóa toàn
@@ -71,22 +88,86 @@ class SettingsRepository {
   Future<void> setLocaleCode(String? code) =>
       code == null ? _remove(localeKey) : _write(localeKey, code);
 
-  /// Mã tiền tệ ISO 4217 (AC-21). Lần đầu chưa có thì lưu [defaultCode] (mặc
-  /// định USD, D-036: không đoán theo vùng/ngôn ngữ máy).
+  /// Mã Tiền tệ chính ISO 4217 (AC-21, D-037). Lần đầu chưa có thì lưu
+  /// [defaultCode] (mặc định USD, D-036: không đoán theo vùng/ngôn ngữ máy).
   Future<String> ensureCurrency({String defaultCode = 'USD'}) async {
-    final saved = await _read(currencyKey);
-    if (saved != null) return saved;
-    await _write(currencyKey, defaultCode);
-    return defaultCode;
+    final saved = await _read(primaryCurrencyKey) ?? await _read(currencyKey);
+    final code = saved ?? defaultCode;
+    await _write(currencyKey, code);
+    await _write(primaryCurrencyKey, code);
+    return code;
   }
 
-  Stream<String> watchCurrency() => _watch(currencyKey).map((v) => v ?? 'USD');
+  /// Tiền tệ chính; đọc khóa cũ khi dữ liệu chưa qua migration (D-037).
+  Stream<String> watchCurrency() =>
+      _watch(primaryCurrencyKey).map((v) => v ?? 'USD');
 
-  Future<String> readCurrency() => _read(currencyKey).then((v) => v ?? 'USD');
+  Future<String> readPrimaryCurrency() async =>
+      await _read(primaryCurrencyKey) ?? await _read(currencyKey) ?? 'USD';
 
-  /// Chỉ ghi mã tiền tệ. Đổi tiền tệ trong app phải qua `convertCurrency`
-  /// (quy đổi mọi số tiền, D-025); hàm này dùng khi chưa có số tiền nào.
-  Future<void> setCurrency(String code) => _write(currencyKey, code);
+  /// Giữ tên cũ cho các luồng chưa chuyển sang "Tiền tệ chính".
+  Future<String> readCurrency() => readPrimaryCurrency();
+
+  /// Ghi Tiền tệ chính. Không quy đổi số tiền (D-037): số gốc giữ nguyên,
+  /// `CurrencyService` quy đổi lại các cột dẫn xuất.
+  Future<void> setPrimaryCurrency(String code) async {
+    await _write(primaryCurrencyKey, code);
+  }
+
+  /// Giữ cho dữ liệu/tests cũ; tương đương [setPrimaryCurrency].
+  Future<void> setCurrency(String code) async {
+    await _write(currencyKey, code);
+    await _write(primaryCurrencyKey, code);
+  }
+
+  /// Ghi đè tỉ giá "1 [from] = rate [to]" (D-037); lưu cả hai chiều đọc được.
+  Future<void> setRateOverride(
+    String from,
+    String to,
+    ExchangeRate rate,
+  ) async {
+    final all = await readRateOverrides();
+    all['$from>$to'] = rate;
+    all.remove('$to>$from');
+    await _write(
+      exchangeRateOverridesKey,
+      jsonEncode({for (final e in all.entries) e.key: e.value.toStorage()}),
+    );
+  }
+
+  /// Bỏ ghi đè của cặp [from]–[to] (cả hai chiều).
+  Future<void> clearRateOverride(String from, String to) async {
+    final all = await readRateOverrides()
+      ..remove('$from>$to')
+      ..remove('$to>$from');
+    if (all.isEmpty) {
+      await _remove(exchangeRateOverridesKey);
+    } else {
+      await _write(
+        exchangeRateOverridesKey,
+        jsonEncode({for (final e in all.entries) e.key: e.value.toStorage()}),
+      );
+    }
+  }
+
+  Future<Map<String, ExchangeRate>> readRateOverrides() async {
+    final text = await _read(exchangeRateOverridesKey);
+    if (text == null) return {};
+    try {
+      final map = jsonDecode(text) as Map<String, dynamic>;
+      return {
+        for (final e in map.entries)
+          e.key: ?ExchangeRate.fromStorage(e.value as String),
+      };
+    } catch (_) {
+      return {};
+    }
+  }
+
+  Future<String?> readRatesAppliedDate() => _read(ratesAppliedDateKey);
+
+  Future<void> setRatesAppliedDate(String date) =>
+      _write(ratesAppliedDateKey, date);
 
   /// Bảng tỉ giá đã lưu; null nếu chưa có hoặc hỏng.
   Future<RateTable?> readRateTable() =>
@@ -205,6 +286,23 @@ class SettingsRepository {
   Future<void> setBudgetMicro(int? micro) => micro == null
       ? _remove(budgetMicroKey)
       : _write(budgetMicroKey, '$micro');
+
+  /// Ngân sách tháng gốc + tiền tệ (D-037); null là ngân sách đang ở Tiền tệ
+  /// chính.
+  Future<int?> readBudgetOriginal() =>
+      _read(budgetOriginalKey).then((v) => int.tryParse(v ?? ''));
+
+  Future<void> setBudgetOriginal(int? amount) => amount == null
+      ? _remove(budgetOriginalKey)
+      : _write(budgetOriginalKey, '$amount');
+
+  Stream<String?> watchBudgetCurrency() => _watch(budgetCurrencyKey);
+
+  Future<String?> readBudgetCurrency() => _read(budgetCurrencyKey);
+
+  Future<void> setBudgetCurrency(String? code) => code == null
+      ? _remove(budgetCurrencyKey)
+      : _write(budgetCurrencyKey, code);
 
   /// Mã cài đặt đi kèm mã PIN; null là cơ sở dữ liệu chưa từng đặt PIN.
   Future<String?> readPinInstallId() => _read(pinInstallIdKey);

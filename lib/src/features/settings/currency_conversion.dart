@@ -20,10 +20,7 @@ import '../../ui/hint.dart';
 import '../../ui/messenger.dart';
 import '../../ui/tokens.g.dart';
 
-/// Nguồn tỉ giá của app (D-025). Test thay bằng nguồn giả, không gọi mạng.
-final exchangeRateSourceProvider = Provider<ExchangeRateSource>(
-  (ref) => const ErApiRateSource(),
-);
+export '../../providers.dart' show exchangeRateSourceProvider;
 
 /// Tỉ giá để hiển thị: tối đa 6 chữ số có nghĩa, theo ngôn ngữ
 /// ("0,0000385", "25.974" ở vi).

@@ -281,7 +281,8 @@ void main() {
           overrides: [reminderSchedulerProvider.overrideWithValue(fake)],
         );
         final n = fake.scheduled.last;
-        expect(n.title, 'Ví Gọn');
+        // D-036: tên app theo ngôn ngữ đang dùng.
+        expect(n.title, code == 'vi' ? 'Ví Gọn' : 'Vigon');
         expect(
           n.body,
           code == 'vi'

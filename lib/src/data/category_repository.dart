@@ -20,6 +20,8 @@ class CategoryRepository {
     required String icon,
     required int color,
     int? budget,
+    int? budgetOriginal,
+    String? budgetCurrency,
   }) async {
     final max = _db.categories.sortOrder.max();
     final row =
@@ -37,18 +39,23 @@ class CategoryRepository {
             color: color,
             sortOrder: Value((row.read(max) ?? -1) + 1),
             budget: Value(budget),
+            budgetOriginal: Value(budgetOriginal),
+            budgetCurrency: Value(budgetCurrency),
           ),
         );
   }
 
   /// Đổi tên, icon, màu (AC-16), và hạn mức tháng nếu truyền [budget] (AC-54). Có [name] thì bỏ tên mặc định theo ngôn ngữ;
-  /// [name] null thì giữ tên đang có.
+  /// [name] null thì giữ tên đang có. `budget` là số dẫn xuất quy về Tiền tệ
+  /// chính; `budgetOriginal`/`budgetCurrency` là số gốc người dùng nhập (D-037).
   Future<void> edit(
     int id, {
     String? name,
     required String icon,
     required int color,
     Value<int?> budget = const Value.absent(),
+    Value<int?> budgetOriginal = const Value.absent(),
+    Value<String?> budgetCurrency = const Value.absent(),
   }) => (_db.update(_db.categories)..where((c) => c.id.equals(id))).write(
     CategoriesCompanion(
       name: name == null ? const Value.absent() : Value(name),
@@ -56,6 +63,8 @@ class CategoryRepository {
       icon: Value(icon),
       color: Value(color),
       budget: budget,
+      budgetOriginal: budgetOriginal,
+      budgetCurrency: budgetCurrency,
     ),
   );
 

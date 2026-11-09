@@ -13,6 +13,7 @@ import '../../ui/confirm_dialog.dart';
 import '../../ui/choice_sheet.dart';
 import '../../ui/format.dart';
 import '../../ui/messenger.dart';
+import '../../ui/money_lines.dart';
 import '../../ui/tokens.g.dart';
 import '../categories/sheet_footer.dart';
 import '../settings/budget_dialog.dart' show currencySymbol;
@@ -50,10 +51,27 @@ class _DebtDetail extends ConsumerWidget {
       }
       return const SizedBox(height: 120);
     }
-    final currency = ref.watch(currencyProvider).value ?? 'USD';
-    final digits = currencyDecimalDigits(currency);
+    final primary = ref.watch(currencyProvider).value ?? 'USD';
+    final digits = currencyDecimalDigits(primary);
+    final service = ref.watch(currencyServiceProvider).value;
     final today = ref.watch(todayProvider);
     final d = view.debt;
+    // Khoản nợ có tiền tệ riêng (D-037): số trong DB là số quy về Tiền tệ
+    // chính, hiện lại theo tiền tệ đã nhập.
+    String own(int amount) {
+      final value = d.currency == primary
+          ? amount
+          : service?.fromPrimary(amount, d.currency) ?? amount;
+      return money(context, d.currency, value);
+    }
+
+    String? ownApprox(int amount) {
+      final value = d.currency == primary
+          ? amount
+          : service?.fromPrimary(amount, d.currency) ?? amount;
+      return approxMoneyText(context, ref, value, d.currency);
+    }
+
     final settled = view.isSettled(digits);
     final overdue = isDebtOverdue(view, today, digits);
 
@@ -62,6 +80,7 @@ class _DebtDetail extends ConsumerWidget {
       String value, {
       Color? color,
       bool bold = false,
+      String? secondary,
     }) => Padding(
       padding: const EdgeInsets.symmetric(vertical: VgSpace.s1),
       child: Row(
@@ -75,14 +94,27 @@ class _DebtDetail extends ConsumerWidget {
           ),
           const SizedBox(width: VgSpace.s3),
           Flexible(
-            child: Text(
-              value,
-              textAlign: TextAlign.end,
-              style: VgType.bodyMd.copyWith(
-                color: color ?? scheme.onSurface,
-                fontWeight: bold ? FontWeight.w600 : null,
-                fontFeatures: const [FontFeature.tabularFigures()],
-              ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                Text(
+                  value,
+                  textAlign: TextAlign.end,
+                  style: VgType.bodyMd.copyWith(
+                    color: color ?? scheme.onSurface,
+                    fontWeight: bold ? FontWeight.w600 : null,
+                    fontFeatures: const [FontFeature.tabularFigures()],
+                  ),
+                ),
+                if (secondary != null)
+                  Text(
+                    secondary,
+                    textAlign: TextAlign.end,
+                    style: VgType.bodySm.copyWith(
+                      color: scheme.onSurfaceVariant,
+                    ),
+                  ),
+              ],
             ),
           ),
         ],
@@ -121,7 +153,16 @@ class _DebtDetail extends ConsumerWidget {
                         ? l.debtLent
                         : l.debtBorrowed,
                   ),
-                  line(l.debtAmount, money(context, currency, d.amount)),
+                  line(
+                    l.debtAmount,
+                    money(context, d.currency, d.originalAmount ?? d.amount),
+                    secondary: approxMoneyText(
+                      context,
+                      ref,
+                      d.originalAmount ?? d.amount,
+                      d.currency,
+                    ),
+                  ),
                   line(l.debtDate, shortDate(context, parseDateKey(d.date))),
                   if (d.dueDate != null)
                     line(
@@ -150,7 +191,8 @@ class _DebtDetail extends ConsumerWidget {
                   else
                     line(
                       l.debtRemainingLabel,
-                      money(context, currency, view.remaining(digits)),
+                      own(view.remaining(digits)),
+                      secondary: ownApprox(view.remaining(digits)),
                       bold: true,
                     ),
                   const SizedBox(height: VgSpace.s2),
@@ -174,11 +216,13 @@ class _DebtDetail extends ConsumerWidget {
                   for (final p in view.payments)
                     ListTile(
                       contentPadding: EdgeInsets.zero,
-                      title: Text(
-                        money(context, currency, p.amount),
+                      title: MoneyLines(
+                        amount: p.originalAmount ?? p.amount,
+                        currency: p.currency,
                         style: const TextStyle(
                           fontFeatures: [FontFeature.tabularFigures()],
                         ),
+                        secondaryStyle: VgType.bodySm,
                       ),
                       subtitle: Text(shortDate(context, parseDateKey(p.date))),
                       trailing: IconButton(
@@ -249,25 +293,28 @@ class _DebtDetail extends ConsumerWidget {
     showMessage(l.debtDeleted);
   }
 
-  Future<void> _addPayment(BuildContext context, DebtView view) =>
-      showModalBottomSheet<void>(
-        context: context,
-        isScrollControlled: true,
-        showDragHandle: true,
-        builder: (context) => Padding(
-          padding: EdgeInsets.only(
-            bottom: MediaQuery.viewInsetsOf(context).bottom,
-          ),
-          child: _PaymentSheet(debtId: view.debt.id),
-        ),
-      );
+  Future<void> _addPayment(
+    BuildContext context,
+    DebtView view,
+  ) => showModalBottomSheet<void>(
+    context: context,
+    isScrollControlled: true,
+    showDragHandle: true,
+    builder: (context) => Padding(
+      padding: EdgeInsets.only(bottom: MediaQuery.viewInsetsOf(context).bottom),
+      child: _PaymentSheet(debtId: view.debt.id, currency: view.debt.currency),
+    ),
+  );
 }
 
 /// Thêm lần trả: số tiền > 0 và không vượt số còn lại (báo lỗi, AC-105), ngày.
 class _PaymentSheet extends ConsumerStatefulWidget {
-  const _PaymentSheet({required this.debtId});
+  const _PaymentSheet({required this.debtId, required this.currency});
 
   final int debtId;
+
+  /// Tiền tệ của khoản nợ; lần trả ghi cùng tiền tệ này (D-037).
+  final String currency;
 
   @override
   ConsumerState<_PaymentSheet> createState() => _PaymentSheetState();
@@ -299,30 +346,49 @@ class _PaymentSheetState extends ConsumerState<_PaymentSheet> {
   Future<void> _save() async {
     if (_saving) return;
     final l = AppLocalizations.of(context);
-    final currency = ref.read(currencyProvider).value ?? 'USD';
+    final primary = ref.read(currencyProvider).value ?? 'USD';
+    final currency = widget.currency;
+    final digits = currencyDecimalDigits(currency);
     final text = _amount.text.trim();
-    final amount = text.isEmpty
+    final amountOriginal = text.isEmpty
         ? null
-        : parseAmountField(context, text, currencyDecimalDigits(currency));
-    if (amount == null || amount <= 0) {
+        : parseAmountField(context, text, digits);
+    if (amountOriginal == null || amountOriginal <= 0) {
       setState(
-        () => _error = text.isNotEmpty && amount == null
+        () => _error = text.isNotEmpty && amountOriginal == null
             ? l.invalidExpression
             : l.amountMustBePositive,
       );
+      return;
+    }
+    final service = await ref.read(currencyServiceProvider.future);
+    final amount = service.toPrimary(amountOriginal, currency);
+    if (amount == null) {
+      if (mounted) {
+        setState(() => _error = l.rateMissing(currency, primary));
+      }
       return;
     }
     _saving = true;
     try {
       await ref
           .read(debtRepositoryProvider)
-          .addPayment(widget.debtId, amount: amount, date: dateKey(_date));
+          .addPayment(
+            widget.debtId,
+            amount: amount,
+            originalAmount: amountOriginal,
+            currency: currency,
+            date: dateKey(_date),
+          );
     } on DebtOverpaymentException catch (e) {
       // Vượt số còn lại: báo lỗi, không lưu (AC-105).
       _saving = false;
       if (mounted) {
+        final remaining = currency == primary
+            ? e.remaining
+            : service.fromPrimary(e.remaining, currency) ?? e.remaining;
         setState(
-          () => _error = l.debtOverpay(money(context, currency, e.remaining)),
+          () => _error = l.debtOverpay(money(context, currency, remaining)),
         );
       }
       return;
@@ -333,7 +399,7 @@ class _PaymentSheetState extends ConsumerState<_PaymentSheet> {
   @override
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context);
-    final currency = ref.watch(currencyProvider).value ?? 'USD';
+    final currency = widget.currency;
     final today = ref.watch(todayProvider);
     return SafeArea(
       child: Column(

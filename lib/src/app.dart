@@ -22,6 +22,7 @@ import 'features/reminder/reminder_providers.dart';
 import 'features/savings/savings_screen.dart';
 import 'features/settings/email_import_screen.dart';
 import 'features/settings/email_mailbox_form.dart';
+import 'features/settings/rates_screen.dart';
 import 'features/settings/secure_window.dart';
 import 'features/settings/settings_screen.dart';
 import 'features/widget/deep_link.dart';
@@ -45,6 +46,10 @@ GoRouter createRouter() => GoRouter(
         GoRoute(
           path: 'settings',
           builder: (context, state) => const SettingsScreen(),
+        ),
+        GoRoute(
+          path: 'rates',
+          builder: (context, state) => const RatesScreen(),
         ),
         GoRoute(
           path: 'about',

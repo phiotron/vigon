@@ -52,6 +52,11 @@ class RecurringRepository {
             frequency: frequency,
             startDate: first.date.value,
             lastGeneratedDate: Value(first.date.value),
+            currency: first.currency,
+            originalAmount: first.originalAmount,
+            toAmount: first.toAmount,
+            toOriginalAmount: first.toOriginalAmount,
+            toCurrency: first.toCurrency,
           ),
         );
     await _db
@@ -90,6 +95,11 @@ class RecurringRepository {
                 date: key,
                 note: Value(rule.note),
                 recurringRuleId: Value(rule.id),
+                currency: Value(rule.currency),
+                originalAmount: Value(rule.originalAmount ?? rule.amount),
+                toAmount: Value(rule.toAmount),
+                toOriginalAmount: Value(rule.toOriginalAmount),
+                toCurrency: Value(rule.toCurrency),
               ),
             );
         newLast = key;
@@ -152,6 +162,8 @@ class RecurringRepository {
     RecurrenceFrequency? frequency,
     int? categoryId,
     int? accountId,
+    int? originalAmount,
+    String? currency,
   }) => _db.transaction(() async {
     final rule = await find(id);
     if (rule == null) return;
@@ -165,6 +177,9 @@ class RecurringRepository {
     await (_db.update(_db.recurringRules)..where((r) => r.id.equals(id))).write(
       RecurringRulesCompanion(
         amount: Value(amount),
+        amountMicro: amount == rule.amount
+            ? const Value.absent()
+            : const Value(null),
         note: Value(note),
         frequency: frequency == null ? const Value.absent() : Value(frequency),
         categoryId: categoryId == null
@@ -175,6 +190,8 @@ class RecurringRepository {
         lastGeneratedDate: lastGenerated == null
             ? const Value.absent()
             : Value(lastGenerated),
+        originalAmount: Value(originalAmount ?? amount),
+        currency: currency == null ? const Value.absent() : Value(currency),
       ),
     );
   });

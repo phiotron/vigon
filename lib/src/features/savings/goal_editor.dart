@@ -56,6 +56,10 @@ class _GoalEditorState extends ConsumerState<_GoalEditor> {
   String? _accountError;
   DateTime? _due;
   int _accountId = _newAccount;
+
+  /// Tiền tệ của số tiền mục tiêu (D-037): theo tài khoản gắn, đổi tài khoản
+  /// thì đổi theo; khi sửa thì giữ tiền tệ đã lưu.
+  String? _currency;
   bool _saving = false;
 
   @override
@@ -64,10 +68,13 @@ class _GoalEditorState extends ConsumerState<_GoalEditor> {
     final g = widget.goal;
     if (g != null && _name.text.isEmpty) {
       _name.text = g.name;
-      final digits = currencyDecimalDigits(
-        ref.read(currencyProvider).value ?? 'USD',
+      _currency ??= g.currency;
+      final digits = currencyDecimalDigits(g.currency);
+      _target.text = amountInput(
+        context,
+        g.originalTargetAmount ?? g.targetAmount,
+        digits,
       );
-      _target.text = amountInput(context, g.targetAmount, digits);
       _due = g.dueDate == null ? null : parseDateKey(g.dueDate!);
       _accountId = g.accountId;
     }
@@ -116,8 +123,14 @@ class _GoalEditorState extends ConsumerState<_GoalEditor> {
       ],
     );
     if (picked != null) {
+      final id = picked.$1;
       setState(() {
-        _accountId = picked.$1;
+        _accountId = id;
+        // Mục tiêu theo tiền tệ của tài khoản (D-037); tài khoản mới dùng
+        // Tiền tệ chính.
+        _currency = id == _newAccount
+            ? ref.read(currencyProvider).value ?? 'USD'
+            : accounts.where((a) => a.id == id).firstOrNull?.currency;
         _accountError = null;
       });
     }
@@ -127,20 +140,31 @@ class _GoalEditorState extends ConsumerState<_GoalEditor> {
     if (_saving) return;
     final l = AppLocalizations.of(context);
     final name = _name.text.trim();
-    final digits = currencyDecimalDigits(
-      ref.read(currencyProvider).value ?? 'USD',
-    );
+    final primary = ref.read(currencyProvider).value ?? 'USD';
+    final currency = _currency ?? primary;
+    final digits = currencyDecimalDigits(currency);
     final text = _target.text.trim();
-    final amount = text.isEmpty
+    final amountOriginal = text.isEmpty
         ? null
         : parseAmountField(context, text, digits);
     setState(() {
       _nameError = name.isEmpty ? l.nameRequired : null;
-      _targetError = amount == null
+      _targetError = amountOriginal == null
           ? (text.isEmpty ? l.amountMustBePositive : l.invalidExpression)
-          : (amount <= 0 ? l.amountMustBePositive : null);
+          : (amountOriginal <= 0 ? l.amountMustBePositive : null);
     });
-    if (_nameError != null || amount == null || amount <= 0) return;
+    if (_nameError != null || amountOriginal == null || amountOriginal <= 0) {
+      return;
+    }
+    // [targetAmount] trong DB là số quy về Tiền tệ chính (D-037).
+    final service = await ref.read(currencyServiceProvider.future);
+    final amount = service.toPrimary(amountOriginal, currency);
+    if (amount == null) {
+      if (mounted) {
+        setState(() => _targetError = l.rateMissing(currency, service.primary));
+      }
+      return;
+    }
     _saving = true;
     final repo = ref.read(savingsRepositoryProvider);
     final dueKey = _due == null ? null : dateKey(_due!);
@@ -151,18 +175,24 @@ class _GoalEditorState extends ConsumerState<_GoalEditor> {
           g.id,
           name: name,
           targetAmount: amount,
+          originalTargetAmount: amountOriginal,
+          currency: currency,
           dueDate: dueKey,
         );
       } else if (_accountId == _newAccount) {
         await repo.addWithNewAccount(
           name: name,
           targetAmount: amount,
+          originalTargetAmount: amountOriginal,
+          currency: currency,
           dueDate: dueKey,
         );
       } else {
         await repo.add(
           name: name,
           targetAmount: amount,
+          originalTargetAmount: amountOriginal,
+          currency: currency,
           accountId: _accountId,
           dueDate: dueKey,
         );
@@ -202,7 +232,14 @@ class _GoalEditorState extends ConsumerState<_GoalEditor> {
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context);
     final scheme = Theme.of(context).colorScheme;
-    final currency = ref.watch(currencyProvider).value ?? 'USD';
+    final primary = ref.watch(currencyProvider).value ?? 'USD';
+    final currency = _currency ?? primary;
+    final digits = currencyDecimalDigits(currency);
+    final service = ref.watch(currencyServiceProvider).value;
+    final typed = parseAmountField(context, _target.text.trim(), digits);
+    final converted = typed == null || currency == primary
+        ? null
+        : service?.toPrimary(typed, currency);
     final goal = widget.goal;
     final visible = ref.watch(accountsProvider).value ?? const <Account>[];
     final all = ref.watch(allAccountsProvider).value ?? visible;
@@ -266,9 +303,13 @@ class _GoalEditorState extends ConsumerState<_GoalEditor> {
                       style: const TextStyle(
                         fontFeatures: [FontFeature.tabularFigures()],
                       ),
+                      onChanged: (_) => setState(() {}),
                       decoration: InputDecoration(
                         labelText: l.savingsTarget,
                         suffixText: currencySymbol(currency),
+                        helperText: converted == null
+                            ? null
+                            : '≈ ${money(context, primary, converted)}',
                         errorText: _targetError,
                         errorMaxLines: 3,
                       ),

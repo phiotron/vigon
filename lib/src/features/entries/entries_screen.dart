@@ -12,6 +12,7 @@ import '../../providers.dart';
 import '../../ui/category_avatar.dart';
 import '../../ui/format.dart';
 import '../../ui/messenger.dart';
+import '../../ui/money_lines.dart';
 import '../../ui/theme.dart';
 import '../../ui/tokens.g.dart';
 import '../entry/entry_time.dart';
@@ -114,7 +115,16 @@ class _EntriesScreenState extends ConsumerState<EntriesScreen> {
               () => _EntryTile(
                 row: r,
                 title: r.entry.note ?? categoryLabel(l, t.category),
-                amount: money(context, currency, r.entry.amount),
+                amount: MoneyLines(
+                  amount: r.entry.originalAmount ?? r.entry.amount,
+                  currency: r.entry.currency,
+                  style: _rowAmount.copyWith(
+                    color: theme.colorScheme.onSurface,
+                  ),
+                  secondaryStyle: VgType.bodySm,
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  textAlign: TextAlign.end,
+                ),
                 accountName: accountName(r.entry.accountId),
               ),
             );
@@ -153,7 +163,14 @@ class _EntriesScreenState extends ConsumerState<EntriesScreen> {
               name(r.entry.accountId),
               name(r.entry.toAccountId),
             ),
-            amount: money(context, currency, r.entry.amount),
+            amount: MoneyLines(
+              amount: r.entry.originalAmount ?? r.entry.amount,
+              currency: r.entry.currency,
+              style: _rowAmount.copyWith(color: theme.colorScheme.onSurface),
+              secondaryStyle: VgType.bodySm,
+              crossAxisAlignment: CrossAxisAlignment.end,
+              textAlign: TextAlign.end,
+            ),
             leading: const Icon(Symbols.swap_horiz_rounded),
             accountName: name(r.entry.accountId),
           ),
@@ -341,7 +358,7 @@ class _EntryTile extends ConsumerWidget {
 
   final EntryView row;
   final String title;
-  final String amount;
+  final Widget amount;
   final Widget? leading;
 
   /// Tên tài khoản của khoản; chỉ hiện cạnh giờ khi khoản có giờ (AC-76).
@@ -350,7 +367,6 @@ class _EntryTile extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l = AppLocalizations.of(context);
-    final scheme = Theme.of(context).colorScheme;
     final entry = row.entry;
     final isTransfer = entry.type == EntryType.transfer;
     final large = isLargeText(context);
@@ -399,7 +415,12 @@ class _EntryTile extends ConsumerWidget {
             ? null
             : SizedBox(width: 40, child: Center(child: leading)),
         title: Text(title, maxLines: 2, overflow: TextOverflow.ellipsis),
-        subtitle: Text(large ? '$when\n$amount' : when),
+        subtitle: large
+            ? Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [Text(when), const SizedBox(height: 2), amount],
+              )
+            : Text(when),
         // Số tiền khoản thẳng mép phải với tổng danh mục: rãnh 24 (+4) thay
         // chỗ mũi tên mở/thu (§10.1 #12, SCR-10).
         trailing: large
@@ -407,10 +428,7 @@ class _EntryTile extends ConsumerWidget {
             : Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Text(
-                    amount,
-                    style: _rowAmount.copyWith(color: scheme.onSurface),
-                  ),
+                  amount,
                   const SizedBox(width: VgSpace.s1 + 24),
                 ],
               ),

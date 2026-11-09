@@ -1,4 +1,5 @@
 import 'database.dart';
+import 'rate_repository.dart';
 
 /// Một khoản ghi kèm danh mục của nó (null với chuyển tiền).
 class EntryView {
@@ -42,13 +43,23 @@ class PeriodSummary {
   int get balance => income - expense;
   bool get isEmpty => income == 0 && expense == 0;
 
-  factory PeriodSummary.of(Iterable<EntryView> rows) {
+  factory PeriodSummary.of(
+    Iterable<EntryView> rows, {
+    CurrencyService? service,
+  }) {
     final expense = <int, (Category, int)>{};
     final income = <int, (Category, int)>{};
     var expenseTotal = 0, incomeTotal = 0;
     for (final row in rows) {
       final category = row.category;
       if (category == null) continue;
+      // Cặp thiếu tỷ giá thì khoản không vào tổng (D-037); UI vẫn hiện số gốc
+      // kèm ghi chú "không có tỷ giá".
+      if (service != null &&
+          row.entry.type != EntryType.transfer &&
+          !service.has(row.entry.currency, service.primary)) {
+        continue;
+      }
       final amount = row.entry.amount;
       switch (row.entry.type) {
         case EntryType.expense:

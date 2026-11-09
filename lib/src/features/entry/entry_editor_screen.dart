@@ -55,6 +55,11 @@ class _EntryEditorScreenState extends ConsumerState<EntryEditorScreen> {
   String _expression = '';
   late DateTime _date = dateOnly(ref.read(clockProvider)());
   int? _accountId;
+
+  /// Tiền tệ của số đang gõ: mặc định theo tài khoản, giữ nguyên khi sửa khoản
+  /// (D-037). Số gốc lưu đúng tiền tệ này; `amount` trong DB là số quy về Tiền
+  /// tệ chính.
+  String? _currency;
   // Giờ `HH:mm`; khoản mới mặc định giờ lúc mở màn (AC-74), khoản cũ có thể
   // chưa có giờ (AC-75).
   late String? _time = nowTimeKey(ref.read(clockProvider)());
@@ -90,18 +95,24 @@ class _EntryEditorScreenState extends ConsumerState<EntryEditorScreen> {
     final accountId = await ref
         .read(importQueueActionsProvider)
         .resolveAccount(item);
+    // Danh sách tài khoản đã có sẵn từ màn trước; đọc thẳng thay vì mở thêm
+    // stream (stream mở lúc này không kịp phát trong test).
+    final accounts = ref.read(allAccountsProvider).value ?? const <Account>[];
+    final account = accounts.where((a) => a.id == accountId).firstOrNull;
+    final accountCurrency = account?.currency ?? currency;
     if (!mounted) return;
     setState(() {
       _queueItem = item;
       _type = EntryType.expense;
       _accountId = accountId;
+      _currency = accountCurrency;
       _date = parseDateKey(item.date);
       _time = item.time;
       _note.text = queueItemNote(item) ?? '';
-      if (item.currency == currency) {
+      if (item.currency == accountCurrency) {
         _expression = minorUnitsToInput(
           item.amount,
-          currencyDecimalDigits(currency),
+          currencyDecimalDigits(accountCurrency),
         );
       }
       _loading = false;
@@ -115,9 +126,7 @@ class _EntryEditorScreenState extends ConsumerState<EntryEditorScreen> {
       context.pop();
       return;
     }
-    final digits = currencyDecimalDigits(
-      ref.read(currencyProvider).value ?? 'USD',
-    );
+    final digits = currencyDecimalDigits(entry.currency);
     final ruleId = entry.recurringRuleId;
     final rule = ruleId == null
         ? null
@@ -128,7 +137,11 @@ class _EntryEditorScreenState extends ConsumerState<EntryEditorScreen> {
       _original = entry;
       _type = entry.type;
       _categoryId = entry.categoryId;
-      _expression = minorUnitsToInput(entry.amount, digits);
+      _currency = entry.currency;
+      _expression = minorUnitsToInput(
+        entry.originalAmount ?? entry.amount,
+        digits,
+      );
       _date = parseDateKey(entry.date);
       _accountId = entry.accountId;
       _time = entry.time;
@@ -143,8 +156,9 @@ class _EntryEditorScreenState extends ConsumerState<EntryEditorScreen> {
     super.dispose();
   }
 
-  int get _digits =>
-      currencyDecimalDigits(ref.read(currencyProvider).value ?? 'USD');
+  int get _digits => currencyDecimalDigits(
+    _currency ?? ref.read(currencyProvider).value ?? 'USD',
+  );
 
   void _onKey(String key) => setState(() {
     _error = null;
@@ -171,8 +185,8 @@ class _EntryEditorScreenState extends ConsumerState<EntryEditorScreen> {
 
   Future<void> _save() async {
     if (_saving) return;
-    final amount = _validAmount();
-    if (amount == null) return;
+    final amountOriginal = _validAmount();
+    if (amountOriginal == null) return;
     if (_categoryId == null) {
       final picked = await _pickCategory();
       if (picked == null) return;
@@ -186,12 +200,27 @@ class _EntryEditorScreenState extends ConsumerState<EntryEditorScreen> {
       final note = _note.text.trim().isEmpty ? null : _note.text.trim();
       final original = _original;
       final queueItem = _queueItem;
+      final currency = _currency ?? ref.read(currencyProvider).value ?? 'USD';
+      final service = await ref.read(currencyServiceProvider.future);
+      final amount = service.toPrimary(amountOriginal, currency);
+      if (amount == null) {
+        _saving = false;
+        if (mounted) {
+          setState(
+            () =>
+                _error = AppLocalizations.of(context)
+                    .rateMissing(currency, service.primary),
+          );
+        }
+        return;
+      }
       if (queueItem != null) {
         // Từ hàng đợi: tạo khoản chi có nguồn + số tham chiếu của email, mục
         // rời hàng đợi, nhớ gợi ý (AC-96). Giữ số chính xác nếu không đổi số.
-        final currency = ref.read(currencyProvider).value ?? 'USD';
         final same =
-            queueItem.currency == currency && amount == queueItem.amount;
+            queueItem.currency == currency &&
+            amountOriginal == queueItem.amount &&
+            currency == service.primary;
         await ref
             .read(importQueueActionsProvider)
             .saveEdited(
@@ -205,6 +234,8 @@ class _EntryEditorScreenState extends ConsumerState<EntryEditorScreen> {
                 date: dateKey(_date),
                 time: Value(_time),
                 note: Value(note),
+                currency: Value(currency),
+                originalAmount: Value(amountOriginal),
               ),
             );
       } else if (original == null) {
@@ -216,6 +247,8 @@ class _EntryEditorScreenState extends ConsumerState<EntryEditorScreen> {
           date: dateKey(_date),
           time: Value(_time),
           note: Value(note),
+          currency: Value(currency),
+          originalAmount: Value(amountOriginal),
         );
         final repeat = _repeat;
         if (repeat == null) {
@@ -230,11 +263,18 @@ class _EntryEditorScreenState extends ConsumerState<EntryEditorScreen> {
         await repo.update(
           original.copyWith(
             amount: amount,
+            amountMicro: Value(
+              currency == service.primary && amount == original.amount
+                  ? original.amountMicro
+                  : null,
+            ),
             categoryId: Value(_categoryId),
             accountId: accountId,
             date: dateKey(_date),
             time: Value(_time),
             note: Value(note),
+            currency: currency,
+            originalAmount: Value(amountOriginal),
           ),
         );
         savedId = original.id;
@@ -337,19 +377,24 @@ class _EntryEditorScreenState extends ConsumerState<EntryEditorScreen> {
           ),
       ],
     );
-    if (picked != null) setState(() => _accountId = picked.$1);
+    if (picked != null) {
+      setState(() {
+        _accountId = picked.$1;
+        _currency = accounts
+            .where((a) => a.id == picked.$1)
+            .firstOrNull
+            ?.currency;
+      });
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context);
-    final currency = ref.watch(currencyProvider).value ?? 'USD';
-    final digits = currencyDecimalDigits(currency);
     final accounts = ref.watch(accountsProvider).value ?? const <Account>[];
     final scheme = Theme.of(context).colorScheme;
     final isIncome = _type == EntryType.income;
     final color = isIncome ? incomeColor(context) : expenseColor(context);
-    final value = evaluateToMinorUnits(_expression, decimalDigits: digits);
     final category = _categoryId == null
         ? null
         : (ref
@@ -372,6 +417,28 @@ class _EntryEditorScreenState extends ConsumerState<EntryEditorScreen> {
       ...accounts,
       if (account != null && !accounts.any((a) => a.id == account.id)) account,
     ];
+    // Tiền tệ đang gõ: theo khoản đang sửa, rồi tới tài khoản, rồi Tiền tệ
+    // chính (D-037). Khoản mới chưa chọn tài khoản thì bám tài khoản đầu.
+    final primary = ref.watch(currencyProvider).value ?? 'USD';
+    final activeCurrency = _currency ?? account?.currency ?? primary;
+    if (_currency == null && account != null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted && _currency == null) {
+          setState(() => _currency = account.currency);
+        }
+      });
+    }
+    final digits = currencyDecimalDigits(activeCurrency);
+    final value = evaluateToMinorUnits(_expression, decimalDigits: digits);
+    final service = ref.watch(currencyServiceProvider).value;
+    final converted = activeCurrency == primary
+        ? null
+        : service?.toPrimary(value ?? 0, activeCurrency);
+    final secondary = activeCurrency == primary
+        ? null
+        : converted == null
+        ? l.rateMissing(activeCurrency, primary)
+        : '≈ ${money(context, primary, converted)}';
     // Màn sửa giữ tiêu đề "Sửa khoản" cả lúc đang nạp (4.7).
     final title = widget.entryId != null
         ? l.editEntry
@@ -405,7 +472,8 @@ class _EntryEditorScreenState extends ConsumerState<EntryEditorScreen> {
                         children: [
                           AmountDisplay(
                             expression: _expression,
-                            amount: money(context, currency, value ?? 0),
+                            amount: money(context, activeCurrency, value ?? 0),
+                            secondary: secondary,
                             color: color,
                             error: _error,
                           ),

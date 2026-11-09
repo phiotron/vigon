@@ -85,6 +85,9 @@ Future<void> _seed(
           accountId: account,
           date: '2026-11-03',
           note: Value(note),
+          // D-037: số gốc VND, tránh bị coi là USD rồi quy đổi thành số khổng lồ.
+          currency: const Value('VND'),
+          originalAmount: Value(amount),
         ),
       );
   await e(1, 155000, 'phở bò');
@@ -103,6 +106,8 @@ Future<void> _seed(
           frequency: RecurrenceFrequency.monthly,
           startDate: '2026-11-01',
           lastGeneratedDate: const Value('2026-11-01'),
+          currency: const Value('VND'),
+          originalAmount: const Value(3500000),
         ),
       );
   await PinService(secrets, settings: () => settings).setPin(_pin);
@@ -179,7 +184,7 @@ final _states = <String, Future<void> Function(_Env e)>{
     await _settings(e);
     await _reveal(e, e.l.autoBackup);
   },
-  'SCR-13 tiền tệ': (e) => _row(e, (l) => l.currency),
+  'SCR-13 tiền tệ': (e) => _row(e, (l) => l.primaryCurrency),
   'SCR-16 sửa danh mục': (e) async {
     await _row(e, (l) => l.categories);
     await _tap(e, find.text(e.l.categoryFood));

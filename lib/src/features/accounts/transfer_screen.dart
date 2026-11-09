@@ -37,9 +37,18 @@ class _TransferScreenState extends ConsumerState<TransferScreen> {
   int? _from;
   late int? _to = widget.toAccountId;
   String _expression = '';
+
+  /// Số nhận khi chuyển khác tiền tệ (D-037); cùng tiền tệ thì bằng số gửi.
+  String _toExpression = '';
+  String? _receivedError;
+
+  /// Tiền tệ của số gửi/số nhận; mặc định theo tài khoản, giữ nguyên khi sửa.
+  String? _currency;
+  String? _toCurrency;
   late DateTime _date = dateOnly(ref.read(clockProvider)());
   late String? _time = nowTimeKey(ref.read(clockProvider)());
   final _note = TextEditingController();
+  final _toAmount = TextEditingController();
   String? _error;
 
   @override
@@ -51,14 +60,23 @@ class _TransferScreenState extends ConsumerState<TransferScreen> {
   Future<void> _load(int id) async {
     final e = await ref.read(entryRepositoryProvider).find(id);
     if (!mounted || e == null) return;
-    final digits = currencyDecimalDigits(
-      ref.read(currencyProvider).value ?? 'USD',
-    );
+    final currency = e.currency;
+    final toCurrency = e.toCurrency ?? currency;
     setState(() {
       _original = e;
       _from = e.accountId;
       _to = e.toAccountId;
-      _expression = minorUnitsToInput(e.amount, digits);
+      _currency = currency;
+      _toCurrency = toCurrency;
+      _expression = minorUnitsToInput(
+        e.originalAmount ?? e.amount,
+        currencyDecimalDigits(currency),
+      );
+      _toExpression = minorUnitsToInput(
+        e.toOriginalAmount ?? e.toAmount ?? e.originalAmount ?? e.amount,
+        currencyDecimalDigits(toCurrency),
+      );
+      _toAmount.text = _toExpression;
       _date = parseDateKey(e.date);
       _time = e.time;
       _note.text = e.note ?? '';
@@ -68,11 +86,13 @@ class _TransferScreenState extends ConsumerState<TransferScreen> {
   @override
   void dispose() {
     _note.dispose();
+    _toAmount.dispose();
     super.dispose();
   }
 
-  int get _digits =>
-      currencyDecimalDigits(ref.read(currencyProvider).value ?? 'USD');
+  int get _digits => currencyDecimalDigits(
+    _currency ?? ref.read(currencyProvider).value ?? 'USD',
+  );
 
   void _onKey(String key) => setState(() {
     _error = null;
@@ -95,15 +115,62 @@ class _TransferScreenState extends ConsumerState<TransferScreen> {
     final l = AppLocalizations.of(context);
     final from = _from ?? _defaultFrom(accounts)!;
     final to = _to ?? accounts[1].id;
-    final amount = evaluateToMinorUnits(_expression, decimalDigits: _digits);
+    final fromAccount = accounts.where((a) => a.id == from).firstOrNull;
+    final toAccount = accounts.where((a) => a.id == to).firstOrNull;
+    final fromCurrency =
+        _currency ??
+        fromAccount?.currency ??
+        ref.read(currencyProvider).value ??
+        'USD';
+    final toCurrency =
+        _toCurrency ??
+        toAccount?.currency ??
+        ref.read(currencyProvider).value ??
+        'USD';
+    final sentOriginal = evaluateToMinorUnits(
+      _expression,
+      decimalDigits: currencyDecimalDigits(fromCurrency),
+    );
     if (from == to) {
       setState(() => _error = l.sameAccountError);
       return;
     }
     // Khoản đang 0 (do quy đổi tiền tệ, D-029) giữ nguyên thì vẫn lưu được.
-    final unchangedZero = amount == 0 && _original?.amount == 0;
-    if (amount == null || (amount <= 0 && !unchangedZero)) {
+    final unchangedZero =
+        sentOriginal == 0 &&
+        ((_original?.originalAmount ?? _original?.amount) == 0);
+    if (sentOriginal == null || (sentOriginal <= 0 && !unchangedZero)) {
       setState(() => _error = l.amountMustBePositive);
+      return;
+    }
+    final sameCurrency = fromCurrency == toCurrency;
+    final receivedOriginal = sameCurrency
+        ? sentOriginal
+        : parseAmountField(
+            context,
+            _toExpression.trim(),
+            currencyDecimalDigits(toCurrency),
+          );
+    if (!sameCurrency && (receivedOriginal == null || receivedOriginal <= 0)) {
+      setState(
+        () => _receivedError = _toExpression.trim().isEmpty
+            ? l.amountMustBePositive
+            : l.invalidExpression,
+      );
+      return;
+    }
+    final service = await ref.read(currencyServiceProvider.future);
+    final amount = service.toPrimary(sentOriginal, fromCurrency);
+    final toAmount = service.toPrimary(receivedOriginal!, toCurrency);
+    if (amount == null || toAmount == null) {
+      if (!mounted) return;
+      setState(() {
+        if (amount == null) {
+          _error = l.rateMissing(fromCurrency, service.primary);
+        } else {
+          _receivedError = l.rateMissing(toCurrency, service.primary);
+        }
+      });
       return;
     }
     final repo = ref.read(entryRepositoryProvider);
@@ -115,6 +182,11 @@ class _TransferScreenState extends ConsumerState<TransferScreen> {
         fromAccountId: from,
         toAccountId: to,
         amount: amount,
+        originalAmount: sentOriginal,
+        currency: fromCurrency,
+        toAmount: toAmount,
+        toOriginalAmount: receivedOriginal,
+        toCurrency: toCurrency,
         date: dateKey(_date),
         time: _time,
         note: note,
@@ -125,6 +197,17 @@ class _TransferScreenState extends ConsumerState<TransferScreen> {
           accountId: from,
           toAccountId: Value(to),
           amount: amount,
+          // Giữ số chính xác cũ khi không đổi tiền tệ/số tiền (D-029).
+          amountMicro: Value(
+            fromCurrency == service.primary && amount == original.amount
+                ? original.amountMicro
+                : null,
+          ),
+          originalAmount: Value(sentOriginal),
+          currency: fromCurrency,
+          toAmount: Value(toAmount),
+          toOriginalAmount: Value(receivedOriginal),
+          toCurrency: Value(toCurrency),
           date: dateKey(_date),
           time: Value(_time),
           note: Value(note),
@@ -157,13 +240,43 @@ class _TransferScreenState extends ConsumerState<TransferScreen> {
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context);
     final scheme = Theme.of(context).colorScheme;
-    final currency = ref.watch(currencyProvider).value ?? 'USD';
-    final digits = currencyDecimalDigits(currency);
+    final primary = ref.watch(currencyProvider).value ?? 'USD';
     final accounts = ref.watch(accountsProvider).value ?? const <Account>[];
     final all = ref.watch(allAccountsProvider).value ?? accounts;
-    final value = evaluateToMinorUnits(_expression, decimalDigits: digits);
     final from = _from ?? _defaultFrom(accounts);
     final to = _to ?? (accounts.length < 2 ? null : accounts[1].id);
+    final fromAccount = all.where((a) => a.id == from).firstOrNull;
+    final toAccount = all.where((a) => a.id == to).firstOrNull;
+    // Tiền tệ của số gửi/nhận: khoản đang sửa giữ đúng tiền tệ đã lưu; khoản
+    // mới bám tài khoản (D-037).
+    final fromCurrency = _currency ?? fromAccount?.currency ?? primary;
+    final toCurrency = _toCurrency ?? toAccount?.currency ?? primary;
+    if (_currency == null && fromAccount != null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted && _currency == null) {
+          setState(() => _currency = fromAccount.currency);
+        }
+      });
+    }
+    if (_toCurrency == null && toAccount != null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted && _toCurrency == null) {
+          setState(() => _toCurrency = toAccount.currency);
+        }
+      });
+    }
+    final digits = currencyDecimalDigits(fromCurrency);
+    final cross = fromCurrency != toCurrency;
+    final value = evaluateToMinorUnits(_expression, decimalDigits: digits);
+    final service = ref.watch(currencyServiceProvider).value;
+    final converted = fromCurrency == primary
+        ? null
+        : service?.toPrimary(value ?? 0, fromCurrency);
+    final secondary = fromCurrency == primary
+        ? null
+        : converted == null
+        ? l.rateMissing(fromCurrency, primary)
+        : '≈ ${money(context, primary, converted)}';
     // Hai tài khoản giống nhau: báo ngay, ô Đến viền `error` (6.7).
     final same = from != null && from == to;
     final error = same ? l.sameAccountError : _error;
@@ -261,6 +374,10 @@ class _TransferScreenState extends ConsumerState<TransferScreen> {
                                     from,
                                     (v) => setState(() {
                                       _from = v;
+                                      _currency = all
+                                          .where((a) => a.id == v)
+                                          .firstOrNull
+                                          ?.currency;
                                       _error = null;
                                     }),
                                   ),
@@ -273,6 +390,10 @@ class _TransferScreenState extends ConsumerState<TransferScreen> {
                                     to,
                                     (v) => setState(() {
                                       _to = v;
+                                      _toCurrency = all
+                                          .where((a) => a.id == v)
+                                          .firstOrNull
+                                          ?.currency;
                                       _error = null;
                                     }),
                                     invalid: same,
@@ -283,10 +404,42 @@ class _TransferScreenState extends ConsumerState<TransferScreen> {
                           ),
                           AmountDisplay(
                             expression: _expression,
-                            amount: money(context, currency, value ?? 0),
+                            amount: money(context, fromCurrency, value ?? 0),
+                            secondary: secondary,
                             color: scheme.onSurface,
                             error: error,
                           ),
+                          if (cross)
+                            Padding(
+                              padding: const EdgeInsets.fromLTRB(
+                                VgSpace.s4,
+                                0,
+                                VgSpace.s4,
+                                VgSpace.s2,
+                              ),
+                              child: TextField(
+                                controller: _toAmount,
+                                keyboardType:
+                                    const TextInputType.numberWithOptions(
+                                      decimal: true,
+                                    ),
+                                style: const TextStyle(
+                                  fontFeatures: [FontFeature.tabularFigures()],
+                                ),
+                                onChanged: (v) {
+                                  _toExpression = v;
+                                  if (_receivedError != null) {
+                                    setState(() => _receivedError = null);
+                                  }
+                                },
+                                decoration: InputDecoration(
+                                  labelText: l.transferReceivedAmount,
+                                  suffixText: toCurrency,
+                                  errorText: _receivedError,
+                                  errorMaxLines: 3,
+                                ),
+                              ),
+                            ),
                           // Chip ngày (`.vg-chips`): căn trái, lề 16.
                           Padding(
                             padding: const EdgeInsets.fromLTRB(

@@ -35,6 +35,8 @@ Future<int> _insertGoal(
             targetAmount: target,
             accountId: accountId,
             dueDate: Value(due),
+            currency: const Value('VND'),
+            originalTargetAmount: Value(target),
           ),
         ),
   );
@@ -50,7 +52,9 @@ Future<int> _insertAccount(
   int balance,
 ) async {
   final id = await tester.runAsync(
-    () => AccountRepository(db).add(name: name, initialBalance: balance),
+    () =>
+        AccountRepository(db)
+            .add(name: name, initialBalance: balance, currency: 'VND'),
   );
   await settle(tester);
   return id!;
@@ -86,6 +90,7 @@ void main() {
       accountId: 1,
       dueDate: due,
       createdAt: DateTime(2026, 11, 1),
+      currency: 'VND',
     );
     final today = DateTime(2026, 11, 3);
 

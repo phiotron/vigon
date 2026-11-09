@@ -104,7 +104,7 @@ Ghi chú thêm cho iOS:
 ## 5. Mạng — đổi tiền tệ có quy đổi tỉ giá (D-025, thêm 2026-11-05)
 | Mục | Yêu cầu | Trạng thái | Bằng chứng |
 |---|---|---|---|
-| S-40 offline mặc định | Ghi chép, xem, sao lưu đều chạy không cần mạng; mạng chỉ dùng khi người dùng chủ động đổi tiền tệ, mất mạng vẫn đổi được bằng tỉ giá tự nhập | đạt (lệch có chủ ý theo D-025) | `lib/src/features/settings/currency_conversion.dart`; test `currency_conversion_flow_test.dart` "mất mạng → … nhập tỉ giá tay" |
+| S-40 offline mặc định | Ghi chép, xem, sao lưu đều chạy không cần mạng; mạng chỉ dùng khi tải tỷ giá, mất mạng vẫn dùng bảng đã lưu/bảng dự phòng và ghi đè tay | đạt (D-037) | `lib/src/features/settings/rates_screen.dart`, `lib/src/data/rate_repository.dart`; test `rate_repository_test.dart` (bảng dự phòng, ghi đè, thiếu cặp trả null) |
 | S-42 khai báo khớp hành vi | Chính sách (mục 1, 3, 4, 5, 10), Data safety, App Privacy, mô tả store đã sửa theo D-025 | chưa — hướng khai đã chốt ("không thu thập", giống A001, 2026-11-05), câu trả lời từng màn đã soạn (D8); chờ điền vào Play Console / App Store Connect và đăng chính sách | `docs/legal/privacy-policy.md`, `store/listing.md`, `store/app-store.md`, `notes/2026-11-05-d8-privacy-declarations.md` |
 | S-60 NETWORK chỉ HTTPS | Một chỗ gọi mạng, chỉ `https`, không theo chuyển hướng, Android không cleartext, iOS ATS mặc định | đạt | `docs/SECURITY.md` mục "Mạng"; `test/manifest_test.dart`, `test/data/exchange_rate_source_test.dart` |
 | Điều khoản nguồn tỉ giá | ExchangeRate-API Open Access: thương mại được, ghi công kèm link (đã có trong hộp quy đổi), giới hạn tần suất theo IP, cấm phân phối lại | đạt (đọc 2026-11-05) | https://www.exchangerate-api.com/docs/free, https://www.exchangerate-api.com/terms |

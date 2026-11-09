@@ -201,7 +201,10 @@ class _ItemCard extends ConsumerWidget {
     final accountName = account != null
         ? accountLabel(l, account)
         : mbAutoAccountName(item.debitLast4);
-    final mismatch = item.currency != appCurrency;
+    // So tiền tệ của email với tiền tệ tài khoản liên kết (D-037): khác thì
+    // người dùng nhập tay ở bước sau, app không tự quy đổi.
+    final accountCurrency = account?.currency ?? appCurrency;
+    final mismatch = item.currency != accountCurrency;
     final payee = item.payee;
     final key = payee == null ? '' : payeeKey(payee);
     final suggestion = key.isEmpty
@@ -217,7 +220,13 @@ class _ItemCard extends ConsumerWidget {
             suggestion?.toAccountId == null ||
             suggestion!.toAccountId == item.accountId
         ? null
-        : all.where((a) => a.id == suggestion.toAccountId).firstOrNull;
+        : all
+              .where(
+                (a) =>
+                    a.id == suggestion.toAccountId &&
+                    a.currency == item.currency,
+              )
+              .firstOrNull;
 
     final when = _dateTime(context, item);
     final amount = money(context, item.currency, item.amount);
@@ -271,7 +280,7 @@ class _ItemCard extends ConsumerWidget {
             ),
             if (mismatch)
               VgHint(
-                l.queueCurrencyNote(item.currency, appCurrency),
+                l.queueCurrencyNote(item.currency, accountCurrency),
                 icon: Symbols.warning_rounded,
                 padding: const EdgeInsets.only(top: VgSpace.s2),
               ),
@@ -371,9 +380,11 @@ class _ItemCard extends ConsumerWidget {
   Future<void> _chooseMoveTarget(BuildContext context, WidgetRef ref) async {
     final l = AppLocalizations.of(context);
     final visible = ref.read(accountsProvider).value ?? const <Account>[];
+    // Chỉ chuyển sang tài khoản cùng tiền tệ: email chỉ cho biết số bị trừ,
+    // không biết số nhận sau quy đổi của ngân hàng (D-037).
     final candidates = [
       for (final a in visible)
-        if (a.id != item.accountId) a,
+        if (a.id != item.accountId && a.currency == item.currency) a,
     ];
     if (candidates.isEmpty) {
       showMessage(l.queueNoOtherAccount);

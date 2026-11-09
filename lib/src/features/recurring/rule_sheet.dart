@@ -4,6 +4,7 @@ import 'package:material_symbols_icons/symbols.dart';
 
 import '../../../l10n/app_localizations.dart';
 import '../../data/database.dart';
+import '../../data/money.dart';
 import '../../data/recurring_repository.dart';
 import '../../l10n_names.dart';
 import '../../ui/category_avatar.dart';
@@ -16,18 +17,22 @@ import '../../ui/tokens.g.dart';
 import '../accounts/accounts_screen.dart' show accountIcon;
 import '../categories/sheet_footer.dart';
 import '../entry/entry_editor_screen.dart' show repeatLabel;
+import '../settings/budget_dialog.dart' show currencySymbol;
 
 /// Kết quả bảng sửa chuỗi định kỳ (AC-25, AC-50).
 class RuleEdit {
   const RuleEdit({
     required this.amount,
+    required this.currency,
     required this.note,
     required this.frequency,
     required this.categoryId,
     required this.accountId,
   });
 
+  /// Số người dùng nhập, đơn vị nhỏ nhất của [currency] (D-037).
   final int amount;
+  final String currency;
   final String? note;
   final RecurrenceFrequency frequency;
 
@@ -41,21 +46,14 @@ class RuleEdit {
 Future<RuleEdit?> showRuleSheet(
   BuildContext context, {
   required RecurringRule rule,
-  required int digits,
-  String symbol = '',
   required List<Category> categories,
   required List<Account> accounts,
 }) => showModalBottomSheet<RuleEdit>(
   context: context,
   isScrollControlled: true,
   useSafeArea: true,
-  builder: (context) => RuleSheet(
-    rule: rule,
-    digits: digits,
-    symbol: symbol,
-    categories: categories,
-    accounts: accounts,
-  ),
+  builder: (context) =>
+      RuleSheet(rule: rule, categories: categories, accounts: accounts),
 );
 
 /// Bảng sửa chuỗi định kỳ (SCR-21): thanh ✕ + tiêu đề; đầu chuỗi chỉ đọc
@@ -66,17 +64,11 @@ class RuleSheet extends StatefulWidget {
   const RuleSheet({
     super.key,
     required this.rule,
-    required this.digits,
-    this.symbol = '',
     required this.categories,
     required this.accounts,
   });
 
   final RecurringRule rule;
-  final int digits;
-
-  /// Ký hiệu tiền tệ cuối ô số tiền.
-  final String symbol;
 
   /// Danh mục cùng loại thu/chi với chuỗi; rỗng với chuỗi chuyển tiền.
   final List<Category> categories;
@@ -89,8 +81,14 @@ class RuleSheet extends StatefulWidget {
 }
 
 class _RuleSheetState extends State<RuleSheet> {
+  late final int _digits = currencyDecimalDigits(widget.rule.currency);
+  late final String _symbol = currencySymbol(widget.rule.currency);
   late final _amount = TextEditingController(
-    text: amountInput(context, widget.rule.amount, widget.digits),
+    text: amountInput(
+      context,
+      widget.rule.originalAmount ?? widget.rule.amount,
+      _digits,
+    ),
   );
   late final _note = TextEditingController(text: widget.rule.note ?? '');
   late RecurrenceFrequency _frequency = widget.rule.frequency;
@@ -107,9 +105,10 @@ class _RuleSheetState extends State<RuleSheet> {
 
   void _save() {
     final l = AppLocalizations.of(context);
-    final v = parseAmountField(context, _amount.text.trim(), widget.digits);
+    final v = parseAmountField(context, _amount.text.trim(), _digits);
     // Chuỗi đang 0 (do quy đổi tiền tệ, D-029) giữ nguyên thì vẫn lưu được.
-    final unchangedZero = v == 0 && widget.rule.amount == 0;
+    final unchangedZero =
+        v == 0 && (widget.rule.originalAmount ?? widget.rule.amount) == 0;
     if (v == null || (v <= 0 && !unchangedZero)) {
       setState(() => _error = l.amountMustBePositive);
       return;
@@ -119,6 +118,7 @@ class _RuleSheetState extends State<RuleSheet> {
       context,
       RuleEdit(
         amount: v,
+        currency: widget.rule.currency,
         note: n.isEmpty ? null : n,
         frequency: _frequency,
         categoryId: _categoryId,
@@ -296,9 +296,7 @@ class _RuleSheetState extends State<RuleSheet> {
                       ),
                       decoration: InputDecoration(
                         labelText: l.amountLabel,
-                        suffixText: widget.symbol.isEmpty
-                            ? null
-                            : widget.symbol,
+                        suffixText: _symbol.isEmpty ? null : _symbol,
                         errorText: _error,
                         errorMaxLines: 3,
                       ),

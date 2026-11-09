@@ -136,8 +136,15 @@ void main() {
       ]);
       final entry = await old.select(old.entries).getSingle();
       expect((entry.amount, entry.note, entry.categoryId), (155000, 'phở', 1));
-      final setting = await old.select(old.settings).getSingle();
-      expect((setting.key, setting.value), ('monthlyBudget', '9000000'));
+      final values = {
+        for (final s in await old.select(old.settings).get()) s.key: s.value,
+      };
+      expect(values['monthlyBudget'], '9000000');
+      // D-037: Tiền tệ chính + tiền tệ ngân sách lấy tiền tệ cũ (mặc định USD).
+      expect(
+        (values['primaryCurrency'], values['budgetCurrency']),
+        ('USD', 'USD'),
+      );
       // Không chạy lại onCreate: không có danh mục mặc định thừa.
       expect(await old.select(old.accounts).get(), hasLength(1));
 

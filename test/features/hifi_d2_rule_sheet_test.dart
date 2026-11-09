@@ -23,6 +23,7 @@ const _rule = RecurringRule(
   startDate: '2026-10-01',
   lastGeneratedDate: '2026-11-01',
   active: true,
+  currency: 'VND',
 );
 
 final _home = Category(
@@ -40,6 +41,7 @@ const _cash = Account(
   initialBalance: 0,
   sortOrder: 0,
   archived: false,
+  currency: 'VND',
 );
 const _card = Account(
   id: 2,
@@ -47,6 +49,7 @@ const _card = Account(
   initialBalance: 0,
   sortOrder: 1,
   archived: false,
+  currency: 'VND',
 );
 
 /// Mở bảng bằng nút trên màn trống; [result] nhận giá trị trả về.
@@ -83,8 +86,6 @@ Future<void> _open(
                 final r = await showRuleSheet(
                   context,
                   rule: rule,
-                  digits: 0,
-                  symbol: '₫',
                   categories: [_home],
                   accounts: accounts,
                 );

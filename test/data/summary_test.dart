@@ -1,5 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:vigon/src/data/database.dart';
+import 'package:vigon/src/data/exchange_rate.dart';
+import 'package:vigon/src/data/rate_repository.dart';
 import 'package:vigon/src/data/summary.dart';
 
 Category _cat(int id, CategoryType type) => Category(
@@ -12,23 +14,29 @@ Category _cat(int id, CategoryType type) => Category(
   sortOrder: id,
 );
 
-EntryView _row(int id, EntryType type, int amount, Category? category) =>
-    EntryView(
-      Entry(
-        id: id,
-        type: type,
-        amount: amount,
-        categoryId: category?.id,
-        accountId: 1,
-        toAccountId: type == EntryType.transfer ? 2 : null,
-        date: '2026-11-03',
-        note: null,
-        recurringRuleId: null,
-        source: EntrySource.manual,
-        createdAt: DateTime(2026),
-      ),
-      category,
-    );
+EntryView _row(
+  int id,
+  EntryType type,
+  int amount,
+  Category? category, {
+  String currency = 'VND',
+}) => EntryView(
+  Entry(
+    id: id,
+    type: type,
+    amount: amount,
+    categoryId: category?.id,
+    accountId: 1,
+    toAccountId: type == EntryType.transfer ? 2 : null,
+    date: '2026-11-03',
+    note: null,
+    recurringRuleId: null,
+    source: EntrySource.manual,
+    createdAt: DateTime(2026),
+    currency: currency,
+  ),
+  category,
+);
 
 void main() {
   final food = _cat(1, CategoryType.expense);
@@ -73,6 +81,19 @@ void main() {
     ]);
     expect(s.expense, 10000);
     expect(s.income, 0);
+  });
+
+  test('cặp thiếu tỷ giá bị loại khỏi tổng (D-037)', () {
+    const service = CurrencyService(
+      RateTable(base: 'USD', date: '2026-11-09', rates: {'VND': 25000}),
+      'VND',
+    );
+    final s = PeriodSummary.of([
+      _row(1, EntryType.expense, 155000, food),
+      _row(2, EntryType.expense, 9999, food, currency: 'EUR'),
+    ], service: service);
+    expect(s.expense, 155000);
+    expect(s.expenseByCategory.single.total, 155000);
   });
 
   test('kỳ trống', () {

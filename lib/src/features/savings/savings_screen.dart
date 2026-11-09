@@ -9,6 +9,7 @@ import '../../data/dates.dart';
 import '../../providers.dart';
 import '../../ui/format.dart';
 import '../../ui/messenger.dart';
+import '../../ui/money_lines.dart';
 import '../../ui/tokens.g.dart';
 import 'goal_editor.dart';
 import 'savings_providers.dart';
@@ -114,15 +115,32 @@ class GoalCard extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final l = AppLocalizations.of(context);
     final scheme = Theme.of(context).colorScheme;
-    final currency = ref.watch(currencyProvider).value ?? 'USD';
+    final primary = ref.watch(currencyProvider).value ?? 'USD';
+    final service = ref.watch(currencyServiceProvider).value;
     final balances =
         ref.watch(accountBalancesProvider).value ?? const <int, int>{};
     final accounts = ref.watch(allAccountsProvider).value ?? const <Account>[];
     final account = accounts.where((a) => a.id == goal.accountId).firstOrNull;
     final balance = balances[goal.accountId] ?? account?.initialBalance ?? 0;
     final progress = GoalProgress.of(goal, balance, ref.watch(todayProvider));
-    final have = money(context, currency, balance);
-    final target = money(context, currency, goal.targetAmount);
+    // Số dư và mục tiêu hiện theo tiền tệ của mục tiêu (D-037); số dư trong DB
+    // là số quy về Tiền tệ chính nên quy ngược lại để hiện như đã nhập.
+    final ownBalance = goal.currency == primary
+        ? balance
+        : service?.fromPrimary(balance, goal.currency) ?? balance;
+    final ownTarget = goal.originalTargetAmount ?? goal.targetAmount;
+    final ownMissing = goal.currency == primary
+        ? progress.missing
+        : service?.fromPrimary(progress.missing, goal.currency) ??
+              progress.missing;
+    final have = money(context, goal.currency, ownBalance);
+    final target = money(context, goal.currency, ownTarget);
+    final approxTarget = approxMoneyText(
+      context,
+      ref,
+      ownTarget,
+      goal.currency,
+    );
 
     // Trạng thái bằng chữ + icon, không chỉ màu (AC-101).
     final (IconData icon, String text, Color color) = progress.reached
@@ -211,10 +229,17 @@ class GoalCard extends ConsumerWidget {
                     l.savingsProgress(have, target),
                     style: VgType.bodyMd.copyWith(color: scheme.onSurface),
                   ),
+                  if (approxTarget != null)
+                    Text(
+                      approxTarget,
+                      style: VgType.bodySm.copyWith(
+                        color: scheme.onSurfaceVariant,
+                      ),
+                    ),
                   if (!progress.reached)
                     Text(
                       l.savingsMissing(
-                        money(context, currency, progress.missing),
+                        money(context, goal.currency, ownMissing),
                       ),
                       style: VgType.bodySm.copyWith(
                         color: scheme.onSurfaceVariant,

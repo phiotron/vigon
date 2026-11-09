@@ -101,7 +101,7 @@ abstract class AppLocalizations {
   /// No description provided for @appTitle.
   ///
   /// In en, this message translates to:
-  /// **'Ví Gọn'**
+  /// **'Vigon'**
   String get appTitle;
 
   /// No description provided for @settings.
@@ -140,12 +140,6 @@ abstract class AppLocalizations {
   /// **'Language'**
   String get language;
 
-  /// No description provided for @languageSystem.
-  ///
-  /// In en, this message translates to:
-  /// **'System'**
-  String get languageSystem;
-
   /// No description provided for @reminderSection.
   ///
   /// In en, this message translates to:
@@ -179,7 +173,7 @@ abstract class AppLocalizations {
   /// No description provided for @reminderExplainBody.
   ///
   /// In en, this message translates to:
-  /// **'Ví Gọn will send one notification every day at the time you choose, to remind you to record your spending. The notification contains no figures.'**
+  /// **'Vigon will send one notification every day at the time you choose, to remind you to record your spending. The notification contains no figures.'**
   String get reminderExplainBody;
 
   /// No description provided for @reminderContinue.
@@ -191,7 +185,7 @@ abstract class AppLocalizations {
   /// No description provided for @reminderDenied.
   ///
   /// In en, this message translates to:
-  /// **'Notifications are not allowed. Turn on notifications for Ví Gọn in the system settings.'**
+  /// **'Notifications are not allowed. Turn on notifications for Vigon in the system settings.'**
   String get reminderDenied;
 
   /// No description provided for @reminderOpenSettings.
@@ -650,6 +644,18 @@ abstract class AppLocalizations {
   /// **'To'**
   String get transferTo;
 
+  /// No description provided for @transferSentAmount.
+  ///
+  /// In en, this message translates to:
+  /// **'Amount sent'**
+  String get transferSentAmount;
+
+  /// No description provided for @transferReceivedAmount.
+  ///
+  /// In en, this message translates to:
+  /// **'Amount received'**
+  String get transferReceivedAmount;
+
   /// No description provided for @sameAccountError.
   ///
   /// In en, this message translates to:
@@ -799,6 +805,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Changing the currency converts every amount using an exchange rate downloaded from the internet (or one you enter yourself). Amounts are rounded to the new currency\'s smallest unit, so converting back may differ slightly.'**
   String get currencyNote;
+
+  /// No description provided for @currencyLockedPayments.
+  ///
+  /// In en, this message translates to:
+  /// **'The currency is locked because this debt already has payments.'**
+  String get currencyLockedPayments;
 
   /// No description provided for @currencySearchHint.
   ///
@@ -1073,7 +1085,7 @@ abstract class AppLocalizations {
   /// No description provided for @autoBackupNote.
   ///
   /// In en, this message translates to:
-  /// **'Ví Gọn only writes files to the folder you choose. Uploading to Google Drive or Dropbox is done by that app.'**
+  /// **'Vigon only writes files to the folder you choose. Uploading to Google Drive or Dropbox is done by that app.'**
   String get autoBackupNote;
 
   /// No description provided for @autoBackupFolder.
@@ -1277,7 +1289,7 @@ abstract class AppLocalizations {
   /// No description provided for @forgotPinBody.
   ///
   /// In en, this message translates to:
-  /// **'Ví Gọn has no server, so a PIN cannot be recovered. You can delete all data in the app to use it again.'**
+  /// **'Vigon has no server, so a PIN cannot be recovered. You can delete all data in the app to use it again.'**
   String get forgotPinBody;
 
   /// No description provided for @digit.
@@ -1349,7 +1361,7 @@ abstract class AppLocalizations {
   /// No description provided for @aboutBody.
   ///
   /// In en, this message translates to:
-  /// **'Your data is stored only on this phone. Ví Gọn does not send it anywhere.'**
+  /// **'Your data is stored only on this phone. Vigon does not send it anywhere.'**
   String get aboutBody;
 
   /// No description provided for @privacyPolicy.
@@ -1385,7 +1397,7 @@ abstract class AppLocalizations {
   /// No description provided for @securityEmailSubject.
   ///
   /// In en, this message translates to:
-  /// **'Ví Gọn security report'**
+  /// **'Vigon security report'**
   String get securityEmailSubject;
 
   /// No description provided for @linkOpenFailed.
@@ -1520,6 +1532,96 @@ abstract class AppLocalizations {
   /// **'Current currency'**
   String get currencyCurrent;
 
+  /// No description provided for @primaryCurrency.
+  ///
+  /// In en, this message translates to:
+  /// **'Main currency'**
+  String get primaryCurrency;
+
+  /// No description provided for @primaryCurrencyChanged.
+  ///
+  /// In en, this message translates to:
+  /// **'Main currency is now {currency}. The amounts you entered are unchanged.'**
+  String primaryCurrencyChanged(String currency);
+
+  /// No description provided for @primaryCurrencyNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Totals, charts and the ≈ line use this currency. Each account keeps its own currency; changing this only changes how amounts are added up and shown, never the amounts you entered.'**
+  String get primaryCurrencyNote;
+
+  /// No description provided for @exchangeRates.
+  ///
+  /// In en, this message translates to:
+  /// **'Exchange rates'**
+  String get exchangeRates;
+
+  /// No description provided for @ratesOffline.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'re offline. Vigon is using the last saved rates.'**
+  String get ratesOffline;
+
+  /// No description provided for @ratesFallback.
+  ///
+  /// In en, this message translates to:
+  /// **'Using the built-in rates until the first update.'**
+  String get ratesFallback;
+
+  /// No description provided for @ratesUpdateNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Update now'**
+  String get ratesUpdateNow;
+
+  /// No description provided for @ratesUpdated.
+  ///
+  /// In en, this message translates to:
+  /// **'Exchange rates updated'**
+  String get ratesUpdated;
+
+  /// No description provided for @ratesUpdateFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t update. Vigon is using the saved rates.'**
+  String get ratesUpdateFailed;
+
+  /// No description provided for @ratesSource.
+  ///
+  /// In en, this message translates to:
+  /// **'Rates by Exchange Rate API'**
+  String get ratesSource;
+
+  /// No description provided for @ratesUseAuto.
+  ///
+  /// In en, this message translates to:
+  /// **'Use automatic rate'**
+  String get ratesUseAuto;
+
+  /// No description provided for @ratesUseOwn.
+  ///
+  /// In en, this message translates to:
+  /// **'Use my rate'**
+  String get ratesUseOwn;
+
+  /// No description provided for @ratesNoPairs.
+  ///
+  /// In en, this message translates to:
+  /// **'No currency pairs need a rate yet.'**
+  String get ratesNoPairs;
+
+  /// No description provided for @ratesPreviewBalance.
+  ///
+  /// In en, this message translates to:
+  /// **'{account}: {amount} ≈ {converted}'**
+  String ratesPreviewBalance(String account, String amount, String converted);
+
+  /// No description provided for @rateMissing.
+  ///
+  /// In en, this message translates to:
+  /// **'No rate for {from} to {to}. This amount is left out of totals.'**
+  String rateMissing(String from, String to);
+
   /// No description provided for @recurringRestartHint.
   ///
   /// In en, this message translates to:
@@ -1547,13 +1649,13 @@ abstract class AppLocalizations {
   /// No description provided for @autoBackupNoteIos.
   ///
   /// In en, this message translates to:
-  /// **'Ví Gọn only writes files to the folder you choose in the Files app, for example in iCloud Drive.'**
+  /// **'Vigon only writes files to the folder you choose in the Files app, for example in iCloud Drive.'**
   String get autoBackupNoteIos;
 
   /// No description provided for @autoBackupRunsOnOpenIos.
   ///
   /// In en, this message translates to:
-  /// **'iPhone does not let closed apps run on their own. At the time you chose, Ví Gọn sends a notification; tap it or open the app to back up. If the time is missed, the backup catches up when you open the app, at most once a day.'**
+  /// **'iPhone does not let closed apps run on their own. At the time you chose, Vigon sends a notification; tap it or open the app to back up. If the time is missed, the backup catches up when you open the app, at most once a day.'**
   String get autoBackupRunsOnOpenIos;
 
   /// No description provided for @autoBackupLocalFolderWarningIos.
@@ -1583,19 +1685,19 @@ abstract class AppLocalizations {
   /// No description provided for @autoBackupNextSoon.
   ///
   /// In en, this message translates to:
-  /// **'Next: when you leave Ví Gọn'**
+  /// **'Next: when you leave Vigon'**
   String get autoBackupNextSoon;
 
   /// No description provided for @autoBackupNextSoonIos.
   ///
   /// In en, this message translates to:
-  /// **'Next: when you open Ví Gọn again'**
+  /// **'Next: when you open Vigon again'**
   String get autoBackupNextSoonIos;
 
   /// No description provided for @autoBackupNotificationBody.
   ///
   /// In en, this message translates to:
-  /// **'Time to back up Ví Gọn. Tap to back up.'**
+  /// **'Time to back up Vigon. Tap to back up.'**
   String get autoBackupNotificationBody;
 
   /// No description provided for @autoBackupNotifyTitleIos.
@@ -1607,13 +1709,13 @@ abstract class AppLocalizations {
   /// No description provided for @autoBackupNotifyBodyIos.
   ///
   /// In en, this message translates to:
-  /// **'iPhone does not let Ví Gọn run on its own while closed. At the time you chose, Ví Gọn sends a notification; tap it to back up. The notification never contains your figures.'**
+  /// **'iPhone does not let Vigon run on its own while closed. At the time you chose, Vigon sends a notification; tap it to back up. The notification never contains your figures.'**
   String get autoBackupNotifyBodyIos;
 
   /// No description provided for @autoBackupNotifyDeniedIos.
   ///
   /// In en, this message translates to:
-  /// **'No backup-time notification. Ví Gọn will still catch up when you open the app.'**
+  /// **'No backup-time notification. Vigon will still catch up when you open the app.'**
   String get autoBackupNotifyDeniedIos;
 
   /// No description provided for @secureWindowNoteIos.
@@ -1625,7 +1727,7 @@ abstract class AppLocalizations {
   /// No description provided for @widgetPickerName.
   ///
   /// In en, this message translates to:
-  /// **'Ví Gọn'**
+  /// **'Vigon'**
   String get widgetPickerName;
 
   /// No description provided for @widgetPickerDescription.
@@ -1787,7 +1889,7 @@ abstract class AppLocalizations {
   /// No description provided for @currencyConvertTooLargeBody.
   ///
   /// In en, this message translates to:
-  /// **'With this rate, some amounts would go over the largest amount Ví Gọn can store. Nothing was changed.'**
+  /// **'With this rate, some amounts would go over the largest amount Vigon can store. Nothing was changed.'**
   String get currencyConvertTooLargeBody;
 
   /// No description provided for @currencyConvertFailed.
@@ -1835,7 +1937,7 @@ abstract class AppLocalizations {
   /// No description provided for @emailIntroRead.
   ///
   /// In en, this message translates to:
-  /// **'Ví Gọn reads your bank\'s transfer receipt emails in the mailbox you add, then puts them in a queue for you to pick a category.'**
+  /// **'Vigon reads your bank\'s transfer receipt emails in the mailbox you add, then puts them in a queue for you to pick a category.'**
   String get emailIntroRead;
 
   /// No description provided for @emailIntroLocal.
@@ -1865,7 +1967,7 @@ abstract class AppLocalizations {
   /// No description provided for @emailIntroIos.
   ///
   /// In en, this message translates to:
-  /// **'On iPhone, Ví Gọn checks email only when you open or return to the app.'**
+  /// **'On iPhone, Vigon checks email only when you open or return to the app.'**
   String get emailIntroIos;
 
   /// No description provided for @emailAddMailbox.
@@ -1883,13 +1985,13 @@ abstract class AppLocalizations {
   /// No description provided for @emailScheduleAndroid.
   ///
   /// In en, this message translates to:
-  /// **'Ví Gọn checks email when you open the app and about every hour while it\'s closed. Pull down to check now.'**
+  /// **'Vigon checks email when you open the app and about every hour while it\'s closed. Pull down to check now.'**
   String get emailScheduleAndroid;
 
   /// No description provided for @emailScheduleIos.
   ///
   /// In en, this message translates to:
-  /// **'On iPhone, Ví Gọn checks email only when you open or return to the app. Pull down to check now.'**
+  /// **'On iPhone, Vigon checks email only when you open or return to the app. Pull down to check now.'**
   String get emailScheduleIos;
 
   /// No description provided for @emailConnected.
@@ -1973,7 +2075,7 @@ abstract class AppLocalizations {
   /// No description provided for @emailRemoveBody.
   ///
   /// In en, this message translates to:
-  /// **'Ví Gọn will stop reading email from {address} and delete the app password from this phone. Records already saved stay as they are.'**
+  /// **'Vigon will stop reading email from {address} and delete the app password from this phone. Records already saved stay as they are.'**
   String emailRemoveBody(String address);
 
   /// No description provided for @emailRemoved.
@@ -2003,7 +2105,7 @@ abstract class AppLocalizations {
   /// No description provided for @emailStepsGmail2.
   ///
   /// In en, this message translates to:
-  /// **'Open the App passwords page with the button below, name it \"Ví Gọn\" and tap Create.'**
+  /// **'Open the App passwords page with the button below, name it \"Vigon\" and tap Create.'**
   String get emailStepsGmail2;
 
   /// No description provided for @emailStepsGmail3.
@@ -2021,7 +2123,7 @@ abstract class AppLocalizations {
   /// No description provided for @emailStepsYahoo2.
   ///
   /// In en, this message translates to:
-  /// **'Choose \"Generate app password\", name it \"Ví Gọn\" and tap Generate.'**
+  /// **'Choose \"Generate app password\", name it \"Vigon\" and tap Generate.'**
   String get emailStepsYahoo2;
 
   /// No description provided for @emailStepsYahoo3.
@@ -2039,7 +2141,7 @@ abstract class AppLocalizations {
   /// No description provided for @emailStepsIcloud2.
   ///
   /// In en, this message translates to:
-  /// **'Open the Apple Account page with the button below → Sign-In and Security → App-Specific Passwords, name it \"Ví Gọn\".'**
+  /// **'Open the Apple Account page with the button below → Sign-In and Security → App-Specific Passwords, name it \"Vigon\".'**
   String get emailStepsIcloud2;
 
   /// No description provided for @emailStepsIcloud3.
@@ -2525,7 +2627,7 @@ abstract class AppLocalizations {
   /// No description provided for @queueCurrencyNote.
   ///
   /// In en, this message translates to:
-  /// **'The email is in {emailCurrency} but the app uses {appCurrency}. You\'ll enter the amount in the next step.'**
+  /// **'The email is in {emailCurrency} but the account uses {appCurrency}. You\'ll enter the amount in the next step.'**
   String queueCurrencyNote(String emailCurrency, String appCurrency);
 
   /// No description provided for @queueSuggested.
@@ -2615,7 +2717,7 @@ abstract class AppLocalizations {
   /// No description provided for @queueSuggestionsEmpty.
   ///
   /// In en, this message translates to:
-  /// **'No suggestions yet. Ví Gọn remembers the category you pick for each payee to suggest it next time.'**
+  /// **'No suggestions yet. Vigon remembers the category you pick for each payee to suggest it next time.'**
   String get queueSuggestionsEmpty;
 
   /// No description provided for @queueSuggestionMove.

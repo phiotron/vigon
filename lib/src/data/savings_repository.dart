@@ -49,6 +49,8 @@ class SavingsGoalRepository {
     required int targetAmount,
     required int accountId,
     String? dueDate,
+    int? originalTargetAmount,
+    String? currency,
   }) {
     _checkTarget(targetAmount);
     return _db.transaction(() async {
@@ -63,6 +65,8 @@ class SavingsGoalRepository {
               targetAmount: targetAmount,
               accountId: accountId,
               dueDate: Value(dueDate),
+              currency: Value(currency ?? 'USD'),
+              originalTargetAmount: Value(originalTargetAmount ?? targetAmount),
             ),
           );
     });
@@ -75,17 +79,27 @@ class SavingsGoalRepository {
     required String name,
     required int targetAmount,
     String? dueDate,
+    int? originalTargetAmount,
+    String currency = 'USD',
   }) {
     _checkTarget(targetAmount);
     return _db.transaction(() async {
       final accountId = await _db
           .into(_db.accounts)
-          .insert(AccountsCompanion.insert(name: Value(name)));
+          .insert(
+            AccountsCompanion.insert(
+              name: Value(name),
+              currency: Value(currency),
+              initialCurrency: Value(currency),
+            ),
+          );
       final goalId = await add(
         name: name,
         targetAmount: targetAmount,
         accountId: accountId,
         dueDate: dueDate,
+        originalTargetAmount: originalTargetAmount,
+        currency: currency,
       );
       return (goalId, accountId);
     });
@@ -97,6 +111,8 @@ class SavingsGoalRepository {
     required String name,
     required int targetAmount,
     String? dueDate,
+    int? originalTargetAmount,
+    String? currency,
   }) async {
     _checkTarget(targetAmount);
     final old = await find(id);
@@ -109,6 +125,8 @@ class SavingsGoalRepository {
             ? const Value.absent()
             : const Value(null),
         dueDate: Value(dueDate),
+        originalTargetAmount: Value(originalTargetAmount ?? targetAmount),
+        currency: currency == null ? const Value.absent() : Value(currency),
       ),
     );
   }

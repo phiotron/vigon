@@ -198,7 +198,11 @@ class EntrySearchResults extends ConsumerWidget {
           rows,
           query,
           categoryNameOf: categoryName,
-          amountTextOf: (a) => money(context, currency, a),
+          amountTextOf: (row) => money(
+            context,
+            row.entry.currency,
+            row.entry.originalAmount ?? row.entry.amount,
+          ),
         ),
       ]..sort(_newestFirst);
       if (matches.isEmpty) {
@@ -272,7 +276,11 @@ class EntrySearchResults extends ConsumerWidget {
                   categoryName: r.entry.type == EntryType.transfer
                       ? l.transfer
                       : categoryName(r),
-                  amount: money(context, currency, r.entry.amount),
+                  amount: money(
+                    context,
+                    r.entry.currency,
+                    r.entry.originalAmount ?? r.entry.amount,
+                  ),
                   query: query,
                 );
               },

@@ -192,13 +192,18 @@ class _CategoryEditorState extends ConsumerState<_CategoryEditor> {
   late final _name = TextEditingController();
   late String _icon = widget.category?.icon ?? 'more_horiz';
   late int _color = widget.category?.color ?? categoryColors.first;
-  late final int _digits = currencyDecimalDigits(
-    ref.read(currencyProvider).value ?? 'USD',
-  );
+  late final String _budgetCurrency =
+      widget.category?.budgetCurrency ??
+      (ref.read(currencyProvider).value ?? 'USD');
+  int get _digits => currencyDecimalDigits(_budgetCurrency);
   late final _budget = TextEditingController(
     text: widget.category?.budget == null
         ? ''
-        : amountInput(context, widget.category!.budget!, _digits),
+        : amountInput(
+            context,
+            widget.category!.budgetOriginal ?? widget.category!.budget!,
+            _digits,
+          ),
   );
   String? _error;
   String? _budgetError;
@@ -227,15 +232,28 @@ class _CategoryEditorState extends ConsumerState<_CategoryEditor> {
       return;
     }
     // Hạn mức tháng chỉ cho danh mục chi; để trống là không đặt (AC-54).
+    int? budgetOriginal;
     int? budget;
     final budgetText = _budget.text.trim();
     if (widget.type == CategoryType.expense && budgetText.isNotEmpty) {
-      budget = parseAmountField(context, budgetText, _digits);
-      if (budget == null || budget <= 0) {
+      budgetOriginal = parseAmountField(context, budgetText, _digits);
+      if (budgetOriginal == null || budgetOriginal <= 0) {
         setState(() {
           _error = null;
           _budgetError = l.amountMustBePositive;
         });
+        return;
+      }
+      // `budget` lưu quy về Tiền tệ chính; số gốc + tiền tệ giữ nguyên (D-037).
+      final service = await ref.read(currencyServiceProvider.future);
+      budget = service.toPrimary(budgetOriginal, _budgetCurrency);
+      if (budget == null) {
+        if (mounted) {
+          setState(
+            () =>
+                _budgetError = l.rateMissing(_budgetCurrency, service.primary),
+          );
+        }
         return;
       }
     }
@@ -248,6 +266,8 @@ class _CategoryEditorState extends ConsumerState<_CategoryEditor> {
         icon: _icon,
         color: _color,
         budget: budget,
+        budgetOriginal: budgetOriginal,
+        budgetCurrency: budgetOriginal == null ? null : _budgetCurrency,
       );
     } else {
       // Không đổi tên thì giữ tên mặc định theo ngôn ngữ.
@@ -259,6 +279,12 @@ class _CategoryEditorState extends ConsumerState<_CategoryEditor> {
         color: _color,
         budget: widget.type == CategoryType.expense
             ? Value(budget)
+            : const Value.absent(),
+        budgetOriginal: widget.type == CategoryType.expense
+            ? Value(budgetOriginal)
+            : const Value.absent(),
+        budgetCurrency: widget.type == CategoryType.expense
+            ? Value(budgetOriginal == null ? null : _budgetCurrency)
             : const Value.absent(),
       );
     }
@@ -308,6 +334,12 @@ class _CategoryEditorState extends ConsumerState<_CategoryEditor> {
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context);
     final scheme = Theme.of(context).colorScheme;
+    final primary = ref.watch(currencyProvider).value ?? 'USD';
+    final service = ref.watch(currencyServiceProvider).value;
+    final typedBudget = parseAmountField(context, _budget.text.trim(), _digits);
+    final convertedBudget = typedBudget == null || _budgetCurrency == primary
+        ? null
+        : service?.toPrimary(typedBudget, _budgetCurrency);
     final isEdit = widget.category != null;
     final canDelete =
         isEdit &&
@@ -419,12 +451,14 @@ class _CategoryEditorState extends ConsumerState<_CategoryEditor> {
                         style: const TextStyle(
                           fontFeatures: [FontFeature.tabularFigures()],
                         ),
+                        onChanged: (_) => setState(() {}),
                         decoration: InputDecoration(
                           labelText: l.categoryBudget,
-                          suffixText: currencySymbol(
-                            ref.watch(currencyProvider).value ?? 'USD',
-                          ),
-                          helperText: l.categoryBudgetHint,
+                          suffixText: currencySymbol(_budgetCurrency),
+                          helperText: convertedBudget == null
+                              ? l.categoryBudgetHint
+                              : '${l.categoryBudgetHint}\n'
+                                    '≈ ${money(context, primary, convertedBudget)}',
                           helperMaxLines: 3,
                           errorText: _budgetError,
                           errorMaxLines: 3,

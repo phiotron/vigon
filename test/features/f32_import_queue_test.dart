@@ -6,6 +6,7 @@ import 'package:vigon/src/data/account_repository.dart';
 import 'package:vigon/src/data/database.dart';
 import 'package:vigon/src/data/entry_repository.dart';
 import 'package:vigon/src/data/period.dart';
+import 'package:vigon/src/data/settings_repository.dart';
 import 'package:vigon/src/data/summary.dart';
 import 'package:vigon/src/data/import_repositories.dart';
 import 'package:vigon/src/import/mb/mb_import_service.dart';
@@ -62,7 +63,9 @@ Future<int> _item(
 
 Future<int> _account(WidgetTester tester, AppDatabase db, String name) async {
   final id = await tester.runAsync(
-    () => AccountRepository(db).add(name: name, initialBalance: 0),
+    () =>
+        AccountRepository(db)
+            .add(name: name, initialBalance: 0, currency: 'VND'),
   );
   await settle(tester);
   return id!;
@@ -363,22 +366,26 @@ void main() {
     await disposeApp(tester, db);
   });
 
-  testWidgets('email bằng tiền tệ khác app: hiện ghi chú, không có "Chuyển '
-      'sang tài khoản của tôi"; chọn danh mục mở Nhập khoản với ô số tiền '
-      'trống (AC-87)', (tester) async {
+  testWidgets('email bằng tiền tệ khác tài khoản: hiện ghi chú, không có '
+      '"Chuyển sang tài khoản của tôi"; chọn danh mục mở Nhập khoản với ô số '
+      'tiền trống (AC-87, D-037)', (tester) async {
     final db = await pumpApp(tester);
+    // Tiền tệ chính USD; email VND trỏ vào tài khoản USD: khác tiền tệ tài
+    // khoản nên không điền sẵn số, người dùng tự nhập. Chỉ một lần ghi mỗi
+    // `runAsync`: ghi hai khóa liền nhau khi cây widget đang theo dõi sẽ treo.
     await tester.runAsync(
-      () => db
-          .into(db.settings)
-          .insertOnConflictUpdate(
-            SettingsCompanion.insert(key: 'currency', value: 'USD'),
-          ),
+      () => SettingsRepository(db).setPrimaryCurrency('USD'),
+    );
+    final usd = await tester.runAsync(
+      () =>
+          AccountRepository(db)
+              .add(name: 'Ví USD', initialBalance: 0, currency: 'USD'),
     );
     await settle(tester);
-    await _item(tester, db, currency: 'VND', amount: 50000);
+    await _item(tester, db, accountId: usd, currency: 'VND', amount: 50000);
     await goTo(tester, '/import-queue');
     expect(
-      find.textContaining('Email bằng VND, app đang dùng USD'),
+      find.textContaining('Email bằng VND, tài khoản đang dùng USD'),
       findsOneWidget,
     );
     expect(find.text('Chuyển sang tài khoản của tôi'), findsNothing);

@@ -13,14 +13,15 @@ import '../../ui/tokens.g.dart';
 /// Tổng chi của THÁNG HIỆN TẠI theo từng danh mục chi (khóa là id danh mục),
 /// mọi tài khoản, không phụ thuộc kỳ đang xem (AC-54). Cùng cách tính tháng
 /// với [budgetSpentProvider].
-final categorySpentProvider = StreamProvider<Map<int, int>>((ref) {
+final categorySpentProvider = StreamProvider<Map<int, int>>((ref) async* {
+  final service = await ref.watch(currencyServiceProvider.future);
   final month = Period.containing(
     PeriodType.month,
     ref.watch(todayProvider),
     monthStartDay: ref.watch(monthStartDayProvider).value ?? 1,
   );
-  return ref.watch(entryRepositoryProvider).watchEntries(month).map((rows) {
-    final summary = PeriodSummary.of(rows);
+  yield* ref.watch(entryRepositoryProvider).watchEntries(month).map((rows) {
+    final summary = PeriodSummary.of(rows, service: service);
     return {for (final t in summary.expenseByCategory) t.category.id: t.total};
   });
 });

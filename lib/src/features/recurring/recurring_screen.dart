@@ -4,15 +4,15 @@ import 'package:material_symbols_icons/symbols.dart';
 
 import '../../../l10n/app_localizations.dart';
 import '../../data/database.dart';
-import '../../data/money.dart';
 import '../../data/recurring_repository.dart';
 import '../../l10n_names.dart';
 import '../../providers.dart';
 import '../../ui/category_avatar.dart';
 import '../../ui/format.dart';
+import '../../ui/messenger.dart';
+import '../../ui/money_lines.dart';
 import '../../ui/tokens.g.dart';
 import '../entry/entry_editor_screen.dart' show repeatLabel;
-import '../settings/budget_dialog.dart' show currencySymbol;
 import 'rule_sheet.dart';
 
 /// Danh sách chuỗi định kỳ: dừng, chạy lại, sửa số tiền (AC-25).
@@ -24,7 +24,6 @@ class RecurringScreen extends ConsumerWidget {
     final l = AppLocalizations.of(context);
     final rules =
         ref.watch(recurringRulesProvider).value ?? const <RecurringRule>[];
-    final currency = ref.watch(currencyProvider).value ?? 'USD';
     final categories = {
       for (final type in CategoryType.values)
         for (final c
@@ -54,7 +53,11 @@ class RecurringScreen extends ConsumerWidget {
                   _RuleTile(
                     rule: r,
                     category: categories[r.categoryId],
-                    amount: money(context, currency, r.amount),
+                    amount: MoneyLines(
+                      amount: r.originalAmount ?? r.amount,
+                      currency: r.currency,
+                      style: VgType.bodyMd,
+                    ),
                     onToggle: (on) => on
                         ? repo.resume(r.id, ref.read(clockProvider)())
                         : repo.stop(r.id),
@@ -70,7 +73,6 @@ class RecurringScreen extends ConsumerWidget {
     WidgetRef ref,
     RecurringRule rule,
   ) async {
-    final currency = ref.read(currencyProvider).value ?? 'USD';
     final categories = switch (rule.type) {
       EntryType.transfer => const <Category>[],
       EntryType.income =>
@@ -82,23 +84,35 @@ class RecurringScreen extends ConsumerWidget {
     final saved = await showRuleSheet(
       context,
       rule: rule,
-      digits: currencyDecimalDigits(currency),
-      symbol: currencySymbol(currency),
       categories: categories ?? const <Category>[],
       accounts: ref.read(accountsProvider).value ?? const <Account>[],
     );
-    if (saved != null) {
-      await ref
-          .read(recurringRepositoryProvider)
-          .edit(
-            rule.id,
-            amount: saved.amount,
-            note: saved.note,
-            frequency: saved.frequency,
-            categoryId: saved.categoryId,
-            accountId: saved.accountId,
-          );
+    if (saved == null) return;
+    // Số nhập là số gốc theo tiền tệ của chuỗi; cột `amount` là số dẫn xuất
+    // quy về Tiền tệ chính (D-037).
+    final service = await ref.read(currencyServiceProvider.future);
+    final amount = service.toPrimary(saved.amount, saved.currency);
+    if (amount == null) {
+      if (context.mounted) {
+        showMessage(
+          AppLocalizations.of(context)
+              .rateMissing(saved.currency, service.primary),
+        );
+      }
+      return;
     }
+    await ref
+        .read(recurringRepositoryProvider)
+        .edit(
+          rule.id,
+          amount: amount,
+          originalAmount: saved.amount,
+          currency: saved.currency,
+          note: saved.note,
+          frequency: saved.frequency,
+          categoryId: saved.categoryId,
+          accountId: saved.accountId,
+        );
   }
 }
 
@@ -115,7 +129,7 @@ class _RuleTile extends StatelessWidget {
 
   final RecurringRule rule;
   final Category? category;
-  final String amount;
+  final Widget amount;
   final ValueChanged<bool> onToggle;
   final VoidCallback onTap;
 
@@ -130,7 +144,6 @@ class _RuleTile extends StatelessWidget {
         : category == null
         ? l.transfer
         : categoryLabel(l, category!);
-    final title = '$name · $amount';
     return ListTile(
       leading: category == null
           ? const SizedBox(
@@ -138,16 +151,23 @@ class _RuleTile extends StatelessWidget {
               child: Center(child: Icon(Symbols.event_repeat_rounded)),
             )
           : CategoryAvatar(category: category!, size: 40),
-      title: Text(title),
-      subtitle: Text(
-        rule.active
-            ? '${repeatLabel(l, rule.frequency)} · '
-                  '${shortDate(context, RecurringRepository.nextDate(rule))}'
-            : '${repeatLabel(l, rule.frequency)} · ${l.repeatStopped}',
+      title: Text(name),
+      subtitle: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            rule.active
+                ? '${repeatLabel(l, rule.frequency)} · '
+                      '${shortDate(context, RecurringRepository.nextDate(rule))}'
+                : '${repeatLabel(l, rule.frequency)} · ${l.repeatStopped}',
+          ),
+          // Số gốc theo tiền tệ của chuỗi, dưới là "≈ Tiền tệ chính" (D-037).
+          amount,
+        ],
       ),
       // Công tắc đọc tên chuỗi để TalkBack biết đang bật/tắt chuỗi nào.
       trailing: Semantics(
-        label: title,
+        label: name,
         child: Switch(value: rule.active, onChanged: onToggle),
       ),
       onTap: onTap,

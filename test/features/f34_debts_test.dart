@@ -31,12 +31,22 @@ Future<int> _debt(
             date: date,
             dueDate: Value(due),
             note: Value(note),
+            currency: const Value('VND'),
+            originalAmount: Value(amount),
           ),
         );
     for (final (a, d) in payments) {
       await db
           .into(db.debtPayments)
-          .insert(DebtPaymentsCompanion.insert(debtId: id, amount: a, date: d));
+          .insert(
+            DebtPaymentsCompanion.insert(
+              debtId: id,
+              amount: a,
+              date: d,
+              currency: const Value('VND'),
+              originalAmount: Value(a),
+            ),
+          );
     }
     return id;
   });

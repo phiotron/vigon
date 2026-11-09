@@ -12,6 +12,7 @@ class AmountDisplay extends StatelessWidget {
     required this.expression,
     required this.amount,
     required this.color,
+    this.secondary,
     this.error,
   });
 
@@ -19,6 +20,10 @@ class AmountDisplay extends StatelessWidget {
 
   /// Số tiền đã định dạng, ví dụ "155.000 ₫".
   final String amount;
+
+  /// Dòng phụ dưới số tiền, ví dụ "≈ 2,30 $": số gốc ở trên, quy đổi ở dưới
+  /// (D-037).
+  final String? secondary;
   final Color color;
   final String? error;
 
@@ -57,6 +62,11 @@ class AmountDisplay extends StatelessWidget {
                 style: VgType.amountXl.copyWith(color: color),
               ),
             ),
+            if (secondary != null)
+              Text(
+                secondary!,
+                style: VgType.bodyMd.copyWith(color: scheme.onSurfaceVariant),
+              ),
             if (error != null)
               Padding(
                 padding: const EdgeInsets.only(top: 2),

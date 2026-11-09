@@ -2,6 +2,8 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
+import 'fallback_rates.dart';
+
 /// Tỉ giá "1 đơn vị tiền cũ = [numerator]/[denominator] đơn vị tiền mới" (D-025).
 ///
 /// Giữ dạng phân số số nguyên để quy đổi và làm tròn chính xác (không qua số
@@ -121,6 +123,7 @@ class RateTable {
     required this.base,
     required this.date,
     required this.rates,
+    this.overrides = const {},
   });
 
   final String base;
@@ -129,10 +132,40 @@ class RateTable {
   final String date;
   final Map<String, double> rates;
 
-  /// Tỉ giá chéo "1 [from] = ? [to]" = b / a tính bằng phân số (không qua số
-  /// thực) nên A→B và B→A cùng bảng là nghịch đảo đúng (D-029); null nếu bảng
-  /// thiếu một trong hai mã.
+  /// Ghi đè của người dùng: khóa `"FROM>TO"`, tỉ giá "1 FROM = ? TO"
+  /// (D-037). Ghi đè thắng bảng tự động.
+  final Map<String, ExchangeRate> overrides;
+
+  /// Bảng đóng gói sẵn, dùng khi chưa từng tải được (D-037).
+  static const fallback = RateTable(
+    base: 'USD',
+    date: fallbackRatesDate,
+    rates: fallbackUsdRates,
+  );
+
+  RateTable withOverrides(Map<String, ExchangeRate> value) =>
+      RateTable(base: base, date: date, rates: rates, overrides: value);
+
+  bool get isFallback => date == fallbackRatesDate && rates == fallbackUsdRates;
+
+  /// Bảng đã cũ ≥ 1 ngày so với [now] (Q2, D-037).
+  bool isStale(DateTime now) {
+    final day = DateTime.tryParse(date);
+    if (day == null) return true;
+    final today = DateTime.utc(now.year, now.month, now.day);
+    return today.difference(DateTime.utc(day.year, day.month, day.day)) >=
+        const Duration(days: 1);
+  }
+
+  /// Tỉ giá "1 [from] = ? [to]": ưu tiên ghi đè, rồi tỉ giá chéo = b / a tính
+  /// bằng phân số (không qua số thực) nên A→B và B→A cùng bảng là nghịch đảo
+  /// đúng (D-029); null nếu bảng thiếu một trong hai mã.
   ExchangeRate? rate(String from, String to) {
+    if (from == to) return ExchangeRate.fromDouble(1);
+    final direct = overrides['$from>$to'];
+    if (direct != null) return direct;
+    final inverse = overrides['$to>$from'];
+    if (inverse != null) return inverse.inverse;
     final a = from == base ? 1.0 : rates[from];
     final b = to == base ? 1.0 : rates[to];
     if (a == null || b == null) return null;
@@ -142,6 +175,7 @@ class RateTable {
     return rb / ra;
   }
 
+  /// Ghi bảng tự động, không kèm ghi đè (ghi đè nằm ở khóa settings riêng).
   String toJson() => jsonEncode({'base': base, 'date': date, 'rates': rates});
 
   /// Null nếu chữ hỏng (cache cũ không làm hỏng luồng đổi tiền tệ).

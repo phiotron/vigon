@@ -7,7 +7,9 @@ import 'data/category_repository.dart';
 import 'data/database.dart';
 import 'data/dates.dart';
 import 'data/entry_repository.dart';
+import 'data/exchange_rate.dart';
 import 'data/period.dart';
+import 'data/rate_repository.dart';
 import 'data/recurring_repository.dart';
 import 'data/settings_repository.dart';
 import 'data/summary.dart';
@@ -43,9 +45,36 @@ final localeCodeProvider = StreamProvider<String?>(
   (ref) => ref.watch(settingsRepositoryProvider).watchLocaleCode(),
 );
 
+/// Tiền tệ chính (D-037): dùng để cộng/hiển thị, không ghi đè số gốc.
 final currencyProvider = StreamProvider<String>(
   (ref) => ref.watch(settingsRepositoryProvider).watchCurrency(),
 );
+
+final exchangeRateSourceProvider = Provider<ExchangeRateSource>(
+  (ref) => const ErApiRateSource(),
+);
+
+final rateRepositoryProvider = Provider<RateRepository>(
+  (ref) => RateRepository(
+    ref.watch(databaseProvider),
+    ref.watch(settingsRepositoryProvider),
+    ref.watch(exchangeRateSourceProvider),
+    ref.watch(clockProvider),
+  ),
+);
+
+/// Bảng tỉ giá đang dùng: cache hoặc bảng đóng gói, đã áp ghi đè.
+final rateTableProvider = StreamProvider<RateTable>(
+  (ref) => ref.watch(rateRepositoryProvider).watch(),
+);
+
+/// Quy đổi theo Tiền tệ chính hiện tại; test có thể ghi đè. Theo dõi
+/// [currencyProvider] để đổi Tiền tệ chính là dùng ngay, không giữ bảng cũ.
+final currencyServiceProvider = FutureProvider<CurrencyService>((ref) async {
+  final table = await ref.watch(rateTableProvider.future);
+  final primary = await ref.watch(currencyProvider.future);
+  return CurrencyService(table, primary);
+});
 
 final weekStartProvider = StreamProvider<int>(
   (ref) => ref.watch(settingsRepositoryProvider).watchWeekStart(),
@@ -149,11 +178,14 @@ final periodEntriesProvider = StreamProvider<List<EntryView>>(
       ),
 );
 
-final periodSummaryProvider = Provider<PeriodSummary>(
-  (ref) =>
-      ref.watch(periodEntriesProvider).whenData(PeriodSummary.of).value ??
-      PeriodSummary.empty,
-);
+final periodSummaryProvider = Provider<PeriodSummary>((ref) {
+  final service = ref.watch(currencyServiceProvider).value;
+  return ref
+          .watch(periodEntriesProvider)
+          .whenData((rows) => PeriodSummary.of(rows, service: service))
+          .value ??
+      PeriodSummary.empty;
+});
 
 /// Phiên bản app cho màn Giới thiệu, ví dụ "1.0.0 (1)"; test ghi đè.
 final appVersionProvider = FutureProvider<String>((ref) async {
@@ -161,10 +193,21 @@ final appVersionProvider = FutureProvider<String>((ref) async {
   return '${info.version} (${info.buildNumber})';
 });
 
-/// Việc chạy một lần khi mở app: đặt tiền tệ mặc định USD nếu chưa có (AC-21, D-036),
-/// tạo các khoản định kỳ tới hạn (AC-24).
+/// Việc chạy một lần khi mở app (D-037): đặt Tiền tệ chính nếu chưa có
+/// (AC-21, D-036), tải tỉ giá nếu bảng cũ ≥ 1 ngày, quy đổi lại số dẫn xuất
+/// khi bảng đổi, rồi tạo các khoản định kỳ tới hạn (AC-24).
 final startupProvider = FutureProvider<void>((ref) async {
-  await ref.read(settingsRepositoryProvider).ensureCurrency();
+  final settings = ref.read(settingsRepositoryProvider);
+  final db = ref.read(databaseProvider);
+  await settings.ensureCurrency();
+  final rates = ref.read(rateRepositoryProvider);
+  final refresh = await rates.refreshIfStale();
+  final table = await rates.load();
+  final primary = await settings.readCurrency();
+  final applied = await settings.readRatesAppliedDate();
+  if (refresh == RatesRefreshResult.updated || applied != table.date) {
+    await recomputeDerivedAmounts(db, CurrencyService(table, primary));
+  }
   await ref
       .read(recurringRepositoryProvider)
       .generateDue(ref.read(clockProvider)());
@@ -211,6 +254,7 @@ final todayProvider = NotifierProvider<TodayNotifier, DateTime>(
 final budgetSpentProvider = StreamProvider<int>((ref) async* {
   final today = ref.watch(todayProvider);
   final entries = ref.watch(entryRepositoryProvider);
+  final service = await ref.watch(currencyServiceProvider.future);
   final monthStartDay = await ref.watch(monthStartDayProvider.future);
   final month = Period.containing(
     PeriodType.month,
@@ -219,7 +263,7 @@ final budgetSpentProvider = StreamProvider<int>((ref) async* {
   );
   yield* entries
       .watchEntries(month)
-      .map((rows) => PeriodSummary.of(rows).expense);
+      .map((rows) => PeriodSummary.of(rows, service: service).expense);
 });
 
 /// Tháng mà thanh ngân sách ở màn chính tính theo, suy từ kỳ đang xem
@@ -244,6 +288,7 @@ Period? budgetMonthFor(Period viewed, {required int monthStartDay}) =>
 final viewedBudgetSpentProvider = StreamProvider<int?>((ref) async* {
   final viewed = ref.watch(periodProvider);
   final entries = ref.watch(entryRepositoryProvider);
+  final service = await ref.watch(currencyServiceProvider.future);
   final monthStartDay = await ref.watch(monthStartDayProvider.future);
   final month = budgetMonthFor(viewed, monthStartDay: monthStartDay);
   if (month == null) {
@@ -252,5 +297,5 @@ final viewedBudgetSpentProvider = StreamProvider<int?>((ref) async* {
   }
   yield* entries
       .watchEntries(month)
-      .map((rows) => PeriodSummary.of(rows).expense);
+      .map((rows) => PeriodSummary.of(rows, service: service).expense);
 });

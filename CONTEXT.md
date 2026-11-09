@@ -6,6 +6,7 @@
 > `design/current/ui-spec.md` — bản sau khi gộp v1.2 + PLAN-001 (2026-11-05). 🤖 = chỉ Android (ẩn trên iOS, D-019).
 > ⚠ = code, SPEC hoặc thiết kế đang lệch nhau — xem mục "Chỗ lệch" ở cuối.
 > **2.0** = thuật ngữ của SPEC 3d (F-27..F-42, D-030..D-035), thêm 2026-11-06 và thu hẹp cùng ngày (chỉ nhập khoản chi từ email MB qua hàng đợi; không đọc thông báo, không quét/ảnh hoá đơn), **SPEC 3d chưa duyệt**: chưa có trong code; chữ UI (VI) là đề xuất, chốt khi viết `.arb`.
+> **D-037** (2026-11-09): đa tiền tệ — thay hàng **Currency** cũ bằng bộ thuật ngữ Currency / Primary currency / Original amount / Derived amount / Exchange rate; SPEC mục 3e (F-43, AC-127..AC-135), đã có trong code.
 
 ## Ghi chép và phân loại
 
@@ -17,8 +18,10 @@
 | **Expense** ⚠ | Chi (khoản chi) — EN UI: *Expenses* | Entry làm giảm tiền, có danh mục chi. Ghi qua nút "−", icon danh mục quanh vòng, ô "Danh mục khác", nút Chi của Widget hoặc chạm Reminder. | "spending" trong nhãn |
 | **Income** | Thu (khoản thu) | Entry làm tăng tiền, có danh mục thu. Ghi qua nút "+" hoặc nút Thu của Widget. | "revenue" |
 | **Transfer** | Chuyển tiền | Entry loại `transfer` từ Account nguồn sang Account đích. **Không** phải thu/chi: không vào biểu đồ, tổng thu/chi, Period balance, Budget, Category budget; chỉ đổi Account balance. | "chuyển khoản" (dễ nhầm chuyển khoản ngân hàng / chuyển khoản sang danh mục khác) |
-| **Amount** | Số tiền | Số nguyên theo Minor unit của Currency, tối đa 10¹² đơn vị nhỏ nhất. Người dùng gõ phải > 0; Entry có thể là 0 chỉ khi Currency conversion làm tròn một số rất nhỏ (D-029). Là số hiện và cộng tổng; phía sau có thể có Exact amount. | số thực, "giá" |
-| **Exact amount** | Số tiền chính xác | Số tiền giữ 6 chữ số lẻ trên đơn vị chính (micro, 10⁻⁶), ẩn, không hiện ở đâu; chỉ dùng khi Currency conversion để đổi A→B→A ra đúng số cũ (D-029). Không có (null) = đúng bằng Amount; Amount bị sửa tay thì Exact amount cũ tự bỏ. | "số gốc", "số thật" |
+| **Amount** | Số tiền (dẫn xuất) | Số nguyên theo Minor unit của **Primary currency**, tối đa 10¹² đơn vị nhỏ nhất; là số dùng để cộng tổng và hiện ở tổng/biểu đồ. Với bản ghi khác tiền tệ, đây là số quy từ **Original amount** tại **Exchange rate** hiện tại (D-037). Người dùng gõ phải > 0; có thể 0 khi quy đổi một số rất nhỏ. | số thực, "giá" |
+| **Original amount** | Số tiền gốc | Số người dùng nhập, lưu `int` theo Minor unit của **Currency** của bản ghi; **không đổi** khi đổi Primary currency hay tỷ giá. Cột `original*` trong cơ sở dữ liệu; Transfer có thêm số nhận gốc và tiền tệ nhận. | "số quy đổi", "số hiển thị" |
+| **Derived amount** | Số dẫn xuất | Số quy từ Original amount về Primary currency tại tỷ giá hiện tại; dùng để cộng tổng, biểu đồ, thanh ngân sách (các cột `amount` / `budget` / `targetAmount` / `initialBalance`). Không hiện thay số gốc ở danh sách/chi tiết. | "số gốc" |
+| **Exact amount** | Số tiền chính xác | Số giữ 6 chữ số lẻ trên đơn vị chính (micro, 10⁻⁶), ẩn; di sản của cách quy đổi toàn bộ cũ (D-029), bị xoá khi số dẫn xuất được tính lại từ số gốc khác tiền tệ. Không có (null) = đúng bằng Amount. | "số gốc", "số thật" |
 | **Minor unit** | Đơn vị nhỏ nhất | Đơn vị lưu tiền: theo số chữ số thập phân ISO (VND 0, USD 2, KWD 3). | |
 | **Amount expression** | Phép tính | Chuỗi gõ trên Keypad (vd `120+35`), tính ra Amount khi lưu hoặc bấm "=". | "công thức" |
 | **Keypad** | Bàn phím số | Bàn phím riêng của app ở màn Nhập khoản/Chuyển tiền (số, `000`/`.`, ⌫, `÷ × − +`, `=`, nút lớn Chọn danh mục/Lưu). Khác **PIN pad**. | "bàn phím hệ thống" |
@@ -105,7 +108,14 @@
 
 | Term (code) | VI | Định nghĩa | Tránh dùng |
 |---|---|---|---|
-| **Currency** | Tiền tệ | **Một** mã ISO 4217 cho toàn app (khoảng 156 mã, chọn có ô tìm), mặc định theo vùng máy. Đổi tiền tệ = **quy đổi** mọi số tiền (Entry, Recurring series, số dư ban đầu, Budget, Category budget) theo tỉ giá tải qua mạng hoặc nhập tay, trong một lần (D-025); quy đổi từ Exact amount, số hiện làm tròn theo số lẻ của tiền mới (D-029). | "Primary currency", "tiền tệ chính", "base currency" (app không có nhiều tiền tệ) |
+| **Currency** | Tiền tệ (của bản ghi) | Mã ISO 4217 gắn với Account, Entry, Recurring series, Savings goal, Debt, Debt payment, Budget tháng và Category budget. Mặc định khi tạo = Currency của Account (hoặc Primary currency nếu không có Account). Đổi Currency của bản ghi không đổi Original amount (D-037). | "tiền tệ chính" (dành cho Primary currency) |
+| **Primary currency** | Tiền tệ chính | Mã ISO 4217 người dùng chọn trong Cài đặt; mọi tổng, biểu đồ, ngân sách và dòng `≈` quy về mã này. Đổi Primary currency chỉ đổi cách cộng/hiển thị, **không** sửa số gốc; đổi qua lại không mất dữ liệu (D-037). | "tiền tệ mặc định", "base currency" |
+| **Exchange rate** | Tỷ giá | Hệ số quy đổi giữa hai Currency tại một ngày; lấy từ **Rate table**, **Fallback rates** hoặc **Rate override**. Mọi quy đổi dùng tỷ giá hiện tại, **không** lưu tỷ giá lịch sử (D-037). | "tỉ giá" (thống nhất "tỷ giá" trong chữ UI) |
+| **Rate table** | Bảng tỷ giá | Bảng tỷ giá công khai tải qua HTTPS (`open.er-api.com`), lưu trong máy kèm ngày; tự kiểm tra khi mở app/quay lại, tải tối đa 1 lần/ngày, có "Cập nhật ngay". | "tỷ giá trực tuyến" |
+| **Fallback rates** | Bảng tỷ giá dự phòng | Bảng đóng gói sẵn trong app, dùng khi chưa từng tải được bảng thật; có ghi ngày và nguồn. | "tỷ giá mặc định" |
+| **Rate override** | Tỷ giá ghi đè | Tỷ giá người dùng nhập tay cho một cặp trong màn Tỷ giá; xem trước số dư Account đầu tiên dùng Currency đó; áp dụng ngay cho số dẫn xuất. | "tỷ giá thủ công" |
+| **Pair in use** | Cặp đang dùng | Cặp Currency ↔ Primary currency đang có ít nhất một bản ghi dùng; màn Tỷ giá chỉ hiện các cặp này. | "mọi cặp tiền tệ" |
+| **Missing rate** | Thiếu tỷ giá | Không có tỷ giá cho cặp đang dùng: bản ghi không được cộng vào tổng (khi recompute thì giữ số dẫn xuất cũ) và UI hiện ghi chú, không quy đổi ngầm. | "tỷ giá 0" |
 | **Backup** | Bản sao lưu (file `.vigon`) | File chứa đủ tài khoản, danh mục, khoản, chuỗi định kỳ, cài đặt (trừ Device-only settings, PIN). Xuất tay qua bảng chia sẻ của hệ điều hành. | "đồng bộ", "cloud backup" |
 | **Encrypted backup** | Bản sao lưu có mật khẩu | Backup được bọc mã hóa bằng **Backup password** (AES-256-GCM, khóa từ PBKDF2). Tùy chọn khi xuất tay (mặc định tắt); Auto backup luôn mã hóa. Không đặt mật khẩu thì file là JSON không mã hóa và app nói rõ. | "khóa file", "file PIN" |
 | **Backup password** | Mật khẩu (file sao lưu) | Mật khẩu ≥ 6 ký tự, nhập hai lần, có cảnh báo "Quên mật khẩu thì không mở được file". Xuất tay: không lưu ở đâu; Auto backup: lưu trong bộ nhớ an toàn của máy. Khác **PIN**. | "mã", "PIN" |
@@ -150,7 +160,7 @@ Trạng thái so với bản CONTEXT 2026-11-04: ✔ = đã hết lệch, ⚠ = 
 | 6 | Default account | Tài khoản **hiện** đầu tiên | SPEC AC-04 "tài khoản mặc định" | ⚠ hiểu "mặc định" = đầu danh sách; chọn được là tính năng mới (Future). |
 | 7 | Hidden account | Cột `archived`, có giao diện Ẩn/Hiện lại (F-14) | — | ✔ (bản cũ: "có cột, không có giao diện"). Còn lệch hành vi: ẩn tài khoản chưa dừng chuỗi định kỳ trỏ tới nó (ui-spec 9). |
 | 8 | "Số dư" / "Balance" | Cùng chữ cho Period balance và Account balance | SPEC AC-07/08 dùng "số dư" cho kỳ | ⚠ tách nghĩa trong tài liệu; thiết kế làm rõ nhãn (product §10.1 #2). |
-| 9 | Currency | Một khóa `currency`, ~156 mã | SPEC AC-53 "khoảng 150 mã" | ✔ không dùng "Primary currency". |
+| 9 | Currency | Nhiều cột `currency` theo bản ghi + `primaryCurrency` trong Settings | SPEC 3e (D-037) | ✔ đã chốt đa tiền tệ; "Primary currency" là thuật ngữ chính thức (không còn cấm). |
 | 10 | Nhãn nút Chi (EN) | Nút màn chính dùng `expense` = **"Expenses"**; nút Widget dùng "Expense" | Thiết kế: "Chi"/"Thu" | ⚠ EN lệch số ít/số nhiều giữa app và widget; phiên #2 chốt (vd thêm khóa "Expense"). |
 | 11 | More categories | `otherCategories` = "Danh mục khác" / "More categories" | SPEC AC-51: ô **"Thêm"** (dấu ⋯), nhãn "Danh mục khác" | ⚠ SPEC gọi ô là "Thêm" nhưng nhãn hiển thị là "Danh mục khác"; dễ nhầm với danh mục "Khác". Dùng "More categories / ô ⋯". |
 | 12 | All time | Period `all` = "Tất cả" / "All time"; Search chip = "Tất cả thời gian" / "All time" | SPEC AC-10, AC-49 | ⚠ EN cùng chữ "All time" cho hai thứ khác nhau; VI khác chữ. Thiết kế nên phân biệt. |

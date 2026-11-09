@@ -45,10 +45,10 @@ void main() {
         find.widgetWithText(SettingsGroupTitle, 'Nhắc ghi chép'),
         findsOneWidget,
       );
-      // Tiền tệ: giá trị là phụ đề.
+      // Tiền tệ chính: giá trị là phụ đề.
       expect(
         find.descendant(
-          of: find.widgetWithText(SettingsNavRow, 'Tiền tệ'),
+          of: find.widgetWithText(SettingsNavRow, 'Tiền tệ chính'),
           matching: find.text('VND · ₫'),
         ),
         findsOneWidget,
@@ -189,9 +189,9 @@ void main() {
       final db = await pumpApp(tester);
       await _openSettings(tester);
       // Danh sách dựng lười: cuộn tới hàng (2.0 thêm thẻ Tiết kiệm/Nợ/Hàng đợi).
-      await tester.scrollUntilVisible(find.text('Tiền tệ'), 200);
+      await tester.scrollUntilVisible(find.text('Tiền tệ chính'), 200);
       await tester.pumpAndSettle();
-      await tester.tap(find.text('Tiền tệ'));
+      await tester.tap(find.text('Tiền tệ chính'));
       await settle(tester);
       final sheet = find.byType(CurrencyPickerSheet);
       expect(sheet, findsOneWidget);

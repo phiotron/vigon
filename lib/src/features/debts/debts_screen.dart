@@ -10,6 +10,7 @@ import '../../data/money.dart';
 import '../../providers.dart';
 import '../../ui/format.dart';
 import '../../ui/hint.dart';
+import '../../ui/money_lines.dart';
 import '../../ui/tokens.g.dart';
 import 'debt_detail.dart';
 import 'debt_editor.dart';
@@ -72,8 +73,7 @@ class _DebtsScreenState extends ConsumerState<DebtsScreen> {
           title: title,
           total: l.debtGroupTotal(money(context, currency, total(list))),
         ),
-        for (final v in list)
-          _DebtTile(view: v, today: today, digits: digits, currency: currency),
+        for (final v in list) _DebtTile(view: v, today: today, digits: digits),
       ],
     );
 
@@ -144,12 +144,7 @@ class _DebtsScreenState extends ConsumerState<DebtsScreen> {
                   ),
                   if (_showDone)
                     for (final v in done)
-                      _DebtTile(
-                        view: v,
-                        today: today,
-                        digits: digits,
-                        currency: currency,
-                      ),
+                      _DebtTile(view: v, today: today, digits: digits),
                 ],
               ],
             ),
@@ -208,27 +203,34 @@ class _GroupHeader extends StatelessWidget {
 
 /// Một khoản nợ: người, trạng thái (Quá hạn / Hạn …/ Đã xong), còn lại; chạm
 /// mở chi tiết (các lần trả, sửa, xoá).
-class _DebtTile extends StatelessWidget {
+class _DebtTile extends ConsumerWidget {
   const _DebtTile({
     required this.view,
     required this.today,
     required this.digits,
-    required this.currency,
   });
 
   final DebtView view;
   final DateTime today;
   final int digits;
-  final String currency;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final l = AppLocalizations.of(context);
     final scheme = Theme.of(context).colorScheme;
     final d = view.debt;
+    final primary = ref.watch(currencyProvider).value ?? 'USD';
+    final service = ref.watch(currencyServiceProvider).value;
     final settled = view.isSettled(digits);
     final overdue = isDebtOverdue(view, today, digits);
-    final remaining = money(context, currency, view.remaining(digits));
+    // Số gốc theo tiền tệ khoản nợ; số còn lại trong DB là số quy về Tiền tệ
+    // chính nên quy ngược để hiện (D-037).
+    final originalAmount = d.originalAmount ?? d.amount;
+    int own(int amount) => d.currency == primary
+        ? amount
+        : service?.fromPrimary(amount, d.currency) ?? amount;
+    final ownRemaining = own(view.remaining(digits));
+    final ownPaid = own(view.paid(digits));
     final lines = <Widget>[
       if (settled)
         Row(
@@ -273,19 +275,23 @@ class _DebtTile extends StatelessWidget {
       if (view.payments.isNotEmpty)
         Text(
           l.debtPaidOf(
-            money(context, currency, view.paid(digits)),
-            money(context, currency, d.amount),
+            money(context, d.currency, ownPaid),
+            money(context, d.currency, originalAmount),
           ),
           style: VgType.bodySm.copyWith(color: scheme.onSurfaceVariant),
         ),
     ];
-    final amount = Text(
-      settled ? money(context, currency, d.amount) : remaining,
+    final amount = MoneyLines(
+      amount: settled ? originalAmount : ownRemaining,
+      currency: d.currency,
       style: VgType.bodyMd.copyWith(
         color: scheme.onSurface,
         fontWeight: FontWeight.w600,
         fontFeatures: const [FontFeature.tabularFigures()],
       ),
+      secondaryStyle: VgType.bodySm,
+      crossAxisAlignment: CrossAxisAlignment.end,
+      textAlign: TextAlign.end,
     );
     final large = isLargeText(context);
     return ListTile(

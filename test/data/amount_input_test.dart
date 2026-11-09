@@ -125,7 +125,10 @@ void main() {
     testWidgets('vi, VND: ngân sách hiện "12.000.000", gõ "1.500.000" lưu '
         '1500000', (tester) async {
       final db = memoryDatabase();
-      await tester.runAsync(() => SettingsRepository(db).setBudget(12000000));
+      await tester.runAsync(() async {
+        await SettingsRepository(db).setCurrency('VND');
+        await SettingsRepository(db).setBudget(12000000);
+      });
       await pumpApp(tester, db: db);
       await tester.tap(find.byTooltip('Cài đặt'));
       await settle(tester);

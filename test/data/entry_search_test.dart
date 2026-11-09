@@ -32,12 +32,14 @@ EntryView _row(
     recurringRuleId: null,
     source: EntrySource.manual,
     createdAt: DateTime(2026),
+    currency: 'VND',
   ),
   category,
 );
 
 /// Giả lập cách hiển thị VND: dấu chấm ngăn nghìn và khoảng trắng + ₫.
-String _vnd(int a) {
+String _vnd(EntryView row) {
+  final a = row.entry.originalAmount ?? row.entry.amount;
   final s = a.toString();
   final out = StringBuffer();
   for (var i = 0; i < s.length; i++) {

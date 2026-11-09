@@ -2,7 +2,10 @@ import 'package:drift/drift.dart';
 
 import '../../data/account_repository.dart';
 import '../../data/database.dart';
+import '../../data/exchange_rate.dart';
 import '../../data/import_repositories.dart';
+import '../../data/rate_repository.dart';
+import '../../data/settings_repository.dart';
 import '../../import/mb/mb_import_service.dart' show mbAutoAccountName;
 
 /// Ghi chú của khoản lấy từ email (AC-88): "người thụ hưởng · nội dung",
@@ -59,6 +62,19 @@ class ImportQueueActions {
     return account.id;
   }
 
+  /// Quy đổi số của hàng đợi (tiền tệ của email) sang Tiền tệ chính (D-037).
+  /// Thiếu cặp tỉ giá thì trả null: người dùng phải sửa tay, không tự đoán.
+  Future<CurrencyService> _currency() async {
+    final settings = SettingsRepository(_db);
+    final cached = await settings.readRateTable();
+    final overrides = await settings.readRateOverrides();
+    final primary = await settings.readCurrency();
+    return CurrencyService(
+      (cached ?? RateTable.fallback).withOverrides(overrides),
+      primary,
+    );
+  }
+
   /// Lưu mục thành một khoản chi vào [categoryId] (AC-96): ngày giờ của email,
   /// Account trích nợ, đúng số tiền (kể cả số chính xác D-029), ghi chú AC-88,
   /// nguồn + số tham chiếu của email; nhớ gợi ý người thụ hưởng → danh mục.
@@ -68,13 +84,17 @@ class ImportQueueActions {
         final removed = await _queue.remove(item.id);
         if (removed == null) return null;
         final accountId = await resolveAccount(removed);
+        final service = await _currency();
+        final amount = service.toPrimary(removed.amount, removed.currency) ?? 0;
         final entryId = await _db
             .into(_db.entries)
             .insert(
               EntriesCompanion.insert(
                 type: EntryType.expense,
-                amount: removed.amount,
-                amountMicro: Value(removed.amountMicro),
+                amount: amount,
+                amountMicro: Value(
+                  amount == removed.amount ? removed.amountMicro : null,
+                ),
                 categoryId: Value(categoryId),
                 accountId: accountId,
                 date: removed.date,
@@ -82,6 +102,8 @@ class ImportQueueActions {
                 note: Value(queueItemNote(removed)),
                 source: Value(entrySourceForBank(removed.bank)),
                 referenceNumber: Value(removed.referenceNumber),
+                currency: Value(removed.currency),
+                originalAmount: Value(removed.amount),
               ),
             );
         await _seen.markSeen(
@@ -105,13 +127,17 @@ class ImportQueueActions {
         if (fromId == toAccountId) {
           throw ArgumentError('Hai tài khoản phải khác nhau');
         }
+        final service = await _currency();
+        final amount = service.toPrimary(removed.amount, removed.currency) ?? 0;
         final entryId = await _db
             .into(_db.entries)
             .insert(
               EntriesCompanion.insert(
                 type: EntryType.transfer,
-                amount: removed.amount,
-                amountMicro: Value(removed.amountMicro),
+                amount: amount,
+                amountMicro: Value(
+                  amount == removed.amount ? removed.amountMicro : null,
+                ),
                 accountId: fromId,
                 toAccountId: Value(toAccountId),
                 date: removed.date,
@@ -119,6 +145,11 @@ class ImportQueueActions {
                 note: Value(queueItemNote(removed)),
                 source: Value(entrySourceForBank(removed.bank)),
                 referenceNumber: Value(removed.referenceNumber),
+                currency: Value(removed.currency),
+                originalAmount: Value(removed.amount),
+                toCurrency: Value(removed.currency),
+                toOriginalAmount: Value(removed.amount),
+                toAmount: Value(amount),
               ),
             );
         await _seen.markSeen(

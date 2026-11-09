@@ -27,6 +27,12 @@ void main() {
             toAccountId: Value(toAccountId),
             date: '2026-11-03',
             note: const Value('nhỏ'),
+            // D-037: số gốc + tiền tệ, khớp Tiền tệ chính VND của test.
+            currency: const Value('VND'),
+            originalAmount: const Value(0),
+            toCurrency: Value(type == EntryType.transfer ? 'VND' : null),
+            toOriginalAmount: Value(type == EntryType.transfer ? 0 : null),
+            toAmount: Value(type == EntryType.transfer ? 0 : null),
           ),
         ),
   ))!;

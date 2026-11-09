@@ -11,10 +11,12 @@ import '../../l10n_names.dart';
 import '../../providers.dart';
 import '../../ui/choice_sheet.dart';
 import '../../ui/format.dart';
+import '../../ui/money_lines.dart';
 import 'account_manage.dart';
 import '../categories/sheet_footer.dart';
 import '../../ui/tokens.g.dart';
 import '../settings/budget_dialog.dart' show currencySymbol;
+import '../settings/currency_picker.dart';
 
 /// Icon đầu dòng tài khoản: tiền mặt mặc định là tờ tiền, còn lại là ví.
 IconData accountIcon(Account a) => a.nameKey == 'cash'
@@ -33,15 +35,39 @@ class AccountsScreen extends ConsumerWidget {
     final balances =
         ref.watch(accountBalancesProvider).value ?? const <int, int>{};
     final currency = ref.watch(currencyProvider).value ?? 'USD';
+    final service = ref.watch(currencyServiceProvider).value;
     final large = isLargeText(context);
-    Widget balance(Account a) => Text(
-      money(context, currency, balances[a.id] ?? a.initialBalance),
-      style: VgType.bodyMd.copyWith(
-        color: Theme.of(context).colorScheme.onSurface,
-        fontWeight: FontWeight.w600,
-        fontFeatures: const [FontFeature.tabularFigures()],
-      ),
-    );
+    // Số dư tính theo Tiền tệ chính; hiện theo tiền tệ của tài khoản, dưới là
+    // "≈ Tiền tệ chính" (D-037). Cặp thiếu tỷ giá thì đành hiện số chính.
+    Widget balance(Account a) {
+      final primaryAmount = balances[a.id] ?? a.initialBalance;
+      final own = a.currency == currency
+          ? primaryAmount
+          : service?.fromPrimary(primaryAmount, a.currency);
+      if (own == null) {
+        return Text(
+          money(context, currency, primaryAmount),
+          style: VgType.bodyMd.copyWith(
+            color: Theme.of(context).colorScheme.onSurface,
+            fontWeight: FontWeight.w600,
+            fontFeatures: const [FontFeature.tabularFigures()],
+          ),
+        );
+      }
+      return MoneyLines(
+        amount: own,
+        currency: a.currency,
+        style: VgType.bodyMd.copyWith(
+          color: Theme.of(context).colorScheme.onSurface,
+          fontWeight: FontWeight.w600,
+          fontFeatures: const [FontFeature.tabularFigures()],
+        ),
+        secondaryStyle: VgType.bodySm,
+        crossAxisAlignment: CrossAxisAlignment.end,
+        textAlign: TextAlign.end,
+      );
+    }
+
     return Scaffold(
       appBar: AppBar(
         title: Text(l.accounts),
@@ -115,6 +141,7 @@ class _AccountEditorState extends ConsumerState<_AccountEditor> {
   final _balance = TextEditingController();
   String? _nameError;
   String? _balanceError;
+  String? _currency;
 
   @override
   void didChangeDependencies() {
@@ -122,11 +149,11 @@ class _AccountEditorState extends ConsumerState<_AccountEditor> {
     final a = widget.account;
     if (a != null && _name.text.isEmpty) {
       _name.text = accountLabel(AppLocalizations.of(context), a);
-      final digits = currencyDecimalDigits(
-        ref.read(currencyProvider).value ?? 'USD',
-      );
-      final abs = amountInput(context, a.initialBalance.abs(), digits);
-      _balance.text = a.initialBalance < 0 ? '-$abs' : abs;
+      _currency ??= a.currency;
+      final digits = currencyDecimalDigits(a.currency);
+      final original = a.initialBalanceOriginal ?? a.initialBalance;
+      final abs = amountInput(context, original.abs(), digits);
+      _balance.text = original < 0 ? '-$abs' : abs;
     }
   }
 
@@ -142,9 +169,8 @@ class _AccountEditorState extends ConsumerState<_AccountEditor> {
     final name = _name.text.trim();
     final text = _balance.text.trim();
     final negative = text.startsWith('-');
-    final digits = currencyDecimalDigits(
-      ref.read(currencyProvider).value ?? 'USD',
-    );
+    final currency = _currency ?? ref.read(currencyProvider).value ?? 'USD';
+    final digits = currencyDecimalDigits(currency);
     final abs = text.isEmpty
         ? 0
         : parseAmountField(
@@ -157,21 +183,68 @@ class _AccountEditorState extends ConsumerState<_AccountEditor> {
       _balanceError = abs == null ? l.invalidExpression : null;
     });
     if (_nameError != null || abs == null) return;
-    final balance = negative ? -abs : abs;
+    final original = negative ? -abs : abs;
+    final service = await ref.read(currencyServiceProvider.future);
+    final balance = service.toPrimary(original, currency);
+    if (balance == null) {
+      if (mounted) {
+        setState(
+          () => _balanceError = l.rateMissing(currency, service.primary),
+        );
+      }
+      return;
+    }
     final repo = ref.read(accountRepositoryProvider);
     final a = widget.account;
     if (a == null) {
-      await repo.add(name: name, initialBalance: balance);
+      await repo.add(
+        name: name,
+        initialBalance: balance,
+        initialBalanceOriginal: original,
+        currency: currency,
+      );
     } else {
-      await repo.edit(a.id, name: name, initialBalance: balance);
+      await repo.edit(
+        a.id,
+        name: name,
+        initialBalance: balance,
+        initialBalanceOriginal: original,
+        currency: currency,
+      );
     }
     if (mounted) Navigator.pop(context);
+  }
+
+  /// Đổi tiền tệ tài khoản: giữ nguyên số gốc người dùng đã nhập, chỉ đổi tiền
+  /// tệ hiển thị/quy đổi (D-037).
+  Future<void> _pickCurrency() async {
+    final current = _currency ?? ref.read(currencyProvider).value ?? 'USD';
+    final picked = await showCurrencyPicker(context, current);
+    if (picked == null || picked == current || !mounted) return;
+    final oldDigits = currencyDecimalDigits(current);
+    final newDigits = currencyDecimalDigits(picked);
+    final text = _balance.text.trim();
+    final negative = text.startsWith('-');
+    final parsed = text.isEmpty
+        ? 0
+        : parseAmountField(
+            context,
+            negative ? text.substring(1) : text,
+            oldDigits,
+          );
+    setState(() {
+      _currency = picked;
+      if (parsed != null && text.isNotEmpty) {
+        final abs = amountInput(context, parsed, newDigits);
+        _balance.text = negative ? '-$abs' : abs;
+      }
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context);
-    final currency = ref.watch(currencyProvider).value ?? 'USD';
+    final currency = _currency ?? ref.watch(currencyProvider).value ?? 'USD';
     final account = widget.account;
     return SafeArea(
       child: Column(
@@ -198,6 +271,34 @@ class _AccountEditorState extends ConsumerState<_AccountEditor> {
                       decoration: InputDecoration(
                         labelText: l.name,
                         errorText: _nameError,
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(
+                      VgSpace.s4,
+                      VgSpace.s2,
+                      VgSpace.s4,
+                      0,
+                    ),
+                    child: InkWell(
+                      onTap: _pickCurrency,
+                      borderRadius: BorderRadius.circular(8),
+                      child: InputDecorator(
+                        decoration: InputDecoration(labelText: l.currency),
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: Text(
+                                currencyCodeLabel(currency),
+                                style: const TextStyle(
+                                  fontFeatures: [FontFeature.tabularFigures()],
+                                ),
+                              ),
+                            ),
+                            const Icon(Symbols.arrow_drop_down_rounded),
+                          ],
+                        ),
                       ),
                     ),
                   ),

@@ -39,14 +39,21 @@ Future<AppDatabase> pumpApp(
 }) async {
   usePhoneScreen(tester);
   final database = db ?? memoryDatabase();
-  await tester.runAsync(
-    () async {
-      final settings = SettingsRepository(database);
-      await settings.setLocaleCode(localeCode);
-      // Test mặc định VND (app thật mặc định USD, D-036).
-      await settings.ensureCurrency(defaultCode: 'VND');
-    },
-  );
+  await tester.runAsync(() async {
+    final settings = SettingsRepository(database);
+    await settings.setLocaleCode(localeCode);
+    // Test mặc định VND (app thật mặc định USD, D-036). Tài khoản mặc định
+    // cũng phải theo VND, nếu không khoản mới sẽ bị coi là USD (D-037).
+    await settings.ensureCurrency(defaultCode: 'VND');
+    await database
+        .update(database.accounts)
+        .write(
+          const AccountsCompanion(
+            currency: Value('VND'),
+            initialCurrency: Value('VND'),
+          ),
+        );
+  });
   await tester.pumpWidget(
     ProviderScope(
       overrides: [
@@ -106,6 +113,11 @@ Future<int> insertEntry(
   String date = '2026-11-03',
   String? time,
   String? note,
+  int? originalAmount,
+  String currency = 'VND',
+  int? toAmount,
+  int? toOriginalAmount,
+  String? toCurrency,
 }) async {
   final id = await tester.runAsync(
     () => db
@@ -120,6 +132,11 @@ Future<int> insertEntry(
             date: date,
             time: Value(time),
             note: Value(note),
+            currency: Value(currency),
+            originalAmount: Value(originalAmount ?? amount),
+            toAmount: Value(toAmount),
+            toOriginalAmount: Value(toOriginalAmount),
+            toCurrency: Value(toCurrency),
           ),
         ),
   );

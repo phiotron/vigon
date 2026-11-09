@@ -191,6 +191,7 @@ void main() {
             recurringRuleId: null,
             source: EntrySource.manual,
             createdAt: now,
+            currency: 'VND',
           ),
           Entry(
             id: 1,
@@ -204,6 +205,7 @@ void main() {
             recurringRuleId: null,
             source: EntrySource.manual,
             createdAt: now,
+            currency: 'VND',
           ),
         ];
         final csv = exportCsv(
@@ -247,6 +249,7 @@ void main() {
             recurringRuleId: null,
             source: EntrySource.manual,
             createdAt: now,
+            currency: 'USD',
           ),
         ],
         currency: 'USD',
@@ -300,6 +303,7 @@ void main() {
       recurringRuleId: null,
       source: EntrySource.manual,
       createdAt: now,
+      currency: 'VND',
     );
 
     String build(

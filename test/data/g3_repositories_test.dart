@@ -165,15 +165,12 @@ void main() {
   });
 
   group('tiền tệ', () {
-    test(
-      'lần đầu mặc định USD, không theo máy, và giữ nguyên về sau (AC-21, D-036)',
-      () async {
-        expect(await settings.readCurrency(), 'USD');
-        expect(await settings.ensureCurrency(), 'USD');
-        await settings.setCurrency('VND');
-        expect(await settings.ensureCurrency(), 'VND');
-      },
-    );
+    test('lần đầu mặc định USD, không theo máy, và giữ nguyên về sau (AC-21, D-036)', () async {
+      expect(await settings.readCurrency(), 'USD');
+      expect(await settings.ensureCurrency(), 'USD');
+      await settings.setCurrency('VND');
+      expect(await settings.ensureCurrency(), 'VND');
+    });
 
     ExchangeRate rate(String r) => ExchangeRate.tryParse(r)!;
 

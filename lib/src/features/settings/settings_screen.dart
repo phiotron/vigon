@@ -5,16 +5,17 @@ import 'package:material_symbols_icons/symbols.dart';
 
 import '../../../l10n/app_localizations.dart';
 import '../../platform_features.dart';
+import '../../data/rate_repository.dart';
 import '../../providers.dart';
 import '../../ui/choice_segments.dart';
 import '../../ui/format.dart';
+import '../../ui/messenger.dart';
 import '../../ui/settings_rows.dart';
 import '../../ui/tokens.g.dart';
 import '../import_queue/import_queue_providers.dart';
 import '../lock/app_lock.dart';
 import 'auto_backup_section.dart';
 import 'budget_dialog.dart';
-import 'currency_conversion.dart';
 import 'currency_picker.dart';
 import 'data_actions.dart';
 import 'email_import_screen.dart';
@@ -74,10 +75,7 @@ class SettingsScreen extends ConsumerWidget {
             children: [
               SettingsSegmentRow(
                 segments: ChoiceSegments<String>(
-                  options: [
-                    ('en', 'English'),
-                    ('vi', 'Tiếng Việt'),
-                  ],
+                  options: [('en', 'English'), ('vi', 'Tiếng Việt')],
                   selected: localeCode.isEmpty ? 'en' : localeCode,
                   onChanged: repo.setLocaleCode,
                 ),
@@ -118,9 +116,14 @@ class SettingsScreen extends ConsumerWidget {
               ),
               SettingsNavRow(
                 icon: Symbols.currency_exchange_rounded,
-                title: l.currency,
+                title: l.primaryCurrency,
                 value: currencyCodeLabel(currency),
                 onTap: () => _pickCurrency(context, ref, currency),
+              ),
+              SettingsNavRow(
+                icon: Symbols.currency_exchange_rounded,
+                title: l.exchangeRates,
+                onTap: () => context.push('/rates'),
               ),
               // Ngày đầu tuần: hai nút chọn một thay cho chạm để đổi (§10.1 #4).
               SettingsSegmentRow(
@@ -264,17 +267,25 @@ class SettingsScreen extends ConsumerWidget {
     );
   }
 
-  /// Chọn tiền tệ (SCR-13): sheet toàn màn; chọn mã khác thì tải tỉ giá, xác
-  /// nhận rồi quy đổi mọi số tiền (D-025).
+  /// Chọn Tiền tệ chính (D-037): chỉ đổi cách cộng/hiển thị, không ghi đè số
+  /// gốc. Số dẫn xuất được tính lại theo bảng tỷ giá hiện tại.
   Future<void> _pickCurrency(
     BuildContext context,
     WidgetRef ref,
     String current,
   ) async {
     final picked = await showCurrencyPicker(context, current);
-    if (picked != null && picked != current && context.mounted) {
-      await changeCurrencyWithConversion(context, ref, current, picked);
-    }
+    if (picked == null || picked == current || !context.mounted) return;
+    final settings = ref.read(settingsRepositoryProvider);
+    final db = ref.read(databaseProvider);
+    // Dữ liệu cũ chưa có cột số gốc: chốt số hiện tại là số gốc ở tiền tệ cũ
+    // trước khi đổi, để không diễn giải sai.
+    await promoteLegacyAmounts(db, current);
+    await settings.setPrimaryCurrency(picked);
+    final table = await ref.read(rateRepositoryProvider).load();
+    await recomputeDerivedAmounts(db, CurrencyService(table, picked));
+    if (!context.mounted) return;
+    showMessage(AppLocalizations.of(context).primaryCurrencyChanged(picked));
   }
 }
 

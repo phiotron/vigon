@@ -145,7 +145,9 @@ void main() {
       addTearDown(tester.platformDispatcher.clearAllTestValues);
       final db = await pumpApp(tester, clock: () => _at1435);
       await tester.runAsync(
-        () => AccountRepository(db).add(name: 'Thẻ', initialBalance: 0),
+        () =>
+            AccountRepository(db)
+                .add(name: 'Thẻ', initialBalance: 0, currency: 'VND'),
       );
       await settle(tester);
       await tester.tap(find.byTooltip('Cài đặt'));
@@ -258,6 +260,7 @@ void main() {
           note: 'a',
           source: EntrySource.emailMb,
           createdAt: DateTime(2026, 11, 3),
+          currency: 'VND',
         ),
         Entry(
           id: 2,
@@ -269,6 +272,7 @@ void main() {
           note: 'b',
           source: EntrySource.manual,
           createdAt: DateTime(2026, 11, 3),
+          currency: 'VND',
         ),
       ];
       return exportCsv(

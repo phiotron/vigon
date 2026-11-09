@@ -12,9 +12,11 @@ import '../../providers.dart';
 import '../../ui/choice_segments.dart';
 import '../../ui/choice_sheet.dart';
 import '../../ui/format.dart';
+import '../../ui/hint.dart';
 import '../../ui/tokens.g.dart';
 import '../categories/sheet_footer.dart';
 import '../settings/budget_dialog.dart' show currencySymbol;
+import '../settings/currency_picker.dart';
 import 'debts_providers.dart';
 
 /// Thêm hoặc sửa khoản nợ (AC-104): người ≤ 50, chiều Cho vay / Đi vay, số
@@ -51,6 +53,9 @@ class _DebtEditorState extends ConsumerState<_DebtEditor> {
   DateTime? _due;
   String? _personError;
   String? _amountError;
+
+  /// Tiền tệ của khoản nợ (D-037); khóa sau lần trả đầu.
+  String? _currency;
   bool _saving = false;
 
   @override
@@ -64,10 +69,9 @@ class _DebtEditorState extends ConsumerState<_DebtEditor> {
       _direction = d.direction;
       _date = parseDateKey(d.date);
       _due = d.dueDate == null ? null : parseDateKey(d.dueDate!);
-      final digits = currencyDecimalDigits(
-        ref.read(currencyProvider).value ?? 'USD',
-      );
-      _amount.text = amountInput(context, d.amount, digits);
+      _currency ??= d.currency;
+      final digits = currencyDecimalDigits(d.currency);
+      _amount.text = amountInput(context, d.originalAmount ?? d.amount, digits);
     }
   }
 
@@ -95,23 +99,35 @@ class _DebtEditorState extends ConsumerState<_DebtEditor> {
   Future<void> _save() async {
     if (_saving) return;
     final l = AppLocalizations.of(context);
-    final currency = ref.read(currencyProvider).value ?? 'USD';
+    final primary = ref.read(currencyProvider).value ?? 'USD';
+    final currency = _currency ?? primary;
     final digits = currencyDecimalDigits(currency);
     final person = _person.text.trim();
     final text = _amount.text.trim();
-    final amount = text.isEmpty
+    final amountOriginal = text.isEmpty
         ? null
         : parseAmountField(context, text, digits);
+    final service = await ref.read(currencyServiceProvider.future);
+    if (!mounted) return;
+    final amount = amountOriginal == null
+        ? null
+        : service.toPrimary(amountOriginal, currency);
     String? amountError;
-    if (amount == null) {
-      amountError = text.isEmpty ? l.amountMustBePositive : l.invalidExpression;
-    } else if (amount <= 0) {
+    if (amountOriginal == null || amount == null) {
+      amountError = amountOriginal == null
+          ? (text.isEmpty ? l.amountMustBePositive : l.invalidExpression)
+          : l.rateMissing(currency, primary);
+    } else if (amountOriginal <= 0) {
       amountError = l.amountMustBePositive;
-    } else if (widget.view != null && amount < widget.view!.paid(digits)) {
+    } else if (widget.view != null) {
       // Sửa số tiền gốc xuống dưới số đã trả thì "còn lại" vô nghĩa.
-      amountError = l.debtAmountBelowPaid(
-        money(context, currency, widget.view!.paid(digits)),
-      );
+      final paid = widget.view!.paid(digits);
+      if (amount < paid) {
+        final ownPaid = currency == primary
+            ? paid
+            : service.fromPrimary(paid, currency) ?? paid;
+        amountError = l.debtAmountBelowPaid(money(context, currency, ownPaid));
+      }
     }
     setState(() {
       _personError = person.isEmpty ? l.nameRequired : null;
@@ -128,16 +144,22 @@ class _DebtEditorState extends ConsumerState<_DebtEditor> {
         person: person,
         direction: _direction,
         amount: amount!,
+        originalAmount: amountOriginal,
+        currency: currency,
         date: dateKey(_date),
         dueDate: due,
         note: note,
       );
     } else {
+      // Tiền tệ khóa sau lần trả đầu (D-037): repo giữ tiền tệ cũ, ở đây cũng
+      // gửi đúng tiền tệ đang hiện để số gốc khớp.
       await repo.edit(
         v.debt.id,
         person: person,
         direction: _direction,
         amount: amount!,
+        originalAmount: amountOriginal,
+        currency: v.payments.isEmpty ? currency : v.debt.currency,
         date: dateKey(_date),
         dueDate: due,
         note: note,
@@ -146,10 +168,38 @@ class _DebtEditorState extends ConsumerState<_DebtEditor> {
     if (mounted) Navigator.pop(context);
   }
 
+  /// Đổi tiền tệ khoản nợ: giữ nguyên số đã nhập, chỉ đổi đơn vị (D-037).
+  Future<void> _pickCurrency() async {
+    final primary = ref.read(currencyProvider).value ?? 'USD';
+    final current = _currency ?? primary;
+    final picked = await showCurrencyPicker(context, current);
+    if (picked == null || picked == current || !mounted) return;
+    final oldDigits = currencyDecimalDigits(current);
+    final newDigits = currencyDecimalDigits(picked);
+    final text = _amount.text.trim();
+    final parsed = text.isEmpty
+        ? 0
+        : parseAmountField(context, text, oldDigits);
+    setState(() {
+      _currency = picked;
+      if (parsed != null && text.isNotEmpty) {
+        _amount.text = amountInput(context, parsed, newDigits);
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context);
-    final currency = ref.watch(currencyProvider).value ?? 'USD';
+    final primary = ref.watch(currencyProvider).value ?? 'USD';
+    final currency = _currency ?? primary;
+    final digits = currencyDecimalDigits(currency);
+    final service = ref.watch(currencyServiceProvider).value;
+    final typed = parseAmountField(context, _amount.text.trim(), digits);
+    final converted = typed == null || currency == primary
+        ? null
+        : service?.toPrimary(typed, currency);
+    final locked = widget.view?.payments.isNotEmpty ?? false;
     final today = ref.watch(todayProvider);
     EdgeInsets pad([double top = VgSpace.s2]) =>
         EdgeInsets.fromLTRB(VgSpace.s4, top, VgSpace.s4, 0);
@@ -200,14 +250,49 @@ class _DebtEditorState extends ConsumerState<_DebtEditor> {
                       style: const TextStyle(
                         fontFeatures: [FontFeature.tabularFigures()],
                       ),
+                      onChanged: (_) => setState(() {}),
                       decoration: InputDecoration(
                         labelText: l.debtAmount,
                         suffixText: currencySymbol(currency),
+                        helperText: converted == null
+                            ? null
+                            : '≈ ${money(context, primary, converted)}',
                         errorText: _amountError,
                         errorMaxLines: 3,
                       ),
                     ),
                   ),
+                  Padding(
+                    padding: pad(),
+                    child: InkWell(
+                      borderRadius: BorderRadius.circular(8),
+                      onTap: locked ? null : _pickCurrency,
+                      child: InputDecorator(
+                        decoration: InputDecoration(
+                          labelText: l.currency,
+                          suffixIcon: Icon(
+                            locked
+                                ? Symbols.lock_rounded
+                                : Symbols.arrow_drop_down_rounded,
+                          ),
+                        ),
+                        child: Text(currencyCodeLabel(currency)),
+                      ),
+                    ),
+                  ),
+                  if (locked)
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(
+                        VgSpace.s4,
+                        VgSpace.s2,
+                        VgSpace.s4,
+                        0,
+                      ),
+                      child: VgHint(
+                        l.currencyLockedPayments,
+                        icon: Symbols.lock_rounded,
+                      ),
+                    ),
                   Padding(
                     padding: pad(VgSpace.s3),
                     child: Wrap(

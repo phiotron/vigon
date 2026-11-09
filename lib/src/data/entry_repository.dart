@@ -52,6 +52,11 @@ class EntryRepository {
     required String date,
     String? time,
     String? note,
+    int? originalAmount,
+    String? currency,
+    int? toAmount,
+    int? toOriginalAmount,
+    String? toCurrency,
   }) {
     if (fromAccountId == toAccountId) {
       throw ArgumentError('Hai tài khoản phải khác nhau');
@@ -65,6 +70,11 @@ class EntryRepository {
         date: date,
         time: Value(time),
         note: Value(note),
+        currency: Value(currency ?? 'USD'),
+        originalAmount: Value(originalAmount ?? amount),
+        toAmount: Value(toAmount),
+        toOriginalAmount: Value(toOriginalAmount),
+        toCurrency: Value(toCurrency),
       ),
     );
   }

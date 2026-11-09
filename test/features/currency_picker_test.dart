@@ -3,21 +3,18 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:vigon/src/data/currency_table.dart';
 import 'package:vigon/src/data/database.dart';
-import 'package:vigon/src/data/exchange_rate.dart';
 import 'package:vigon/src/data/settings_repository.dart';
-import 'package:vigon/src/features/settings/currency_conversion.dart';
 import 'package:vigon/src/features/settings/currency_picker.dart';
 
 import '../helpers.dart';
-import 'currency_conversion_flow_test.dart' show FakeRateSource, flow;
 
 Future<void> openPicker(WidgetTester tester) async {
   await tester.tap(find.byTooltip('Cài đặt'));
   await settle(tester);
   // Cài đặt dạng thẻ (SCR-12) cao hơn: cuộn hàng vào màn trước khi chạm.
-  await tester.ensureVisible(find.text('Tiền tệ'));
+  await tester.ensureVisible(find.text('Tiền tệ chính'));
   await tester.pumpAndSettle();
-  await tester.tap(find.text('Tiền tệ'));
+  await tester.tap(find.text('Tiền tệ chính'));
   await settle(tester);
 }
 
@@ -77,22 +74,10 @@ void main() {
     await disposeApp(tester, db);
   });
 
-  testWidgets('chọn mã tìm được thì mở hộp quy đổi; chưa xác nhận thì chưa '
-      'đổi gì (D-025)', (tester) async {
-    final db = await pumpApp(
-      tester,
-      overrides: [
-        exchangeRateSourceProvider.overrideWithValue(
-          FakeRateSource(
-            table: const RateTable(
-              base: 'USD',
-              date: '2026-11-05',
-              rates: {'VND': 25974, 'KWD': 0.3065},
-            ),
-          ),
-        ),
-      ],
-    );
+  testWidgets('chọn mã mới chỉ đổi Tiền tệ chính, giữ nguyên số gốc (D-037)', (
+    tester,
+  ) async {
+    final db = await pumpApp(tester);
     await insertEntry(
       tester,
       db,
@@ -109,17 +94,24 @@ void main() {
     await tester.tap(
       find.descendant(of: dialog, matching: find.textContaining('KWD')),
     );
-    await flow(tester);
-    expect(find.byType(CurrencyConversionDialog), findsOneWidget);
-    expect(find.text('Quy đổi sang KWD?'), findsOneWidget);
+    await tester.pumpAndSettle();
+    // Đổi Tiền tệ chính chạy trong nền (ghi số gốc rồi tính lại số dẫn xuất):
+    // cho async thật chạy xong rồi mới đọc.
+    await tester.runAsync(
+      () => Future<void>.delayed(const Duration(milliseconds: 200)),
+    );
+    await settle(tester);
     expect(
       await tester.runAsync(() => SettingsRepository(db).watchCurrency().first),
-      'VND',
+      'KWD',
     );
-    expect(
-      (await tester.runAsync(() => db.select(db.entries).getSingle()))!.amount,
-      155,
+    final entry = await tester.runAsync(
+      () => db.select(db.entries).getSingle(),
     );
+    // Số người dùng nhập không bị ghi đè; dữ liệu cũ được chốt là số gốc VND.
+    expect((entry!.originalAmount, entry.currency), (155, 'VND'));
+    // Số dẫn xuất được tính lại theo KWD, không còn là 155 của tiền tệ cũ.
+    expect(entry.amount, isNot(155));
     await disposeApp(tester, db);
   });
 }

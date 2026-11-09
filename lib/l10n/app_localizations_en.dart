@@ -10,7 +10,7 @@ class AppLocalizationsEn extends AppLocalizations {
   AppLocalizationsEn([String locale = 'en']) : super(locale);
 
   @override
-  String get appTitle => 'Ví Gọn';
+  String get appTitle => 'Vigon';
 
   @override
   String get settings => 'Settings';
@@ -31,9 +31,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get language => 'Language';
 
   @override
-  String get languageSystem => 'System';
-
-  @override
   String get reminderSection => 'Reminder';
 
   @override
@@ -51,14 +48,14 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get reminderExplainBody =>
-      'Ví Gọn will send one notification every day at the time you choose, to remind you to record your spending. The notification contains no figures.';
+      'Vigon will send one notification every day at the time you choose, to remind you to record your spending. The notification contains no figures.';
 
   @override
   String get reminderContinue => 'Continue';
 
   @override
   String get reminderDenied =>
-      'Notifications are not allowed. Turn on notifications for Ví Gọn in the system settings.';
+      'Notifications are not allowed. Turn on notifications for Vigon in the system settings.';
 
   @override
   String get reminderOpenSettings => 'Open settings';
@@ -309,6 +306,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get transferTo => 'To';
 
   @override
+  String get transferSentAmount => 'Amount sent';
+
+  @override
+  String get transferReceivedAmount => 'Amount received';
+
+  @override
   String get sameAccountError => 'Choose two different accounts';
 
   @override
@@ -388,6 +391,10 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get currencyNote =>
       'Changing the currency converts every amount using an exchange rate downloaded from the internet (or one you enter yourself). Amounts are rounded to the new currency\'s smallest unit, so converting back may differ slightly.';
+
+  @override
+  String get currencyLockedPayments =>
+      'The currency is locked because this debt already has payments.';
 
   @override
   String get currencySearchHint => 'Search by code or name';
@@ -535,7 +542,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get autoBackupNote =>
-      'Ví Gọn only writes files to the folder you choose. Uploading to Google Drive or Dropbox is done by that app.';
+      'Vigon only writes files to the folder you choose. Uploading to Google Drive or Dropbox is done by that app.';
 
   @override
   String autoBackupFolder(String name) {
@@ -655,7 +662,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get forgotPinBody =>
-      'Ví Gọn has no server, so a PIN cannot be recovered. You can delete all data in the app to use it again.';
+      'Vigon has no server, so a PIN cannot be recovered. You can delete all data in the app to use it again.';
 
   @override
   String digit(String digit) {
@@ -704,7 +711,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get aboutBody =>
-      'Your data is stored only on this phone. Ví Gọn does not send it anywhere.';
+      'Your data is stored only on this phone. Vigon does not send it anywhere.';
 
   @override
   String get privacyPolicy => 'Privacy policy';
@@ -724,7 +731,7 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get securityEmailSubject => 'Ví Gọn security report';
+  String get securityEmailSubject => 'Vigon security report';
 
   @override
   String linkOpenFailed(String target) {
@@ -802,6 +809,61 @@ class AppLocalizationsEn extends AppLocalizations {
   String get currencyCurrent => 'Current currency';
 
   @override
+  String get primaryCurrency => 'Main currency';
+
+  @override
+  String primaryCurrencyChanged(String currency) {
+    return 'Main currency is now $currency. The amounts you entered are unchanged.';
+  }
+
+  @override
+  String get primaryCurrencyNote =>
+      'Totals, charts and the ≈ line use this currency. Each account keeps its own currency; changing this only changes how amounts are added up and shown, never the amounts you entered.';
+
+  @override
+  String get exchangeRates => 'Exchange rates';
+
+  @override
+  String get ratesOffline =>
+      'You\'re offline. Vigon is using the last saved rates.';
+
+  @override
+  String get ratesFallback =>
+      'Using the built-in rates until the first update.';
+
+  @override
+  String get ratesUpdateNow => 'Update now';
+
+  @override
+  String get ratesUpdated => 'Exchange rates updated';
+
+  @override
+  String get ratesUpdateFailed =>
+      'Couldn\'t update. Vigon is using the saved rates.';
+
+  @override
+  String get ratesSource => 'Rates by Exchange Rate API';
+
+  @override
+  String get ratesUseAuto => 'Use automatic rate';
+
+  @override
+  String get ratesUseOwn => 'Use my rate';
+
+  @override
+  String get ratesNoPairs => 'No currency pairs need a rate yet.';
+
+  @override
+  String ratesPreviewBalance(String account, String amount, String converted) {
+    return '$account: $amount ≈ $converted';
+  }
+
+  @override
+  String rateMissing(String from, String to) {
+    return 'No rate for $from to $to. This amount is left out of totals.';
+  }
+
+  @override
   String recurringRestartHint(String date) {
     return 'Restarts from the next due date: $date';
   }
@@ -821,11 +883,11 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get autoBackupNoteIos =>
-      'Ví Gọn only writes files to the folder you choose in the Files app, for example in iCloud Drive.';
+      'Vigon only writes files to the folder you choose in the Files app, for example in iCloud Drive.';
 
   @override
   String get autoBackupRunsOnOpenIos =>
-      'iPhone does not let closed apps run on their own. At the time you chose, Ví Gọn sends a notification; tap it or open the app to back up. If the time is missed, the backup catches up when you open the app, at most once a day.';
+      'iPhone does not let closed apps run on their own. At the time you chose, Vigon sends a notification; tap it or open the app to back up. If the time is missed, the backup catches up when you open the app, at most once a day.';
 
   @override
   String get autoBackupLocalFolderWarningIos =>
@@ -845,32 +907,32 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get autoBackupNextSoon => 'Next: when you leave Ví Gọn';
+  String get autoBackupNextSoon => 'Next: when you leave Vigon';
 
   @override
-  String get autoBackupNextSoonIos => 'Next: when you open Ví Gọn again';
+  String get autoBackupNextSoonIos => 'Next: when you open Vigon again';
 
   @override
   String get autoBackupNotificationBody =>
-      'Time to back up Ví Gọn. Tap to back up.';
+      'Time to back up Vigon. Tap to back up.';
 
   @override
   String get autoBackupNotifyTitleIos => 'Notify me at backup time';
 
   @override
   String get autoBackupNotifyBodyIos =>
-      'iPhone does not let Ví Gọn run on its own while closed. At the time you chose, Ví Gọn sends a notification; tap it to back up. The notification never contains your figures.';
+      'iPhone does not let Vigon run on its own while closed. At the time you chose, Vigon sends a notification; tap it to back up. The notification never contains your figures.';
 
   @override
   String get autoBackupNotifyDeniedIos =>
-      'No backup-time notification. Ví Gọn will still catch up when you open the app.';
+      'No backup-time notification. Vigon will still catch up when you open the app.';
 
   @override
   String get secureWindowNoteIos =>
       'Hides content in the app switcher. iPhone does not let apps block screenshots.';
 
   @override
-  String get widgetPickerName => 'Ví Gọn';
+  String get widgetPickerName => 'Vigon';
 
   @override
   String get widgetPickerDescription => 'Quickly add an expense or income';
@@ -972,7 +1034,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get currencyConvertTooLargeBody =>
-      'With this rate, some amounts would go over the largest amount Ví Gọn can store. Nothing was changed.';
+      'With this rate, some amounts would go over the largest amount Vigon can store. Nothing was changed.';
 
   @override
   String get currencyConvertFailed => 'Couldn\'t convert. Nothing was changed.';
@@ -1005,7 +1067,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get emailIntroRead =>
-      'Ví Gọn reads your bank\'s transfer receipt emails in the mailbox you add, then puts them in a queue for you to pick a category.';
+      'Vigon reads your bank\'s transfer receipt emails in the mailbox you add, then puts them in a queue for you to pick a category.';
 
   @override
   String get emailIntroLocal =>
@@ -1024,7 +1086,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get emailIntroIos =>
-      'On iPhone, Ví Gọn checks email only when you open or return to the app.';
+      'On iPhone, Vigon checks email only when you open or return to the app.';
 
   @override
   String get emailAddMailbox => 'Add mailbox';
@@ -1035,11 +1097,11 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get emailScheduleAndroid =>
-      'Ví Gọn checks email when you open the app and about every hour while it\'s closed. Pull down to check now.';
+      'Vigon checks email when you open the app and about every hour while it\'s closed. Pull down to check now.';
 
   @override
   String get emailScheduleIos =>
-      'On iPhone, Ví Gọn checks email only when you open or return to the app. Pull down to check now.';
+      'On iPhone, Vigon checks email only when you open or return to the app. Pull down to check now.';
 
   @override
   String get emailConnected => 'Connected';
@@ -1097,7 +1159,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String emailRemoveBody(String address) {
-    return 'Ví Gọn will stop reading email from $address and delete the app password from this phone. Records already saved stay as they are.';
+    return 'Vigon will stop reading email from $address and delete the app password from this phone. Records already saved stay as they are.';
   }
 
   @override
@@ -1115,7 +1177,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get emailStepsGmail2 =>
-      'Open the App passwords page with the button below, name it \"Ví Gọn\" and tap Create.';
+      'Open the App passwords page with the button below, name it \"Vigon\" and tap Create.';
 
   @override
   String get emailStepsGmail3 =>
@@ -1127,7 +1189,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get emailStepsYahoo2 =>
-      'Choose \"Generate app password\", name it \"Ví Gọn\" and tap Generate.';
+      'Choose \"Generate app password\", name it \"Vigon\" and tap Generate.';
 
   @override
   String get emailStepsYahoo3 =>
@@ -1139,7 +1201,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get emailStepsIcloud2 =>
-      'Open the Apple Account page with the button below → Sign-In and Security → App-Specific Passwords, name it \"Ví Gọn\".';
+      'Open the Apple Account page with the button below → Sign-In and Security → App-Specific Passwords, name it \"Vigon\".';
 
   @override
   String get emailStepsIcloud3 =>
@@ -1440,7 +1502,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String queueCurrencyNote(String emailCurrency, String appCurrency) {
-    return 'The email is in $emailCurrency but the app uses $appCurrency. You\'ll enter the amount in the next step.';
+    return 'The email is in $emailCurrency but the account uses $appCurrency. You\'ll enter the amount in the next step.';
   }
 
   @override
@@ -1496,7 +1558,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get queueSuggestionsEmpty =>
-      'No suggestions yet. Ví Gọn remembers the category you pick for each payee to suggest it next time.';
+      'No suggestions yet. Vigon remembers the category you pick for each payee to suggest it next time.';
 
   @override
   String queueSuggestionMove(String account) {

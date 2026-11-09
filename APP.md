@@ -12,13 +12,13 @@
 - **Nền tảng:** Android + iOS (iOS thêm 2026-11-04, build + test trên GitHub Actions macOS runner — theo fact xưởng `may-windows-build-ios`) · **Stack:** Flutter 3.47.8, Riverpod 3, go_router, drift/SQLite.
 - **Thiết kế Hi-Fi (nguồn UI hiện hành):** `design/hifi/` (frame `<android|ios>/<light|dark>/<NN>_<slug>__<state>.html|png`,
   `_frames.json`, `assumptions.html`, token v2 `tokens/`, component `design-system/`) — link `design/LINKS.md`.
-- **Tài liệu tham chiếu:** `docs/SPEC.md` (F-01..F-26 đã hợp nhất — nguồn sự thật về hành vi), `docs/DECISIONS.md`, `docs/ARCHITECTURE.md`,
+- **Tài liệu tham chiếu:** `docs/SPEC.md` (F-01..F-43 đã hợp nhất — nguồn sự thật về hành vi; 3e = đa tiền tệ, D-037), `docs/DECISIONS.md`, `docs/ARCHITECTURE.md`,
   `docs/TESTING.md`, `docs/SECURITY.md`, `docs/COMPLIANCE.md`, `docs/RELEASE.md`, `docs/legal/`; thiết kế hiện tại `design/current/`
   (`ui-spec.md` + bộ màn `screens/`); store `store/`; thuật ngữ `CONTEXT.md` (khi có); mô tả gửi Claude Design `product.md` (khi có).
 
 ## Tiêu chuẩn áp dụng (`playbook/STANDARDS.md`)
 - **Khác đối thủ ở đâu (S-30):** ghi một khoản ≤ 3 chạm từ màn chính (vòng icon danh mục, chọn = lưu D-018); dùng offline
-  (mạng chỉ để tải tỉ giá khi đổi tiền tệ, D-025), không tài khoản, không quảng cáo/SDK; sao lưu mã hoá bằng mật khẩu; song ngữ vi/en.
+  (mạng chỉ để tải bảng tỷ giá tối đa 1 lần/ngày, D-037), không tài khoản, không quảng cáo/SDK; đa tiền tệ giữ số gốc + `≈` Tiền tệ chính; sao lưu mã hoá bằng mật khẩu; song ngữ vi/en.
 - **Mục A:** bắt buộc toàn bộ (S-10…S-71).
 - **Mục B được bật:** **S-89** (tự mã hoá file sao lưu AES-256-GCM → D-020, khai báo ANSSI). Không S-80..S-88.
 - **Thị trường:** toàn cầu (gồm EU, Pháp), trừ Trung Quốc đại lục.
@@ -29,10 +29,11 @@
 3. **Bản 1.2 (F-24..F-26):** sao lưu tự động hằng ngày (mã hoá, giữ 2 file — D-027) · nhắc ghi chép hằng ngày · widget màn hình chính Chi/Thu.
 4. **Giao diện:** theo bộ thiết kế đã duyệt `design/current/screens/` (S01–S16, token, Be Vietnam Pro, Material Symbols) — PLAN-001.
 5. **Hiện chỉ Android, iOS ẩn mục (D-019) — đang làm bản iOS ở #2 (D-022):** sao lưu tự động (F-24), widget (F-26), che đa nhiệm (F-22), icon đơn sắc (F-23). Nhắc ghi chép có trên iOS nhưng CHƯA thử thông báo thật.
+6. **Đa tiền tệ (D-037, 2026-11-09 — F-43):** mỗi tài khoản/bản ghi có tiền tệ riêng; giữ **số gốc** + dòng `≈` quy về **Tiền tệ chính**; tỷ giá tự cập nhật tối đa 1 lần/ngày, có "Cập nhật ngay", bảng dự phòng khi offline, màn Tỷ giá chỉ hiện cặp đang dùng + ghi đè tay; chuyển tiền khác tiền tệ lưu cả số gửi và số nhận; ngân sách/nợ/mục tiêu/chuỗi định kỳ theo tiền tệ riêng; hàng đợi email không tự quy đổi.
 
 ## Màn hình & luồng chính
 Màn chính `/` (+ khoá PIN phủ) · Ghi/sửa khoản `/entry/new?type=&category=`, `/entry/:id` · Các khoản `/entries` (tìm kiếm, hạn mức danh mục) ·
-Cài đặt `/settings` (che nội dung, widget, nhắc, sao lưu có mật khẩu, sao lưu tự động, tiền tệ có tìm) · Danh mục `/categories` (hạn mức) ·
+Cài đặt `/settings` (che nội dung, widget, nhắc, sao lưu có mật khẩu, sao lưu tự động, Tiền tệ chính) · Tỷ giá `/rates` (cặp đang dùng, ghi đè, offline) · Danh mục `/categories` (hạn mức) ·
 Tài khoản `/accounts` (ẩn/hiện/xoá) · Chuyển tiền `/transfer` · Khoản định kỳ `/recurring` · Giới thiệu `/about`.
 Ngoài app: widget Android 2×2, thông báo nhắc. Danh sách đầy đủ + hộp thoại: `notes/2026-11-04-gop-nhanh.md` mục "Tính năng + màn sau gộp".
 Màn 1.2 dựng lại bằng thành phần mới nhưng **chưa có bản vẽ** (ô hạn mức danh mục, ẩn/xoá tài khoản, nhóm cài đặt 1.2, hộp sửa chuỗi mở rộng) → cần Claude Design vẽ ở #2.
@@ -46,14 +47,15 @@ Luồng nhanh nhất: Màn chính → chạm icon danh mục (hoặc −/+) → 
 | #2b Sửa nhanh + thử máy (không phiên con) | 2026-11-06 | — (làm trực tiếp, Claude tự lái adb) | ✅ D-027 giữ 2 file sao lưu + báo "dữ liệu không đổi"; D-028 thanh ngân sách theo tháng đang xem; thử máy sao lưu M-2 (a)(b) + nhiều chức năng đạt; 625 test; push `dev` `47fa34a`. Nhật ký: `memory/sessions/2026-11-06-A002-vigon-phien2.md` |
 | #2c Sửa quy đổi tiền tệ (1 phiên con) | 2026-11-06 | `a002-exact-fx` | ✅ D-029 giữ số chính xác 6 lẻ khi quy đổi (schema v3, cột `*Micro`, khoản được 0, tỉ giá chéo phân số), AC-73; 645 test; `dev` `f3cf4f4` chưa push. Báo cáo: `notes/2026-11-06-exact-currency-conversion.md` |
 | #3 Mở rộng A — dữ liệu + nhập email MB (**ngoại lệ: tổng 5 phiên, người dùng cho phép 2026-11-06**) | 2026-11-06.. | S0 SPEC 2.0 (duyệt 2026-11-06, F-27..F-42, D-030..D-035) ✅ → M0 schema 4 ✅ · N2 hộp thư IMAP ✅ → M1 đọc email MB ✅ (mẫu thật đã che: `notes/2026-11-06-mb-email-mau.md`) → M5 giờ khoản + Tiết kiệm + Khoản nợ + Hàng đợi ✅ → V3. Đã BỎ N1 (đọc thông báo) và N3 (OCR/ảnh hoá đơn) | ✅ M0 + N2 + M1 + M5 xong: 839 test, `dev` `3adc5c2`/`31ef671`. V3: CI Android/Dart + iOS **xanh** trên bản sao `sun-moonstars/A002` (`dev` `042a226`, 2026-11-06); còn thử Gmail thật rồi sang #4 |
-| #4 Mở rộng B — dashboard, thống kê, cảnh báo ngân sách, lịch, Excel/PDF, vân tay + thiết kế | | | |
+| #4 Mở rộng B — mở đầu bằng D-037 (làm trực tiếp, không phiên con) | 2026-11-09 | — | ✅ **D-037 đa tiền tệ**: schema v5 + migration 1→5/3→5/4→5, giữ **số gốc** + dòng `≈` Tiền tệ chính, tỷ giá tự cập nhật tối đa 1 lần/ngày + ghi đè tay, màn Tỷ giá `/rates`, tiền tệ riêng cho ngân sách/nợ/mục tiêu/chuỗi/hàng đợi email; **835 test**, analyze sạch. Còn: Tổng quan, thống kê, cảnh báo 80%, lịch, lọc, Excel/PDF, vân tay + mockup. Nhật ký: `memory/sessions/2026-11-09-A002-vigon.md` (repo xưởng) |
 | #5 Phát hành | | E ảnh store · F Android · G iOS + khai báo mới (Data safety, App Privacy, notification access) | |
 
 Kế hoạch 3 phiên cũ: `notes/2026-11-04-ke-hoach-3-phien.md`. **Kế hoạch mở rộng 2.0 (đã grill + người dùng duyệt 2026-11-06):** `notes/2026-11-06-ke-hoach-mo-rong.md`.
 
 **Việc dở / bước tiếp:**
+- **2026-11-09: D-037 đa tiền tệ xong** (schema v5, 835 test, `dev` chưa push) — **bước tiếp:** build release + cài máy thử đa tiền tệ (đổi Tiền tệ chính, nhập khoản USD, chuyển tiền khác tệ, ngân sách/nợ/mục tiêu, màn Tỷ giá), chạy CI Android/iOS trên bản sao, rồi làm tiếp #4 (Tổng quan, thống kê, cảnh báo 80%, lịch, lọc, Excel/PDF, vân tay + mockup). Gmail thật + duyệt UI vẫn chờ người dùng.
 - **2026-11-06: mở rộng 2.0 trước phát hành** (nhập tự động thông báo/email/OCR, tiết kiệm, nợ, ảnh hoá đơn, giờ khoản, dashboard/thống kê mới, cảnh báo ngân sách, lịch, Excel/PDF, vân tay) — `notes/2026-11-06-ke-hoach-mo-rong.md`. SPEC 2.0 đã duyệt 2026-11-06, thu hẹp: nhập tự động CHỈ qua email MB Bank → hàng đợi chọn danh mục; không OCR/ảnh/đọc thông báo (giữ "không thu thập"). **Người dùng:** tự tạo mật khẩu ứng dụng Gmail để thử email thật (hướng dẫn `notes/2026-11-06-n2-imap.md`). **Giả định cần kiểm khi thử Gmail thật:** địa chỉ gửi MB = `mbebanking@mbbank.com.vn` (hằng số trong `lib/src/import/mail/bank_senders.dart`; sai thì không tải thư nào và bộ đếm "không đọc được" vẫn 0); nếu MB đổi chữ "Giao dịch thành công" thì thư bị bỏ im lặng. **Còn cho #4 (từ M1/M5):** dòng "N khoản chờ" ở màn chính, kéo-để-làm-mới kiểm mail ở Hàng đợi, nhãn "Từ email MB" ở Tài khoản, biểu tượng email trên dòng khoản; chưa có mẫu email thất bại/loại giao dịch khác.
-- **Sau #2b (2026-11-06):** M-2 sao lưu theo giờ ĐÃ thử máy (đạt). Còn thử máy: widget mới (tối, 4×2), Q-3 USD→VND (hỏi trước), Q-7 khôi phục (hỏi phép), PIN, xuất file/CSV → người dùng duyệt UI → gộp `dev`→`main` khi GitHub Billing ổn + chạy tay CI iOS → #3 Phát hành. Chưa kiểm máy thật: chạy nền sao lưu theo giờ, iOS (App Group, widget, che màn, thông báo sao lưu).
+- **Sau #2b (2026-11-06):** M-2 sao lưu theo giờ ĐÃ thử máy (đạt). Còn thử máy: widget mới (tối, 4×2), đa tiền tệ D-037 (đổi Tiền tệ chính, nhập khoản USD, chuyển tiền khác tệ, màn Tỷ giá + ghi đè), Q-7 khôi phục (hỏi phép), PIN, xuất file/CSV → người dùng duyệt UI → gộp `dev`→`main` khi GitHub Billing ổn + chạy tay CI iOS → #5 Phát hành. Chưa kiểm máy thật: chạy nền sao lưu theo giờ, iOS (App Group, widget, che màn, thông báo sao lưu).
 - **2026-11-05: đã có mockup Hi-Fi P1** (`design/hifi/`, link `design/LINKS.md`; PNG + zip chỉ ở máy, không vào git) → phiên #2
   đang chạy: P1 + P2 theo `design/hifi/tokens/CHANGELOG.md` (D-023), iOS làm F-22/F-24/F-26 (D-022).
 - Người dùng: tạo App Group `group.com.phiotron.vigon` (khi có Apple Developer) để widget iOS chạy thật.

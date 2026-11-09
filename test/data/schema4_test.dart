@@ -132,7 +132,7 @@ String _downgradeBackup(String json, int schema) {
 void main() {
   final now = DateTime(2026, 11, 6, 10);
 
-  group('migration schema 3 lên 4 (AC-121)', () {
+  group('migration schema 3 lên 5 (AC-121, D-037)', () {
     late AppDatabase old;
     setUp(() {
       old = AppDatabase(
@@ -153,7 +153,7 @@ void main() {
         final version = await old
             .customSelect('PRAGMA user_version')
             .getSingle();
-        expect(version.read<int>('user_version'), 4);
+        expect(version.read<int>('user_version'), currentSchemaVersion);
 
         final entries = await (old.select(
           old.entries,
@@ -270,6 +270,30 @@ void main() {
         );
         final fk = await old.customSelect('PRAGMA foreign_keys').getSingle();
         expect(fk.read<int>('foreign_keys'), 1);
+      },
+    );
+
+    test(
+      'migration lên 5: tiền tệ cũ thành tiền tệ gốc, giữ nguyên số',
+      () async {
+        final settings = SettingsRepository(old);
+        expect(await settings.readPrimaryCurrency(), 'VND');
+        expect(await settings.readBudgetCurrency(), 'VND');
+        final entries = await old.select(old.entries).get();
+        expect(entries.map((e) => e.currency), everyElement('VND'));
+        expect(entries.map((e) => e.originalAmount), everyElement(isNull));
+        final accounts = await old.select(old.accounts).get();
+        expect(accounts.map((a) => a.currency), everyElement('VND'));
+        expect(accounts.map((a) => a.initialCurrency), everyElement('VND'));
+        expect(
+          accounts.map((a) => a.initialBalanceOriginal),
+          everyElement(isNull),
+        );
+        final cats = await old.select(old.categories).get();
+        expect(cats.map((c) => c.budgetCurrency), ['VND', null]);
+        final rule = await old.select(old.recurringRules).getSingle();
+        expect((rule.currency, rule.originalAmount), ('VND', null));
+        expect(await old.select(old.savingsGoals).get(), isEmpty);
       },
     );
 
@@ -609,7 +633,7 @@ void main() {
         await seed();
         final json = await exportBackup(db, now: now);
         final root = jsonDecode(json) as Map<String, dynamic>;
-        expect(root['schemaVersion'], 4);
+        expect(root['schemaVersion'], currentSchemaVersion);
         final tables = root['tables'] as Map<String, dynamic>;
         expect(tables.keys, isNot(contains('importQueueItems')));
         expect(json, isNot(contains('FT-QUEUED')));
@@ -717,7 +741,7 @@ void main() {
     );
 
     test(
-      'file schema 4 thiếu bảng mới bị từ chối; schema 5 bị từ chối',
+      'file schema 4 thiếu bảng mới bị từ chối; schema mới hơn bị từ chối',
       () async {
         await seed();
         final json = await exportBackup(db, now: now);
@@ -731,7 +755,7 @@ void main() {
           throwsA(isA<BackupFormatException>()),
         );
         final newer = jsonDecode(json) as Map<String, dynamic>
-          ..['schemaVersion'] = 5;
+          ..['schemaVersion'] = currentSchemaVersion + 1;
         expect(
           () => validateBackup(jsonEncode(newer)),
           throwsA(isA<BackupFormatException>()),
@@ -911,6 +935,7 @@ void main() {
             time: '12:00',
             source: EntrySource.emailMb,
             referenceNumber: 'FT1',
+            currency: 'VND',
           ),
           Entry(
             id: 2,
@@ -925,6 +950,7 @@ void main() {
             createdAt: now,
             time: null,
             source: EntrySource.manual,
+            currency: 'VND',
           ),
         ],
         currency: 'VND',

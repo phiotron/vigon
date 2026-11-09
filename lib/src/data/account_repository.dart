@@ -98,12 +98,22 @@ class AccountRepository {
     return null;
   });
 
-  Future<int> add({required String name, int initialBalance = 0}) => _db
+  Future<int> add({
+    required String name,
+    int initialBalance = 0,
+    int? initialBalanceOriginal,
+    String currency = 'USD',
+  }) => _db
       .into(_db.accounts)
       .insert(
         AccountsCompanion.insert(
           name: Value(name),
           initialBalance: Value(initialBalance),
+          initialBalanceOriginal: Value(
+            initialBalanceOriginal ?? initialBalance,
+          ),
+          currency: Value(currency),
+          initialCurrency: Value(currency),
         ),
       );
 
@@ -111,13 +121,31 @@ class AccountRepository {
     int id, {
     required String name,
     required int initialBalance,
+    int? initialBalanceOriginal,
+    String? currency,
   }) => (_db.update(_db.accounts)..where((a) => a.id.equals(id))).write(
     AccountsCompanion(
       name: Value(name),
       nameKey: const Value(null),
       initialBalance: Value(initialBalance),
+      initialBalanceOriginal: Value(initialBalanceOriginal ?? initialBalance),
+      currency: currency == null ? const Value.absent() : Value(currency),
+      initialCurrency: currency == null
+          ? const Value.absent()
+          : Value(currency),
     ),
   );
+
+  /// Đổi tiền tệ tài khoản (D-037): không sửa số gốc của khoản đã có; khoản
+  /// mới sẽ mặc định dùng tiền tệ mới. Số dư ban đầu giữ nguyên số, đổi tiền
+  /// tệ đích.
+  Future<void> setCurrency(int id, String currency) =>
+      (_db.update(_db.accounts)..where((a) => a.id.equals(id))).write(
+        AccountsCompanion(
+          currency: Value(currency),
+          initialCurrency: Value(currency),
+        ),
+      );
 
   /// Tài khoản liên kết với tài khoản trích nợ ([bank], [last4]) (AC-89, AC-90),
   /// kể cả đã ẩn; null nếu chưa có.
@@ -190,7 +218,8 @@ Map<int, int> balances(List<Account> accounts, List<Entry> entries) {
         );
         final to = e.toAccountId;
         if (to != null) {
-          result.update(to, (v) => v + e.amount, ifAbsent: () => e.amount);
+          final received = e.toAmount ?? e.amount;
+          result.update(to, (v) => v + received, ifAbsent: () => received);
         }
     }
   }

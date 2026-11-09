@@ -113,6 +113,7 @@ void main() {
         recurringRuleId: null,
         source: EntrySource.manual,
         createdAt: DateTime(2026),
+        currency: 'VND',
       );
       return exportCsv(
         entries: [e],

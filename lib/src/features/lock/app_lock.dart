@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../data/pin_service.dart';
+import '../../data/rate_repository.dart';
 import '../../providers.dart';
 import '../settings/auto_backup_providers.dart';
 
@@ -109,10 +110,23 @@ class _AppLifecycleWatcherState extends ConsumerState<AppLifecycleWatcher> {
         // Sao lưu tự động (F-24): không chặn giao diện, không ném lỗi.
         unawaited(ref.read(autoBackupServiceProvider).maybeRunDaily());
       },
-      onResume: () {
+      onResume: () async {
         ref.read(lockProvider.notifier).onResumed();
         ref.read(todayProvider.notifier).refresh();
-        ref
+        // Tỷ giá: kiểm tra lại khi quay lại app, tải nếu bảng cũ ≥ 1 ngày
+        // (D-037). Tải được bảng mới thì tính lại số dẫn xuất theo tỷ giá mới.
+        final rates = ref.read(rateRepositoryProvider);
+        final result = await rates.refreshIfStale();
+        if (result == RatesRefreshResult.updated) {
+          final settings = ref.read(settingsRepositoryProvider);
+          final table = await rates.load();
+          final primary = await settings.readCurrency();
+          await recomputeDerivedAmounts(
+            ref.read(databaseProvider),
+            CurrencyService(table, primary),
+          );
+        }
+        await ref
             .read(recurringRepositoryProvider)
             .generateDue(ref.read(clockProvider)());
       },

@@ -13,7 +13,9 @@ part 'database.g.dart';
 /// 4: bản 2.0 (AC-121) — giờ, nguồn, số tham chiếu của khoản; liên kết ngân
 /// hàng của tài khoản; mục tiêu tiết kiệm, khoản nợ + lần trả, gợi ý theo
 /// người thụ hưởng, hàng đợi nhập, số tham chiếu đã gặp.
-const currentSchemaVersion = 4;
+/// 5: đa tiền tệ (D-037) — tiền tệ của tài khoản, số tiền gốc + tiền tệ của
+/// khoản/định kỳ/nợ/mục tiêu/ngân sách, số nhận của chuyển tiền khác tiền tệ.
+const currentSchemaVersion = 5;
 
 /// Loại khoản ghi. Chuyển tiền không tính là thu hay chi (AC-19).
 enum EntryType { expense, income, transfer }
@@ -76,6 +78,18 @@ class Accounts extends Table {
   /// 4 số cuối của tài khoản trích nợ — KHÔNG bao giờ lưu số đầy đủ (AC-88).
   /// Thêm ở schema 4.
   TextColumn get bankLast4 => text().nullable().check(_isLast4('bank_last4'))();
+
+  /// Tiền tệ của tài khoản (D-037). Mọi khoản của tài khoản mặc định ghi bằng
+  /// tiền tệ này; vẫn có thể đổi tiền tệ hiển thị mà không sửa số gốc. Thêm ở
+  /// schema 5.
+  TextColumn get currency =>
+      text().withLength(min: 3, max: 3).withDefault(const Constant('USD'))();
+
+  /// Số dư ban đầu gốc + tiền tệ (D-037); [initialBalance] là số quy về Tiền
+  /// tệ chính. Null ở cột gốc là dữ liệu cũ.
+  IntColumn get initialBalanceOriginal => integer().nullable()();
+  TextColumn get initialCurrency =>
+      text().withLength(min: 3, max: 3).nullable()();
 }
 
 class Categories extends Table {
@@ -97,6 +111,14 @@ class Categories extends Table {
   /// Hạn mức chính xác, phần triệu đơn vị chính (D-029); null là đúng bằng
   /// [budget]. Thêm ở schema 3.
   IntColumn get budgetMicro => integer().nullable()();
+
+  /// Hạn mức gốc theo tiền tệ của danh mục (D-037); null là [budget] đã là số
+  /// gốc ở [budgetCurrency]. Thêm ở schema 5.
+  IntColumn get budgetOriginal => integer().nullable()();
+
+  /// Tiền tệ của hạn mức danh mục; null là chưa đặt. Thêm ở schema 5.
+  TextColumn get budgetCurrency =>
+      text().withLength(min: 3, max: 3).nullable()();
 }
 
 class RecurringRules extends Table {
@@ -123,6 +145,18 @@ class RecurringRules extends Table {
   TextColumn get lastGeneratedDate =>
       text().withLength(min: 10, max: 10).nullable()();
   BoolColumn get active => boolean().withDefault(const Constant(true))();
+
+  /// Số tiền gốc + tiền tệ của chuỗi (D-037); [amount] là số quy về Tiền tệ
+  /// chính. Null ở cột gốc là dữ liệu cũ: [amount] đã là số gốc ở [currency].
+  TextColumn get currency =>
+      text().withLength(min: 3, max: 3).withDefault(const Constant('USD'))();
+  IntColumn get originalAmount => integer().nullable()();
+
+  /// Chuyển tiền khác tiền tệ: số nhận gốc + tiền tệ đích, và số nhận quy về
+  /// Tiền tệ chính (D-037).
+  IntColumn get toOriginalAmount => integer().nullable()();
+  TextColumn get toCurrency => text().withLength(min: 3, max: 3).nullable()();
+  IntColumn get toAmount => integer().nullable()();
 }
 
 /// Một số tham chiếu chỉ nằm ở một khoản (AC-86, AC-93). NULL (khoản ghi tay
@@ -171,6 +205,18 @@ class Entries extends Table {
   /// Số tham chiếu của email biên lai đã ghép/lưu vào khoản (AC-86); null với
   /// khoản ghi tay chưa ghép. Thêm ở schema 4.
   TextColumn get referenceNumber => text().withLength(max: 64).nullable()();
+
+  /// Số tiền gốc + tiền tệ gốc (D-037). [amount] là số quy về Tiền tệ chính;
+  /// null ở [originalAmount] là dữ liệu cũ: [amount] đã là số gốc ở [currency].
+  TextColumn get currency =>
+      text().withLength(min: 3, max: 3).withDefault(const Constant('USD'))();
+  IntColumn get originalAmount => integer().nullable()();
+
+  /// Chuyển tiền khác tiền tệ: số nhận gốc + tiền tệ đích; [toAmount] là số
+  /// nhận quy về Tiền tệ chính (D-037).
+  IntColumn get toOriginalAmount => integer().nullable()();
+  TextColumn get toCurrency => text().withLength(min: 3, max: 3).nullable()();
+  IntColumn get toAmount => integer().nullable()();
 }
 
 /// Mục tiêu tiết kiệm (Savings goal, AC-100..AC-103): tiến độ là số dư của
@@ -194,6 +240,12 @@ class SavingsGoals extends Table {
   /// Tài khoản gắn. Xoá tài khoản bị chặn khi còn mục tiêu (AccountRepository).
   IntColumn get accountId => integer().unique().references(Accounts, #id)();
   DateTimeColumn get createdAt => dateTime().withDefault(currentDateAndTime)();
+
+  /// Số mục tiêu gốc + tiền tệ (D-037); [targetAmount] là số quy về Tiền tệ
+  /// chính. Null ở cột gốc là dữ liệu cũ.
+  TextColumn get currency =>
+      text().withLength(min: 3, max: 3).withDefault(const Constant('USD'))();
+  IntColumn get originalTargetAmount => integer().nullable()();
 }
 
 /// Khoản nợ (Debt record, AC-104..AC-106): sổ ghi nhớ, không phải khoản,
@@ -215,6 +267,12 @@ class Debts extends Table {
   TextColumn get dueDate => text().withLength(min: 10, max: 10).nullable()();
   TextColumn get note => text().withLength(max: 200).nullable()();
   DateTimeColumn get createdAt => dateTime().withDefault(currentDateAndTime)();
+
+  /// Số nợ gốc + tiền tệ (D-037); [amount] là số quy về Tiền tệ chính. Null ở
+  /// cột gốc là dữ liệu cũ.
+  TextColumn get currency =>
+      text().withLength(min: 3, max: 3).withDefault(const Constant('USD'))();
+  IntColumn get originalAmount => integer().nullable()();
 }
 
 /// Lần trả của khoản nợ (Debt payment, AC-105). Xoá khoản nợ xoá luôn lần trả.
@@ -230,6 +288,12 @@ class DebtPayments extends Table {
   IntColumn get amountMicro => integer().nullable()();
   TextColumn get date => text().withLength(min: 10, max: 10)();
   DateTimeColumn get createdAt => dateTime().withDefault(currentDateAndTime)();
+
+  /// Số trả gốc + tiền tệ (D-037); [amount] là số quy về Tiền tệ chính. Null ở
+  /// cột gốc là dữ liệu cũ.
+  TextColumn get currency =>
+      text().withLength(min: 3, max: 3).withDefault(const Constant('USD'))();
+  IntColumn get originalAmount => integer().nullable()();
 }
 
 /// Gợi ý theo người thụ hưởng (Payee suggestion, AC-97): lựa chọn gần nhất
@@ -383,7 +447,17 @@ class AppDatabase extends _$AppDatabase {
         await m.alterTable(
           TableMigration(
             recurringRules,
-            newColumns: [recurringRules.amountMicro],
+            // Phải liệt kê MỌI cột thêm sau schema 3 (schema 4 và 5): drift
+            // dựng bảng theo định nghĩa hiện tại, cột không có trong danh sách
+            // này sẽ bị SELECT từ bảng cũ và lỗi "no such column".
+            newColumns: [
+              recurringRules.amountMicro,
+              recurringRules.currency,
+              recurringRules.originalAmount,
+              recurringRules.toOriginalAmount,
+              recurringRules.toCurrency,
+              recurringRules.toAmount,
+            ],
           ),
         );
         // Dựng lại theo định nghĩa HIỆN TẠI của bảng: các cột schema 4 cũng
@@ -396,6 +470,11 @@ class AppDatabase extends _$AppDatabase {
               entries.time,
               entries.source,
               entries.referenceNumber,
+              entries.currency,
+              entries.originalAmount,
+              entries.toOriginalAmount,
+              entries.toCurrency,
+              entries.toAmount,
             ],
           ),
         );
@@ -426,6 +505,78 @@ class AppDatabase extends _$AppDatabase {
         final broken = await customSelect('PRAGMA foreign_key_check').get();
         if (broken.isNotEmpty) {
           throw StateError('foreign_key_check after v4 migration: $broken');
+        }
+      }
+      // 4 -> 5: đa tiền tệ (D-037). Dữ liệu cũ giữ nguyên số tiền; mọi bản ghi
+      // nhận tiền tệ đang dùng của app, Tiền tệ chính = tiền tệ đó. Cột gốc để
+      // null nghĩa là số hiện tại đã là số gốc.
+      if (from < 5) {
+        await m.addColumn(accounts, accounts.currency);
+        await m.addColumn(accounts, accounts.initialBalanceOriginal);
+        await m.addColumn(accounts, accounts.initialCurrency);
+        await m.addColumn(categories, categories.budgetOriginal);
+        await m.addColumn(categories, categories.budgetCurrency);
+        // Từ schema 3 trở xuống, bước dựng lại bảng ở trên đã tạo sẵn các cột
+        // của bảng này theo định nghĩa hiện tại; chỉ thêm khi bảng chưa dựng lại.
+        if (from >= 3) {
+          await m.addColumn(recurringRules, recurringRules.currency);
+          await m.addColumn(recurringRules, recurringRules.originalAmount);
+          await m.addColumn(recurringRules, recurringRules.toOriginalAmount);
+          await m.addColumn(recurringRules, recurringRules.toCurrency);
+          await m.addColumn(recurringRules, recurringRules.toAmount);
+          await m.addColumn(entries, entries.currency);
+          await m.addColumn(entries, entries.originalAmount);
+          await m.addColumn(entries, entries.toOriginalAmount);
+          await m.addColumn(entries, entries.toCurrency);
+          await m.addColumn(entries, entries.toAmount);
+        }
+        // savings_goals/debts/debt_payments được tạo ở bước 4 với định nghĩa
+        // hiện tại (đã có cột tiền tệ) khi nâng từ schema < 4.
+        if (from >= 4) {
+          await m.addColumn(savingsGoals, savingsGoals.currency);
+          await m.addColumn(savingsGoals, savingsGoals.originalTargetAmount);
+          await m.addColumn(debts, debts.currency);
+          await m.addColumn(debts, debts.originalAmount);
+          await m.addColumn(debtPayments, debtPayments.currency);
+          await m.addColumn(debtPayments, debtPayments.originalAmount);
+        }
+
+        final legacy = await customSelect(
+          "SELECT value FROM settings WHERE key = 'currency'",
+        ).getSingleOrNull();
+        var oldCurrency = legacy?.read<String>('value') ?? 'USD';
+        if (!RegExp(r'^[A-Z]{3}$').hasMatch(oldCurrency)) oldCurrency = 'USD';
+        await customStatement(
+          "UPDATE accounts SET currency = '$oldCurrency', "
+          "initial_currency = '$oldCurrency'",
+        );
+        await customStatement(
+          "UPDATE categories SET budget_currency = '$oldCurrency' "
+          'WHERE budget IS NOT NULL',
+        );
+        await customStatement(
+          "UPDATE recurring_rules SET currency = '$oldCurrency'",
+        );
+        await customStatement("UPDATE entries SET currency = '$oldCurrency'");
+        await customStatement(
+          "UPDATE savings_goals SET currency = '$oldCurrency'",
+        );
+        await customStatement("UPDATE debts SET currency = '$oldCurrency'");
+        await customStatement(
+          "UPDATE debt_payments SET currency = '$oldCurrency'",
+        );
+        await customStatement(
+          "INSERT OR REPLACE INTO settings (key, value) "
+          "VALUES ('primaryCurrency', '$oldCurrency')",
+        );
+        await customStatement(
+          "INSERT OR REPLACE INTO settings (key, value) "
+          "SELECT 'budgetCurrency', '$oldCurrency' WHERE EXISTS "
+          "(SELECT 1 FROM settings WHERE key = 'monthlyBudget')",
+        );
+        final broken = await customSelect('PRAGMA foreign_key_check').get();
+        if (broken.isNotEmpty) {
+          throw StateError('foreign_key_check after v5 migration: $broken');
         }
       }
     },

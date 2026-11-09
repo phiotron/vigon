@@ -31,9 +31,6 @@ class AppLocalizationsVi extends AppLocalizations {
   String get language => 'Ngôn ngữ';
 
   @override
-  String get languageSystem => 'Theo máy';
-
-  @override
   String get reminderSection => 'Nhắc ghi chép';
 
   @override
@@ -301,6 +298,12 @@ class AppLocalizationsVi extends AppLocalizations {
   String get transferTo => 'Đến';
 
   @override
+  String get transferSentAmount => 'Số gửi';
+
+  @override
+  String get transferReceivedAmount => 'Số nhận';
+
+  @override
   String get sameAccountError => 'Chọn hai tài khoản khác nhau';
 
   @override
@@ -379,6 +382,10 @@ class AppLocalizationsVi extends AppLocalizations {
   @override
   String get currencyNote =>
       'Đổi tiền tệ sẽ quy đổi mọi số tiền theo tỉ giá tải qua mạng (hoặc tỉ giá bạn tự nhập). Số tiền được làm tròn tới đơn vị nhỏ nhất của tiền mới, nên đổi ngược lại có thể lệch một chút.';
+
+  @override
+  String get currencyLockedPayments =>
+      'Tiền tệ đã khóa vì khoản nợ này đã có lần trả.';
 
   @override
   String get currencySearchHint => 'Tìm theo mã hoặc tên';
@@ -788,6 +795,61 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get currencyCurrent => 'Tiền tệ đang dùng';
+
+  @override
+  String get primaryCurrency => 'Tiền tệ chính';
+
+  @override
+  String primaryCurrencyChanged(String currency) {
+    return 'Tiền tệ chính giờ là $currency. Số tiền bạn đã nhập vẫn giữ nguyên.';
+  }
+
+  @override
+  String get primaryCurrencyNote =>
+      'Tổng, biểu đồ và dòng ≈ dùng tiền tệ này. Mỗi tài khoản giữ tiền tệ riêng; đổi mục này chỉ đổi cách cộng và hiển thị, không đổi số tiền bạn đã nhập.';
+
+  @override
+  String get exchangeRates => 'Tỷ giá';
+
+  @override
+  String get ratesOffline =>
+      'Đang ngoại tuyến. Ví Gọn dùng tỷ giá đã lưu gần nhất.';
+
+  @override
+  String get ratesFallback =>
+      'Đang dùng bảng tỷ giá có sẵn cho tới lần cập nhật đầu.';
+
+  @override
+  String get ratesUpdateNow => 'Cập nhật ngay';
+
+  @override
+  String get ratesUpdated => 'Đã cập nhật tỷ giá';
+
+  @override
+  String get ratesUpdateFailed =>
+      'Không cập nhật được. Ví Gọn dùng tỷ giá đã lưu.';
+
+  @override
+  String get ratesSource => 'Tỷ giá từ Exchange Rate API';
+
+  @override
+  String get ratesUseAuto => 'Dùng tỷ giá tự động';
+
+  @override
+  String get ratesUseOwn => 'Dùng tỷ giá của tôi';
+
+  @override
+  String get ratesNoPairs => 'Chưa có cặp tiền tệ nào cần tỷ giá.';
+
+  @override
+  String ratesPreviewBalance(String account, String amount, String converted) {
+    return '$account: $amount ≈ $converted';
+  }
+
+  @override
+  String rateMissing(String from, String to) {
+    return 'Không có tỷ giá từ $from sang $to. Số tiền này không vào tổng.';
+  }
 
   @override
   String recurringRestartHint(String date) {
@@ -1421,7 +1483,7 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String queueCurrencyNote(String emailCurrency, String appCurrency) {
-    return 'Email bằng $emailCurrency, app đang dùng $appCurrency. Bạn nhập số tiền ở bước tiếp theo.';
+    return 'Email bằng $emailCurrency, tài khoản đang dùng $appCurrency. Bạn nhập số tiền ở bước tiếp theo.';
   }
 
   @override

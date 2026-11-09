@@ -19,7 +19,7 @@ List<EntryView> filterEntries(
   List<EntryView> rows,
   String query, {
   required String Function(EntryView row) categoryNameOf,
-  required String Function(int amount) amountTextOf,
+  required String Function(EntryView row) amountTextOf,
 }) {
   final trimmed = query.trim();
   if (trimmed.isEmpty) return rows;
@@ -38,13 +38,13 @@ bool _matches(
   String text,
   String digits,
   String Function(EntryView) categoryNameOf,
-  String Function(int) amountTextOf,
+  String Function(EntryView) amountTextOf,
 ) {
   final note = row.entry.note;
   if (note != null && foldText(note).contains(text)) return true;
   if (foldText(categoryNameOf(row)).contains(text)) return true;
   return digits.isNotEmpty &&
-      amountTextOf(row.entry.amount).replaceAll(_nonDigit, '').contains(digits);
+      amountTextOf(row).replaceAll(_nonDigit, '').contains(digits);
 }
 
 /// Tổng hiển thị ở đầu kết quả tìm: chỉ khoản chi thì tổng chi, chỉ khoản thu
