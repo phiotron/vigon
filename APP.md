@@ -105,6 +105,9 @@ Flutter 3.47.8 ở `C:/src/flutter`, **chưa có trong PATH**. Git Bash: `export
 - Nhiều phiên cùng chạy `flutter test`/`build` trong một thư mục sẽ khoá `build/native_assets/windows/sqlite3.dll` → mỗi phiên chỉ chạy test của mình; test + build toàn bộ một lần ở cuối.
 - PIN 4 số chỉ chặn người tò mò, không mã hoá dữ liệu (D-007). File `.vigon` là JSON thường (D-006).
 - Chỉ push lên GitHub khi người dùng bảo.
+- **Thêm cột vào `recurring_rules`/`entries`** → thêm cả vào `newColumns` của bước dựng lại bảng `from < 3` trong `database.dart` (quên là nâng cấp từ schema 1–2 lỗi "no such column"; test migration 1→/2→ bắt được).
+- **Có máy ảo `emulator-5554` cắm cùng** → mọi lệnh adb dùng `-s R58TC12SRZW`. `pm clear com.phiotron.vigon` xoá cả hộp thư Gmail + mật khẩu ứng dụng (Keystore), PIN, cấu hình sao lưu — hỏi trước.
+- **Màn chào** chỉ hiện khi DB vừa tạo (`onCreate`); test cũ dùng `createRouter()` không có cổng nên không thấy; test màn chào truyền `createRouter(onboarding: gate)` + `VigonApp(onboardingGate: gate)` (D-041).
 
 ## Quyết định riêng của app (chi tiết: `docs/DECISIONS.md`)
 - **D-001** Flutter; ~~Android trước~~ → **2026-11-04: thêm iOS vào bản 1**, build/ký/test trên GitHub Actions macOS runner (đồng bộ với xưởng); không có iPhone → thử trên simulator CI.
