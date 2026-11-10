@@ -36,6 +36,20 @@
   theo `ValueNotifier` (`createRouter(onboarding:)`, `VigonApp(onboardingGate:)`); `_OnboardingCurtain` che app khi chưa biết cờ.
 - Chưa thử trên máy thật: phải xoá dữ liệu (máy đang giữ dữ liệu mẫu chụp store) → cần người dùng cho phép, hoặc thử khi cài máy khác.
 
+## Thử trên Galaxy A13 (người dùng cho phép xoá dữ liệu, `pm clear`, 2026-11-10)
+- Dữ liệu mẫu chụp store, hộp thư Gmail + mật khẩu ứng dụng, cấu hình sao lưu tự động **đã mất** — người dùng tự thêm lại hộp thư.
+- **Màn chào đạt:** mở lần đầu là "Step 1 of 5" (English); chọn Tiếng Việt đổi ngay; Chào mừng; Tiền tệ chọn VND (bảng "Chọn tiền
+  tệ khác…" mở được); Nhắc: "Bật nhắc" hiện hộp quyền Android → **Từ chối** (theo luật thử máy) → nhắc tắt, sang bước 5 có thanh báo;
+  PIN: mở màn đặt mã rồi Back → ở lại bước 5 (không đặt PIN thật); "Để sau" → màn chính tiếng Việt, số dư "0 ₫" (Tiền mặt theo VND).
+- **"Chọn thứ…" đạt:** khoản 5.000 ₫ Nhà cửa hôm nay (T3), bỏ T3 chọn T2 + T6 → chip "T2, T6", dòng "Khoản đầu: T6 13/11", Lưu →
+  thanh báo đúng, không có khoản hôm nay; danh sách "T2, T6 · 13 thg 11, 2026"; bảng sửa có chip "✓ T2, T6". Chuỗi thử đã **dừng**.
+- Sửa sau khi thử: dòng chưa chọn ở Ngôn ngữ/Tiền tệ lệch lề (thêm `_Row`); biểu tượng giờ nhắc lệch lề; thanh báo từ chối quyền
+  bỏ chế độ dài 10 s (che nút "Đặt mã PIN"); chữ `currencyNote` của bảng chọn tiền tệ còn nói "quy đổi mọi số tiền" (D-025 cũ) → viết lại theo D-037.
+- **Chưa giải thích được (1 lần, không tái hiện):** lượt thử đầu, tới bước 3 ngôn ngữ tự về English dù đã chọn Tiếng Việt; hai lượt
+  sau (kể cả chờ 100 s) không lặp lại. Lúc đó có phiên khác cũng điều khiển máy (máy chuyển sang Subnest giữa chừng) — có thể do chạm
+  nhầm của phiên kia. Nếu gặp lại thì xem kỹ.
+- Chưa thử trên máy: nhánh **cho phép** quyền thông báo, đặt PIN thật trong màn chào, "Bỏ qua" (đã có widget test).
+
 ## Test mới
 `test/data/recurring_weekdays_test.dart`, `test/features/repeat_days_test.dart`, `test/features/onboarding_test.dart`,
 nhóm "thư MB thật" trong `test/import/mb/mb_receipt_parser_test.dart`.

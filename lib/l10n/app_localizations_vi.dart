@@ -512,7 +512,7 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get currencyNote =>
-      'Đổi tiền tệ sẽ quy đổi mọi số tiền theo tỉ giá tải qua mạng (hoặc tỉ giá bạn tự nhập). Số tiền được làm tròn tới đơn vị nhỏ nhất của tiền mới, nên đổi ngược lại có thể lệch một chút.';
+      'Đổi tiền tệ không sửa số bạn đã nhập; chỉ đổi cách cộng tổng và dòng \"≈\" theo tỷ giá hiện tại (tải qua mạng tối đa 1 lần/ngày, hoặc bạn tự nhập ở màn Tỷ giá).';
 
   @override
   String get currencyLockedPayments =>

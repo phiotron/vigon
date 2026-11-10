@@ -165,7 +165,7 @@
   "initialBalance": "Số dư ban đầu",
 
   "currency": "Tiền tệ",
-  "currencyNote": "Đổi tiền tệ sẽ quy đổi mọi số tiền theo tỉ giá tải qua mạng (hoặc tỉ giá bạn tự nhập). Số tiền được làm tròn tới đơn vị nhỏ nhất của tiền mới, nên đổi ngược lại có thể lệch một chút.",
+  "currencyNote": "Đổi tiền tệ không sửa số bạn đã nhập; chỉ đổi cách cộng tổng và dòng \"≈\" theo tỷ giá hiện tại (tải qua mạng tối đa 1 lần/ngày, hoặc bạn tự nhập ở màn Tỷ giá).",
   "currencyLockedPayments": "Tiền tệ đã khóa vì khoản nợ này đã có lần trả.",
   "currencySearchHint": "Tìm theo mã hoặc tên",
   "currencyNoMatch": "Không có tiền tệ nào khớp",

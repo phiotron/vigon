@@ -80,7 +80,6 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
           l.reminderDenied,
           actionLabel: l.reminderOpenSettings,
           onAction: scheduler.openSystemSettings,
-          long: true,
         );
       }
     } finally {
@@ -144,7 +143,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
             ('en', 'English'),
             ('vi', 'Tiếng Việt'),
           ])
-            ChoiceRow(
+            _Row(
               key: ValueKey('onboarding-lang-$value'),
               label: label,
               selected: value == code,
@@ -204,7 +203,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           for (final code in codes)
-            ChoiceRow(
+            _Row(
               key: ValueKey('onboarding-currency-$code'),
               label:
                   '${currencyInfo(code)?.name(lang) ?? code} · '
@@ -212,7 +211,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
               selected: code == current,
               onTap: () => _setCurrency(code),
             ),
-          ChoiceRow(
+          _Row(
             key: const ValueKey('onboarding-currency-other'),
             icon: Symbols.search_rounded,
             label: l.onboardingOtherCurrency,
@@ -240,7 +239,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
       hint: l.onboardingReminderHint,
       body: ListTile(
         key: const Key('onboarding-reminder-time'),
-        contentPadding: const EdgeInsets.symmetric(horizontal: VgSpace.s4),
+        contentPadding: const EdgeInsets.symmetric(horizontal: VgSpace.s6),
         leading: const Icon(Symbols.schedule_rounded),
         title: Text(l.reminderTime),
         trailing: Text(
@@ -466,4 +465,32 @@ class _Benefit extends StatelessWidget {
       ),
     );
   }
+}
+
+/// Dòng chọn của Màn chào: [ChoiceRow] thụt thêm khi chưa chọn để chữ của mọi
+/// dòng thẳng hàng (dòng đang chọn đã tự thụt vào trong viên nền).
+class _Row extends StatelessWidget {
+  const _Row({
+    super.key,
+    required this.label,
+    required this.selected,
+    required this.onTap,
+    this.icon,
+  });
+
+  final String label;
+  final bool selected;
+  final VoidCallback onTap;
+  final IconData? icon;
+
+  @override
+  Widget build(BuildContext context) => Padding(
+    padding: EdgeInsets.symmetric(horizontal: selected ? 0 : VgSpace.s3),
+    child: ChoiceRow(
+      label: label,
+      selected: selected,
+      onTap: onTap,
+      icon: icon,
+    ),
+  );
 }

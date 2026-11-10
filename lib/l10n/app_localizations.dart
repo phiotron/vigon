@@ -1043,7 +1043,7 @@ abstract class AppLocalizations {
   /// No description provided for @currencyNote.
   ///
   /// In en, this message translates to:
-  /// **'Changing the currency converts every amount using an exchange rate downloaded from the internet (or one you enter yourself). Amounts are rounded to the new currency\'s smallest unit, so converting back may differ slightly.'**
+  /// **'Changing a currency never changes the amounts you entered; it only changes how totals and the \"≈\" line are converted, using current exchange rates (downloaded at most once a day, or entered by you on the Exchange rates screen).'**
   String get currencyNote;
 
   /// No description provided for @currencyLockedPayments.
