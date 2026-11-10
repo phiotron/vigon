@@ -118,13 +118,13 @@
   src: url(../../_shared/fonts/material-symbols-rounded.woff2) format('woff2');
 }
 
-/* Ví Gọn — generated from tokens.json */
+/* Vigon — generated from tokens.json */
 :root, [data-theme="light"] {
   --primary: #2e7d6b; /* Màu gốc của app: nút chính (Lưu ở Chuyển tiền), công tắc bật, tab đang chọn, thanh ngân sách, liên kết. Chữ trên nó dùng on-primary. */
   --on-primary: #ffffff; /* Chữ và icon trên nền primary. */
   --primary-container: #b8eddc; /* Nền nhấn nhẹ: nút nổi +, dòng đang chọn trong bảng chọn kỳ, ô chip đã chọn. v2: thêm nền đánh dấu chữ khớp khi tìm kiếm (kèm chữ đậm 600) và chip lọc tài khoản đang bật. */
   --on-primary-container: #002019; /* Chữ và icon trên primary-container. */
-  --secondary-container: #cce8df; /* Phím phép tính (÷ × − + =) trên bàn phím số. v2: thêm nút tonal (Sao lưu ngay), phần đang chọn của nút chọn một (segmented), chip lọc đang chọn (Tháng này / Tất cả thời gian). */
+  --secondary-container: #cce8df; /* Phím phép tính (÷ × − + =) trên bàn phím số. v2: thêm nút tonal (Sao lưu ngay), phần đang chọn của nút chọn một (segmented), chip lọc đang chọn (Tháng này / Tất cả thời gian). v3: thêm viên chọn của thanh tab (tabbar-indicator cùng giá trị). */
   --on-secondary-container: #062019; /* Chữ trên secondary-container. */
   --surface: #f7faf8; /* Nền màn hình. */
   --surface-container-low: #f2f6f4; /* v2. Nền thẻ nhóm trong Cài đặt (mỗi nhóm một thẻ bo radius-lg) để dễ quét danh sách dài. Map ColorScheme.surfaceContainerLow. ink, ink-muted, primary (4.52:1), income, error đều ≥ 4.5:1 trên nó. */
@@ -138,10 +138,33 @@
   --on-income: #ffffff; /* Chữ trên nền income (nút +, nút Lưu khoản thu). Giao diện tối dùng chữ đen. */
   --expense: #c62828; /* Tiền chi: tổng chi, số tiền khi ghi khoản chi, nút −, nút Lưu khoản chi. Luôn đi kèm dấu − hoặc chữ Chi. */
   --on-expense: #ffffff; /* Chữ trên nền expense. Giao diện tối dùng chữ đen. */
-  --error: #ba1a1a; /* Lỗi nhập liệu, Vượt ngân sách, dòng Xóa toàn bộ dữ liệu, nút hành động nguy hiểm trong hộp thoại. */
+  --error: #ba1a1a; /* Lỗi nhập liệu, Vượt ngân sách, dòng Xóa toàn bộ dữ liệu, nút hành động nguy hiểm trong hộp thoại. v3: chỉ cho "Over"; "Almost over" dùng warning. */
   --on-error: #ffffff; /* Chữ trên nền error. */
   --error-container: #ffdad6; /* v2. Nền dải trạng thái lỗi (sao lưu tự động lỗi) và nhãn Vượt nhỏ. Chữ trên nó dùng on-error-container. Map ColorScheme.errorContainer. */
   --on-error-container: #410002; /* v2. Chữ và icon trên error-container (≥ 10:1 ở hai chủ đề). Map ColorScheme.onErrorContainer. */
+  --warning: #8a4f00; /* v3. Trạng thái "Sắp vượt" (Almost over) của ngân sách: chữ, icon, thanh tiến độ. Luôn đi kèm icon + chữ "Used 82 %". Tách với error (Over) bằng icon, chữ và kiểu thanh. ≥ 5.4:1 trên mọi surface. */
+  --on-warning: #ffffff; /* v3. Chữ trên nền warning (nhãn đặc). */
+  --warning-container: #ffdcbe; /* v3. Nền dải/nhãn "Almost over" (thẻ Budget left, chip trạng thái). Chữ on-warning-container. */
+  --on-warning-container: #2e1500; /* v3. Chữ và icon trên warning-container (13.3:1 / 7.2:1). */
+  --info-container: #dde6f1; /* v3. Nền trung tính cho thông tin nhập từ email: banner hàng đợi ở Home, thẻ "Created account", dấu ✉. Không mang nghĩa tốt/xấu. */
+  --on-info-container: #0f1d2b; /* v3. Chữ và icon trên info-container (13.5:1 / 10.2:1). */
+  --tabbar-surface: #ecf2ef; /* v3. Nền thanh tab 5 mục (bằng surface-container). Map NavigationBarTheme.backgroundColor. */
+  --tabbar-indicator: #cce8df; /* v3. Viên chọn sau icon tab đang chọn (bằng secondary-container). Map NavigationBarTheme.indicatorColor. */
+  --tabbar-active: #062019; /* v3. Icon (FILL 1) và nhãn tab đang chọn, weight 600. */
+  --tabbar-inactive: #3f4946; /* v3. Icon (FILL 0) và nhãn tab không chọn (bằng ink-muted, ≥ 7:1). */
+  --badge: #ba1a1a; /* v3. Huy hiệu đếm trên tab More và icon hàng đợi ("3", "99+"). Chữ on-badge. Bằng error vì là việc cần làm, không phải lỗi. */
+  --on-badge: #ffffff; /* v3. Số trên huy hiệu. */
+  --chart-income: #2e7d32; /* v3. Cột thu trong biểu đồ cặp (bằng income). Cột thu luôn đứng bên trái cặp và có nhãn trong bảng thay thế. */
+  --chart-expense: #c62828; /* v3. Cột chi (bằng expense). */
+  --chart-line: #2e7d6b; /* v3. Đường số dư (Balance history) và điểm cuối nhấn (bằng primary). */
+  --chart-grid: #d3dcd8; /* v3. Đường lưới ngang, mảnh 1 dp. Trang trí, không mang nghĩa. */
+  --chart-axis: #3f4946; /* v3. Nhãn trục, nhãn tháng (bằng ink-muted). */
+  --chart-highlight: #cce8df; /* v3. Dải nền sau cột/ngày đang chọn và bong bóng giá trị (callout). */
+  --cal-selected: #2e7d6b; /* v3. Nền ô ngày đang chọn trong Lịch (bằng primary); chữ on-cal-selected. */
+  --on-cal-selected: #ffffff; /* v3. Số ngày và số tiền trên ô đang chọn. */
+  --cal-today: #2e7d6b; /* v3. Viền 1.5 dp quanh ô hôm nay. */
+  --cal-muted: #6f7975; /* v3. Số ngày tương lai / ngoài tháng (trạng thái không dùng được, bằng outline). */
+  --cal-income-dot: #2e7d32; /* v3. Chấm 6 dp dưới ô ngày có khoản thu (kèm nhãn đọc "income recorded"). */
   --swipe-delete: #ffdad6; /* Nền lộ ra khi vuốt một khoản sang trái để xóa; icon thùng rác màu error. Cùng giá trị sáng với error-container; giữ riêng vì đã map vào ViGonColors. */
   --inverse-surface: #2c3230; /* Nền thanh thông báo (Đã xóa · Hoàn tác). v2: thanh thông báo luôn nằm trên hai nút − / + và trên bàn phím số, cao tự giãn theo chữ (1–3 dòng). */
   --inverse-ink: #edf2ef; /* Chữ trên inverse-surface. */
@@ -153,10 +176,10 @@
   --brand-mint: #8cd5bf; /* v2. Thẻ sau của logo. Chỉ dùng trong logo. */
   --brand-paper: #f7faf8; /* v2. Thẻ trước của logo. Chỉ dùng trong logo. */
   --brand-dot: #e65100; /* v2. Nút tròn cam trên thẻ trước của logo. Chỉ dùng trong logo. */
-  --widget-surface: #0e5244; /* v2. Nền widget 2×2 / 4×2 trên màn hình chờ Android (cố định, không theo chủ đề app; bằng brand-deep). Đọc được trên hình nền sáng và tối. */
+  --widget-surface: #0e5244; /* v3. Nền widget 2×2 / 4×2 (cố định, không theo chủ đề app; bằng brand-deep), có quầng brand-mint 12 % góc trên phải. Đọc được trên hình nền sáng và tối. */
   --widget-ink: #f7faf8; /* v2. Chữ dòng trạng thái và tên app trên widget-surface (8.9:1). */
-  --widget-expense: #c62828; /* v2. Nút Chi trên widget (cố định ở hai chủ đề, khác expense tối). Chữ on-widget-action 5.6:1. */
-  --widget-income: #2e7d32; /* v2. Nút Thu trên widget (cố định). Chữ on-widget-action 5.1:1. */
+  --widget-expense: #c62828; /* v3. Đĩa tròn chứa dấu − trên nút Chi của widget (nút nền brand-paper, chữ brand-deep). Cố định ở hai chủ đề. Không còn dùng làm nền cả nút. */
+  --widget-income: #2e7d32; /* v3. Đĩa tròn chứa dấu + trên nút Thu của widget. Cố định ở hai chủ đề. Không còn dùng làm nền cả nút. */
   --on-widget-action: #ffffff; /* v2. Chữ và dấu − / + trên hai nút widget. */
   --on-cat: #ffffff; /* Icon trắng trên mọi màu danh mục cat-01 … cat-16 (đủ 3:1). */
   --cat-01: #c62828; /* Đỏ. Danh mục, ví dụ Sức khỏe. Giữ nguyên ở hai chủ đề; icon on-cat. */
@@ -201,6 +224,29 @@
   --on-error: #690005;
   --error-container: #93000a;
   --on-error-container: #ffdad6;
+  --warning: #ffb869;
+  --on-warning: #4a2800;
+  --warning-container: #693c00;
+  --on-warning-container: #ffdcbe;
+  --info-container: #25313d;
+  --on-info-container: #d7e3f0;
+  --tabbar-surface: #1b211f;
+  --tabbar-indicator: #334b44;
+  --tabbar-active: #cce8df;
+  --tabbar-inactive: #bec9c4;
+  --badge: #ffb4ab;
+  --on-badge: #690005;
+  --chart-income: #81c784;
+  --chart-expense: #ef9a9a;
+  --chart-line: #8cd5bf;
+  --chart-grid: #2c3431;
+  --chart-axis: #bec9c4;
+  --chart-highlight: #334b44;
+  --cal-selected: #8cd5bf;
+  --on-cal-selected: #00382d;
+  --cal-today: #8cd5bf;
+  --cal-muted: #89938f;
+  --cal-income-dot: #81c784;
   --swipe-delete: #5c1714;
   --inverse-surface: #dee4e1;
   --inverse-ink: #2c3230;
@@ -248,13 +294,19 @@
   --radius-md: 12px; /* Phím số, thanh Số dư. */
   --radius-lg: 16px; /* Hai nút lớn − +, nút nổi +, nút Lưu. */
   --radius-xl: 28px; /* Hộp thoại, góc trên bảng kéo từ dưới lên. */
-  --radius-widget: 20px; /* v2. Góc widget Android khi launcher không áp góc hệ thống (Android 12+ dùng system_app_widget_background_radius). Nút trong widget dùng radius-md. */
+  --radius-widget: 24px; /* v3: 20 → 24. Góc widget Android, bằng góc widget hệ thống Android 12+. Nút trong widget dùng radius-lg (16). */
+  --radius-bar: 3px; /* v3. Góc trên của cột biểu đồ. */
   --radius-full: 999px; /* Icon danh mục tròn, công tắc, chấm PIN, phím PIN bầu dục. */
   --tap-min: 48px; /* Mọi nút bấm, icon danh mục quanh biểu đồ, ô màu. */
   --tap-key: 56px; /* Phím số, thanh Số dư, dòng danh sách. */
   --tap-main: 64px; /* Nút − + ở màn chính, phím PIN. */
   --appbar: 56px; /* Chiều cao thanh tiêu đề. */
   --row-two-line: 72px; /* v2. Chiều cao tối thiểu dòng hai dòng (công tắc có phụ đề, dòng kết quả tìm kiếm, dòng khoản có ghi chú). Dòng tự cao lên theo chữ, không cắt. */
+  --tabbar-height: 80px; /* v3. Cao thanh tab gồm vùng an toàn: Android 56 + 24 (thanh cử chỉ); iPhone 49 + 34 (Home indicator) = 83. Ở ≥ 130 % chữ: chỉ hiện nhãn tab đang chọn, thanh cao theo chữ. */
+  --tabbar-indicator-w: 56px; /* v3. Rộng viên chọn của tab. */
+  --tabbar-indicator-h: 28px; /* v3. Cao viên chọn của tab (radius-full). */
+  --cal-cell-h: 52px; /* v3. Cao ô ngày trong Lịch tháng (số ngày + số tiền rút gọn). Ở 200 %: ô chỉ hiện số ngày, số tiền xem ở bảng ngày. */
+  --chart-bar-w: 8px; /* v3. Rộng tối đa một cột trong cặp thu/chi; tự hẹp lại (tối thiểu 3 px) khi nhiều ngày. */
   --font-sans: "Be Vietnam Pro", system-ui, sans-serif;
   --font-icon: "Material Symbols Rounded";
   --text-amount-xl: 600 40px/48px var(--font-sans); /* Số tiền đang gõ ở Nhập khoản và Chuyển tiền. Tự co nhỏ khi không vừa. */
@@ -814,18 +866,6 @@ html, body { margin: 0; background: var(--canvas); }
 .lnch-ink-light { color: #1A1C1E; } .lnch-ink-dark { color: #E3E3E6; }
 .gwidget { background: rgba(255,255,255,.55); }
 .wall-dark .gwidget { background: rgba(255,255,255,.10); }
-.vw { background: var(--widget-surface); color: var(--widget-ink); border-radius: var(--radius-widget); padding: 8px; display: flex; flex-direction: column; gap: 6px; font-family: var(--font-sans); box-shadow: 0 2px 8px rgba(0,0,0,.18); }
-.vw .vst { display: flex; align-items: flex-start; gap: 6px; font: 500 12px/16px var(--font-sans); padding: 2px 4px 0; min-height: 20px; }
-.vw .vst .ms { font-size: 16px; flex: none; }
-.vw .vst .t { flex: 1; min-width: 0; }
-.vw .vst .t.one { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.vw .vst .t.two { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
-.vw .vbtns { flex: 1; display: flex; gap: 6px; }
-.vw.tall .vbtns { flex-direction: column; }
-.vw .vb { flex: 1; min-height: 48px; border-radius: var(--radius-md); color: var(--on-widget-action); display: flex; align-items: center; justify-content: center; gap: 6px; font: 700 18px/24px var(--font-sans); }
-.vw .vb .g { font: 500 24px/24px var(--font-sans); }
-.vw .vb.e { background: var(--widget-expense); } .vw .vb.i { background: var(--widget-income); }
-.vw .brand { display: flex; align-items: center; gap: 6px; font: 700 13px/16px var(--font-sans); padding: 2px 4px 0; min-height: 20px; }
 .lnch-icons { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px 0; padding: 0 12px; }
 .lnch-icons > span { display: flex; flex-direction: column; align-items: center; gap: 6px; font: 400 12px/14px var(--font-sans); }
 .lnch-icons i { width: 52px; height: 52px; border-radius: 50%; display: block; }
@@ -879,7 +919,256 @@ html, body { margin: 0; background: var(--canvas); }
 .vg-weekseg .vg-seg { margin: 0; display: inline-flex; }
 .vg-weekseg .vg-seg.stack { display: flex; }
 .cur .vg-row.two { min-height: 64px; }
-</style></head><body><div class="fb"><div class="vg-phone and" role="img" aria-label="Home screen widget" style="--ts:1.0;background:transparent;"><div class="vg-status and" aria-hidden="true" style="color:#1A1C1E;background:transparent"><span class="num">9:41</span><span class="sbic"><span class="ms fill" aria-hidden="true">wifi</span><span class="ms fill" aria-hidden="true">signal_cellular_alt</span><span class="ms fill" aria-hidden="true">battery_full</span></span></div><div class="vg-body"><div class="lnch wall-light lnch-ink-light"><span class="wshape1" style="width:420px;height:420px;left:-160px;top:420px"></span><span class="wshape2" style="width:300px;height:300px;right:-120px;top:80px"></span><div style="position:relative;display:flex;flex-direction:column;flex:1"><div style="padding:28px 24px 28px"><div style="font:400 44px/1.1 var(--font-sans)">Thu, Nov 26</div><div style="font:400 15px/20px var(--font-sans);opacity:.8;margin-top:6px"><span class="ms xs" aria-hidden="true" style="vertical-align:-3px">partly_cloudy_day</span> 29°C</div></div><div style="display:grid;grid-template-columns:168px 1fr;padding:0 6px 0 18px;align-items:start"><div class="vw tall" style="width:156px;height:164px"><div class="vst"><span class="ms fill" aria-hidden="true">lock</span><span class="t two">Locked with PIN</span></div><div class="vbtns"><span class="vb e" title="Add expense"><span class="g">−</span>Expense</span><span class="vb i" title="Add income"><span class="g">+</span>Income</span></div></div><div class="lnch-icons" style="grid-template-columns:1fr 1fr;padding:0;gap:22px 0"><span><i style="background:#E8453C"></i>Mail</span><span><i style="background:#4285F4"></i>Maps</span><span><i style="background:#34A853"></i>Photos</span><span><i style="background:#FBBC05"></i>Files</span></div></div><div class="lnch-icons" style="margin-top:22px"><span><i style="background:#7E57C2"></i>Notes</span><span><i style="background:#00ACC1"></i>Clock</span><span><i style="background:#F06292"></i>Music</span><span><i style="background:#8D6E63"></i>Contacts</span></div><div style="flex:1"></div><div class="lnch-dock" style="margin-bottom:18px"><i style="background:#43A047"></i><i style="background:#1E88E5"></i><i style="background:#F4511E"></i><i style="background:#5E35B1"></i></div><div class="lnch-search gwidget" style="margin-bottom:12px"><span class="ms" aria-hidden="true">search</span><span style="font:400 15px/20px var(--font-sans);opacity:.7">Search</span></div></div></div></div><div class="vg-nav and" style="--ink:#1A1C1E"></div><span class="asm-pin" style="left:164px;top:196px">A15</span></div><div class="anno"><div class="fid">android/light/EXT01_ext-widget__locked.png</div><h1>Home-screen widget · locked</h1><div class="st">locked · Android 360 × 800 dp · light · EN</div><h2>Design notes</h2><ul><li>PIN on (or unknown): lock icon + “Locked with PIN”; amounts are never shown.</li><li>Fixed brand colours (tokens <code>widget-*</code>), not the app theme or Android 12 dynamic colour: the widget is a brand surface and must keep − red / + green meaning. Solid surface reads on light and dark wallpapers.</li><li>2 × 2 proposal: the two buttons <b>stack vertically</b> (each ≥ 48 dp tall, full width) because side-by-side “Expense / Income” at 18 sp bold does not fit ~70 dp each; glyph − / + + word, never colour alone.</li></ul><h2>Assumptions</h2><div class="asm"><span class="tag as">ASSUMPTION A15</span>Widget 2 × 2: buttons stack vertically and the status line may use 2 lines before ellipsis (brief says 1 line) — needed for “Spent this month: X / Y” and for VI.</div><div class="asm"><span class="tag as">ASSUMPTION A19</span>EXT frames: “theme” folder = light / dark wallpaper. EXT-01 and EXT-03 Android only; EXT-02 both platforms. EXT files use <code>EXT01</code>, <code>EXT02</code>, <code>EXT03</code> as the &lt;NN&gt; part.</div><h2>Accessibility</h2><ul><li>Buttons “Add expense” / “Add income” (device language). Status line read as text.</li></ul><h2>Flows</h2><ul><li>F2: widget Expense → (Lock → PIN) → New expense → amount → Choose category → saved → Home</li></ul><h2>Scope</h2><div class="muted">P1 · EXT-01 · tokens v2 (design/hifi/tokens). Dotted underline in the frame = NEW copy. Numbered dark pins = ASSUMPTION markers.</div></div></div><script>
+
+/* ===== Vigon 2.0 (v3) additions. Tokens only. ===== */
+
+/* ---------- Tab bar ---------- */
+.vg-tabbar { flex: none; display: flex; background: var(--tabbar-surface); padding: 0 4px; }
+.vg-tabbar > a { flex: 1; min-width: 0; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; gap: 2px; padding-top: 6px; color: var(--tabbar-inactive); text-decoration: none; position: relative; }
+.vg-tabbar .pill { width: var(--tabbar-indicator-w); height: var(--tabbar-indicator-h); border-radius: var(--radius-full); display: flex; align-items: center; justify-content: center; position: relative; }
+.vg-tabbar .pill .ms { font-size: 22px; }
+.vg-tabbar > a.on { color: var(--tabbar-active); }
+.vg-tabbar > a.on .pill { background: var(--tabbar-indicator); }
+.vg-tabbar > a.on .tl { font-weight: 600; }
+.vg-tabbar .tl { font: 500 calc(12px * var(--ts))/calc(16px * var(--ts)) var(--font-sans); text-align: center; white-space: nowrap; }
+.vg-tabbar.big .tl { white-space: normal; }
+.vg-tabbar .bdg { position: absolute; top: -2px; left: calc(50% + 6px); min-width: 16px; height: 16px; padding: 0 4px; border-radius: 8px; background: var(--badge); color: var(--on-badge); font: 700 10px/16px var(--font-sans); text-align: center; box-shadow: 0 0 0 2px var(--tabbar-surface); }
+.vg-iconbtn { position: relative; }
+.vg-iconbtn .bdg { position: absolute; top: 4px; right: 2px; min-width: 16px; height: 16px; padding: 0 4px; border-radius: 8px; background: var(--badge); color: var(--on-badge); font: 700 10px/16px var(--font-sans); text-align: center; box-shadow: 0 0 0 2px var(--surface); }
+.vg-tabbar.compact > a { justify-content: center; padding-top: 0; }
+
+/* ---------- Banner (queue), info marker ---------- */
+.vg-banner { flex: none; margin: 0 var(--space-4) var(--space-2); min-height: 44px; border-radius: var(--radius-md); background: var(--info-container); color: var(--on-info-container); display: flex; align-items: center; gap: var(--space-2); padding: 6px var(--space-2) 6px var(--space-3); }
+.vg-banner .ms { font-size: 20px; flex: none; }
+.vg-banner .t { flex: 1; min-width: 0; }
+.mail-mk { display: inline-flex; align-items: center; justify-content: center; width: 18px; height: 18px; border-radius: 4px; background: var(--info-container); color: var(--on-info-container); vertical-align: -3px; margin-left: 4px; }
+.mail-mk .ms { font-size: 13px; }
+.vg-filterchip { display: inline-flex; align-items: center; gap: 4px; height: 32px; padding: 0 6px 0 10px; border-radius: var(--radius-sm); background: var(--primary-container); color: var(--on-primary-container); white-space: nowrap; max-width: 150px; position: relative; }
+.vg-filterchip::before { content: ""; position: absolute; inset: -8px 0; }
+.vg-filterchip span.n { overflow: hidden; text-overflow: ellipsis; }
+.vg-filterchip .ms { font-size: 18px; }
+
+/* ---------- Budget states ---------- */
+.vg-budget.warn .vg-btext { color: var(--warning); font-weight: 600; }
+.vg-budget.warn .vg-track > i { background: var(--warning); }
+.vg-catbudget.warn .t { color: var(--warning); font-weight: 600; }
+.vg-catbudget.warn .vg-track > i { background: var(--warning); }
+.st-chip { display: inline-flex; align-items: center; gap: 4px; min-height: 24px; padding: 2px 10px 2px 6px; border-radius: var(--radius-full); white-space: nowrap; }
+.st-chip .ms { font-size: 16px; }
+.st-chip.ok { background: var(--primary-container); color: var(--on-primary-container); }
+.st-chip.warn { background: var(--warning-container); color: var(--on-warning-container); }
+.st-chip.err { background: var(--error-container); color: var(--on-error-container); }
+.st-chip.info { background: var(--info-container); color: var(--on-info-container); }
+.st-chip.neutral { background: var(--surface-container-high); color: var(--ink-muted); }
+
+/* ---------- Overview tiles & cards ---------- */
+.ov { padding: 0 var(--space-4) var(--space-4); display: flex; flex-direction: column; gap: var(--space-3); }
+.ov-hero { background: var(--surface-container-low); border-radius: var(--radius-lg); padding: var(--space-4); }
+.ov-hero .lab { color: var(--ink-muted); }
+.ov-tiles { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-3); }
+.ov-tiles.stack { grid-template-columns: minmax(0, 1fr); }
+.tile { background: var(--surface-container-low); border-radius: var(--radius-lg); padding: var(--space-3) var(--space-4); display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.tile .lab { color: var(--ink-muted); }
+.tile .v { font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
+.tile.warn { background: var(--warning-container); color: var(--on-warning-container); }
+.tile.warn .lab { color: var(--on-warning-container); }
+.tile.over { background: var(--error-container); color: var(--on-error-container); }
+.tile.over .lab { color: var(--on-error-container); }
+.tile .sub { display: flex; align-items: center; gap: 4px; }
+.tile .sub .ms { font-size: 16px; }
+.card { background: var(--surface-container-low); border-radius: var(--radius-lg); padding: var(--space-4); }
+.card h3 { margin: 0 0 var(--space-3); }
+.card .row2 { display: flex; align-items: center; gap: var(--space-3); min-height: 40px; }
+.card .row2 .ms { font-size: 20px; }
+.legend { display: flex; flex-wrap: wrap; gap: 4px 14px; color: var(--ink-muted); }
+.legend i { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 6px; vertical-align: 0; }
+.chart { position: relative; }
+.chart svg { display: block; }
+.chart .callout { position: absolute; background: var(--inverse-surface); color: var(--inverse-ink); border-radius: var(--radius-sm); padding: 6px 10px; box-shadow: var(--shadow-float); white-space: nowrap; }
+.trend { display: flex; align-items: center; gap: 6px; }
+.trend .ms { font-size: 20px; }
+.month-hd { flex: none; display: flex; align-items: center; justify-content: space-between; padding: 0 var(--space-2); height: 52px; }
+.seg-tabs { display: flex; margin: 0 var(--space-4) var(--space-2); border: 1px solid var(--outline); border-radius: var(--radius-full); overflow: hidden; flex: none; }
+.seg-tabs > span { flex: 1; min-height: 40px; display: flex; align-items: center; justify-content: center; gap: 4px; border-left: 1px solid var(--outline); }
+.seg-tabs > span:first-child { border-left: 0; }
+.seg-tabs > span.on { background: var(--secondary-container); color: var(--on-secondary-container); }
+.seg-tabs > span .ms { font-size: 18px; }
+.toprow { display: flex; align-items: center; gap: var(--space-3); padding: 6px 0; }
+.toprow .ic { width: 32px; height: 32px; border-radius: 50%; color: var(--on-cat); display: flex; align-items: center; justify-content: center; flex: none; }
+.toprow .ic .ms { font-size: 18px; }
+.toprow .mid { flex: 1; min-width: 0; }
+.toprow .bar { height: 6px; border-radius: 3px; background: var(--surface-container-high); margin-top: 6px; overflow: hidden; }
+.toprow .bar > i { display: block; height: 100%; border-radius: 3px; }
+.empty-ill { display: flex; flex-direction: column; align-items: center; text-align: center; gap: var(--space-3); padding: var(--space-8) var(--space-6); color: var(--ink-muted); }
+.empty-ill .art { width: 96px; height: 96px; }
+
+/* ---------- Calendar ---------- */
+.calg { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); padding: 0 var(--space-2); row-gap: 2px; flex: none; }
+.calg .wd { text-align: center; color: var(--ink-muted); height: 24px; }
+.calg .d { height: var(--cal-cell-h); border-radius: var(--radius-md); display: flex; flex-direction: column; align-items: center; justify-content: flex-start; padding-top: 4px; gap: 1px; position: relative; margin: 0 2px; }
+.calg .d .n { font: 500 calc(14px * var(--ts))/calc(18px * var(--ts)) var(--font-sans); }
+.calg .d .a { font: 500 calc(11px * var(--ts))/calc(14px * var(--ts)) var(--font-sans); color: var(--expense); font-variant-numeric: tabular-nums; white-space: nowrap; max-width: 100%; overflow: hidden; text-overflow: clip; }
+.calg .d .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--cal-income-dot); position: absolute; bottom: 4px; }
+.calg .d.today { box-shadow: inset 0 0 0 1.5px var(--cal-today); }
+.calg .d.sel { background: var(--cal-selected); color: var(--on-cal-selected); }
+.calg .d.sel .a { color: var(--on-cal-selected); }
+.calg .d.sel .dot { background: var(--on-cal-selected); }
+.calg .d.mut .n { color: var(--cal-muted); }
+.calg .d.out { visibility: hidden; }
+.daypanel { flex: 1; min-height: 0; background: var(--surface-container-low); border-radius: var(--radius-xl) var(--radius-xl) 0 0; margin-top: var(--space-2); overflow: hidden; display: flex; flex-direction: column; }
+.daypanel .hd { padding: var(--space-3) var(--space-4) var(--space-2); }
+.daypanel .tot { display: flex; flex-wrap: wrap; gap: 4px 16px; color: var(--ink-muted); }
+.daypanel .vg-row { background: transparent; }
+
+/* ---------- Queue ---------- */
+.qcard { background: var(--surface-container-low); border-radius: var(--radius-lg); padding: var(--space-3) var(--space-3) var(--space-2); display: flex; flex-direction: column; gap: var(--space-2); }
+.qcard .qhd { display: flex; align-items: flex-start; gap: var(--space-2); }
+.qcard .qhd .mid { flex: 1; min-width: 0; }
+.qcard .amt { font: 600 calc(24px * var(--ts))/calc(30px * var(--ts)) var(--font-sans); color: var(--expense); font-variant-numeric: tabular-nums; }
+.qcard .payee { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.qcard .content { color: var(--ink-muted); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.qcard .meta { color: var(--ink-muted); display: flex; flex-wrap: wrap; align-items: center; gap: 4px 10px; }
+.qcats { display: flex; gap: 4px; overflow: hidden; }
+.qcats .c { flex: none; width: 64px; display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 4px 0; border-radius: var(--radius-md); position: relative; }
+.qcats .c .ic { width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--on-cat); }
+.qcats .c .ic .ms { font-size: 22px; }
+.qcats .c .nm { font: 500 calc(11px * var(--ts))/calc(14px * var(--ts)) var(--font-sans); text-align: center; max-width: 60px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.qcats .c.sug { background: var(--secondary-container); color: var(--on-secondary-container); }
+.qcats .c.sug .ic { box-shadow: 0 0 0 2px var(--secondary-container), 0 0 0 4px var(--on-secondary-container); }
+.qcats .c .tag { position: absolute; top: -6px; left: 50%; transform: translateX(-50%); padding: 0 6px; border-radius: 8px; background: var(--on-secondary-container); color: var(--secondary-container); font: 700 9px/14px var(--font-sans); letter-spacing: .02em; white-space: nowrap; }
+.qcats .c.more .ic { background: var(--surface); color: var(--ink-muted); border: 2px dashed var(--outline); }
+.qacts { display: flex; flex-wrap: wrap; gap: 4px 6px; align-items: center; }
+.qacts .vg-btn { height: 36px; padding: 0 10px; }
+.qnote { display: flex; gap: 6px; align-items: flex-start; background: var(--info-container); color: var(--on-info-container); border-radius: var(--radius-sm); padding: 6px 10px; }
+.qnote .ms { font-size: 18px; flex: none; margin-top: 1px; }
+.qlist { display: flex; flex-direction: column; gap: var(--space-3); padding: 0 var(--space-3) var(--space-4); }
+.qinfo { background: var(--info-container); color: var(--on-info-container); border-radius: var(--radius-lg); padding: var(--space-3); display: flex; flex-direction: column; gap: 6px; }
+.qinfo .r { display: flex; gap: var(--space-2); align-items: flex-start; }
+.qinfo .vg-btn { color: var(--on-info-container); height: 36px; padding: 0 10px; }
+.pull { display: flex; align-items: center; justify-content: center; gap: 8px; height: 48px; color: var(--ink-muted); flex: none; }
+
+/* ---------- Savings / debts ---------- */
+.gcard { background: var(--surface-container-low); border-radius: var(--radius-lg); padding: var(--space-4); display: flex; flex-direction: column; gap: 8px; }
+.gcard .top { display: flex; align-items: flex-start; gap: var(--space-2); }
+.gcard .top .nm { flex: 1; min-width: 0; }
+.pbar { height: 8px; border-radius: 4px; background: var(--surface-container-high); overflow: hidden; }
+.pbar > i { display: block; height: 100%; border-radius: 4px; background: var(--primary); }
+.pbar.done > i { background: var(--income); }
+.pbar.warn > i { background: var(--warning); }
+.pbar.over > i { background: var(--error); }
+.pbar.sm { height: 4px; }
+.gline { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 2px 12px; color: var(--ink-muted); }
+.glist { display: flex; flex-direction: column; gap: var(--space-3); padding: 0 var(--space-4) 96px; }
+.drow { display: flex; gap: var(--space-3); align-items: flex-start; padding: var(--space-3) var(--space-4); min-height: var(--row-two-line); }
+.drow .av { width: 40px; height: 40px; border-radius: 50%; background: var(--surface-container-high); color: var(--ink); display: flex; align-items: center; justify-content: center; flex: none; font: 600 15px/1 var(--font-sans); }
+.drow .mid { flex: 1; min-width: 0; }
+.drow .amt { text-align: right; font-variant-numeric: tabular-nums; }
+.grp-hd { display: flex; justify-content: space-between; align-items: baseline; padding: var(--space-4) var(--space-4) var(--space-1); flex-wrap: wrap; gap: 4px; }
+.notecard { margin: 0 var(--space-4) var(--space-2); display: flex; gap: 8px; color: var(--ink-muted); align-items: flex-start; }
+.notecard .ms { font-size: 20px; flex: none; }
+.bigamt { font: 600 calc(36px * var(--ts))/calc(44px * var(--ts)) var(--font-sans); font-variant-numeric: tabular-nums; }
+
+/* ---------- Stepper ---------- */
+.stepper { display: inline-flex; align-items: center; border: 1px solid var(--outline); border-radius: var(--radius-full); height: 40px; }
+.stepper > span { width: 44px; height: 40px; display: flex; align-items: center; justify-content: center; }
+.stepper > b { min-width: 52px; text-align: center; font: 600 15px/1 var(--font-sans); font-variant-numeric: tabular-nums; }
+
+/* ---------- Mailbox / email ---------- */
+.reass { display: flex; flex-direction: column; gap: var(--space-4); padding: var(--space-2) var(--space-6); }
+.reass .r { display: flex; gap: var(--space-3); align-items: flex-start; }
+.reass .r .ic { width: 40px; height: 40px; border-radius: 50%; background: var(--secondary-container); color: var(--on-secondary-container); display: flex; align-items: center; justify-content: center; flex: none; }
+.prov { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-2); padding: 0 var(--space-4); }
+.prov > span { min-height: 56px; border: 1px solid var(--outline); border-radius: var(--radius-md); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; }
+.prov > span.on { border: 2px solid var(--primary); background: var(--primary-container); color: var(--on-primary-container); }
+.steps { margin: 0 var(--space-4); background: var(--surface-container-low); border-radius: var(--radius-lg); padding: var(--space-3) var(--space-4); display: flex; flex-direction: column; gap: 8px; }
+.steps ol { margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 6px; }
+.mbox { background: var(--surface-container-low); border-radius: var(--radius-lg); padding: var(--space-4); display: flex; flex-direction: column; gap: 8px; margin: 0 var(--space-4); }
+.mbox .top { display: flex; gap: var(--space-3); align-items: center; }
+.mbox .top .lg { width: 40px; height: 40px; border-radius: 50%; background: var(--surface-container-high); display: flex; align-items: center; justify-content: center; font: 700 16px/1 var(--font-sans); flex: none; }
+
+/* ---------- Export / PDF ---------- */
+.radiorow { display: flex; align-items: center; gap: var(--space-3); min-height: 56px; padding: 0 var(--space-4); }
+.radio { width: 20px; height: 20px; border-radius: 50%; border: 2px solid var(--ink-muted); flex: none; position: relative; }
+.radio.on { border-color: var(--primary); }
+.radio.on::after { content: ""; position: absolute; inset: 3px; border-radius: 50%; background: var(--primary); }
+.checkb { width: 18px; height: 18px; border-radius: 2px; border: 2px solid var(--ink-muted); flex: none; display: flex; align-items: center; justify-content: center; }
+.checkb.on { background: var(--primary); border-color: var(--primary); color: var(--on-primary); }
+.checkb .ms { font-size: 16px; }
+
+/* ---------- Lock / biometric ---------- */
+.bio-btn { width: 64px; height: 64px; border-radius: 50%; background: var(--secondary-container); color: var(--on-secondary-container); display: flex; align-items: center; justify-content: center; }
+.bio-btn .ms { font-size: 32px; }
+.sys-sheet { position: absolute; left: 8px; right: 8px; z-index: 8; border-radius: 28px; background: var(--surface-container-high); padding: 24px; text-align: center; }
+
+/* ---------- More hub ---------- */
+.more-row .bdg2 { min-width: 22px; height: 22px; padding: 0 6px; border-radius: 11px; background: var(--badge); color: var(--on-badge); font: 700 12px/22px var(--font-sans); text-align: center; }
+.mstatus { color: var(--ink-muted); white-space: nowrap; }
+
+/* ---------- Removable filter chips ---------- */
+.rchips { display: flex; flex-wrap: wrap; gap: 6px; padding: 4px var(--space-4) 8px; flex: none; }
+.rchip { display: inline-flex; align-items: center; gap: 2px; min-height: 32px; padding: 0 4px 0 12px; border-radius: var(--radius-sm); background: var(--secondary-container); color: var(--on-secondary-container); position: relative; }
+.rchip::before { content: ""; position: absolute; inset: -8px 0; }
+.rchip .x { width: 28px; height: 28px; display: inline-flex; align-items: center; justify-content: center; }
+.rchip .x .ms { font-size: 18px; }
+.mgrid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px 0; padding: 0 var(--space-3); }
+.mgrid .cell { display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 4px 0; position: relative; }
+.mgrid .cell .ic { width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--on-cat); }
+.mgrid .cell .ic .ms { font-size: 20px; }
+.mgrid .cell .chk { position: absolute; top: 0; left: calc(50% + 8px); width: 20px; height: 20px; border-radius: 50%; background: var(--primary); color: var(--on-primary); display: flex; align-items: center; justify-content: center; box-shadow: 0 0 0 2px var(--surface-container); }
+.mgrid .cell .chk .ms { font-size: 14px; }
+.mgrid .cell.off .ic { opacity: .45; }
+.pdf { width: 595px; height: 842px; background: #FFFFFF; color: #171D1B; font-family: var(--font-sans); padding: 48px 48px; box-sizing: border-box; display: flex; flex-direction: column; gap: 18px; }
+/* ---------- 200 % text reflow ---------- */
+.big .amount-xl, .big .bigamt { overflow-wrap: anywhere; }
+.big .vg-row.two { flex-wrap: wrap; }
+.big .amt2 { flex-basis: 100%; padding-left: 56px; }
+.big .amt2 div { text-align: left !important; }
+.big .gcard .top { flex-wrap: wrap; }
+.big .drow { flex-wrap: wrap; }
+.big .drow .amt { flex-basis: 100%; padding-left: 52px; text-align: left; }
+.big .qcard .qhd { flex-wrap: wrap; }
+.big .qcard .qhd > div:last-child { text-align: left !important; }
+.big .vg-btn { height: auto; min-height: 40px; white-space: normal; padding-top: 6px; padding-bottom: 6px; text-align: center; }
+.big .vg-fab { max-width: calc(100% - 32px); }
+.big .grp-hd, .big .gline { flex-direction: column; align-items: flex-start; }
+.big .vg-row .txt > div { white-space: normal; }
+.big .num { white-space: normal; }
+.big .vg-row.two .txt { flex-basis: calc(100% - 56px); }
+.big .ov-hero .amount-xl { font-size: 44px; line-height: 52px; }
+.big .gcard .top .nm { flex-basis: calc(100% - 52px); }
+.big .qcard .qhd .mid { flex-basis: 100%; }
+.big .qcard .amt { font-size: 36px; line-height: 44px; }
+
+/* ---------- Home-screen widget, v4 (EXT-01) ----------
+   Always rendered in the brand's dark scheme (data-theme="dark" on the widget), so `warning` resolves to its dark value. */
+.vw4 { position: relative; overflow: hidden; background: var(--widget-surface); color: var(--widget-ink); border-radius: var(--radius-widget); padding: 12px; display: flex; flex-direction: column; font-family: var(--font-sans); box-shadow: 0 1px 2px rgba(0,0,0,.22), 0 8px 20px rgba(0,0,0,.16); }
+.vw4::before { content: ""; position: absolute; right: -48px; top: -64px; width: 160px; height: 160px; border-radius: 50%; background: rgba(140,213,191,.12); pointer-events: none; }
+.vw4 > * { position: relative; }
+.vw4 .hd { display: flex; align-items: center; gap: 6px; font: 600 12px/16px var(--font-sans); color: var(--brand-mint); min-height: 18px; }
+.vw4 .hd .ms { font-size: 16px; }
+.vw4 .amt { font: 700 22px/28px var(--font-sans); letter-spacing: -.2px; margin-top: 6px; white-space: nowrap; font-variant-numeric: tabular-nums; }
+.vw4 .amt.mask { letter-spacing: 3px; color: rgba(247,250,248,.45); }
+.vw4 .bar { height: 6px; border-radius: 3px; background: rgba(247,250,248,.18); margin-top: 8px; overflow: hidden; }
+.vw4 .bar i { display: block; height: 100%; border-radius: 3px; background: var(--brand-mint); }
+.vw4 .bar.warn i { background: var(--warning); }
+.vw4 .cap { display: flex; align-items: center; gap: 4px; font: 500 12px/16px var(--font-sans); color: rgba(247,250,248,.80); margin-top: 6px; font-variant-numeric: tabular-nums; }
+.vw4 .cap .ms { font-size: 14px; }
+.vw4 .cap.warn { color: var(--warning); font-weight: 600; }
+.vw4 .msg { display: flex; align-items: flex-start; gap: 8px; font: 500 13px/18px var(--font-sans); color: rgba(247,250,248,.88); margin-top: 8px; }
+.vw4 .msg .ms { font-size: 18px; color: var(--brand-mint); flex: none; }
+.vw4 .fl { flex: 1; min-height: 8px; }
+.vw4 .btns { display: flex; gap: 8px; }
+.vw4 .b { flex: 1; min-height: 56px; border-radius: var(--radius-lg); background: var(--brand-paper); color: var(--brand-deep); display: flex; align-items: center; justify-content: center; gap: 8px; font: 600 14px/20px var(--font-sans); }
+.vw4 .b .gl { width: 26px; height: 26px; border-radius: 50%; flex: none; display: flex; align-items: center; justify-content: center; color: var(--on-widget-action); font: 600 20px/1 var(--font-sans); }
+.vw4 .b.e .gl { background: var(--widget-expense); }
+.vw4 .b.i .gl { background: var(--widget-income); }
+.vw4.s2 .b { flex-direction: column; gap: 3px; min-height: 60px; font: 600 12px/16px var(--font-sans); }
+.vw4.s4 { flex-direction: row; gap: 14px; padding: 14px; }
+.vw4.s4 .info { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.vw4.s4 .amt { font-size: 26px; line-height: 32px; margin-top: 8px; }
+.vw4.s4 .btns { flex-direction: column; width: 132px; flex: none; }
+.vw4.s4 .b { justify-content: flex-start; padding: 0 12px; }
+</style></head><body><div class="fb"><div class="vg-phone and" role="img" aria-label="Home screen widget" style="--ts:1.0;background:transparent;"><div class="vg-status and" aria-hidden="true" style="color:#1A1C1E;background:transparent"><span class="num">9:41</span><span class="sbic"><span class="ms fill" aria-hidden="true">wifi</span><span class="ms fill" aria-hidden="true">signal_cellular_alt</span><span class="ms fill" aria-hidden="true">battery_full</span></span></div><div class="vg-body"><div class="lnch wall-light lnch-ink-light"><span class="wshape1" style="width:420px;height:420px;left:-160px;top:420px"></span><span class="wshape2" style="width:300px;height:300px;right:-120px;top:80px"></span><div style="position:relative;display:flex;flex-direction:column;flex:1"><div style="padding:28px 24px 28px"><div style="font:400 44px/1.1 var(--font-sans)">Thu, Nov 26</div><div style="font:400 15px/20px var(--font-sans);opacity:.8;margin-top:6px"><span class="ms xs" aria-hidden="true" style="vertical-align:-3px">partly_cloudy_day</span> 29°C</div></div><div style="display:grid;grid-template-columns:168px 1fr;padding:0 6px 0 18px;align-items:start"><div class="vw4 s2" data-theme="dark" style="width:164px;height:186px"><div class="hd"><span class="ms fill" aria-hidden="true">lock</span><span>Locked with PIN</span></div><div class="amt mask" aria-hidden="true">••••••</div><div class="bar"><i style="width:0"></i></div><div class="fl"></div><div class="btns"><span class="b e" role="button" aria-label="Add expense"><span class="gl">−</span><span>Expense</span></span><span class="b i" role="button" aria-label="Add income"><span class="gl">+</span><span>Income</span></span></div></div><div class="lnch-icons" style="grid-template-columns:1fr 1fr;padding:0;gap:22px 0"><span><i style="background:#E8453C"></i>Mail</span><span><i style="background:#4285F4"></i>Maps</span><span><i style="background:#34A853"></i>Photos</span><span><i style="background:#FBBC05"></i>Files</span></div></div><div class="lnch-icons" style="margin-top:22px"><span><i style="background:#7E57C2"></i>Notes</span><span><i style="background:#00ACC1"></i>Clock</span><span><i style="background:#F06292"></i>Music</span><span><i style="background:#8D6E63"></i>Contacts</span></div><div style="flex:1"></div><div class="lnch-dock" style="margin-bottom:18px"><i style="background:#43A047"></i><i style="background:#1E88E5"></i><i style="background:#F4511E"></i><i style="background:#5E35B1"></i></div><div class="lnch-search gwidget" style="margin-bottom:12px"><span class="ms" aria-hidden="true">search</span><span style="font:400 15px/20px var(--font-sans);opacity:.7">Search</span></div></div></div></div><div class="vg-nav and" style="--ink:#1A1C1E"></div></div><div class="anno"><div class="fid">android/light/EXT01_ext-widget__locked.png</div><h1>Home-screen widget · locked</h1><div class="st">Android 360 × 800 dp · light · EN · main USD</div><h2>Design notes</h2><ul><li>PIN on: lock icon + “Locked with PIN” in the header, the amount replaced by a dotted mask and an empty bar, so the layout does not jump when PIN is turned off.</li><li>What changed from P1: the saturated red / green blocks become two <b>paper</b> buttons (<code>brand-paper</code>, text <code>brand-deep</code> 8.9:1) with a small red − / green + glyph disc, so the money colours stay as cues without shouting. Radius 24 (system widget radius on Android 12+), soft shadow, a faint mint halo top-right.</li><li>The widget keeps fixed brand colours on light and dark wallpapers (not the app theme, not dynamic colour). Amounts are in the <b>main currency</b>, as everywhere in v4.</li><li>2 × 2: buttons side by side, each ≥ 62 × 62 dp, glyph disc above the word, so “Expense / Income” fit without truncation in EN and VI.</li></ul><h2>Assumptions</h2><div class="asm"><span class="tag as">ASSUMPTION C00</span>product.md v4 was not reachable from this session (not in the connected folders, docs/ access declined). This round is built from what is in the project: design/current/ui-spec.md (2026-11-10), lib/l10n/app_en.arb + app_vi.arb (2026-11-10), brief v3 (2026-11-06) and the four themes named in chat: main currency first, savings wallets, reminders before due dates, the remaining screens.</div><div class="asm"><span class="tag as">ASSUMPTION C10</span>Home-screen widget (EXT-01) redrawn: Android only (iOS has no widget in the spec). Theme folders = light / dark wallpaper; the widget itself keeps fixed brand colours. Two new strings split the old “Spent this month: X / Y” line into a label and a caption.</div><h2>Accessibility</h2><ul><li>Buttons read “Add expense” / “Add income”. Amount and caption read as one text: “Spent this month, $1,840.00, of $2,800.00, 66 percent”.</li></ul><h2>Flows</h2><ul><li>F2: widget Expense → (Lock → PIN) → New expense → amount → Choose category → saved → Home</li></ul></div></div><script>
 document.querySelectorAll('[data-scroll]').forEach(function(el){var a=el.getAttribute('data-scroll');
 if(a==='bottom'){el.scrollTop=el.scrollHeight;}else if(a!=='top'){var t=el.querySelector('#'+a);if(t){el.scrollTop=t.offsetTop-parseInt(el.getAttribute('data-off')||'8');}}});
 </script></body></html>

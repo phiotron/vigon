@@ -1,0 +1,244 @@
+/* Ví Gọn — generated from tokens.json */
+:root, [data-theme="light"] {
+  --primary: #2e7d6b; /* Màu gốc của app: nút chính (Lưu ở Chuyển tiền), công tắc bật, tab đang chọn, thanh ngân sách, liên kết. Chữ trên nó dùng on-primary. */
+  --on-primary: #ffffff; /* Chữ và icon trên nền primary. */
+  --primary-container: #b8eddc; /* Nền nhấn nhẹ: nút nổi +, dòng đang chọn trong bảng chọn kỳ, ô chip đã chọn. v2: thêm nền đánh dấu chữ khớp khi tìm kiếm (kèm chữ đậm 600) và chip lọc tài khoản đang bật. */
+  --on-primary-container: #002019; /* Chữ và icon trên primary-container. */
+  --secondary-container: #cce8df; /* Phím phép tính (÷ × − + =) trên bàn phím số. v2: thêm nút tonal (Sao lưu ngay), phần đang chọn của nút chọn một (segmented), chip lọc đang chọn (Tháng này / Tất cả thời gian). */
+  --on-secondary-container: #062019; /* Chữ trên secondary-container. */
+  --surface: #f7faf8; /* Nền màn hình. */
+  --surface-container-low: #f2f6f4; /* v2. Nền thẻ nhóm trong Cài đặt (mỗi nhóm một thẻ bo radius-lg) để dễ quét danh sách dài. Map ColorScheme.surfaceContainerLow. ink, ink-muted, primary (4.52:1), income, error đều ≥ 4.5:1 trên nó. */
+  --surface-container: #ecf2ef; /* Nền bảng kéo từ dưới lên, menu, ô nhập. v2: thêm nền ô tìm kiếm trên thanh tiêu đề. */
+  --surface-container-high: #e3ebe7; /* Nền hộp thoại, thanh Số dư, phím chữ số. */
+  --ink: #171d1b; /* Chữ chính trên surface, surface-container, surface-container-high. */
+  --ink-muted: #3f4946; /* Chữ phụ: phụ đề, biểu thức đang gõ, ngày trong dòng khoản, chú thích. Trên mọi nền surface. */
+  --outline: #6f7975; /* Viền ô nhập, viền chip, viền nút chọn một. Đủ 3:1 trên surface. v2: thêm vòng nét đứt của ô ⋯ Danh mục khác quanh biểu đồ. */
+  --outline-variant: #bec9c4; /* Đường kẻ chia mục, viền khung điện thoại. Chỉ trang trí, không mang nghĩa. */
+  --income: #2e7d32; /* Tiền thu: tổng thu giữa vòng tròn, phần Thu ở Các khoản, nút + và nút Lưu khi ghi khoản thu. Luôn đi kèm dấu + hoặc chữ Thu vì cùng độ sáng với expense. */
+  --on-income: #ffffff; /* Chữ trên nền income (nút +, nút Lưu khoản thu). Giao diện tối dùng chữ đen. */
+  --expense: #c62828; /* Tiền chi: tổng chi, số tiền khi ghi khoản chi, nút −, nút Lưu khoản chi. Luôn đi kèm dấu − hoặc chữ Chi. */
+  --on-expense: #ffffff; /* Chữ trên nền expense. Giao diện tối dùng chữ đen. */
+  --error: #ba1a1a; /* Lỗi nhập liệu, Vượt ngân sách, dòng Xóa toàn bộ dữ liệu, nút hành động nguy hiểm trong hộp thoại. */
+  --on-error: #ffffff; /* Chữ trên nền error. */
+  --error-container: #ffdad6; /* v2. Nền dải trạng thái lỗi (sao lưu tự động lỗi) và nhãn Vượt nhỏ. Chữ trên nó dùng on-error-container. Map ColorScheme.errorContainer. */
+  --on-error-container: #410002; /* v2. Chữ và icon trên error-container (≥ 10:1 ở hai chủ đề). Map ColorScheme.onErrorContainer. */
+  --swipe-delete: #ffdad6; /* Nền lộ ra khi vuốt một khoản sang trái để xóa; icon thùng rác màu error. Cùng giá trị sáng với error-container; giữ riêng vì đã map vào ViGonColors. */
+  --inverse-surface: #2c3230; /* Nền thanh thông báo (Đã xóa · Hoàn tác). v2: thanh thông báo luôn nằm trên hai nút − / + và trên bàn phím số, cao tự giãn theo chữ (1–3 dòng). */
+  --inverse-ink: #edf2ef; /* Chữ trên inverse-surface. */
+  --inverse-primary: #8cd5bf; /* Nút hành động trong thanh thông báo (Hoàn tác). */
+  --focus: #0e5244; /* Vòng focus 2px khi dùng bàn phím hoặc trình đọc màn hình. Đủ 3:1 trên mọi nền surface. */
+  --scrim: rgba(0, 0, 0, 0.40); /* Lớp tối phủ màn hình sau hộp thoại và bảng kéo. */
+  --canvas: #e2e7e4; /* Nền bảng trình bày thiết kế quanh khung điện thoại (không dùng trong app). */
+  --brand-deep: #0e5244; /* v2. Màu nền logo (D-009). Chỉ dùng cho logo, widget, icon thông báo; không dùng làm màu giao diện trong app. */
+  --brand-mint: #8cd5bf; /* v2. Thẻ sau của logo. Chỉ dùng trong logo. */
+  --brand-paper: #f7faf8; /* v2. Thẻ trước của logo. Chỉ dùng trong logo. */
+  --brand-dot: #e65100; /* v2. Nút tròn cam trên thẻ trước của logo. Chỉ dùng trong logo. */
+  --widget-surface: #fbf8f1; /* v3 (widget B). Nền widget 2×2 / 4×2 Android, iOS: đầu dải chuyển màu (góc trên trái). Sáng: ngà; tối: ngọc lục bảo sâu. Theo chế độ sáng/tối của máy, không theo chủ đề app hay màu động. */
+  --widget-surface-end: #f3ecdd; /* v3 (widget B). Cuối dải chuyển màu nền widget (góc dưới phải). */
+  --widget-ink: #0e3b32; /* v3 (widget B). Tên app và chữ hai nút trên widget. */
+  --widget-gold: #6e5c34; /* v3 (widget B). Điểm nhấn vàng: dòng trạng thái (chi tháng, khóa PIN, cập nhật) và icon đi kèm. ≥ 4.5:1 trên cả hai đầu nền. */
+  --widget-outline: #d9c48f; /* v3 (widget B). Viền vàng mảnh 1dp quanh widget. Chỉ trang trí. */
+  --widget-action: #efe5cf; /* v3 (widget B). Nền hai nút Chi/Thu (khối trong mờ trên nền widget). */
+  --widget-expense: #c0463a; /* v3 (widget B). Huy hiệu tròn dấu − của nút Chi (giống nhau ở hai chủ đề). Dấu on-widget-action ≥ 4.5:1. */
+  --widget-income: #1f7a5c; /* v3 (widget B). Huy hiệu tròn dấu + của nút Thu (giống nhau ở hai chủ đề). Dấu on-widget-action ≥ 4.5:1. */
+  --on-widget-action: #ffffff; /* v3 (widget B). Dấu − / + trên huy hiệu tròn của hai nút widget. */
+  --on-cat: #ffffff; /* Icon trắng trên mọi màu danh mục cat-01 … cat-16 (đủ 3:1). */
+  --cat-01: #c62828; /* Đỏ. Danh mục, ví dụ Sức khỏe. Giữ nguyên ở hai chủ đề; icon on-cat. */
+  --cat-02: #ad1457; /* Hồng. Danh mục, ví dụ Mua sắm. Giữ nguyên ở hai chủ đề; icon on-cat. */
+  --cat-03: #6a1b9a; /* Tím. Danh mục, ví dụ Giải trí. Giữ nguyên ở hai chủ đề; icon on-cat. */
+  --cat-04: #4527a0; /* Tím than. Giữ nguyên ở hai chủ đề; icon on-cat. */
+  --cat-05: #283593; /* Chàm. Danh mục, ví dụ Hóa đơn. Giữ nguyên ở hai chủ đề; icon on-cat. */
+  --cat-06: #1565c0; /* Xanh dương. Danh mục, ví dụ Đi lại. Giữ nguyên ở hai chủ đề; icon on-cat. */
+  --cat-07: #0277bd; /* Lam. Giữ nguyên ở hai chủ đề; icon on-cat. */
+  --cat-08: #00838f; /* Lam ngọc. Danh mục, ví dụ Học tập. Giữ nguyên ở hai chủ đề; icon on-cat. */
+  --cat-09: #00695c; /* Ngọc. Danh mục, ví dụ Nhà cửa. Giữ nguyên ở hai chủ đề; icon on-cat. */
+  --cat-10: #2e7d32; /* Lục. Danh mục thu, ví dụ Lương. Giữ nguyên ở hai chủ đề; icon on-cat. */
+  --cat-11: #558b2f; /* Lục nhạt. Giữ nguyên ở hai chủ đề; icon on-cat. */
+  --cat-12: #827717; /* Ô liu. Danh mục thu, ví dụ Thưởng. Giữ nguyên ở hai chủ đề; icon on-cat. */
+  --cat-13: #e65100; /* Cam. Danh mục, ví dụ Ăn uống. Giữ nguyên ở hai chủ đề; icon on-cat. */
+  --cat-14: #bf360c; /* Cam đất. Giữ nguyên ở hai chủ đề; icon on-cat. */
+  --cat-15: #6d4c41; /* Nâu. Danh mục, ví dụ Gia đình. Giữ nguyên ở hai chủ đề; icon on-cat. */
+  --cat-16: #546e7a; /* Xám xanh. Danh mục Khác. Giữ nguyên ở hai chủ đề; icon on-cat. */
+  --shadow-sheet: 0 -2px 12px rgba(0, 0, 0, 0.12); /* Bảng kéo từ dưới lên. */
+  --shadow-float: 0 3px 8px rgba(0, 0, 0, 0.18); /* Nút nổi +, menu, thanh thông báo. */
+}
+[data-theme="dark"] {
+  --primary: #8cd5bf;
+  --on-primary: #00382d;
+  --primary-container: #0e5244;
+  --on-primary-container: #b8eddc;
+  --secondary-container: #334b44;
+  --on-secondary-container: #cce8df;
+  --surface: #0f1513;
+  --surface-container-low: #171d1b;
+  --surface-container: #1b211f;
+  --surface-container-high: #252b29;
+  --ink: #dee4e1;
+  --ink-muted: #bec9c4;
+  --outline: #89938f;
+  --outline-variant: #3f4946;
+  --income: #81c784;
+  --on-income: #0a1f0b;
+  --expense: #ef9a9a;
+  --on-expense: #2d0a0a;
+  --error: #ffb4ab;
+  --on-error: #690005;
+  --error-container: #93000a;
+  --on-error-container: #ffdad6;
+  --swipe-delete: #5c1714;
+  --inverse-surface: #dee4e1;
+  --inverse-ink: #2c3230;
+  --inverse-primary: #0e5244;
+  --focus: #8cd5bf;
+  --scrim: rgba(0, 0, 0, 0.60);
+  --canvas: #060908;
+  --brand-deep: #0e5244;
+  --brand-mint: #8cd5bf;
+  --brand-paper: #f7faf8;
+  --brand-dot: #e65100;
+  --widget-surface: #0a2f27;
+  --widget-surface-end: #062019;
+  --widget-ink: #f4ebd3;
+  --widget-gold: #d6b66e;
+  --widget-outline: #7d6b3f;
+  --widget-action: #1b3e36;
+  --widget-expense: #c0463a;
+  --widget-income: #1f7a5c;
+  --on-widget-action: #ffffff;
+  --on-cat: #ffffff;
+  --cat-01: #c62828;
+  --cat-02: #ad1457;
+  --cat-03: #6a1b9a;
+  --cat-04: #4527a0;
+  --cat-05: #283593;
+  --cat-06: #1565c0;
+  --cat-07: #0277bd;
+  --cat-08: #00838f;
+  --cat-09: #00695c;
+  --cat-10: #2e7d32;
+  --cat-11: #558b2f;
+  --cat-12: #827717;
+  --cat-13: #e65100;
+  --cat-14: #bf360c;
+  --cat-15: #6d4c41;
+  --cat-16: #546e7a;
+  --shadow-sheet: 0 -2px 12px rgba(0, 0, 0, 0.5);
+  --shadow-float: 0 3px 8px rgba(0, 0, 0, 0.6);
+}
+:root {
+  --space-1: 4px; /* Khoảng giữa icon và chữ trong chip. */
+  --space-2: 8px; /* Khoảng giữa các phím, giữa các chip. */
+  --space-3: 12px; /* Khoảng giữa hai nút lớn − +, lề trong của chip. */
+  --space-4: 16px; /* Lề trái phải của màn hình, lề trong dòng danh sách. */
+  --space-6: 24px; /* Lề trong hộp thoại, đệm đáy danh sách. */
+  --space-8: 32px; /* Khoảng giữa các nhóm lớn (màn khóa). */
+  --radius-sm: 8px; /* Chip, thanh thông báo, ô nhập. */
+  --radius-md: 12px; /* Phím số, thanh Số dư. */
+  --radius-lg: 16px; /* Hai nút lớn − +, nút nổi +, nút Lưu. */
+  --radius-xl: 28px; /* Hộp thoại, góc trên bảng kéo từ dưới lên. */
+  --radius-widget: 20px; /* v2. Góc widget Android khi launcher không áp góc hệ thống (Android 12+ dùng system_app_widget_background_radius). Nút trong widget dùng radius-md. */
+  --radius-full: 999px; /* Icon danh mục tròn, công tắc, chấm PIN, phím PIN bầu dục. */
+  --tap-min: 48px; /* Mọi nút bấm, icon danh mục quanh biểu đồ, ô màu. */
+  --tap-key: 56px; /* Phím số, thanh Số dư, dòng danh sách. */
+  --tap-main: 64px; /* Nút − + ở màn chính, phím PIN. */
+  --appbar: 56px; /* Chiều cao thanh tiêu đề. */
+  --row-two-line: 72px; /* v2. Chiều cao tối thiểu dòng hai dòng (công tắc có phụ đề, dòng kết quả tìm kiếm, dòng khoản có ghi chú). Dòng tự cao lên theo chữ, không cắt. */
+  --font-sans: "Be Vietnam Pro", system-ui, sans-serif;
+  --font-icon: "Material Symbols Rounded";
+  --text-amount-xl: 600 40px/48px var(--font-sans); /* Số tiền đang gõ ở Nhập khoản và Chuyển tiền. Tự co nhỏ khi không vừa. */
+  --text-amount-md: 600 18px/24px var(--font-sans); /* Tổng thu, tổng chi giữa vòng tròn; số dư. */
+  --text-title-lg: 600 22px/28px var(--font-sans); /* Tiêu đề thanh trên cùng, dòng Số dư ở Các khoản. */
+  --text-title-md: 600 18px/24px var(--font-sans); /* Tiêu đề hộp thoại, bảng kéo, tên kỳ. */
+  --text-title-sm: 600 16px/24px var(--font-sans); /* Tiêu đề phần (Chi, Thu, Chuyển tiền), tên nhóm cài đặt. */
+  --text-body-md: 400 16px/24px var(--font-sans); /* Chữ thường: tên dòng, nội dung hộp thoại, ô nhập. */
+  --text-body-sm: 400 14px/20px var(--font-sans); /* Phụ đề, ngày, dòng ngân sách, chú thích. */
+  --text-label-lg: 600 16px/24px var(--font-sans); /* Chữ trên nút lớn (Lưu, Chọn danh mục). */
+  --text-label-md: 500 14px/20px var(--font-sans); /* Chip, tab, nút chữ, nút trong hộp thoại. */
+  --text-label-sm: 500 12px/16px var(--font-sans); /* Tên danh mục dưới icon trong lưới chọn, bộ đếm ký tự. */
+  --text-key-digit: 500 24px/32px var(--font-sans); /* Phím số và phím phép tính; bàn phím PIN. */
+  --text-key-glyph: 500 32px/40px var(--font-sans); /* Dấu trên hai nút lớn ở màn chính. */
+}
+.amount-xl {
+  font-family: var(--font-sans);
+  font-size: 40px;
+  line-height: 48px;
+  font-weight: 600;
+  letter-spacing: 0;
+}
+.amount-md {
+  font-family: var(--font-sans);
+  font-size: 18px;
+  line-height: 24px;
+  font-weight: 600;
+  letter-spacing: 0;
+}
+.title-lg {
+  font-family: var(--font-sans);
+  font-size: 22px;
+  line-height: 28px;
+  font-weight: 600;
+  letter-spacing: 0;
+}
+.title-md {
+  font-family: var(--font-sans);
+  font-size: 18px;
+  line-height: 24px;
+  font-weight: 600;
+  letter-spacing: 0;
+}
+.title-sm {
+  font-family: var(--font-sans);
+  font-size: 16px;
+  line-height: 24px;
+  font-weight: 600;
+  letter-spacing: 0;
+}
+.body-md {
+  font-family: var(--font-sans);
+  font-size: 16px;
+  line-height: 24px;
+  font-weight: 400;
+  letter-spacing: 0;
+}
+.body-sm {
+  font-family: var(--font-sans);
+  font-size: 14px;
+  line-height: 20px;
+  font-weight: 400;
+  letter-spacing: 0;
+}
+.label-lg {
+  font-family: var(--font-sans);
+  font-size: 16px;
+  line-height: 24px;
+  font-weight: 600;
+  letter-spacing: 0;
+}
+.label-md {
+  font-family: var(--font-sans);
+  font-size: 14px;
+  line-height: 20px;
+  font-weight: 500;
+  letter-spacing: 0;
+}
+.label-sm {
+  font-family: var(--font-sans);
+  font-size: 12px;
+  line-height: 16px;
+  font-weight: 500;
+  letter-spacing: 0;
+}
+.key-digit {
+  font-family: var(--font-sans);
+  font-size: 24px;
+  line-height: 32px;
+  font-weight: 500;
+  letter-spacing: 0;
+}
+.key-glyph {
+  font-family: var(--font-sans);
+  font-size: 32px;
+  line-height: 40px;
+  font-weight: 500;
+  letter-spacing: 0;
+}

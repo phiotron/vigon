@@ -56,7 +56,7 @@ tool/shots/out/
 
 # Claude Design exports: zips exceed GitHub 100 MB limit; PNGs stay local (HTML + tokens are committed)
 design/*.zip
-design/hifi/*.zip
+design/hifi/**/*.zip
 design/hifi/**/*.png
 
 # Device test screenshots (D9, heavy; stay local)

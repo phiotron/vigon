@@ -4,34 +4,2097 @@
   "v": 1,
   "at": "2026-11-05T03:40:59Z"
  },
- "title": "Ví Gọn Hi-Fi P1",
+ "title": "Ví Gọn Hi-Fi · full app",
  "launch": {
   "view": "canvas",
-  "page": "and-light"
+  "page": "v4-and-light"
  },
  "pages": [
   {
+   "id": "v4-and-light",
+   "name": "Full app · Android · Light"
+  },
+  {
+   "id": "v4-and-dark",
+   "name": "Full app · Android · Dark"
+  },
+  {
+   "id": "v4-ios-light",
+   "name": "Full app · iPhone · Light"
+  },
+  {
+   "id": "v4-ios-dark",
+   "name": "Full app · iPhone · Dark"
+  },
+  {
+   "id": "v4-variants",
+   "name": "Full app · VI + 200 % (Android light)"
+  },
+  {
    "id": "and-light",
-   "name": "Android · Light"
+   "name": "P1 archive (Nov 5) · Android · Light"
   },
   {
    "id": "and-dark",
-   "name": "Android · Dark"
+   "name": "P1 archive (Nov 5) · Android · Dark"
   },
   {
    "id": "ios-light",
-   "name": "iPhone · Light"
+   "name": "P1 archive (Nov 5) · iPhone · Light"
   },
   {
    "id": "ios-dark",
-   "name": "iPhone · Dark"
+   "name": "P1 archive (Nov 5) · iPhone · Dark"
   },
   {
    "id": "variants",
-   "name": "VI + 200 % (Android light)"
+   "name": "P1 archive (Nov 5) · VI + 200 % (Android light)"
   }
  ],
  "boards": {
+  "v4-and-light_01_home__default.dc.html": {
+   "x": 0,
+   "y": 240,
+   "w": 360,
+   "h": 800,
+   "title": "android/light/01_home__default.png",
+   "page": "v4-and-light",
+   "radius": 28
+  },
+  "v4-and-light_01_home__queue.dc.html": {
+   "x": 440,
+   "y": 240,
+   "w": 360,
+   "h": 800,
+   "title": "android/light/01_home__queue.png",
+   "page": "v4-and-light",
+   "radius": 28
+  },
+  "v4-and-light_01_home__filtered.dc.html": {
+   "x": 880,
+   "y": 240,
+   "w": 360,
+   "h": 800,
+   "title": "android/light/01_home__filtered.png",
+   "page": "v4-and-light",
+   "radius": 28
+  },
+  "v4-and-light_01_home__empty.dc.html": {
+   "x": 1320,
+   "y": 240,
+   "w": 360,
+   "h": 800,
+   "title": "android/light/01_home__empty.png",
+   "page": "v4-and-light",
+   "radius": 28
+  },
+  "v4-and-light_01_home__over.dc.html": {
+   "x": 1760,
+   "y": 240,
+   "w": 360,
+   "h": 800,
+   "title": "android/light/01_home__over.png",
+   "page": "v4-and-light",
+   "radius": 28
+  },
+  "v4-and-light_49_onboarding__language.dc.html": {
+   "x": 0,
+   "y": 1400,
+   "w": 360,
+   "h": 800,
+   "title": "android/light/49_onboarding__language.png",
+   "page": "v4-and-light",
+   "radius": 28
+  },
+  "v4-and-light_49_onboarding__welcome.dc.html": {
+   "x": 440,
+   "y": 1400,
+   "w": 360,
+   "h": 800,
+   "title": "android/light/49_onboarding__welcome.png",
+   "page": "v4-and-light",
+   "radius": 28
+  },
+  "v4-and-light_49_onboarding__currency.dc.html": {
+   "x": 880,
+   "y": 1400,
+   "w": 360,
+   "h": 800,
+   "title": "android/light/49_onboarding__currency.png",
+   "page": "v4-and-light",
+   "radius": 28
+  },
+  "v4-and-light_49_onboarding__reminder.dc.html": {
+   "x": 1320,
+   "y": 1400,
+   "w": 360,
+   "h": 800,
+   "title": "android/light/49_onboarding__reminder.png",
+   "page": "v4-and-light",
+   "radius": 28
+  },
+  "v4-and-light_49_onboarding__pin.dc.html": {
+   "x": 1760,
+   "y": 1400,
+   "w": 360,
+   "h": 800,
+   "title": "android/light/49_onboarding__pin.png",
+   "page": "v4-and-light",
+   "radius": 28
+  },
+  "v4-and-light_05_entry-new__default.dc.html": {
+   "x": 0,
+   "y": 2560,
+   "w": 360,
+   "h": 800,
+   "title": "android/light/05_entry-new__default.png",
+   "page": "v4-and-light",
+   "radius": 28
+  },
+  "v4-and-light_05_entry-new__foreign.dc.html": {
+   "x": 440,
+   "y": 2560,
+   "w": 360,
+   "h": 800,
+   "title": "android/light/05_entry-new__foreign.png",
+   "page": "v4-and-light",
+   "radius": 28
+  },
+  "v4-and-light_06_entry-id__from-email.dc.html": {
+   "x": 0,
+   "y": 3720,
+   "w": 360,
+   "h": 800,
+   "title": "android/light/06_entry-id__from-email.png",
+   "page": "v4-and-light",
+   "radius": 28
+  },
+  "v4-and-light_06_entry-id__no-time.dc.html": {
+   "x": 440,
+   "y": 3720,
+   "w": 360,
+   "h": 800,
+   "title": "android/light/06_entry-id__no-time.png",
+   "page": "v4-and-light",
+   "radius": 28
+  },
+  "v4-and-light_10_entries__default.dc.html": {
+   "x": 0,
+   "y": 4880,
+   "w": 360,
+   "h": 800,
+   "title": "android/light/10_entries__default.png",
+   "page": "v4-and-light",
+   "radius": 28
+  },
+  "v4-and-light_10_entries__matched.dc.html": {
+   "x": 440,
+   "y": 4880,
+   "w": 360,
+   "h": 800,
+   "title": "android/light/10_entries__matched.png",
+   "page": "v4-and-light",
+   "radius": 28
+  },
+  "v4-and-light_12_settings__top.dc.html": {
+   "x": 0,
+   "y": 6040,
+   "w": 360,
+   "h": 800,
+   "title": "android/light/12_settings__top.png",
+   "page": "v4-and-light",
+   "radius": 28
+  },
+  "v4-and-light_12_settings__middle.dc.html": {
+   "x": 440,
+   "y": 6040,
+   "w": 360,
+   "h": 800,
+   "title": "android/light/12_settings__middle.png",
+   "page": "v4-and-light",
+   "radius": 28
+  },
+  "v4-and-light_12_settings__bottom.dc.html": {
+   "x": 880,
+   "y": 6040,
+   "w": 360,
+   "h": 800,
+   "title": "android/light/12_settings__bottom.png",
+   "page": "v4-and-light",
+   "radius": 28
+  },
+  "v4-and-light_13_settings--main-currency__default.dc.html": {
+   "x": 0,
+   "y": 7200,
+   "w": 360,
+   "h": 800,
+   "title": "android/light/13_settings~main-currency__default.png",
+   "page": "v4-and-light",
+   "radius": 28
+  },
+  "v4-and-light_50_rates__default.dc.html": {
+   "x": 0,
+   "y": 8360,
+   "w": 360,
+   "h": 800,
+   "title": "android/light/50_rates__default.png",
+   "page": "v4-and-light",
+   "radius": 28
+  },
+  "v4-and-light_50_rates__offline.dc.html": {
+   "x": 440,
+   "y": 8360,
+   "w": 360,
+   "h": 800,
+   "title": "android/light/50_rates__offline.png",
+   "page": "v4-and-light",
+   "radius": 28
+  },
+  "v4-and-light_50_rates--edit__default.dc.html": {
+   "x": 880,
+   "y": 8360,
+   "w": 360,
+   "h": 800,
+   "title": "android/light/50_rates~edit__default.png",
+   "page": "v4-and-light",
+   "radius": 28
+  },
+  "v4-and-light_17_accounts__default.dc.html": {
+   "x": 0,
+   "y": 9520,
+   "w": 360,
+   "h": 800,
+   "title": "android/light/17_accounts__default.png",
+   "page": "v4-and-light",
+   "radius": 28
+  },
+  "v4-and-light_18_accounts--add__default.dc.html": {
+   "x": 0,
+   "y": 10680,
+   "w": 360,
+   "h": 800,
+   "title": "android/light/18_accounts~add__default.png",
+   "page": "v4-and-light",
+   "radius": 28
+  },
+  "v4-and-light_19_transfer__cross-currency.dc.html": {
+   "x": 0,
+   "y": 11840,
+   "w": 360,
+   "h": 800,
+   "title": "android/light/19_transfer__cross-currency.png",
+   "page": "v4-and-light",
+   "radius": 28
+  },
+  "v4-and-light_41_savings__default.dc.html": {
+   "x": 0,
+   "y": 13000,
+   "w": 360,
+   "h": 800,
+   "title": "android/light/41_savings__default.png",
+   "page": "v4-and-light",
+   "radius": 28
+  },
+  "v4-and-light_41_savings__empty.dc.html": {
+   "x": 440,
+   "y": 13000,
+   "w": 360,
+   "h": 800,
+   "title": "android/light/41_savings__empty.png",
+   "page": "v4-and-light",
+   "radius": 28
+  },
+  "v4-and-light_41_savings--edit__default.dc.html": {
+   "x": 880,
+   "y": 13000,
+   "w": 360,
+   "h": 800,
+   "title": "android/light/41_savings~edit__default.png",
+   "page": "v4-and-light",
+   "radius": 28
+  },
+  "v4-and-light_41_savings--edit__error.dc.html": {
+   "x": 1320,
+   "y": 13000,
+   "w": 360,
+   "h": 800,
+   "title": "android/light/41_savings~edit__error.png",
+   "page": "v4-and-light",
+   "radius": 28
+  },
+  "v4-and-light_41_savings--add-money__default.dc.html": {
+   "x": 1760,
+   "y": 13000,
+   "w": 360,
+   "h": 800,
+   "title": "android/light/41_savings~add-money__default.png",
+   "page": "v4-and-light",
+   "radius": 28
+  },
+  "v4-and-light_42_debts__default.dc.html": {
+   "x": 0,
+   "y": 14160,
+   "w": 360,
+   "h": 800,
+   "title": "android/light/42_debts__default.png",
+   "page": "v4-and-light",
+   "radius": 28
+  },
+  "v4-and-light_42_debts__empty.dc.html": {
+   "x": 440,
+   "y": 14160,
+   "w": 360,
+   "h": 800,
+   "title": "android/light/42_debts__empty.png",
+   "page": "v4-and-light",
+   "radius": 28
+  },
+  "v4-and-light_42_debts--edit__default.dc.html": {
+   "x": 880,
+   "y": 14160,
+   "w": 360,
+   "h": 800,
+   "title": "android/light/42_debts~edit__default.png",
+   "page": "v4-and-light",
+   "radius": 28
+  },
+  "v4-and-light_42_debts--detail__default.dc.html": {
+   "x": 1320,
+   "y": 14160,
+   "w": 360,
+   "h": 800,
+   "title": "android/light/42_debts~detail__default.png",
+   "page": "v4-and-light",
+   "radius": 28
+  },
+  "v4-and-light_42_debts--payment__default.dc.html": {
+   "x": 1760,
+   "y": 14160,
+   "w": 360,
+   "h": 800,
+   "title": "android/light/42_debts~payment__default.png",
+   "page": "v4-and-light",
+   "radius": 28
+  },
+  "v4-and-light_42_debts--payment__error.dc.html": {
+   "x": 2200,
+   "y": 14160,
+   "w": 360,
+   "h": 800,
+   "title": "android/light/42_debts~payment__error.png",
+   "page": "v4-and-light",
+   "radius": 28
+  },
+  "v4-and-light_51_settings--due-reminders__default.dc.html": {
+   "x": 0,
+   "y": 15320,
+   "w": 360,
+   "h": 800,
+   "title": "android/light/51_settings~due-reminders__default.png",
+   "page": "v4-and-light",
+   "radius": 28
+  },
+  "v4-and-light_EXT07_ext-due-notification__lockscreen.dc.html": {
+   "x": 0,
+   "y": 16480,
+   "w": 360,
+   "h": 800,
+   "title": "android/light/EXT07_ext-due-notification__lockscreen.png",
+   "page": "v4-and-light",
+   "radius": 28
+  },
+  "v4-and-light_EXT01_ext-widget__default.dc.html": {
+   "x": 0,
+   "y": 17640,
+   "w": 360,
+   "h": 800,
+   "title": "android/light/EXT01_ext-widget__default.png",
+   "page": "v4-and-light",
+   "radius": 28
+  },
+  "v4-and-light_EXT01_ext-widget__spent.dc.html": {
+   "x": 440,
+   "y": 17640,
+   "w": 360,
+   "h": 800,
+   "title": "android/light/EXT01_ext-widget__spent.png",
+   "page": "v4-and-light",
+   "radius": 28
+  },
+  "v4-and-light_EXT01_ext-widget__budget.dc.html": {
+   "x": 880,
+   "y": 17640,
+   "w": 360,
+   "h": 800,
+   "title": "android/light/EXT01_ext-widget__budget.png",
+   "page": "v4-and-light",
+   "radius": 28
+  },
+  "v4-and-light_EXT01_ext-widget__near.dc.html": {
+   "x": 1320,
+   "y": 17640,
+   "w": 360,
+   "h": 800,
+   "title": "android/light/EXT01_ext-widget__near.png",
+   "page": "v4-and-light",
+   "radius": 28
+  },
+  "v4-and-light_EXT01_ext-widget__locked.dc.html": {
+   "x": 1760,
+   "y": 17640,
+   "w": 360,
+   "h": 800,
+   "title": "android/light/EXT01_ext-widget__locked.png",
+   "page": "v4-and-light",
+   "radius": 28
+  },
+  "v4-and-light_EXT01_ext-widget__stale.dc.html": {
+   "x": 2200,
+   "y": 17640,
+   "w": 360,
+   "h": 800,
+   "title": "android/light/EXT01_ext-widget__stale.png",
+   "page": "v4-and-light",
+   "radius": 28
+  },
+  "v4-and-light_EXT01_ext-widget__4x2.dc.html": {
+   "x": 2640,
+   "y": 17640,
+   "w": 360,
+   "h": 800,
+   "title": "android/light/EXT01_ext-widget__4x2.png",
+   "page": "v4-and-light",
+   "radius": 28
+  },
+  "v4-and-light_EXT01_ext-widget__picker.dc.html": {
+   "x": 3080,
+   "y": 17640,
+   "w": 360,
+   "h": 800,
+   "title": "android/light/EXT01_ext-widget__picker.png",
+   "page": "v4-and-light",
+   "radius": 28
+  },
+  "v4-and-light_43_queue__default.dc.html": {
+   "x": 0,
+   "y": 18800,
+   "w": 360,
+   "h": 800,
+   "title": "android/light/43_queue__default.png",
+   "page": "v4-and-light",
+   "radius": 28
+  },
+  "v4-and-light_43_queue__mismatch.dc.html": {
+   "x": 440,
+   "y": 18800,
+   "w": 360,
+   "h": 800,
+   "title": "android/light/43_queue__mismatch.png",
+   "page": "v4-and-light",
+   "radius": 28
+  },
+  "v4-and-light_43_queue__empty.dc.html": {
+   "x": 880,
+   "y": 18800,
+   "w": 360,
+   "h": 800,
+   "title": "android/light/43_queue__empty.png",
+   "page": "v4-and-light",
+   "radius": 28
+  },
+  "v4-and-light_43_queue--skip__default.dc.html": {
+   "x": 1320,
+   "y": 18800,
+   "w": 360,
+   "h": 800,
+   "title": "android/light/43_queue~skip__default.png",
+   "page": "v4-and-light",
+   "radius": 28
+  },
+  "v4-and-light_43_queue__saved.dc.html": {
+   "x": 1760,
+   "y": 18800,
+   "w": 360,
+   "h": 800,
+   "title": "android/light/43_queue__saved.png",
+   "page": "v4-and-light",
+   "radius": 28
+  },
+  "v4-and-light_44_email-intro__default.dc.html": {
+   "x": 0,
+   "y": 19960,
+   "w": 360,
+   "h": 800,
+   "title": "android/light/44_email-intro__default.png",
+   "page": "v4-and-light",
+   "radius": 28
+  },
+  "v4-and-light_44_email-add__default.dc.html": {
+   "x": 440,
+   "y": 19960,
+   "w": 360,
+   "h": 800,
+   "title": "android/light/44_email-add__default.png",
+   "page": "v4-and-light",
+   "radius": 28
+  },
+  "v4-and-light_44_email-connected__default.dc.html": {
+   "x": 880,
+   "y": 19960,
+   "w": 360,
+   "h": 800,
+   "title": "android/light/44_email-connected__default.png",
+   "page": "v4-and-light",
+   "radius": 28
+  },
+  "v4-and-light_23_lock__default.dc.html": {
+   "x": 0,
+   "y": 21120,
+   "w": 360,
+   "h": 800,
+   "title": "android/light/23_lock__default.png",
+   "page": "v4-and-light",
+   "radius": 28
+  },
+  "v4-and-dark_01_home__default.dc.html": {
+   "x": 0,
+   "y": 240,
+   "w": 360,
+   "h": 800,
+   "title": "android/dark/01_home__default.png",
+   "page": "v4-and-dark",
+   "radius": 28
+  },
+  "v4-and-dark_01_home__queue.dc.html": {
+   "x": 440,
+   "y": 240,
+   "w": 360,
+   "h": 800,
+   "title": "android/dark/01_home__queue.png",
+   "page": "v4-and-dark",
+   "radius": 28
+  },
+  "v4-and-dark_01_home__filtered.dc.html": {
+   "x": 880,
+   "y": 240,
+   "w": 360,
+   "h": 800,
+   "title": "android/dark/01_home__filtered.png",
+   "page": "v4-and-dark",
+   "radius": 28
+  },
+  "v4-and-dark_01_home__empty.dc.html": {
+   "x": 1320,
+   "y": 240,
+   "w": 360,
+   "h": 800,
+   "title": "android/dark/01_home__empty.png",
+   "page": "v4-and-dark",
+   "radius": 28
+  },
+  "v4-and-dark_01_home__over.dc.html": {
+   "x": 1760,
+   "y": 240,
+   "w": 360,
+   "h": 800,
+   "title": "android/dark/01_home__over.png",
+   "page": "v4-and-dark",
+   "radius": 28
+  },
+  "v4-and-dark_49_onboarding__language.dc.html": {
+   "x": 0,
+   "y": 1400,
+   "w": 360,
+   "h": 800,
+   "title": "android/dark/49_onboarding__language.png",
+   "page": "v4-and-dark",
+   "radius": 28
+  },
+  "v4-and-dark_49_onboarding__welcome.dc.html": {
+   "x": 440,
+   "y": 1400,
+   "w": 360,
+   "h": 800,
+   "title": "android/dark/49_onboarding__welcome.png",
+   "page": "v4-and-dark",
+   "radius": 28
+  },
+  "v4-and-dark_49_onboarding__currency.dc.html": {
+   "x": 880,
+   "y": 1400,
+   "w": 360,
+   "h": 800,
+   "title": "android/dark/49_onboarding__currency.png",
+   "page": "v4-and-dark",
+   "radius": 28
+  },
+  "v4-and-dark_49_onboarding__reminder.dc.html": {
+   "x": 1320,
+   "y": 1400,
+   "w": 360,
+   "h": 800,
+   "title": "android/dark/49_onboarding__reminder.png",
+   "page": "v4-and-dark",
+   "radius": 28
+  },
+  "v4-and-dark_49_onboarding__pin.dc.html": {
+   "x": 1760,
+   "y": 1400,
+   "w": 360,
+   "h": 800,
+   "title": "android/dark/49_onboarding__pin.png",
+   "page": "v4-and-dark",
+   "radius": 28
+  },
+  "v4-and-dark_05_entry-new__default.dc.html": {
+   "x": 0,
+   "y": 2560,
+   "w": 360,
+   "h": 800,
+   "title": "android/dark/05_entry-new__default.png",
+   "page": "v4-and-dark",
+   "radius": 28
+  },
+  "v4-and-dark_05_entry-new__foreign.dc.html": {
+   "x": 440,
+   "y": 2560,
+   "w": 360,
+   "h": 800,
+   "title": "android/dark/05_entry-new__foreign.png",
+   "page": "v4-and-dark",
+   "radius": 28
+  },
+  "v4-and-dark_06_entry-id__from-email.dc.html": {
+   "x": 0,
+   "y": 3720,
+   "w": 360,
+   "h": 800,
+   "title": "android/dark/06_entry-id__from-email.png",
+   "page": "v4-and-dark",
+   "radius": 28
+  },
+  "v4-and-dark_06_entry-id__no-time.dc.html": {
+   "x": 440,
+   "y": 3720,
+   "w": 360,
+   "h": 800,
+   "title": "android/dark/06_entry-id__no-time.png",
+   "page": "v4-and-dark",
+   "radius": 28
+  },
+  "v4-and-dark_10_entries__default.dc.html": {
+   "x": 0,
+   "y": 4880,
+   "w": 360,
+   "h": 800,
+   "title": "android/dark/10_entries__default.png",
+   "page": "v4-and-dark",
+   "radius": 28
+  },
+  "v4-and-dark_10_entries__matched.dc.html": {
+   "x": 440,
+   "y": 4880,
+   "w": 360,
+   "h": 800,
+   "title": "android/dark/10_entries__matched.png",
+   "page": "v4-and-dark",
+   "radius": 28
+  },
+  "v4-and-dark_12_settings__top.dc.html": {
+   "x": 0,
+   "y": 6040,
+   "w": 360,
+   "h": 800,
+   "title": "android/dark/12_settings__top.png",
+   "page": "v4-and-dark",
+   "radius": 28
+  },
+  "v4-and-dark_12_settings__middle.dc.html": {
+   "x": 440,
+   "y": 6040,
+   "w": 360,
+   "h": 800,
+   "title": "android/dark/12_settings__middle.png",
+   "page": "v4-and-dark",
+   "radius": 28
+  },
+  "v4-and-dark_12_settings__bottom.dc.html": {
+   "x": 880,
+   "y": 6040,
+   "w": 360,
+   "h": 800,
+   "title": "android/dark/12_settings__bottom.png",
+   "page": "v4-and-dark",
+   "radius": 28
+  },
+  "v4-and-dark_13_settings--main-currency__default.dc.html": {
+   "x": 0,
+   "y": 7200,
+   "w": 360,
+   "h": 800,
+   "title": "android/dark/13_settings~main-currency__default.png",
+   "page": "v4-and-dark",
+   "radius": 28
+  },
+  "v4-and-dark_50_rates__default.dc.html": {
+   "x": 0,
+   "y": 8360,
+   "w": 360,
+   "h": 800,
+   "title": "android/dark/50_rates__default.png",
+   "page": "v4-and-dark",
+   "radius": 28
+  },
+  "v4-and-dark_50_rates__offline.dc.html": {
+   "x": 440,
+   "y": 8360,
+   "w": 360,
+   "h": 800,
+   "title": "android/dark/50_rates__offline.png",
+   "page": "v4-and-dark",
+   "radius": 28
+  },
+  "v4-and-dark_50_rates--edit__default.dc.html": {
+   "x": 880,
+   "y": 8360,
+   "w": 360,
+   "h": 800,
+   "title": "android/dark/50_rates~edit__default.png",
+   "page": "v4-and-dark",
+   "radius": 28
+  },
+  "v4-and-dark_17_accounts__default.dc.html": {
+   "x": 0,
+   "y": 9520,
+   "w": 360,
+   "h": 800,
+   "title": "android/dark/17_accounts__default.png",
+   "page": "v4-and-dark",
+   "radius": 28
+  },
+  "v4-and-dark_18_accounts--add__default.dc.html": {
+   "x": 0,
+   "y": 10680,
+   "w": 360,
+   "h": 800,
+   "title": "android/dark/18_accounts~add__default.png",
+   "page": "v4-and-dark",
+   "radius": 28
+  },
+  "v4-and-dark_19_transfer__cross-currency.dc.html": {
+   "x": 0,
+   "y": 11840,
+   "w": 360,
+   "h": 800,
+   "title": "android/dark/19_transfer__cross-currency.png",
+   "page": "v4-and-dark",
+   "radius": 28
+  },
+  "v4-and-dark_41_savings__default.dc.html": {
+   "x": 0,
+   "y": 13000,
+   "w": 360,
+   "h": 800,
+   "title": "android/dark/41_savings__default.png",
+   "page": "v4-and-dark",
+   "radius": 28
+  },
+  "v4-and-dark_41_savings__empty.dc.html": {
+   "x": 440,
+   "y": 13000,
+   "w": 360,
+   "h": 800,
+   "title": "android/dark/41_savings__empty.png",
+   "page": "v4-and-dark",
+   "radius": 28
+  },
+  "v4-and-dark_41_savings--edit__default.dc.html": {
+   "x": 880,
+   "y": 13000,
+   "w": 360,
+   "h": 800,
+   "title": "android/dark/41_savings~edit__default.png",
+   "page": "v4-and-dark",
+   "radius": 28
+  },
+  "v4-and-dark_41_savings--edit__error.dc.html": {
+   "x": 1320,
+   "y": 13000,
+   "w": 360,
+   "h": 800,
+   "title": "android/dark/41_savings~edit__error.png",
+   "page": "v4-and-dark",
+   "radius": 28
+  },
+  "v4-and-dark_41_savings--add-money__default.dc.html": {
+   "x": 1760,
+   "y": 13000,
+   "w": 360,
+   "h": 800,
+   "title": "android/dark/41_savings~add-money__default.png",
+   "page": "v4-and-dark",
+   "radius": 28
+  },
+  "v4-and-dark_42_debts__default.dc.html": {
+   "x": 0,
+   "y": 14160,
+   "w": 360,
+   "h": 800,
+   "title": "android/dark/42_debts__default.png",
+   "page": "v4-and-dark",
+   "radius": 28
+  },
+  "v4-and-dark_42_debts__empty.dc.html": {
+   "x": 440,
+   "y": 14160,
+   "w": 360,
+   "h": 800,
+   "title": "android/dark/42_debts__empty.png",
+   "page": "v4-and-dark",
+   "radius": 28
+  },
+  "v4-and-dark_42_debts--edit__default.dc.html": {
+   "x": 880,
+   "y": 14160,
+   "w": 360,
+   "h": 800,
+   "title": "android/dark/42_debts~edit__default.png",
+   "page": "v4-and-dark",
+   "radius": 28
+  },
+  "v4-and-dark_42_debts--detail__default.dc.html": {
+   "x": 1320,
+   "y": 14160,
+   "w": 360,
+   "h": 800,
+   "title": "android/dark/42_debts~detail__default.png",
+   "page": "v4-and-dark",
+   "radius": 28
+  },
+  "v4-and-dark_42_debts--payment__default.dc.html": {
+   "x": 1760,
+   "y": 14160,
+   "w": 360,
+   "h": 800,
+   "title": "android/dark/42_debts~payment__default.png",
+   "page": "v4-and-dark",
+   "radius": 28
+  },
+  "v4-and-dark_42_debts--payment__error.dc.html": {
+   "x": 2200,
+   "y": 14160,
+   "w": 360,
+   "h": 800,
+   "title": "android/dark/42_debts~payment__error.png",
+   "page": "v4-and-dark",
+   "radius": 28
+  },
+  "v4-and-dark_51_settings--due-reminders__default.dc.html": {
+   "x": 0,
+   "y": 15320,
+   "w": 360,
+   "h": 800,
+   "title": "android/dark/51_settings~due-reminders__default.png",
+   "page": "v4-and-dark",
+   "radius": 28
+  },
+  "v4-and-dark_EXT07_ext-due-notification__lockscreen.dc.html": {
+   "x": 0,
+   "y": 16480,
+   "w": 360,
+   "h": 800,
+   "title": "android/dark/EXT07_ext-due-notification__lockscreen.png",
+   "page": "v4-and-dark",
+   "radius": 28
+  },
+  "v4-and-dark_EXT01_ext-widget__default.dc.html": {
+   "x": 0,
+   "y": 17640,
+   "w": 360,
+   "h": 800,
+   "title": "android/dark/EXT01_ext-widget__default.png",
+   "page": "v4-and-dark",
+   "radius": 28
+  },
+  "v4-and-dark_EXT01_ext-widget__spent.dc.html": {
+   "x": 440,
+   "y": 17640,
+   "w": 360,
+   "h": 800,
+   "title": "android/dark/EXT01_ext-widget__spent.png",
+   "page": "v4-and-dark",
+   "radius": 28
+  },
+  "v4-and-dark_EXT01_ext-widget__budget.dc.html": {
+   "x": 880,
+   "y": 17640,
+   "w": 360,
+   "h": 800,
+   "title": "android/dark/EXT01_ext-widget__budget.png",
+   "page": "v4-and-dark",
+   "radius": 28
+  },
+  "v4-and-dark_EXT01_ext-widget__near.dc.html": {
+   "x": 1320,
+   "y": 17640,
+   "w": 360,
+   "h": 800,
+   "title": "android/dark/EXT01_ext-widget__near.png",
+   "page": "v4-and-dark",
+   "radius": 28
+  },
+  "v4-and-dark_EXT01_ext-widget__locked.dc.html": {
+   "x": 1760,
+   "y": 17640,
+   "w": 360,
+   "h": 800,
+   "title": "android/dark/EXT01_ext-widget__locked.png",
+   "page": "v4-and-dark",
+   "radius": 28
+  },
+  "v4-and-dark_EXT01_ext-widget__stale.dc.html": {
+   "x": 2200,
+   "y": 17640,
+   "w": 360,
+   "h": 800,
+   "title": "android/dark/EXT01_ext-widget__stale.png",
+   "page": "v4-and-dark",
+   "radius": 28
+  },
+  "v4-and-dark_EXT01_ext-widget__4x2.dc.html": {
+   "x": 2640,
+   "y": 17640,
+   "w": 360,
+   "h": 800,
+   "title": "android/dark/EXT01_ext-widget__4x2.png",
+   "page": "v4-and-dark",
+   "radius": 28
+  },
+  "v4-and-dark_EXT01_ext-widget__picker.dc.html": {
+   "x": 3080,
+   "y": 17640,
+   "w": 360,
+   "h": 800,
+   "title": "android/dark/EXT01_ext-widget__picker.png",
+   "page": "v4-and-dark",
+   "radius": 28
+  },
+  "v4-and-dark_43_queue__default.dc.html": {
+   "x": 0,
+   "y": 18800,
+   "w": 360,
+   "h": 800,
+   "title": "android/dark/43_queue__default.png",
+   "page": "v4-and-dark",
+   "radius": 28
+  },
+  "v4-and-dark_43_queue__mismatch.dc.html": {
+   "x": 440,
+   "y": 18800,
+   "w": 360,
+   "h": 800,
+   "title": "android/dark/43_queue__mismatch.png",
+   "page": "v4-and-dark",
+   "radius": 28
+  },
+  "v4-and-dark_43_queue__empty.dc.html": {
+   "x": 880,
+   "y": 18800,
+   "w": 360,
+   "h": 800,
+   "title": "android/dark/43_queue__empty.png",
+   "page": "v4-and-dark",
+   "radius": 28
+  },
+  "v4-and-dark_43_queue--skip__default.dc.html": {
+   "x": 1320,
+   "y": 18800,
+   "w": 360,
+   "h": 800,
+   "title": "android/dark/43_queue~skip__default.png",
+   "page": "v4-and-dark",
+   "radius": 28
+  },
+  "v4-and-dark_43_queue__saved.dc.html": {
+   "x": 1760,
+   "y": 18800,
+   "w": 360,
+   "h": 800,
+   "title": "android/dark/43_queue__saved.png",
+   "page": "v4-and-dark",
+   "radius": 28
+  },
+  "v4-and-dark_44_email-intro__default.dc.html": {
+   "x": 0,
+   "y": 19960,
+   "w": 360,
+   "h": 800,
+   "title": "android/dark/44_email-intro__default.png",
+   "page": "v4-and-dark",
+   "radius": 28
+  },
+  "v4-and-dark_44_email-add__default.dc.html": {
+   "x": 440,
+   "y": 19960,
+   "w": 360,
+   "h": 800,
+   "title": "android/dark/44_email-add__default.png",
+   "page": "v4-and-dark",
+   "radius": 28
+  },
+  "v4-and-dark_44_email-connected__default.dc.html": {
+   "x": 880,
+   "y": 19960,
+   "w": 360,
+   "h": 800,
+   "title": "android/dark/44_email-connected__default.png",
+   "page": "v4-and-dark",
+   "radius": 28
+  },
+  "v4-and-dark_23_lock__default.dc.html": {
+   "x": 0,
+   "y": 21120,
+   "w": 360,
+   "h": 800,
+   "title": "android/dark/23_lock__default.png",
+   "page": "v4-and-dark",
+   "radius": 28
+  },
+  "v4-ios-light_01_home__default.dc.html": {
+   "x": 0,
+   "y": 240,
+   "w": 393,
+   "h": 852,
+   "title": "ios/light/01_home__default.png",
+   "page": "v4-ios-light",
+   "radius": 55
+  },
+  "v4-ios-light_01_home__queue.dc.html": {
+   "x": 473,
+   "y": 240,
+   "w": 393,
+   "h": 852,
+   "title": "ios/light/01_home__queue.png",
+   "page": "v4-ios-light",
+   "radius": 55
+  },
+  "v4-ios-light_01_home__filtered.dc.html": {
+   "x": 946,
+   "y": 240,
+   "w": 393,
+   "h": 852,
+   "title": "ios/light/01_home__filtered.png",
+   "page": "v4-ios-light",
+   "radius": 55
+  },
+  "v4-ios-light_01_home__empty.dc.html": {
+   "x": 1419,
+   "y": 240,
+   "w": 393,
+   "h": 852,
+   "title": "ios/light/01_home__empty.png",
+   "page": "v4-ios-light",
+   "radius": 55
+  },
+  "v4-ios-light_01_home__over.dc.html": {
+   "x": 1892,
+   "y": 240,
+   "w": 393,
+   "h": 852,
+   "title": "ios/light/01_home__over.png",
+   "page": "v4-ios-light",
+   "radius": 55
+  },
+  "v4-ios-light_49_onboarding__language.dc.html": {
+   "x": 0,
+   "y": 1452,
+   "w": 393,
+   "h": 852,
+   "title": "ios/light/49_onboarding__language.png",
+   "page": "v4-ios-light",
+   "radius": 55
+  },
+  "v4-ios-light_49_onboarding__welcome.dc.html": {
+   "x": 473,
+   "y": 1452,
+   "w": 393,
+   "h": 852,
+   "title": "ios/light/49_onboarding__welcome.png",
+   "page": "v4-ios-light",
+   "radius": 55
+  },
+  "v4-ios-light_49_onboarding__currency.dc.html": {
+   "x": 946,
+   "y": 1452,
+   "w": 393,
+   "h": 852,
+   "title": "ios/light/49_onboarding__currency.png",
+   "page": "v4-ios-light",
+   "radius": 55
+  },
+  "v4-ios-light_49_onboarding__reminder.dc.html": {
+   "x": 1419,
+   "y": 1452,
+   "w": 393,
+   "h": 852,
+   "title": "ios/light/49_onboarding__reminder.png",
+   "page": "v4-ios-light",
+   "radius": 55
+  },
+  "v4-ios-light_49_onboarding__pin.dc.html": {
+   "x": 1892,
+   "y": 1452,
+   "w": 393,
+   "h": 852,
+   "title": "ios/light/49_onboarding__pin.png",
+   "page": "v4-ios-light",
+   "radius": 55
+  },
+  "v4-ios-light_05_entry-new__default.dc.html": {
+   "x": 0,
+   "y": 2664,
+   "w": 393,
+   "h": 852,
+   "title": "ios/light/05_entry-new__default.png",
+   "page": "v4-ios-light",
+   "radius": 55
+  },
+  "v4-ios-light_05_entry-new__foreign.dc.html": {
+   "x": 473,
+   "y": 2664,
+   "w": 393,
+   "h": 852,
+   "title": "ios/light/05_entry-new__foreign.png",
+   "page": "v4-ios-light",
+   "radius": 55
+  },
+  "v4-ios-light_06_entry-id__from-email.dc.html": {
+   "x": 0,
+   "y": 3876,
+   "w": 393,
+   "h": 852,
+   "title": "ios/light/06_entry-id__from-email.png",
+   "page": "v4-ios-light",
+   "radius": 55
+  },
+  "v4-ios-light_06_entry-id__no-time.dc.html": {
+   "x": 473,
+   "y": 3876,
+   "w": 393,
+   "h": 852,
+   "title": "ios/light/06_entry-id__no-time.png",
+   "page": "v4-ios-light",
+   "radius": 55
+  },
+  "v4-ios-light_10_entries__default.dc.html": {
+   "x": 0,
+   "y": 5088,
+   "w": 393,
+   "h": 852,
+   "title": "ios/light/10_entries__default.png",
+   "page": "v4-ios-light",
+   "radius": 55
+  },
+  "v4-ios-light_10_entries__matched.dc.html": {
+   "x": 473,
+   "y": 5088,
+   "w": 393,
+   "h": 852,
+   "title": "ios/light/10_entries__matched.png",
+   "page": "v4-ios-light",
+   "radius": 55
+  },
+  "v4-ios-light_12_settings__top.dc.html": {
+   "x": 0,
+   "y": 6300,
+   "w": 393,
+   "h": 852,
+   "title": "ios/light/12_settings__top.png",
+   "page": "v4-ios-light",
+   "radius": 55
+  },
+  "v4-ios-light_12_settings__middle.dc.html": {
+   "x": 473,
+   "y": 6300,
+   "w": 393,
+   "h": 852,
+   "title": "ios/light/12_settings__middle.png",
+   "page": "v4-ios-light",
+   "radius": 55
+  },
+  "v4-ios-light_12_settings__bottom.dc.html": {
+   "x": 946,
+   "y": 6300,
+   "w": 393,
+   "h": 852,
+   "title": "ios/light/12_settings__bottom.png",
+   "page": "v4-ios-light",
+   "radius": 55
+  },
+  "v4-ios-light_13_settings--main-currency__default.dc.html": {
+   "x": 0,
+   "y": 7512,
+   "w": 393,
+   "h": 852,
+   "title": "ios/light/13_settings~main-currency__default.png",
+   "page": "v4-ios-light",
+   "radius": 55
+  },
+  "v4-ios-light_50_rates__default.dc.html": {
+   "x": 0,
+   "y": 8724,
+   "w": 393,
+   "h": 852,
+   "title": "ios/light/50_rates__default.png",
+   "page": "v4-ios-light",
+   "radius": 55
+  },
+  "v4-ios-light_50_rates__offline.dc.html": {
+   "x": 473,
+   "y": 8724,
+   "w": 393,
+   "h": 852,
+   "title": "ios/light/50_rates__offline.png",
+   "page": "v4-ios-light",
+   "radius": 55
+  },
+  "v4-ios-light_50_rates--edit__default.dc.html": {
+   "x": 946,
+   "y": 8724,
+   "w": 393,
+   "h": 852,
+   "title": "ios/light/50_rates~edit__default.png",
+   "page": "v4-ios-light",
+   "radius": 55
+  },
+  "v4-ios-light_17_accounts__default.dc.html": {
+   "x": 0,
+   "y": 9936,
+   "w": 393,
+   "h": 852,
+   "title": "ios/light/17_accounts__default.png",
+   "page": "v4-ios-light",
+   "radius": 55
+  },
+  "v4-ios-light_18_accounts--add__default.dc.html": {
+   "x": 0,
+   "y": 11148,
+   "w": 393,
+   "h": 852,
+   "title": "ios/light/18_accounts~add__default.png",
+   "page": "v4-ios-light",
+   "radius": 55
+  },
+  "v4-ios-light_19_transfer__cross-currency.dc.html": {
+   "x": 0,
+   "y": 12360,
+   "w": 393,
+   "h": 852,
+   "title": "ios/light/19_transfer__cross-currency.png",
+   "page": "v4-ios-light",
+   "radius": 55
+  },
+  "v4-ios-light_41_savings__default.dc.html": {
+   "x": 0,
+   "y": 13572,
+   "w": 393,
+   "h": 852,
+   "title": "ios/light/41_savings__default.png",
+   "page": "v4-ios-light",
+   "radius": 55
+  },
+  "v4-ios-light_41_savings__empty.dc.html": {
+   "x": 473,
+   "y": 13572,
+   "w": 393,
+   "h": 852,
+   "title": "ios/light/41_savings__empty.png",
+   "page": "v4-ios-light",
+   "radius": 55
+  },
+  "v4-ios-light_41_savings--edit__default.dc.html": {
+   "x": 946,
+   "y": 13572,
+   "w": 393,
+   "h": 852,
+   "title": "ios/light/41_savings~edit__default.png",
+   "page": "v4-ios-light",
+   "radius": 55
+  },
+  "v4-ios-light_41_savings--edit__error.dc.html": {
+   "x": 1419,
+   "y": 13572,
+   "w": 393,
+   "h": 852,
+   "title": "ios/light/41_savings~edit__error.png",
+   "page": "v4-ios-light",
+   "radius": 55
+  },
+  "v4-ios-light_41_savings--add-money__default.dc.html": {
+   "x": 1892,
+   "y": 13572,
+   "w": 393,
+   "h": 852,
+   "title": "ios/light/41_savings~add-money__default.png",
+   "page": "v4-ios-light",
+   "radius": 55
+  },
+  "v4-ios-light_42_debts__default.dc.html": {
+   "x": 0,
+   "y": 14784,
+   "w": 393,
+   "h": 852,
+   "title": "ios/light/42_debts__default.png",
+   "page": "v4-ios-light",
+   "radius": 55
+  },
+  "v4-ios-light_42_debts__empty.dc.html": {
+   "x": 473,
+   "y": 14784,
+   "w": 393,
+   "h": 852,
+   "title": "ios/light/42_debts__empty.png",
+   "page": "v4-ios-light",
+   "radius": 55
+  },
+  "v4-ios-light_42_debts--edit__default.dc.html": {
+   "x": 946,
+   "y": 14784,
+   "w": 393,
+   "h": 852,
+   "title": "ios/light/42_debts~edit__default.png",
+   "page": "v4-ios-light",
+   "radius": 55
+  },
+  "v4-ios-light_42_debts--detail__default.dc.html": {
+   "x": 1419,
+   "y": 14784,
+   "w": 393,
+   "h": 852,
+   "title": "ios/light/42_debts~detail__default.png",
+   "page": "v4-ios-light",
+   "radius": 55
+  },
+  "v4-ios-light_42_debts--payment__default.dc.html": {
+   "x": 1892,
+   "y": 14784,
+   "w": 393,
+   "h": 852,
+   "title": "ios/light/42_debts~payment__default.png",
+   "page": "v4-ios-light",
+   "radius": 55
+  },
+  "v4-ios-light_42_debts--payment__error.dc.html": {
+   "x": 2365,
+   "y": 14784,
+   "w": 393,
+   "h": 852,
+   "title": "ios/light/42_debts~payment__error.png",
+   "page": "v4-ios-light",
+   "radius": 55
+  },
+  "v4-ios-light_51_settings--due-reminders__default.dc.html": {
+   "x": 0,
+   "y": 15996,
+   "w": 393,
+   "h": 852,
+   "title": "ios/light/51_settings~due-reminders__default.png",
+   "page": "v4-ios-light",
+   "radius": 55
+  },
+  "v4-ios-light_EXT07_ext-due-notification__lockscreen.dc.html": {
+   "x": 0,
+   "y": 17208,
+   "w": 393,
+   "h": 852,
+   "title": "ios/light/EXT07_ext-due-notification__lockscreen.png",
+   "page": "v4-ios-light",
+   "radius": 55
+  },
+  "v4-ios-light_43_queue__default.dc.html": {
+   "x": 0,
+   "y": 18420,
+   "w": 393,
+   "h": 852,
+   "title": "ios/light/43_queue__default.png",
+   "page": "v4-ios-light",
+   "radius": 55
+  },
+  "v4-ios-light_43_queue__mismatch.dc.html": {
+   "x": 473,
+   "y": 18420,
+   "w": 393,
+   "h": 852,
+   "title": "ios/light/43_queue__mismatch.png",
+   "page": "v4-ios-light",
+   "radius": 55
+  },
+  "v4-ios-light_43_queue__empty.dc.html": {
+   "x": 946,
+   "y": 18420,
+   "w": 393,
+   "h": 852,
+   "title": "ios/light/43_queue__empty.png",
+   "page": "v4-ios-light",
+   "radius": 55
+  },
+  "v4-ios-light_43_queue--skip__default.dc.html": {
+   "x": 1419,
+   "y": 18420,
+   "w": 393,
+   "h": 852,
+   "title": "ios/light/43_queue~skip__default.png",
+   "page": "v4-ios-light",
+   "radius": 55
+  },
+  "v4-ios-light_43_queue__saved.dc.html": {
+   "x": 1892,
+   "y": 18420,
+   "w": 393,
+   "h": 852,
+   "title": "ios/light/43_queue__saved.png",
+   "page": "v4-ios-light",
+   "radius": 55
+  },
+  "v4-ios-light_44_email-intro__default.dc.html": {
+   "x": 0,
+   "y": 19632,
+   "w": 393,
+   "h": 852,
+   "title": "ios/light/44_email-intro__default.png",
+   "page": "v4-ios-light",
+   "radius": 55
+  },
+  "v4-ios-light_44_email-add__default.dc.html": {
+   "x": 473,
+   "y": 19632,
+   "w": 393,
+   "h": 852,
+   "title": "ios/light/44_email-add__default.png",
+   "page": "v4-ios-light",
+   "radius": 55
+  },
+  "v4-ios-light_44_email-connected__default.dc.html": {
+   "x": 946,
+   "y": 19632,
+   "w": 393,
+   "h": 852,
+   "title": "ios/light/44_email-connected__default.png",
+   "page": "v4-ios-light",
+   "radius": 55
+  },
+  "v4-ios-light_23_lock__default.dc.html": {
+   "x": 0,
+   "y": 20844,
+   "w": 393,
+   "h": 852,
+   "title": "ios/light/23_lock__default.png",
+   "page": "v4-ios-light",
+   "radius": 55
+  },
+  "v4-ios-dark_01_home__default.dc.html": {
+   "x": 0,
+   "y": 240,
+   "w": 393,
+   "h": 852,
+   "title": "ios/dark/01_home__default.png",
+   "page": "v4-ios-dark",
+   "radius": 55
+  },
+  "v4-ios-dark_01_home__queue.dc.html": {
+   "x": 473,
+   "y": 240,
+   "w": 393,
+   "h": 852,
+   "title": "ios/dark/01_home__queue.png",
+   "page": "v4-ios-dark",
+   "radius": 55
+  },
+  "v4-ios-dark_01_home__filtered.dc.html": {
+   "x": 946,
+   "y": 240,
+   "w": 393,
+   "h": 852,
+   "title": "ios/dark/01_home__filtered.png",
+   "page": "v4-ios-dark",
+   "radius": 55
+  },
+  "v4-ios-dark_01_home__empty.dc.html": {
+   "x": 1419,
+   "y": 240,
+   "w": 393,
+   "h": 852,
+   "title": "ios/dark/01_home__empty.png",
+   "page": "v4-ios-dark",
+   "radius": 55
+  },
+  "v4-ios-dark_01_home__over.dc.html": {
+   "x": 1892,
+   "y": 240,
+   "w": 393,
+   "h": 852,
+   "title": "ios/dark/01_home__over.png",
+   "page": "v4-ios-dark",
+   "radius": 55
+  },
+  "v4-ios-dark_49_onboarding__language.dc.html": {
+   "x": 0,
+   "y": 1452,
+   "w": 393,
+   "h": 852,
+   "title": "ios/dark/49_onboarding__language.png",
+   "page": "v4-ios-dark",
+   "radius": 55
+  },
+  "v4-ios-dark_49_onboarding__welcome.dc.html": {
+   "x": 473,
+   "y": 1452,
+   "w": 393,
+   "h": 852,
+   "title": "ios/dark/49_onboarding__welcome.png",
+   "page": "v4-ios-dark",
+   "radius": 55
+  },
+  "v4-ios-dark_49_onboarding__currency.dc.html": {
+   "x": 946,
+   "y": 1452,
+   "w": 393,
+   "h": 852,
+   "title": "ios/dark/49_onboarding__currency.png",
+   "page": "v4-ios-dark",
+   "radius": 55
+  },
+  "v4-ios-dark_49_onboarding__reminder.dc.html": {
+   "x": 1419,
+   "y": 1452,
+   "w": 393,
+   "h": 852,
+   "title": "ios/dark/49_onboarding__reminder.png",
+   "page": "v4-ios-dark",
+   "radius": 55
+  },
+  "v4-ios-dark_49_onboarding__pin.dc.html": {
+   "x": 1892,
+   "y": 1452,
+   "w": 393,
+   "h": 852,
+   "title": "ios/dark/49_onboarding__pin.png",
+   "page": "v4-ios-dark",
+   "radius": 55
+  },
+  "v4-ios-dark_05_entry-new__default.dc.html": {
+   "x": 0,
+   "y": 2664,
+   "w": 393,
+   "h": 852,
+   "title": "ios/dark/05_entry-new__default.png",
+   "page": "v4-ios-dark",
+   "radius": 55
+  },
+  "v4-ios-dark_05_entry-new__foreign.dc.html": {
+   "x": 473,
+   "y": 2664,
+   "w": 393,
+   "h": 852,
+   "title": "ios/dark/05_entry-new__foreign.png",
+   "page": "v4-ios-dark",
+   "radius": 55
+  },
+  "v4-ios-dark_06_entry-id__from-email.dc.html": {
+   "x": 0,
+   "y": 3876,
+   "w": 393,
+   "h": 852,
+   "title": "ios/dark/06_entry-id__from-email.png",
+   "page": "v4-ios-dark",
+   "radius": 55
+  },
+  "v4-ios-dark_06_entry-id__no-time.dc.html": {
+   "x": 473,
+   "y": 3876,
+   "w": 393,
+   "h": 852,
+   "title": "ios/dark/06_entry-id__no-time.png",
+   "page": "v4-ios-dark",
+   "radius": 55
+  },
+  "v4-ios-dark_10_entries__default.dc.html": {
+   "x": 0,
+   "y": 5088,
+   "w": 393,
+   "h": 852,
+   "title": "ios/dark/10_entries__default.png",
+   "page": "v4-ios-dark",
+   "radius": 55
+  },
+  "v4-ios-dark_10_entries__matched.dc.html": {
+   "x": 473,
+   "y": 5088,
+   "w": 393,
+   "h": 852,
+   "title": "ios/dark/10_entries__matched.png",
+   "page": "v4-ios-dark",
+   "radius": 55
+  },
+  "v4-ios-dark_12_settings__top.dc.html": {
+   "x": 0,
+   "y": 6300,
+   "w": 393,
+   "h": 852,
+   "title": "ios/dark/12_settings__top.png",
+   "page": "v4-ios-dark",
+   "radius": 55
+  },
+  "v4-ios-dark_12_settings__middle.dc.html": {
+   "x": 473,
+   "y": 6300,
+   "w": 393,
+   "h": 852,
+   "title": "ios/dark/12_settings__middle.png",
+   "page": "v4-ios-dark",
+   "radius": 55
+  },
+  "v4-ios-dark_12_settings__bottom.dc.html": {
+   "x": 946,
+   "y": 6300,
+   "w": 393,
+   "h": 852,
+   "title": "ios/dark/12_settings__bottom.png",
+   "page": "v4-ios-dark",
+   "radius": 55
+  },
+  "v4-ios-dark_13_settings--main-currency__default.dc.html": {
+   "x": 0,
+   "y": 7512,
+   "w": 393,
+   "h": 852,
+   "title": "ios/dark/13_settings~main-currency__default.png",
+   "page": "v4-ios-dark",
+   "radius": 55
+  },
+  "v4-ios-dark_50_rates__default.dc.html": {
+   "x": 0,
+   "y": 8724,
+   "w": 393,
+   "h": 852,
+   "title": "ios/dark/50_rates__default.png",
+   "page": "v4-ios-dark",
+   "radius": 55
+  },
+  "v4-ios-dark_50_rates__offline.dc.html": {
+   "x": 473,
+   "y": 8724,
+   "w": 393,
+   "h": 852,
+   "title": "ios/dark/50_rates__offline.png",
+   "page": "v4-ios-dark",
+   "radius": 55
+  },
+  "v4-ios-dark_50_rates--edit__default.dc.html": {
+   "x": 946,
+   "y": 8724,
+   "w": 393,
+   "h": 852,
+   "title": "ios/dark/50_rates~edit__default.png",
+   "page": "v4-ios-dark",
+   "radius": 55
+  },
+  "v4-ios-dark_17_accounts__default.dc.html": {
+   "x": 0,
+   "y": 9936,
+   "w": 393,
+   "h": 852,
+   "title": "ios/dark/17_accounts__default.png",
+   "page": "v4-ios-dark",
+   "radius": 55
+  },
+  "v4-ios-dark_18_accounts--add__default.dc.html": {
+   "x": 0,
+   "y": 11148,
+   "w": 393,
+   "h": 852,
+   "title": "ios/dark/18_accounts~add__default.png",
+   "page": "v4-ios-dark",
+   "radius": 55
+  },
+  "v4-ios-dark_19_transfer__cross-currency.dc.html": {
+   "x": 0,
+   "y": 12360,
+   "w": 393,
+   "h": 852,
+   "title": "ios/dark/19_transfer__cross-currency.png",
+   "page": "v4-ios-dark",
+   "radius": 55
+  },
+  "v4-ios-dark_41_savings__default.dc.html": {
+   "x": 0,
+   "y": 13572,
+   "w": 393,
+   "h": 852,
+   "title": "ios/dark/41_savings__default.png",
+   "page": "v4-ios-dark",
+   "radius": 55
+  },
+  "v4-ios-dark_41_savings__empty.dc.html": {
+   "x": 473,
+   "y": 13572,
+   "w": 393,
+   "h": 852,
+   "title": "ios/dark/41_savings__empty.png",
+   "page": "v4-ios-dark",
+   "radius": 55
+  },
+  "v4-ios-dark_41_savings--edit__default.dc.html": {
+   "x": 946,
+   "y": 13572,
+   "w": 393,
+   "h": 852,
+   "title": "ios/dark/41_savings~edit__default.png",
+   "page": "v4-ios-dark",
+   "radius": 55
+  },
+  "v4-ios-dark_41_savings--edit__error.dc.html": {
+   "x": 1419,
+   "y": 13572,
+   "w": 393,
+   "h": 852,
+   "title": "ios/dark/41_savings~edit__error.png",
+   "page": "v4-ios-dark",
+   "radius": 55
+  },
+  "v4-ios-dark_41_savings--add-money__default.dc.html": {
+   "x": 1892,
+   "y": 13572,
+   "w": 393,
+   "h": 852,
+   "title": "ios/dark/41_savings~add-money__default.png",
+   "page": "v4-ios-dark",
+   "radius": 55
+  },
+  "v4-ios-dark_42_debts__default.dc.html": {
+   "x": 0,
+   "y": 14784,
+   "w": 393,
+   "h": 852,
+   "title": "ios/dark/42_debts__default.png",
+   "page": "v4-ios-dark",
+   "radius": 55
+  },
+  "v4-ios-dark_42_debts__empty.dc.html": {
+   "x": 473,
+   "y": 14784,
+   "w": 393,
+   "h": 852,
+   "title": "ios/dark/42_debts__empty.png",
+   "page": "v4-ios-dark",
+   "radius": 55
+  },
+  "v4-ios-dark_42_debts--edit__default.dc.html": {
+   "x": 946,
+   "y": 14784,
+   "w": 393,
+   "h": 852,
+   "title": "ios/dark/42_debts~edit__default.png",
+   "page": "v4-ios-dark",
+   "radius": 55
+  },
+  "v4-ios-dark_42_debts--detail__default.dc.html": {
+   "x": 1419,
+   "y": 14784,
+   "w": 393,
+   "h": 852,
+   "title": "ios/dark/42_debts~detail__default.png",
+   "page": "v4-ios-dark",
+   "radius": 55
+  },
+  "v4-ios-dark_42_debts--payment__default.dc.html": {
+   "x": 1892,
+   "y": 14784,
+   "w": 393,
+   "h": 852,
+   "title": "ios/dark/42_debts~payment__default.png",
+   "page": "v4-ios-dark",
+   "radius": 55
+  },
+  "v4-ios-dark_42_debts--payment__error.dc.html": {
+   "x": 2365,
+   "y": 14784,
+   "w": 393,
+   "h": 852,
+   "title": "ios/dark/42_debts~payment__error.png",
+   "page": "v4-ios-dark",
+   "radius": 55
+  },
+  "v4-ios-dark_51_settings--due-reminders__default.dc.html": {
+   "x": 0,
+   "y": 15996,
+   "w": 393,
+   "h": 852,
+   "title": "ios/dark/51_settings~due-reminders__default.png",
+   "page": "v4-ios-dark",
+   "radius": 55
+  },
+  "v4-ios-dark_EXT07_ext-due-notification__lockscreen.dc.html": {
+   "x": 0,
+   "y": 17208,
+   "w": 393,
+   "h": 852,
+   "title": "ios/dark/EXT07_ext-due-notification__lockscreen.png",
+   "page": "v4-ios-dark",
+   "radius": 55
+  },
+  "v4-ios-dark_43_queue__default.dc.html": {
+   "x": 0,
+   "y": 18420,
+   "w": 393,
+   "h": 852,
+   "title": "ios/dark/43_queue__default.png",
+   "page": "v4-ios-dark",
+   "radius": 55
+  },
+  "v4-ios-dark_43_queue__mismatch.dc.html": {
+   "x": 473,
+   "y": 18420,
+   "w": 393,
+   "h": 852,
+   "title": "ios/dark/43_queue__mismatch.png",
+   "page": "v4-ios-dark",
+   "radius": 55
+  },
+  "v4-ios-dark_43_queue__empty.dc.html": {
+   "x": 946,
+   "y": 18420,
+   "w": 393,
+   "h": 852,
+   "title": "ios/dark/43_queue__empty.png",
+   "page": "v4-ios-dark",
+   "radius": 55
+  },
+  "v4-ios-dark_43_queue--skip__default.dc.html": {
+   "x": 1419,
+   "y": 18420,
+   "w": 393,
+   "h": 852,
+   "title": "ios/dark/43_queue~skip__default.png",
+   "page": "v4-ios-dark",
+   "radius": 55
+  },
+  "v4-ios-dark_43_queue__saved.dc.html": {
+   "x": 1892,
+   "y": 18420,
+   "w": 393,
+   "h": 852,
+   "title": "ios/dark/43_queue__saved.png",
+   "page": "v4-ios-dark",
+   "radius": 55
+  },
+  "v4-ios-dark_44_email-intro__default.dc.html": {
+   "x": 0,
+   "y": 19632,
+   "w": 393,
+   "h": 852,
+   "title": "ios/dark/44_email-intro__default.png",
+   "page": "v4-ios-dark",
+   "radius": 55
+  },
+  "v4-ios-dark_44_email-add__default.dc.html": {
+   "x": 473,
+   "y": 19632,
+   "w": 393,
+   "h": 852,
+   "title": "ios/dark/44_email-add__default.png",
+   "page": "v4-ios-dark",
+   "radius": 55
+  },
+  "v4-ios-dark_44_email-connected__default.dc.html": {
+   "x": 946,
+   "y": 19632,
+   "w": 393,
+   "h": 852,
+   "title": "ios/dark/44_email-connected__default.png",
+   "page": "v4-ios-dark",
+   "radius": 55
+  },
+  "v4-ios-dark_23_lock__default.dc.html": {
+   "x": 0,
+   "y": 20844,
+   "w": 393,
+   "h": 852,
+   "title": "ios/dark/23_lock__default.png",
+   "page": "v4-ios-dark",
+   "radius": 55
+  },
+  "v4-and-light_01_home__vi.dc.html": {
+   "x": 0,
+   "y": 240,
+   "w": 360,
+   "h": 800,
+   "title": "android/light/01_home__vi.png",
+   "page": "v4-variants",
+   "radius": 28
+  },
+  "v4-and-light_01_home__text-200.dc.html": {
+   "x": 440,
+   "y": 240,
+   "w": 360,
+   "h": 800,
+   "title": "android/light/01_home__text-200.png",
+   "page": "v4-variants",
+   "radius": 28
+  },
+  "v4-and-light_49_onboarding__language-vi.dc.html": {
+   "x": 0,
+   "y": 1400,
+   "w": 360,
+   "h": 800,
+   "title": "android/light/49_onboarding__language-vi.png",
+   "page": "v4-variants",
+   "radius": 28
+  },
+  "v4-and-light_49_onboarding__currency-vi.dc.html": {
+   "x": 440,
+   "y": 1400,
+   "w": 360,
+   "h": 800,
+   "title": "android/light/49_onboarding__currency-vi.png",
+   "page": "v4-variants",
+   "radius": 28
+  },
+  "v4-and-light_05_entry-new__foreign-vi.dc.html": {
+   "x": 0,
+   "y": 2560,
+   "w": 360,
+   "h": 800,
+   "title": "android/light/05_entry-new__foreign-vi.png",
+   "page": "v4-variants",
+   "radius": 28
+  },
+  "v4-and-light_10_entries__vi.dc.html": {
+   "x": 0,
+   "y": 3720,
+   "w": 360,
+   "h": 800,
+   "title": "android/light/10_entries__vi.png",
+   "page": "v4-variants",
+   "radius": 28
+  },
+  "v4-and-light_12_settings__top-vi.dc.html": {
+   "x": 0,
+   "y": 4880,
+   "w": 360,
+   "h": 800,
+   "title": "android/light/12_settings__top-vi.png",
+   "page": "v4-variants",
+   "radius": 28
+  },
+  "v4-and-light_50_rates__vi.dc.html": {
+   "x": 0,
+   "y": 6040,
+   "w": 360,
+   "h": 800,
+   "title": "android/light/50_rates__vi.png",
+   "page": "v4-variants",
+   "radius": 28
+  },
+  "v4-and-light_17_accounts__vi.dc.html": {
+   "x": 0,
+   "y": 7200,
+   "w": 360,
+   "h": 800,
+   "title": "android/light/17_accounts__vi.png",
+   "page": "v4-variants",
+   "radius": 28
+  },
+  "v4-and-light_17_accounts__text-200.dc.html": {
+   "x": 440,
+   "y": 7200,
+   "w": 360,
+   "h": 800,
+   "title": "android/light/17_accounts__text-200.png",
+   "page": "v4-variants",
+   "radius": 28
+  },
+  "v4-and-light_41_savings__vi.dc.html": {
+   "x": 0,
+   "y": 8360,
+   "w": 360,
+   "h": 800,
+   "title": "android/light/41_savings__vi.png",
+   "page": "v4-variants",
+   "radius": 28
+  },
+  "v4-and-light_41_savings__text-200.dc.html": {
+   "x": 440,
+   "y": 8360,
+   "w": 360,
+   "h": 800,
+   "title": "android/light/41_savings__text-200.png",
+   "page": "v4-variants",
+   "radius": 28
+  },
+  "v4-and-light_42_debts__vi.dc.html": {
+   "x": 0,
+   "y": 9520,
+   "w": 360,
+   "h": 800,
+   "title": "android/light/42_debts__vi.png",
+   "page": "v4-variants",
+   "radius": 28
+  },
+  "v4-and-light_42_debts__text-200.dc.html": {
+   "x": 440,
+   "y": 9520,
+   "w": 360,
+   "h": 800,
+   "title": "android/light/42_debts__text-200.png",
+   "page": "v4-variants",
+   "radius": 28
+  },
+  "v4-and-light_51_settings--due-reminders__vi.dc.html": {
+   "x": 0,
+   "y": 10680,
+   "w": 360,
+   "h": 800,
+   "title": "android/light/51_settings~due-reminders__vi.png",
+   "page": "v4-variants",
+   "radius": 28
+  },
+  "v4-and-light_EXT01_ext-widget__budget-vi.dc.html": {
+   "x": 0,
+   "y": 11840,
+   "w": 360,
+   "h": 800,
+   "title": "android/light/EXT01_ext-widget__budget-vi.png",
+   "page": "v4-variants",
+   "radius": 28
+  },
+  "v4-and-light_43_queue__vi.dc.html": {
+   "x": 0,
+   "y": 13000,
+   "w": 360,
+   "h": 800,
+   "title": "android/light/43_queue__vi.png",
+   "page": "v4-variants",
+   "radius": 28
+  },
+  "v4-and-light_43_queue__text-200.dc.html": {
+   "x": 440,
+   "y": 13000,
+   "w": 360,
+   "h": 800,
+   "title": "android/light/43_queue__text-200.png",
+   "page": "v4-variants",
+   "radius": 28
+  },
+  "v4-and-light_44_email-intro__vi.dc.html": {
+   "x": 0,
+   "y": 14160,
+   "w": 360,
+   "h": 800,
+   "title": "android/light/44_email-intro__vi.png",
+   "page": "v4-variants",
+   "radius": 28
+  },
   "Main.dc.html": {
    "x": 0,
    "y": 240,
@@ -2110,9 +4173,254 @@
    "title": "android/light/EXT01_ext-widget__vi.png",
    "page": "variants",
    "radius": 28
+  },
+  "widget-sheet.dc.html": {
+   "x": 3600,
+   "y": 17640,
+   "w": 900,
+   "h": 942,
+   "title": "Home-screen widget · all states (2 × 2 and 4 × 2, light and dark wallpaper)",
+   "page": "v4-and-light",
+   "radius": 0
+  },
+  "widget-sheet-archive.dc.html": {
+   "x": 3160,
+   "y": 16480,
+   "w": 900,
+   "h": 942,
+   "title": "Home-screen widget · all states (2 × 2 and 4 × 2, light and dark wallpaper)",
+   "page": "and-light",
+   "radius": 0
   }
  },
  "order": [
+  "v4-and-light_01_home__default.dc.html",
+  "v4-and-light_01_home__queue.dc.html",
+  "v4-and-light_01_home__filtered.dc.html",
+  "v4-and-light_01_home__empty.dc.html",
+  "v4-and-light_01_home__over.dc.html",
+  "v4-and-light_49_onboarding__language.dc.html",
+  "v4-and-light_49_onboarding__welcome.dc.html",
+  "v4-and-light_49_onboarding__currency.dc.html",
+  "v4-and-light_49_onboarding__reminder.dc.html",
+  "v4-and-light_49_onboarding__pin.dc.html",
+  "v4-and-light_05_entry-new__default.dc.html",
+  "v4-and-light_05_entry-new__foreign.dc.html",
+  "v4-and-light_06_entry-id__from-email.dc.html",
+  "v4-and-light_06_entry-id__no-time.dc.html",
+  "v4-and-light_10_entries__default.dc.html",
+  "v4-and-light_10_entries__matched.dc.html",
+  "v4-and-light_12_settings__top.dc.html",
+  "v4-and-light_12_settings__middle.dc.html",
+  "v4-and-light_12_settings__bottom.dc.html",
+  "v4-and-light_13_settings--main-currency__default.dc.html",
+  "v4-and-light_50_rates__default.dc.html",
+  "v4-and-light_50_rates__offline.dc.html",
+  "v4-and-light_50_rates--edit__default.dc.html",
+  "v4-and-light_17_accounts__default.dc.html",
+  "v4-and-light_18_accounts--add__default.dc.html",
+  "v4-and-light_19_transfer__cross-currency.dc.html",
+  "v4-and-light_41_savings__default.dc.html",
+  "v4-and-light_41_savings__empty.dc.html",
+  "v4-and-light_41_savings--edit__default.dc.html",
+  "v4-and-light_41_savings--edit__error.dc.html",
+  "v4-and-light_41_savings--add-money__default.dc.html",
+  "v4-and-light_42_debts__default.dc.html",
+  "v4-and-light_42_debts__empty.dc.html",
+  "v4-and-light_42_debts--edit__default.dc.html",
+  "v4-and-light_42_debts--detail__default.dc.html",
+  "v4-and-light_42_debts--payment__default.dc.html",
+  "v4-and-light_42_debts--payment__error.dc.html",
+  "v4-and-light_51_settings--due-reminders__default.dc.html",
+  "v4-and-light_EXT07_ext-due-notification__lockscreen.dc.html",
+  "v4-and-light_EXT01_ext-widget__default.dc.html",
+  "v4-and-light_EXT01_ext-widget__spent.dc.html",
+  "v4-and-light_EXT01_ext-widget__budget.dc.html",
+  "v4-and-light_EXT01_ext-widget__near.dc.html",
+  "v4-and-light_EXT01_ext-widget__locked.dc.html",
+  "v4-and-light_EXT01_ext-widget__stale.dc.html",
+  "v4-and-light_EXT01_ext-widget__4x2.dc.html",
+  "v4-and-light_EXT01_ext-widget__picker.dc.html",
+  "v4-and-light_43_queue__default.dc.html",
+  "v4-and-light_43_queue__mismatch.dc.html",
+  "v4-and-light_43_queue__empty.dc.html",
+  "v4-and-light_43_queue--skip__default.dc.html",
+  "v4-and-light_43_queue__saved.dc.html",
+  "v4-and-light_44_email-intro__default.dc.html",
+  "v4-and-light_44_email-add__default.dc.html",
+  "v4-and-light_44_email-connected__default.dc.html",
+  "v4-and-light_23_lock__default.dc.html",
+  "v4-and-dark_01_home__default.dc.html",
+  "v4-and-dark_01_home__queue.dc.html",
+  "v4-and-dark_01_home__filtered.dc.html",
+  "v4-and-dark_01_home__empty.dc.html",
+  "v4-and-dark_01_home__over.dc.html",
+  "v4-and-dark_49_onboarding__language.dc.html",
+  "v4-and-dark_49_onboarding__welcome.dc.html",
+  "v4-and-dark_49_onboarding__currency.dc.html",
+  "v4-and-dark_49_onboarding__reminder.dc.html",
+  "v4-and-dark_49_onboarding__pin.dc.html",
+  "v4-and-dark_05_entry-new__default.dc.html",
+  "v4-and-dark_05_entry-new__foreign.dc.html",
+  "v4-and-dark_06_entry-id__from-email.dc.html",
+  "v4-and-dark_06_entry-id__no-time.dc.html",
+  "v4-and-dark_10_entries__default.dc.html",
+  "v4-and-dark_10_entries__matched.dc.html",
+  "v4-and-dark_12_settings__top.dc.html",
+  "v4-and-dark_12_settings__middle.dc.html",
+  "v4-and-dark_12_settings__bottom.dc.html",
+  "v4-and-dark_13_settings--main-currency__default.dc.html",
+  "v4-and-dark_50_rates__default.dc.html",
+  "v4-and-dark_50_rates__offline.dc.html",
+  "v4-and-dark_50_rates--edit__default.dc.html",
+  "v4-and-dark_17_accounts__default.dc.html",
+  "v4-and-dark_18_accounts--add__default.dc.html",
+  "v4-and-dark_19_transfer__cross-currency.dc.html",
+  "v4-and-dark_41_savings__default.dc.html",
+  "v4-and-dark_41_savings__empty.dc.html",
+  "v4-and-dark_41_savings--edit__default.dc.html",
+  "v4-and-dark_41_savings--edit__error.dc.html",
+  "v4-and-dark_41_savings--add-money__default.dc.html",
+  "v4-and-dark_42_debts__default.dc.html",
+  "v4-and-dark_42_debts__empty.dc.html",
+  "v4-and-dark_42_debts--edit__default.dc.html",
+  "v4-and-dark_42_debts--detail__default.dc.html",
+  "v4-and-dark_42_debts--payment__default.dc.html",
+  "v4-and-dark_42_debts--payment__error.dc.html",
+  "v4-and-dark_51_settings--due-reminders__default.dc.html",
+  "v4-and-dark_EXT07_ext-due-notification__lockscreen.dc.html",
+  "v4-and-dark_EXT01_ext-widget__default.dc.html",
+  "v4-and-dark_EXT01_ext-widget__spent.dc.html",
+  "v4-and-dark_EXT01_ext-widget__budget.dc.html",
+  "v4-and-dark_EXT01_ext-widget__near.dc.html",
+  "v4-and-dark_EXT01_ext-widget__locked.dc.html",
+  "v4-and-dark_EXT01_ext-widget__stale.dc.html",
+  "v4-and-dark_EXT01_ext-widget__4x2.dc.html",
+  "v4-and-dark_EXT01_ext-widget__picker.dc.html",
+  "v4-and-dark_43_queue__default.dc.html",
+  "v4-and-dark_43_queue__mismatch.dc.html",
+  "v4-and-dark_43_queue__empty.dc.html",
+  "v4-and-dark_43_queue--skip__default.dc.html",
+  "v4-and-dark_43_queue__saved.dc.html",
+  "v4-and-dark_44_email-intro__default.dc.html",
+  "v4-and-dark_44_email-add__default.dc.html",
+  "v4-and-dark_44_email-connected__default.dc.html",
+  "v4-and-dark_23_lock__default.dc.html",
+  "v4-ios-light_01_home__default.dc.html",
+  "v4-ios-light_01_home__queue.dc.html",
+  "v4-ios-light_01_home__filtered.dc.html",
+  "v4-ios-light_01_home__empty.dc.html",
+  "v4-ios-light_01_home__over.dc.html",
+  "v4-ios-light_49_onboarding__language.dc.html",
+  "v4-ios-light_49_onboarding__welcome.dc.html",
+  "v4-ios-light_49_onboarding__currency.dc.html",
+  "v4-ios-light_49_onboarding__reminder.dc.html",
+  "v4-ios-light_49_onboarding__pin.dc.html",
+  "v4-ios-light_05_entry-new__default.dc.html",
+  "v4-ios-light_05_entry-new__foreign.dc.html",
+  "v4-ios-light_06_entry-id__from-email.dc.html",
+  "v4-ios-light_06_entry-id__no-time.dc.html",
+  "v4-ios-light_10_entries__default.dc.html",
+  "v4-ios-light_10_entries__matched.dc.html",
+  "v4-ios-light_12_settings__top.dc.html",
+  "v4-ios-light_12_settings__middle.dc.html",
+  "v4-ios-light_12_settings__bottom.dc.html",
+  "v4-ios-light_13_settings--main-currency__default.dc.html",
+  "v4-ios-light_50_rates__default.dc.html",
+  "v4-ios-light_50_rates__offline.dc.html",
+  "v4-ios-light_50_rates--edit__default.dc.html",
+  "v4-ios-light_17_accounts__default.dc.html",
+  "v4-ios-light_18_accounts--add__default.dc.html",
+  "v4-ios-light_19_transfer__cross-currency.dc.html",
+  "v4-ios-light_41_savings__default.dc.html",
+  "v4-ios-light_41_savings__empty.dc.html",
+  "v4-ios-light_41_savings--edit__default.dc.html",
+  "v4-ios-light_41_savings--edit__error.dc.html",
+  "v4-ios-light_41_savings--add-money__default.dc.html",
+  "v4-ios-light_42_debts__default.dc.html",
+  "v4-ios-light_42_debts__empty.dc.html",
+  "v4-ios-light_42_debts--edit__default.dc.html",
+  "v4-ios-light_42_debts--detail__default.dc.html",
+  "v4-ios-light_42_debts--payment__default.dc.html",
+  "v4-ios-light_42_debts--payment__error.dc.html",
+  "v4-ios-light_51_settings--due-reminders__default.dc.html",
+  "v4-ios-light_EXT07_ext-due-notification__lockscreen.dc.html",
+  "v4-ios-light_43_queue__default.dc.html",
+  "v4-ios-light_43_queue__mismatch.dc.html",
+  "v4-ios-light_43_queue__empty.dc.html",
+  "v4-ios-light_43_queue--skip__default.dc.html",
+  "v4-ios-light_43_queue__saved.dc.html",
+  "v4-ios-light_44_email-intro__default.dc.html",
+  "v4-ios-light_44_email-add__default.dc.html",
+  "v4-ios-light_44_email-connected__default.dc.html",
+  "v4-ios-light_23_lock__default.dc.html",
+  "v4-ios-dark_01_home__default.dc.html",
+  "v4-ios-dark_01_home__queue.dc.html",
+  "v4-ios-dark_01_home__filtered.dc.html",
+  "v4-ios-dark_01_home__empty.dc.html",
+  "v4-ios-dark_01_home__over.dc.html",
+  "v4-ios-dark_49_onboarding__language.dc.html",
+  "v4-ios-dark_49_onboarding__welcome.dc.html",
+  "v4-ios-dark_49_onboarding__currency.dc.html",
+  "v4-ios-dark_49_onboarding__reminder.dc.html",
+  "v4-ios-dark_49_onboarding__pin.dc.html",
+  "v4-ios-dark_05_entry-new__default.dc.html",
+  "v4-ios-dark_05_entry-new__foreign.dc.html",
+  "v4-ios-dark_06_entry-id__from-email.dc.html",
+  "v4-ios-dark_06_entry-id__no-time.dc.html",
+  "v4-ios-dark_10_entries__default.dc.html",
+  "v4-ios-dark_10_entries__matched.dc.html",
+  "v4-ios-dark_12_settings__top.dc.html",
+  "v4-ios-dark_12_settings__middle.dc.html",
+  "v4-ios-dark_12_settings__bottom.dc.html",
+  "v4-ios-dark_13_settings--main-currency__default.dc.html",
+  "v4-ios-dark_50_rates__default.dc.html",
+  "v4-ios-dark_50_rates__offline.dc.html",
+  "v4-ios-dark_50_rates--edit__default.dc.html",
+  "v4-ios-dark_17_accounts__default.dc.html",
+  "v4-ios-dark_18_accounts--add__default.dc.html",
+  "v4-ios-dark_19_transfer__cross-currency.dc.html",
+  "v4-ios-dark_41_savings__default.dc.html",
+  "v4-ios-dark_41_savings__empty.dc.html",
+  "v4-ios-dark_41_savings--edit__default.dc.html",
+  "v4-ios-dark_41_savings--edit__error.dc.html",
+  "v4-ios-dark_41_savings--add-money__default.dc.html",
+  "v4-ios-dark_42_debts__default.dc.html",
+  "v4-ios-dark_42_debts__empty.dc.html",
+  "v4-ios-dark_42_debts--edit__default.dc.html",
+  "v4-ios-dark_42_debts--detail__default.dc.html",
+  "v4-ios-dark_42_debts--payment__default.dc.html",
+  "v4-ios-dark_42_debts--payment__error.dc.html",
+  "v4-ios-dark_51_settings--due-reminders__default.dc.html",
+  "v4-ios-dark_EXT07_ext-due-notification__lockscreen.dc.html",
+  "v4-ios-dark_43_queue__default.dc.html",
+  "v4-ios-dark_43_queue__mismatch.dc.html",
+  "v4-ios-dark_43_queue__empty.dc.html",
+  "v4-ios-dark_43_queue--skip__default.dc.html",
+  "v4-ios-dark_43_queue__saved.dc.html",
+  "v4-ios-dark_44_email-intro__default.dc.html",
+  "v4-ios-dark_44_email-add__default.dc.html",
+  "v4-ios-dark_44_email-connected__default.dc.html",
+  "v4-ios-dark_23_lock__default.dc.html",
+  "v4-and-light_01_home__vi.dc.html",
+  "v4-and-light_01_home__text-200.dc.html",
+  "v4-and-light_49_onboarding__language-vi.dc.html",
+  "v4-and-light_49_onboarding__currency-vi.dc.html",
+  "v4-and-light_05_entry-new__foreign-vi.dc.html",
+  "v4-and-light_10_entries__vi.dc.html",
+  "v4-and-light_12_settings__top-vi.dc.html",
+  "v4-and-light_50_rates__vi.dc.html",
+  "v4-and-light_17_accounts__vi.dc.html",
+  "v4-and-light_17_accounts__text-200.dc.html",
+  "v4-and-light_41_savings__vi.dc.html",
+  "v4-and-light_41_savings__text-200.dc.html",
+  "v4-and-light_42_debts__vi.dc.html",
+  "v4-and-light_42_debts__text-200.dc.html",
+  "v4-and-light_51_settings--due-reminders__vi.dc.html",
+  "v4-and-light_EXT01_ext-widget__budget-vi.dc.html",
+  "v4-and-light_43_queue__vi.dc.html",
+  "v4-and-light_43_queue__text-200.dc.html",
+  "v4-and-light_44_email-intro__vi.dc.html",
   "Main.dc.html",
   "and-light_07_home--more-categories__default.dc.html",
   "and-light_10_entries__category-budget.dc.html",
@@ -2343,9 +4651,707 @@
   "and-light_31_settings--auto-backup__vi.dc.html",
   "and-light_31_settings--auto-backup__text-200.dc.html",
   "and-light_31_settings--auto-backup-password__vi.dc.html",
-  "and-light_EXT01_ext-widget__vi.dc.html"
+  "and-light_EXT01_ext-widget__vi.dc.html",
+  "widget-sheet.dc.html",
+  "widget-sheet-archive.dc.html"
  ],
  "notes": {
+  "v4-and-light-scr-01": {
+   "x": 0,
+   "y": 0,
+   "text": "SCR-01 Home",
+   "kind": "title1",
+   "maxW": 2120,
+   "page": "v4-and-light"
+  },
+  "v4-and-light-n-49": {
+   "x": 0,
+   "y": 1160,
+   "text": "N-49 Onboarding",
+   "kind": "title1",
+   "maxW": 2120,
+   "page": "v4-and-light"
+  },
+  "v4-and-light-scr-05": {
+   "x": 0,
+   "y": 2320,
+   "text": "SCR-05 New entry",
+   "kind": "title1",
+   "maxW": 1200,
+   "page": "v4-and-light"
+  },
+  "v4-and-light-scr-06": {
+   "x": 0,
+   "y": 3480,
+   "text": "SCR-06 Edit record",
+   "kind": "title1",
+   "maxW": 1200,
+   "page": "v4-and-light"
+  },
+  "v4-and-light-scr-10": {
+   "x": 0,
+   "y": 4640,
+   "text": "SCR-10 Records",
+   "kind": "title1",
+   "maxW": 1200,
+   "page": "v4-and-light"
+  },
+  "v4-and-light-scr-12": {
+   "x": 0,
+   "y": 5800,
+   "text": "SCR-12 Settings (9 groups)",
+   "kind": "title1",
+   "maxW": 1240,
+   "page": "v4-and-light"
+  },
+  "v4-and-light-scr-13": {
+   "x": 0,
+   "y": 6960,
+   "text": "SCR-13 Main currency",
+   "kind": "title1",
+   "maxW": 1200,
+   "page": "v4-and-light"
+  },
+  "v4-and-light-n-50": {
+   "x": 0,
+   "y": 8120,
+   "text": "N-50 Exchange rates",
+   "kind": "title1",
+   "maxW": 1240,
+   "page": "v4-and-light"
+  },
+  "v4-and-light-scr-17": {
+   "x": 0,
+   "y": 9280,
+   "text": "SCR-17 Accounts (multi-currency)",
+   "kind": "title1",
+   "maxW": 1200,
+   "page": "v4-and-light"
+  },
+  "v4-and-light-scr-18": {
+   "x": 0,
+   "y": 10440,
+   "text": "SCR-18 Add account",
+   "kind": "title1",
+   "maxW": 1200,
+   "page": "v4-and-light"
+  },
+  "v4-and-light-scr-19": {
+   "x": 0,
+   "y": 11600,
+   "text": "SCR-19 Transfer",
+   "kind": "title1",
+   "maxW": 1200,
+   "page": "v4-and-light"
+  },
+  "v4-and-light-n-41": {
+   "x": 0,
+   "y": 12760,
+   "text": "N-41 Savings wallets",
+   "kind": "title1",
+   "maxW": 2120,
+   "page": "v4-and-light"
+  },
+  "v4-and-light-n-42": {
+   "x": 0,
+   "y": 13920,
+   "text": "N-42 Debts",
+   "kind": "title1",
+   "maxW": 2560,
+   "page": "v4-and-light"
+  },
+  "v4-and-light-n-51": {
+   "x": 0,
+   "y": 15080,
+   "text": "N-51 Due reminders",
+   "kind": "title1",
+   "maxW": 1200,
+   "page": "v4-and-light"
+  },
+  "v4-and-light-ext-07": {
+   "x": 0,
+   "y": 16240,
+   "text": "EXT-07 Due reminder notification",
+   "kind": "title1",
+   "maxW": 1200,
+   "page": "v4-and-light"
+  },
+  "v4-and-light-ext-01": {
+   "x": 0,
+   "y": 17400,
+   "text": "EXT-01 Home-screen widget",
+   "kind": "title1",
+   "maxW": 3440,
+   "page": "v4-and-light"
+  },
+  "v4-and-light-n-43": {
+   "x": 0,
+   "y": 18560,
+   "text": "N-43 Import queue",
+   "kind": "title1",
+   "maxW": 2120,
+   "page": "v4-and-light"
+  },
+  "v4-and-light-n-44": {
+   "x": 0,
+   "y": 19720,
+   "text": "N-44 Email import",
+   "kind": "title1",
+   "maxW": 1240,
+   "page": "v4-and-light"
+  },
+  "v4-and-light-scr-23": {
+   "x": 0,
+   "y": 20880,
+   "text": "SCR-23 Lock",
+   "kind": "title1",
+   "maxW": 1200,
+   "page": "v4-and-light"
+  },
+  "v4-and-dark-scr-01": {
+   "x": 0,
+   "y": 0,
+   "text": "SCR-01 Home",
+   "kind": "title1",
+   "maxW": 2120,
+   "page": "v4-and-dark"
+  },
+  "v4-and-dark-n-49": {
+   "x": 0,
+   "y": 1160,
+   "text": "N-49 Onboarding",
+   "kind": "title1",
+   "maxW": 2120,
+   "page": "v4-and-dark"
+  },
+  "v4-and-dark-scr-05": {
+   "x": 0,
+   "y": 2320,
+   "text": "SCR-05 New entry",
+   "kind": "title1",
+   "maxW": 1200,
+   "page": "v4-and-dark"
+  },
+  "v4-and-dark-scr-06": {
+   "x": 0,
+   "y": 3480,
+   "text": "SCR-06 Edit record",
+   "kind": "title1",
+   "maxW": 1200,
+   "page": "v4-and-dark"
+  },
+  "v4-and-dark-scr-10": {
+   "x": 0,
+   "y": 4640,
+   "text": "SCR-10 Records",
+   "kind": "title1",
+   "maxW": 1200,
+   "page": "v4-and-dark"
+  },
+  "v4-and-dark-scr-12": {
+   "x": 0,
+   "y": 5800,
+   "text": "SCR-12 Settings (9 groups)",
+   "kind": "title1",
+   "maxW": 1240,
+   "page": "v4-and-dark"
+  },
+  "v4-and-dark-scr-13": {
+   "x": 0,
+   "y": 6960,
+   "text": "SCR-13 Main currency",
+   "kind": "title1",
+   "maxW": 1200,
+   "page": "v4-and-dark"
+  },
+  "v4-and-dark-n-50": {
+   "x": 0,
+   "y": 8120,
+   "text": "N-50 Exchange rates",
+   "kind": "title1",
+   "maxW": 1240,
+   "page": "v4-and-dark"
+  },
+  "v4-and-dark-scr-17": {
+   "x": 0,
+   "y": 9280,
+   "text": "SCR-17 Accounts (multi-currency)",
+   "kind": "title1",
+   "maxW": 1200,
+   "page": "v4-and-dark"
+  },
+  "v4-and-dark-scr-18": {
+   "x": 0,
+   "y": 10440,
+   "text": "SCR-18 Add account",
+   "kind": "title1",
+   "maxW": 1200,
+   "page": "v4-and-dark"
+  },
+  "v4-and-dark-scr-19": {
+   "x": 0,
+   "y": 11600,
+   "text": "SCR-19 Transfer",
+   "kind": "title1",
+   "maxW": 1200,
+   "page": "v4-and-dark"
+  },
+  "v4-and-dark-n-41": {
+   "x": 0,
+   "y": 12760,
+   "text": "N-41 Savings wallets",
+   "kind": "title1",
+   "maxW": 2120,
+   "page": "v4-and-dark"
+  },
+  "v4-and-dark-n-42": {
+   "x": 0,
+   "y": 13920,
+   "text": "N-42 Debts",
+   "kind": "title1",
+   "maxW": 2560,
+   "page": "v4-and-dark"
+  },
+  "v4-and-dark-n-51": {
+   "x": 0,
+   "y": 15080,
+   "text": "N-51 Due reminders",
+   "kind": "title1",
+   "maxW": 1200,
+   "page": "v4-and-dark"
+  },
+  "v4-and-dark-ext-07": {
+   "x": 0,
+   "y": 16240,
+   "text": "EXT-07 Due reminder notification",
+   "kind": "title1",
+   "maxW": 1200,
+   "page": "v4-and-dark"
+  },
+  "v4-and-dark-ext-01": {
+   "x": 0,
+   "y": 17400,
+   "text": "EXT-01 Home-screen widget",
+   "kind": "title1",
+   "maxW": 3440,
+   "page": "v4-and-dark"
+  },
+  "v4-and-dark-n-43": {
+   "x": 0,
+   "y": 18560,
+   "text": "N-43 Import queue",
+   "kind": "title1",
+   "maxW": 2120,
+   "page": "v4-and-dark"
+  },
+  "v4-and-dark-n-44": {
+   "x": 0,
+   "y": 19720,
+   "text": "N-44 Email import",
+   "kind": "title1",
+   "maxW": 1240,
+   "page": "v4-and-dark"
+  },
+  "v4-and-dark-scr-23": {
+   "x": 0,
+   "y": 20880,
+   "text": "SCR-23 Lock",
+   "kind": "title1",
+   "maxW": 1200,
+   "page": "v4-and-dark"
+  },
+  "v4-ios-light-scr-01": {
+   "x": 0,
+   "y": 0,
+   "text": "SCR-01 Home",
+   "kind": "title1",
+   "maxW": 2285,
+   "page": "v4-ios-light"
+  },
+  "v4-ios-light-n-49": {
+   "x": 0,
+   "y": 1212,
+   "text": "N-49 Onboarding",
+   "kind": "title1",
+   "maxW": 2285,
+   "page": "v4-ios-light"
+  },
+  "v4-ios-light-scr-05": {
+   "x": 0,
+   "y": 2424,
+   "text": "SCR-05 New entry",
+   "kind": "title1",
+   "maxW": 1200,
+   "page": "v4-ios-light"
+  },
+  "v4-ios-light-scr-06": {
+   "x": 0,
+   "y": 3636,
+   "text": "SCR-06 Edit record",
+   "kind": "title1",
+   "maxW": 1200,
+   "page": "v4-ios-light"
+  },
+  "v4-ios-light-scr-10": {
+   "x": 0,
+   "y": 4848,
+   "text": "SCR-10 Records",
+   "kind": "title1",
+   "maxW": 1200,
+   "page": "v4-ios-light"
+  },
+  "v4-ios-light-scr-12": {
+   "x": 0,
+   "y": 6060,
+   "text": "SCR-12 Settings (9 groups)",
+   "kind": "title1",
+   "maxW": 1339,
+   "page": "v4-ios-light"
+  },
+  "v4-ios-light-scr-13": {
+   "x": 0,
+   "y": 7272,
+   "text": "SCR-13 Main currency",
+   "kind": "title1",
+   "maxW": 1200,
+   "page": "v4-ios-light"
+  },
+  "v4-ios-light-n-50": {
+   "x": 0,
+   "y": 8484,
+   "text": "N-50 Exchange rates",
+   "kind": "title1",
+   "maxW": 1339,
+   "page": "v4-ios-light"
+  },
+  "v4-ios-light-scr-17": {
+   "x": 0,
+   "y": 9696,
+   "text": "SCR-17 Accounts (multi-currency)",
+   "kind": "title1",
+   "maxW": 1200,
+   "page": "v4-ios-light"
+  },
+  "v4-ios-light-scr-18": {
+   "x": 0,
+   "y": 10908,
+   "text": "SCR-18 Add account",
+   "kind": "title1",
+   "maxW": 1200,
+   "page": "v4-ios-light"
+  },
+  "v4-ios-light-scr-19": {
+   "x": 0,
+   "y": 12120,
+   "text": "SCR-19 Transfer",
+   "kind": "title1",
+   "maxW": 1200,
+   "page": "v4-ios-light"
+  },
+  "v4-ios-light-n-41": {
+   "x": 0,
+   "y": 13332,
+   "text": "N-41 Savings wallets",
+   "kind": "title1",
+   "maxW": 2285,
+   "page": "v4-ios-light"
+  },
+  "v4-ios-light-n-42": {
+   "x": 0,
+   "y": 14544,
+   "text": "N-42 Debts",
+   "kind": "title1",
+   "maxW": 2758,
+   "page": "v4-ios-light"
+  },
+  "v4-ios-light-n-51": {
+   "x": 0,
+   "y": 15756,
+   "text": "N-51 Due reminders",
+   "kind": "title1",
+   "maxW": 1200,
+   "page": "v4-ios-light"
+  },
+  "v4-ios-light-ext-07": {
+   "x": 0,
+   "y": 16968,
+   "text": "EXT-07 Due reminder notification",
+   "kind": "title1",
+   "maxW": 1200,
+   "page": "v4-ios-light"
+  },
+  "v4-ios-light-n-43": {
+   "x": 0,
+   "y": 18180,
+   "text": "N-43 Import queue",
+   "kind": "title1",
+   "maxW": 2285,
+   "page": "v4-ios-light"
+  },
+  "v4-ios-light-n-44": {
+   "x": 0,
+   "y": 19392,
+   "text": "N-44 Email import",
+   "kind": "title1",
+   "maxW": 1339,
+   "page": "v4-ios-light"
+  },
+  "v4-ios-light-scr-23": {
+   "x": 0,
+   "y": 20604,
+   "text": "SCR-23 Lock",
+   "kind": "title1",
+   "maxW": 1200,
+   "page": "v4-ios-light"
+  },
+  "v4-ios-dark-scr-01": {
+   "x": 0,
+   "y": 0,
+   "text": "SCR-01 Home",
+   "kind": "title1",
+   "maxW": 2285,
+   "page": "v4-ios-dark"
+  },
+  "v4-ios-dark-n-49": {
+   "x": 0,
+   "y": 1212,
+   "text": "N-49 Onboarding",
+   "kind": "title1",
+   "maxW": 2285,
+   "page": "v4-ios-dark"
+  },
+  "v4-ios-dark-scr-05": {
+   "x": 0,
+   "y": 2424,
+   "text": "SCR-05 New entry",
+   "kind": "title1",
+   "maxW": 1200,
+   "page": "v4-ios-dark"
+  },
+  "v4-ios-dark-scr-06": {
+   "x": 0,
+   "y": 3636,
+   "text": "SCR-06 Edit record",
+   "kind": "title1",
+   "maxW": 1200,
+   "page": "v4-ios-dark"
+  },
+  "v4-ios-dark-scr-10": {
+   "x": 0,
+   "y": 4848,
+   "text": "SCR-10 Records",
+   "kind": "title1",
+   "maxW": 1200,
+   "page": "v4-ios-dark"
+  },
+  "v4-ios-dark-scr-12": {
+   "x": 0,
+   "y": 6060,
+   "text": "SCR-12 Settings (9 groups)",
+   "kind": "title1",
+   "maxW": 1339,
+   "page": "v4-ios-dark"
+  },
+  "v4-ios-dark-scr-13": {
+   "x": 0,
+   "y": 7272,
+   "text": "SCR-13 Main currency",
+   "kind": "title1",
+   "maxW": 1200,
+   "page": "v4-ios-dark"
+  },
+  "v4-ios-dark-n-50": {
+   "x": 0,
+   "y": 8484,
+   "text": "N-50 Exchange rates",
+   "kind": "title1",
+   "maxW": 1339,
+   "page": "v4-ios-dark"
+  },
+  "v4-ios-dark-scr-17": {
+   "x": 0,
+   "y": 9696,
+   "text": "SCR-17 Accounts (multi-currency)",
+   "kind": "title1",
+   "maxW": 1200,
+   "page": "v4-ios-dark"
+  },
+  "v4-ios-dark-scr-18": {
+   "x": 0,
+   "y": 10908,
+   "text": "SCR-18 Add account",
+   "kind": "title1",
+   "maxW": 1200,
+   "page": "v4-ios-dark"
+  },
+  "v4-ios-dark-scr-19": {
+   "x": 0,
+   "y": 12120,
+   "text": "SCR-19 Transfer",
+   "kind": "title1",
+   "maxW": 1200,
+   "page": "v4-ios-dark"
+  },
+  "v4-ios-dark-n-41": {
+   "x": 0,
+   "y": 13332,
+   "text": "N-41 Savings wallets",
+   "kind": "title1",
+   "maxW": 2285,
+   "page": "v4-ios-dark"
+  },
+  "v4-ios-dark-n-42": {
+   "x": 0,
+   "y": 14544,
+   "text": "N-42 Debts",
+   "kind": "title1",
+   "maxW": 2758,
+   "page": "v4-ios-dark"
+  },
+  "v4-ios-dark-n-51": {
+   "x": 0,
+   "y": 15756,
+   "text": "N-51 Due reminders",
+   "kind": "title1",
+   "maxW": 1200,
+   "page": "v4-ios-dark"
+  },
+  "v4-ios-dark-ext-07": {
+   "x": 0,
+   "y": 16968,
+   "text": "EXT-07 Due reminder notification",
+   "kind": "title1",
+   "maxW": 1200,
+   "page": "v4-ios-dark"
+  },
+  "v4-ios-dark-n-43": {
+   "x": 0,
+   "y": 18180,
+   "text": "N-43 Import queue",
+   "kind": "title1",
+   "maxW": 2285,
+   "page": "v4-ios-dark"
+  },
+  "v4-ios-dark-n-44": {
+   "x": 0,
+   "y": 19392,
+   "text": "N-44 Email import",
+   "kind": "title1",
+   "maxW": 1339,
+   "page": "v4-ios-dark"
+  },
+  "v4-ios-dark-scr-23": {
+   "x": 0,
+   "y": 20604,
+   "text": "SCR-23 Lock",
+   "kind": "title1",
+   "maxW": 1200,
+   "page": "v4-ios-dark"
+  },
+  "v4-variants-scr-01": {
+   "x": 0,
+   "y": 0,
+   "text": "SCR-01 Home",
+   "kind": "title1",
+   "maxW": 1200,
+   "page": "v4-variants"
+  },
+  "v4-variants-n-49": {
+   "x": 0,
+   "y": 1160,
+   "text": "N-49 Onboarding",
+   "kind": "title1",
+   "maxW": 1200,
+   "page": "v4-variants"
+  },
+  "v4-variants-scr-05": {
+   "x": 0,
+   "y": 2320,
+   "text": "SCR-05 New entry",
+   "kind": "title1",
+   "maxW": 1200,
+   "page": "v4-variants"
+  },
+  "v4-variants-scr-10": {
+   "x": 0,
+   "y": 3480,
+   "text": "SCR-10 Records",
+   "kind": "title1",
+   "maxW": 1200,
+   "page": "v4-variants"
+  },
+  "v4-variants-scr-12": {
+   "x": 0,
+   "y": 4640,
+   "text": "SCR-12 Settings (9 groups)",
+   "kind": "title1",
+   "maxW": 1200,
+   "page": "v4-variants"
+  },
+  "v4-variants-n-50": {
+   "x": 0,
+   "y": 5800,
+   "text": "N-50 Exchange rates",
+   "kind": "title1",
+   "maxW": 1200,
+   "page": "v4-variants"
+  },
+  "v4-variants-scr-17": {
+   "x": 0,
+   "y": 6960,
+   "text": "SCR-17 Accounts (multi-currency)",
+   "kind": "title1",
+   "maxW": 1200,
+   "page": "v4-variants"
+  },
+  "v4-variants-n-41": {
+   "x": 0,
+   "y": 8120,
+   "text": "N-41 Savings wallets",
+   "kind": "title1",
+   "maxW": 1200,
+   "page": "v4-variants"
+  },
+  "v4-variants-n-42": {
+   "x": 0,
+   "y": 9280,
+   "text": "N-42 Debts",
+   "kind": "title1",
+   "maxW": 1200,
+   "page": "v4-variants"
+  },
+  "v4-variants-n-51": {
+   "x": 0,
+   "y": 10440,
+   "text": "N-51 Due reminders",
+   "kind": "title1",
+   "maxW": 1200,
+   "page": "v4-variants"
+  },
+  "v4-variants-ext-01": {
+   "x": 0,
+   "y": 11600,
+   "text": "EXT-01 Home-screen widget",
+   "kind": "title1",
+   "maxW": 1200,
+   "page": "v4-variants"
+  },
+  "v4-variants-n-43": {
+   "x": 0,
+   "y": 12760,
+   "text": "N-43 Import queue",
+   "kind": "title1",
+   "maxW": 1200,
+   "page": "v4-variants"
+  },
+  "v4-variants-n-44": {
+   "x": 0,
+   "y": 13920,
+   "text": "N-44 Email import",
+   "kind": "title1",
+   "maxW": 1200,
+   "page": "v4-variants"
+  },
   "and-light-scr-01": {
    "x": 0,
    "y": 0,
@@ -2936,8 +5942,8 @@
    "title": "Ví Gọn",
    "namespace": "vigon",
    "artifact": "https://claude.ai/artifact/EhNKP8PgiDPNqtmMdzTtVR",
-   "version": "1793849537-8405",
-   "copiedAt": "2026-11-05T03:40:59Z"
+   "version": "1794302187-13c8",
+   "copiedAt": "2026-11-10T09:17:21Z"
   }
  ]
 }
