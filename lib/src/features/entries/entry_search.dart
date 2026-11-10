@@ -254,7 +254,14 @@ class EntrySearchResults extends ConsumerWidget {
                 child: Text(
                   l.searchTotal(
                     matches.length,
-                    money(context, currency, searchTotal(matches)),
+                    money(
+                      context,
+                      currency,
+                      searchTotal(
+                        matches,
+                        service: ref.watch(currencyServiceProvider).value,
+                      ),
+                    ),
                   ),
                   style: VgType.bodySm.copyWith(color: muted),
                 ),

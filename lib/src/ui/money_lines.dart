@@ -6,15 +6,17 @@ import '../providers.dart';
 import 'format.dart';
 import 'tokens.g.dart';
 
-/// Số tiền gốc + dòng "≈ Tiền tệ chính" bên dưới (D-037), như A001.
+/// Số tiền theo **Tiền tệ chính to ở trên**, số gốc nhỏ ở dưới (D-042,
+/// AC-146).
 ///
-/// Số gốc luôn đứng trên, đúng tiền tệ người dùng đã nhập; dòng dưới chỉ là
-/// cách nhìn theo Tiền tệ chính. Cặp thiếu tỷ giá thì ghi chú thay vì đoán số.
+/// Cùng tiền tệ thì chỉ một dòng. Thiếu tỷ giá thì dòng trên là số gốc và dòng
+/// dưới ghi chú "Thiếu tỷ giá" thay vì đoán số.
 class MoneyLines extends ConsumerWidget {
   const MoneyLines({
     super.key,
     required this.amount,
     required this.currency,
+    this.primaryAmount,
     this.style,
     this.secondaryStyle,
     this.textAlign,
@@ -25,62 +27,95 @@ class MoneyLines extends ConsumerWidget {
   /// Số gốc, đơn vị nhỏ nhất của [currency].
   final int amount;
   final String currency;
+
+  /// Số theo Tiền tệ chính đã tính sẵn chính xác (vd số dư cộng gốc rồi quy
+  /// đổi một lần, AC-148); null thì quy đổi [amount] tại tỷ giá hiện tại.
+  final int? primaryAmount;
   final TextStyle? style;
   final TextStyle? secondaryStyle;
   final TextAlign? textAlign;
   final CrossAxisAlignment crossAxisAlignment;
 
-  /// Chỉ hiện dòng quy đổi khi khác tiền tệ; dùng trong dòng chật.
+  /// Chỉ hiện dòng trên; dùng trong dòng chật.
   final bool compact;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final l = AppLocalizations.of(context);
-    final primary = ref.watch(currencyProvider).value ?? 'USD';
-    final service = ref.watch(currencyServiceProvider).value;
-    final original = Text(
-      money(context, currency, amount),
-      style: style,
-      textAlign: textAlign,
+    final lines = moneyLinesText(
+      context,
+      ref,
+      amount,
+      currency,
+      primaryAmount: primaryAmount,
     );
-    if (currency == primary) return original;
-    final converted = service?.toPrimary(amount, currency);
+    final main = Text(lines.main, style: style, textAlign: textAlign);
+    if (lines.secondary == null || compact) return main;
     final scheme = Theme.of(context).colorScheme;
     final secondary = (secondaryStyle ?? VgType.bodySm).copyWith(
-      color: converted == null ? scheme.error : scheme.onSurfaceVariant,
+      color: lines.missingRate ? scheme.error : scheme.onSurfaceVariant,
     );
     return Column(
       crossAxisAlignment: crossAxisAlignment,
       mainAxisSize: MainAxisSize.min,
       children: [
-        original,
-        if (!compact)
-          Text(
-            converted == null
-                ? l.rateMissing(currency, primary)
-                : '≈ ${money(context, primary, converted)}',
-            style: secondary,
-            textAlign: textAlign,
-          ),
+        main,
+        Text(lines.secondary!, style: secondary, textAlign: textAlign),
       ],
     );
   }
 }
 
-/// Chuỗi "≈ …" của [amount] theo Tiền tệ chính, hoặc null khi cùng tiền tệ.
-/// Nơi cần một chuỗi (SnackBar, ngữ nghĩa) dùng hàm này.
-String? approxMoneyText(
+/// Chữ hai dòng của một số tiền (D-042): [main] theo Tiền tệ chính (hoặc số
+/// gốc khi thiếu tỷ giá), [secondary] là số gốc / ghi chú thiếu tỷ giá, null
+/// khi cùng tiền tệ.
+typedef MoneyLinesText = ({String main, String? secondary, bool missingRate});
+
+MoneyLinesText moneyLinesText(
   BuildContext context,
   WidgetRef ref,
   int amount,
-  String currency,
-) {
+  String currency, {
+  int? primaryAmount,
+}) {
   final primary = ref.watch(currencyProvider).value ?? 'USD';
-  if (currency == primary) return null;
-  final converted = ref
-      .watch(currencyServiceProvider)
-      .value
-      ?.toPrimary(amount, currency);
-  if (converted == null) return null;
-  return '≈ ${money(context, primary, converted)}';
+  final original = money(context, currency, amount);
+  if (currency == primary) {
+    return (main: original, secondary: null, missingRate: false);
+  }
+  final converted =
+      primaryAmount ??
+      ref.watch(currencyServiceProvider).value?.toPrimary(amount, currency);
+  if (converted == null) {
+    final l = AppLocalizations.of(context);
+    return (
+      main: original,
+      secondary: l.rateMissing(currency, primary),
+      missingRate: true,
+    );
+  }
+  return (
+    main: money(context, primary, converted),
+    secondary: original,
+    missingRate: false,
+  );
+}
+
+/// Chữ một dòng "chính · gốc" cho SnackBar, ngữ nghĩa, thông báo.
+String moneyOneLine(
+  BuildContext context,
+  WidgetRef ref,
+  int amount,
+  String currency, {
+  int? primaryAmount,
+}) {
+  final t = moneyLinesText(
+    context,
+    ref,
+    amount,
+    currency,
+    primaryAmount: primaryAmount,
+  );
+  return t.secondary == null || t.missingRate
+      ? t.main
+      : '${t.main} (${t.secondary})';
 }

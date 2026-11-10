@@ -19,6 +19,7 @@ import 'features/lock/app_lock.dart';
 import 'features/lock/lock_screen.dart';
 import 'features/onboarding/onboarding_screen.dart';
 import 'features/recurring/recurring_screen.dart';
+import 'features/reminder/deadline_reminders.dart';
 import 'features/reminder/reminder_providers.dart';
 import 'features/savings/savings_screen.dart';
 import 'features/settings/email_import_screen.dart';
@@ -185,6 +186,7 @@ class VigonApp extends ConsumerWidget {
     ref.watch(secureWindowSyncProvider);
     ref.watch(widgetSyncProvider);
     ref.watch(reminderSyncProvider);
+    ref.watch(deadlineSyncProvider);
     final themeMode = ref.watch(themeModeProvider).value ?? ThemeMode.system;
     final localeCode = ref.watch(localeCodeProvider).value;
     final lock = ref.watch(lockProvider);

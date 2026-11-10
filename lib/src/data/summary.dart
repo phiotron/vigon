@@ -1,4 +1,5 @@
 import 'database.dart';
+import 'money_sum.dart';
 import 'rate_repository.dart';
 
 /// Một khoản ghi kèm danh mục của nó (null với chuyển tiền).
@@ -47,38 +48,55 @@ class PeriodSummary {
     Iterable<EntryView> rows, {
     CurrencyService? service,
   }) {
-    final expense = <int, (Category, int)>{};
-    final income = <int, (Category, int)>{};
-    var expenseTotal = 0, incomeTotal = 0;
+    // Có service: cộng số gốc theo từng tiền tệ rồi quy đổi một lần (D-042,
+    // AC-148). Không có (test cũ, chưa nạp tỷ giá): cộng số dẫn xuất.
+    final expense = <int, (Category, MoneyBag)>{};
+    final income = <int, (Category, MoneyBag)>{};
+    final expenseAll = MoneyBag(), incomeAll = MoneyBag();
     for (final row in rows) {
       final category = row.category;
       if (category == null) continue;
+      final e = row.entry;
       // Cặp thiếu tỷ giá thì khoản không vào tổng (D-037); UI vẫn hiện số gốc
       // kèm ghi chú "không có tỷ giá".
       if (service != null &&
-          row.entry.type != EntryType.transfer &&
-          !service.has(row.entry.currency, service.primary)) {
+          e.type != EntryType.transfer &&
+          !service.has(e.currency, service.primary)) {
         continue;
       }
-      final amount = row.entry.amount;
-      switch (row.entry.type) {
+      final amount = service == null ? e.amount : entryOriginal(e);
+      final currency = service == null ? '' : e.currency;
+      switch (e.type) {
         case EntryType.expense:
-          expenseTotal += amount;
-          final old = expense[category.id]?.$2 ?? 0;
-          expense[category.id] = (category, old + amount);
+          expenseAll.add(currency, amount);
+          (expense[category.id] ??= (
+            category,
+            MoneyBag(),
+          )).$2.add(currency, amount);
         case EntryType.income:
-          incomeTotal += amount;
-          final old = income[category.id]?.$2 ?? 0;
-          income[category.id] = (category, old + amount);
+          incomeAll.add(currency, amount);
+          (income[category.id] ??= (
+            category,
+            MoneyBag(),
+          )).$2.add(currency, amount);
         case EntryType.transfer:
           break;
       }
     }
+    int total(MoneyBag bag) => service == null
+        ? bag.parts.values.fold(0, (a, b) => a + b)
+        : bag.convertTo(service, service.primary) ?? 0;
+    final expenseTotal = total(expenseAll);
+    final incomeTotal = total(incomeAll);
     return PeriodSummary(
       income: incomeTotal,
       expense: expenseTotal,
-      expenseByCategory: _sorted(expense.values, expenseTotal),
-      incomeByCategory: _sorted(income.values, incomeTotal),
+      expenseByCategory: _sorted([
+        for (final v in expense.values) (v.$1, total(v.$2)),
+      ], expenseTotal),
+      incomeByCategory: _sorted([
+        for (final v in income.values) (v.$1, total(v.$2)),
+      ], incomeTotal),
     );
   }
 

@@ -34,6 +34,8 @@ const deviceOnlySettingKeys = {
   SettingsRepository.reminderEnabledKey,
   SettingsRepository.mbAutoAccountNoticesKey,
   SettingsRepository.onboardingPendingKey,
+  SettingsRepository.deadlineReminderOffKey,
+  SettingsRepository.deadlinePermissionAskedKey,
 };
 
 /// Mã cài đặt đi kèm PIN (iOS-02) gắn với máy, không phải dữ liệu: không xuất,

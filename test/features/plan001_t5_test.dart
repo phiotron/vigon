@@ -182,7 +182,9 @@ void main() {
   });
 
   testWidgets('Giới thiệu (9.1–9.2, AC-41): một thẻ trong Cài đặt có phiên '
-      'bản, chính sách, điều khoản, giấy phép, đánh giá, góp ý', (tester) async {
+      'bản, chính sách, điều khoản, giấy phép, đánh giá, góp ý', (
+    tester,
+  ) async {
     expect(
       AppInfo.privacyPolicyUrl('vi'),
       endsWith('/vigon/privacy-policy.vi.html'),

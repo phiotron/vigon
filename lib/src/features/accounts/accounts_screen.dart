@@ -34,39 +34,24 @@ class AccountsScreen extends ConsumerWidget {
     final accounts = ref.watch(accountsProvider).value ?? const <Account>[];
     final balances =
         ref.watch(accountBalancesProvider).value ?? const <int, int>{};
-    final currency = ref.watch(currencyProvider).value ?? 'USD';
-    final service = ref.watch(currencyServiceProvider).value;
+    final own =
+        ref.watch(accountOwnBalancesProvider).value ?? const <int, int>{};
     final large = isLargeText(context);
-    // Số dư tính theo Tiền tệ chính; hiện theo tiền tệ của tài khoản, dưới là
-    // "≈ Tiền tệ chính" (D-037). Cặp thiếu tỷ giá thì đành hiện số chính.
-    Widget balance(Account a) {
-      final primaryAmount = balances[a.id] ?? a.initialBalance;
-      final own = a.currency == currency
-          ? primaryAmount
-          : service?.fromPrimary(primaryAmount, a.currency);
-      if (own == null) {
-        return Text(
-          money(context, currency, primaryAmount),
-          style: VgType.bodyMd.copyWith(
-            color: Theme.of(context).colorScheme.onSurface,
-            fontWeight: FontWeight.w600,
-            fontFeatures: const [FontFeature.tabularFigures()],
-          ),
-        );
-      }
-      return MoneyLines(
-        amount: own,
-        currency: a.currency,
-        style: VgType.bodyMd.copyWith(
-          color: Theme.of(context).colorScheme.onSurface,
-          fontWeight: FontWeight.w600,
-          fontFeatures: const [FontFeature.tabularFigures()],
-        ),
-        secondaryStyle: VgType.bodySm,
-        crossAxisAlignment: CrossAxisAlignment.end,
-        textAlign: TextAlign.end,
-      );
-    }
+    // Số dư: Tiền tệ chính to ở trên, số theo tiền tệ tài khoản nhỏ ở dưới
+    // (D-042). Cả hai tính thẳng từ số gốc, không quy ngược (AC-148).
+    Widget balance(Account a) => MoneyLines(
+      amount: own[a.id] ?? a.initialBalanceOriginal ?? a.initialBalance,
+      currency: a.currency,
+      primaryAmount: balances[a.id],
+      style: VgType.bodyMd.copyWith(
+        color: Theme.of(context).colorScheme.onSurface,
+        fontWeight: FontWeight.w600,
+        fontFeatures: const [FontFeature.tabularFigures()],
+      ),
+      secondaryStyle: VgType.bodySm,
+      crossAxisAlignment: CrossAxisAlignment.end,
+      textAlign: TextAlign.end,
+    );
 
     return Scaffold(
       appBar: AppBar(

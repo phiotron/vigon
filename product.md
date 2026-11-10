@@ -86,7 +86,7 @@ few seconds, adds everything up in **one main currency the user picks**, and kee
    another currency, the **original amount small underneath**. One currency → one line.
 4. **Calm, compact finance UI.** Numbers are the hero; colour sparingly; celebrate a finished savings goal once, quietly.
 5. **Thumb zone first.** Primary actions in the bottom half; sheets over full pages for short tasks.
-6. **Never colour alone.** Income/expense carry a sign or word; Almost over / Over / Overdue / Done carry icon + text.
+6. **Never colour alone.** Income/expense carry a sign or word; Over / Due soon / Overdue / Done carry icon + text.
 7. **Forgiving.** Deletes have 5‑s Undo or a confirm; limits are explained ("Only $40.00 more needed").
 8. **Same app on both platforms**, except OS‑owned behaviour (§9).
 
@@ -105,7 +105,7 @@ few seconds, adds everything up in **one main currency the user picks**, and kee
   `#2E7D32`/`#81C784`; expense `#C62828`/`#EF9A9A`; error `#BA1A1A`/`#FFB4AB`; 16 category colours `cat-01…16`. Type **Be
   Vietnam Pro** with **tabular figures**, 12 type styles. Icons **Material Symbols Rounded**.
 - Keep token names; list every change (§11.4). Contrast ≥ 4.5:1 text / 3:1 large text & icons in both themes.
-  **Needed:** a **warning** pair (`warning`, `on-warning`, `warning-container`) for *Almost over* and *Due soon*, distinct from
+  **Needed:** a **warning** pair (`warning`, `on-warning`, `warning-container`) for *Due soon*, distinct from
   `error` (*Over*, *Overdue*) and from `expense`; a **success** accent for *Goal completed* that is not the income green.
 - Category colours/icons are **user data** (keys in backups) — keep the 16 slots and icon keys.
 - **Brand (D‑009):** logo "two stacked cards" (bg `#0E5244`, back card `#8CD5BF` −14°, front `#F7FAF8` +8°, dot `#E65100`).
@@ -522,7 +522,7 @@ Rates (built‑in style): 1 USD = 25,974 VND · 1 EUR = 1.087 USD.
 savings account for the house deposit".
 **November expenses** (main USD, exact total **$1,840.00**): Home $540.00 (29.3 %) · Food $495.00 · Shopping $215.00 · Bills $170.00 ·
 Transport $130.00 · Family $90.00 · Entertainment $80.00 · Health $50.00 · Other $20.00 · Education none.
-**Income:** Salary $2,300.00 + Bonus $200.00. **Period balance** $660.00. **Monthly budget** $2,000.00 → 92 % (Almost over);
+**Income:** Salary $2,300.00 + Bonus $200.00. **Period balance** $660.00. **Monthly budget** $2,000.00 → 92 %;
 over variant $1,700 → "Over by $140.00". Category limits: Food $450 → Over by $45.00 · Transport $160 → 81 %.
 **Records (mixed currencies, main‑first):** Nov 26 12:02 "Beef pho" Food **$3.85** / 100,000 ₫ ✉ · Nov 25 18:40 "Groceries" Food
 **$32.00** · Nov 24 "Hotel deposit" Entertainment **$108.70** / €100.00 · Nov 20 "Electricity" Bills **$26.18** / 680,000 ₫ · Nov 18
@@ -625,7 +625,7 @@ Each platform (Android 360 × 800 dp; iPhone 393 × 852 pt) × light + dark, eve
   `warning` / `on-warning` / `warning-container`, `success` accent for Done,
   **money block** spec (line 1 / line 2 styles, spacing, alignment start/end, 200 % behaviour).
 - **Component sheet** (default, pressed, focused, disabled, error, selected; light + dark): two‑line money block, currency chip,
-  currency bar (form field), progress bar (goal / debt / budget: normal · due soon / almost · over / overdue · done), history row,
+  currency bar (form field), progress bar (goal / debt / budget: normal · due soon · over / overdue · done), history row,
   amount field with "Fill to target" chip, account picker row with balance, celebration dialog, status chip, stepper (days before),
   queue card, suggested chip, ✉ marker, banner, segmented control, plus all v2 components (ring, keypad, rows, dialogs, snackbar, PIN pad, widget, notification).
 - **Motion** (150–250 ms, reduce‑motion aware): progress fill, goal → Done, reached burst, sheet open/close, period change, keypad.

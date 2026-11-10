@@ -6,6 +6,7 @@ import '../../../l10n/app_localizations.dart';
 import '../../data/database.dart';
 import '../../data/dates.dart';
 import '../../data/debt_repository.dart';
+import '../../data/money_sum.dart';
 import '../../data/money.dart';
 import '../../providers.dart';
 import '../../ui/format.dart';
@@ -63,8 +64,17 @@ class _DebtsScreenState extends ConsumerState<DebtsScreen> {
         if (v.debt.direction == DebtDirection.borrowed) v,
     ];
 
-    int total(List<DebtView> list) =>
-        list.fold(0, (sum, v) => sum + v.remaining(digits));
+    // Cộng số còn lại theo từng tiền tệ rồi quy đổi một lần (AC-148).
+    final service = ref.watch(currencyServiceProvider).value;
+    int total(List<DebtView> list) {
+      final bag = MoneyBag();
+      for (final v in list) {
+        bag.add(v.debt.currency, v.remaining());
+      }
+      return service == null
+          ? bag.parts[currency] ?? 0
+          : bag.convertTo(service, currency) ?? 0;
+    }
 
     Widget group(String title, List<DebtView> list) => Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -219,18 +229,12 @@ class _DebtTile extends ConsumerWidget {
     final l = AppLocalizations.of(context);
     final scheme = Theme.of(context).colorScheme;
     final d = view.debt;
-    final primary = ref.watch(currencyProvider).value ?? 'USD';
-    final service = ref.watch(currencyServiceProvider).value;
-    final settled = view.isSettled(digits);
+    final settled = view.isSettled();
     final overdue = isDebtOverdue(view, today, digits);
-    // Số gốc theo tiền tệ khoản nợ; số còn lại trong DB là số quy về Tiền tệ
-    // chính nên quy ngược để hiện (D-037).
-    final originalAmount = d.originalAmount ?? d.amount;
-    int own(int amount) => d.currency == primary
-        ? amount
-        : service?.fromPrimary(amount, d.currency) ?? amount;
-    final ownRemaining = own(view.remaining(digits));
-    final ownPaid = own(view.paid(digits));
+    // Số theo tiền tệ khoản nợ, tính thẳng từ số gốc (AC-148).
+    final originalAmount = view.total;
+    final ownRemaining = view.remaining();
+    final ownPaid = view.paid();
     final lines = <Widget>[
       if (settled)
         Row(

@@ -11,10 +11,13 @@ import '../../data/money.dart';
 import '../../providers.dart';
 import '../../ui/choice_segments.dart';
 import '../../ui/choice_sheet.dart';
+import '../../ui/confirm_dialog.dart';
+import '../../ui/dialog.dart';
 import '../../ui/format.dart';
 import '../../ui/hint.dart';
 import '../../ui/tokens.g.dart';
 import '../categories/sheet_footer.dart';
+import '../reminder/deadline_reminders.dart';
 import '../settings/budget_dialog.dart' show currencySymbol;
 import '../settings/currency_picker.dart';
 import 'debts_providers.dart';
@@ -121,12 +124,10 @@ class _DebtEditorState extends ConsumerState<_DebtEditor> {
       amountError = l.amountMustBePositive;
     } else if (widget.view != null) {
       // Sửa số tiền gốc xuống dưới số đã trả thì "còn lại" vô nghĩa.
-      final paid = widget.view!.paid(digits);
-      if (amount < paid) {
-        final ownPaid = currency == primary
-            ? paid
-            : service.fromPrimary(paid, currency) ?? paid;
-        amountError = l.debtAmountBelowPaid(money(context, currency, ownPaid));
+      // So bằng số gốc theo tiền tệ khoản nợ (AC-148).
+      final paid = widget.view!.paid();
+      if (amountOriginal < paid) {
+        amountError = l.debtAmountBelowPaid(money(context, currency, paid));
       }
     }
     setState(() {
@@ -163,6 +164,21 @@ class _DebtEditorState extends ConsumerState<_DebtEditor> {
         date: dateKey(_date),
         dueDate: due,
         note: note,
+      );
+    }
+    // Lần đầu có hạn: giải thích + xin quyền nhắc trước hạn (AC-155).
+    if (due != null && mounted) {
+      await ensureDeadlinePermission(
+        context,
+        ref,
+        explain: () => showConfirmDialog(
+          context,
+          icon: Symbols.notifications_rounded,
+          iconTone: VgDialogTone.neutral,
+          title: l.deadlineExplainTitle,
+          body: l.deadlineExplainBody,
+          action: l.reminderContinue,
+        ),
       );
     }
     if (mounted) Navigator.pop(context);

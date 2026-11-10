@@ -1805,7 +1805,7 @@ abstract class AppLocalizations {
   /// No description provided for @primaryCurrencyNote.
   ///
   /// In en, this message translates to:
-  /// **'Totals, charts and the ≈ line use this currency. Each account keeps its own currency; changing this only changes how amounts are added up and shown, never the amounts you entered.'**
+  /// **'Everything is shown and added up in this currency. Amounts recorded in other currencies keep their original value, shown underneath.'**
   String get primaryCurrencyNote;
 
   /// No description provided for @exchangeRates.
@@ -2687,7 +2687,7 @@ abstract class AppLocalizations {
   /// No description provided for @savingsAccount.
   ///
   /// In en, this message translates to:
-  /// **'Linked account'**
+  /// **'Account'**
   String get savingsAccount;
 
   /// No description provided for @savingsNewAccount.
@@ -2771,7 +2771,7 @@ abstract class AppLocalizations {
   /// No description provided for @savingsDeleteBody.
   ///
   /// In en, this message translates to:
-  /// **'The linked account and all records stay. Only the goal is deleted.'**
+  /// **'The account and all records stay. Only the goal is deleted.'**
   String get savingsDeleteBody;
 
   /// No description provided for @savingsDeleted.
@@ -3175,6 +3175,336 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Matched with MB email {time}'**
   String queueMatched(String time);
+
+  /// No description provided for @savingsGoalName.
+  ///
+  /// In en, this message translates to:
+  /// **'Goal name'**
+  String get savingsGoalName;
+
+  /// No description provided for @savingsAccountHelper.
+  ///
+  /// In en, this message translates to:
+  /// **'A new account just for this goal. Move money in with Add money.'**
+  String get savingsAccountHelper;
+
+  /// No description provided for @savingsAccountEditHelper.
+  ///
+  /// In en, this message translates to:
+  /// **'The account that holds this goal\'s money.'**
+  String get savingsAccountEditHelper;
+
+  /// No description provided for @savingsAlreadySaved.
+  ///
+  /// In en, this message translates to:
+  /// **'Already saved (optional)'**
+  String get savingsAlreadySaved;
+
+  /// No description provided for @savingsAlreadySavedHelper.
+  ///
+  /// In en, this message translates to:
+  /// **'Money you\'ve already put aside. It becomes the account\'s starting balance.'**
+  String get savingsAlreadySavedHelper;
+
+  /// No description provided for @savingsCurrencyLocked.
+  ///
+  /// In en, this message translates to:
+  /// **'The currency can\'t change once the account has records.'**
+  String get savingsCurrencyLocked;
+
+  /// No description provided for @savingsInProgress.
+  ///
+  /// In en, this message translates to:
+  /// **'In progress'**
+  String get savingsInProgress;
+
+  /// No description provided for @savingsDoneSection.
+  ///
+  /// In en, this message translates to:
+  /// **'Done ({count})'**
+  String savingsDoneSection(int count);
+
+  /// No description provided for @savingsDone.
+  ///
+  /// In en, this message translates to:
+  /// **'Done'**
+  String get savingsDone;
+
+  /// No description provided for @savingsDoneOn.
+  ///
+  /// In en, this message translates to:
+  /// **'Done · {date}'**
+  String savingsDoneOn(String date);
+
+  /// No description provided for @savingsWithdraw.
+  ///
+  /// In en, this message translates to:
+  /// **'Withdraw'**
+  String get savingsWithdraw;
+
+  /// No description provided for @savingsHistory.
+  ///
+  /// In en, this message translates to:
+  /// **'History'**
+  String get savingsHistory;
+
+  /// No description provided for @savingsHistoryEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No money moved yet'**
+  String get savingsHistoryEmpty;
+
+  /// No description provided for @savingsHistoryAdded.
+  ///
+  /// In en, this message translates to:
+  /// **'Added from {account}'**
+  String savingsHistoryAdded(String account);
+
+  /// No description provided for @savingsHistoryWithdrew.
+  ///
+  /// In en, this message translates to:
+  /// **'Withdrew to {account}'**
+  String savingsHistoryWithdrew(String account);
+
+  /// No description provided for @savingsHistorySpent.
+  ///
+  /// In en, this message translates to:
+  /// **'Spent: {what}'**
+  String savingsHistorySpent(String what);
+
+  /// No description provided for @savingsHistoryIncome.
+  ///
+  /// In en, this message translates to:
+  /// **'Income: {what}'**
+  String savingsHistoryIncome(String what);
+
+  /// No description provided for @savingsHistoryStart.
+  ///
+  /// In en, this message translates to:
+  /// **'Already saved'**
+  String get savingsHistoryStart;
+
+  /// No description provided for @savingsBalance.
+  ///
+  /// In en, this message translates to:
+  /// **'Balance {amount}'**
+  String savingsBalance(String amount);
+
+  /// No description provided for @savingsFromAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'From account'**
+  String get savingsFromAccount;
+
+  /// No description provided for @savingsToAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'To account'**
+  String get savingsToAccount;
+
+  /// No description provided for @savingsMoveAmount.
+  ///
+  /// In en, this message translates to:
+  /// **'Amount'**
+  String get savingsMoveAmount;
+
+  /// No description provided for @savingsFillToTarget.
+  ///
+  /// In en, this message translates to:
+  /// **'Fill to target'**
+  String get savingsFillToTarget;
+
+  /// No description provided for @savingsWithdrawAll.
+  ///
+  /// In en, this message translates to:
+  /// **'All'**
+  String get savingsWithdrawAll;
+
+  /// No description provided for @savingsOverTarget.
+  ///
+  /// In en, this message translates to:
+  /// **'Only {amount} more needed'**
+  String savingsOverTarget(String amount);
+
+  /// No description provided for @savingsOverBalance.
+  ///
+  /// In en, this message translates to:
+  /// **'Only {amount} in this account'**
+  String savingsOverBalance(String amount);
+
+  /// No description provided for @savingsSendsApprox.
+  ///
+  /// In en, this message translates to:
+  /// **'Sends {amount} from {account} at today\'s rate'**
+  String savingsSendsApprox(String amount, String account);
+
+  /// No description provided for @savingsNothingToWithdraw.
+  ///
+  /// In en, this message translates to:
+  /// **'This account is empty'**
+  String get savingsNothingToWithdraw;
+
+  /// No description provided for @savingsReachedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Savings goal reached'**
+  String get savingsReachedTitle;
+
+  /// No description provided for @savingsReachedBody.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'ve saved {amount} for {goal}.'**
+  String savingsReachedBody(String amount, String goal);
+
+  /// No description provided for @savingsReachedOk.
+  ///
+  /// In en, this message translates to:
+  /// **'Great'**
+  String get savingsReachedOk;
+
+  /// No description provided for @savingsReopen.
+  ///
+  /// In en, this message translates to:
+  /// **'Reopen'**
+  String get savingsReopen;
+
+  /// No description provided for @savingsReopened.
+  ///
+  /// In en, this message translates to:
+  /// **'Goal reopened'**
+  String get savingsReopened;
+
+  /// No description provided for @savingsAdded.
+  ///
+  /// In en, this message translates to:
+  /// **'Added {amount}'**
+  String savingsAdded(String amount);
+
+  /// No description provided for @savingsWithdrawn.
+  ///
+  /// In en, this message translates to:
+  /// **'Withdrew {amount}'**
+  String savingsWithdrawn(String amount);
+
+  /// No description provided for @savingsWalletOf.
+  ///
+  /// In en, this message translates to:
+  /// **'Savings · {goal}'**
+  String savingsWalletOf(String goal);
+
+  /// No description provided for @currencyChipTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Currency: {currency}'**
+  String currencyChipTooltip(String currency);
+
+  /// No description provided for @deadlineReminders.
+  ///
+  /// In en, this message translates to:
+  /// **'Deadline reminders'**
+  String get deadlineReminders;
+
+  /// No description provided for @deadlineRemindersValue.
+  ///
+  /// In en, this message translates to:
+  /// **'{days, plural, =1{1 day before} other{{days} days before}} · {time}'**
+  String deadlineRemindersValue(int days, String time);
+
+  /// No description provided for @deadlineRemindersOff.
+  ///
+  /// In en, this message translates to:
+  /// **'Off'**
+  String get deadlineRemindersOff;
+
+  /// No description provided for @deadlineRemindersSwitch.
+  ///
+  /// In en, this message translates to:
+  /// **'Remind me before due dates'**
+  String get deadlineRemindersSwitch;
+
+  /// No description provided for @deadlineRemindersNote.
+  ///
+  /// In en, this message translates to:
+  /// **'For savings goals and debts with a due date. Notifications show the amount left.'**
+  String get deadlineRemindersNote;
+
+  /// No description provided for @deadlineDaysBefore.
+  ///
+  /// In en, this message translates to:
+  /// **'Days before'**
+  String get deadlineDaysBefore;
+
+  /// No description provided for @deadlineDaysValue.
+  ///
+  /// In en, this message translates to:
+  /// **'{days, plural, =1{1 day} other{{days} days}}'**
+  String deadlineDaysValue(int days);
+
+  /// No description provided for @deadlineTime.
+  ///
+  /// In en, this message translates to:
+  /// **'Time'**
+  String get deadlineTime;
+
+  /// No description provided for @deadlineExplainTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Turn on deadline reminders?'**
+  String get deadlineExplainTitle;
+
+  /// No description provided for @deadlineExplainBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Vigon will notify you before and on the due date of your savings goals and debts. The notification shows the amount left.'**
+  String get deadlineExplainBody;
+
+  /// No description provided for @deadlineChannelName.
+  ///
+  /// In en, this message translates to:
+  /// **'Deadline reminders'**
+  String get deadlineChannelName;
+
+  /// No description provided for @deadlineChannelDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Reminders before savings goals and debts are due'**
+  String get deadlineChannelDescription;
+
+  /// No description provided for @deadlineWhenDays.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{due in 1 day} other{due in {count} days}}'**
+  String deadlineWhenDays(int count);
+
+  /// No description provided for @deadlineWhenToday.
+  ///
+  /// In en, this message translates to:
+  /// **'due today'**
+  String get deadlineWhenToday;
+
+  /// No description provided for @deadlineDebtLent.
+  ///
+  /// In en, this message translates to:
+  /// **'Debt with {person}: {amount} left, {when}'**
+  String deadlineDebtLent(String person, String amount, String when);
+
+  /// No description provided for @deadlineDebtBorrowed.
+  ///
+  /// In en, this message translates to:
+  /// **'You owe {person}: {amount} left, {when}'**
+  String deadlineDebtBorrowed(String person, String amount, String when);
+
+  /// No description provided for @deadlineGoal.
+  ///
+  /// In en, this message translates to:
+  /// **'Goal {goal}: {amount} to go, {when}'**
+  String deadlineGoal(String goal, String amount, String when);
+
+  /// No description provided for @debtPayRest.
+  ///
+  /// In en, this message translates to:
+  /// **'Pay the rest'**
+  String get debtPayRest;
 }
 
 class _AppLocalizationsDelegate

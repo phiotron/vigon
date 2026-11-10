@@ -1,9 +1,6 @@
 import 'package:drift/drift.dart';
 
-import 'currency.dart';
 import 'database.dart';
-import 'money.dart';
-import 'settings_repository.dart';
 
 /// Lần trả vượt số còn lại (AC-105).
 class DebtOverpaymentException implements Exception {
@@ -23,26 +20,29 @@ class DebtView {
   final Debt debt;
   final List<DebtPayment> payments;
 
-  /// Số còn lại, đơn vị nhỏ nhất của tiền có [digits] chữ số lẻ, không âm.
-  /// Tính từ số chính xác (D-029) rồi mới làm tròn, nên sau quy đổi tiền tệ
-  /// một khoản đã trả đủ vẫn còn đúng 0 dù từng lần trả làm tròn lệch.
-  int remaining(int digits) => remainingOf(debt, payments, digits);
+  /// Số tiền khoản nợ theo tiền tệ của nó (số gốc).
+  int get total => debt.originalAmount ?? debt.amount;
 
-  /// Đã trả = số tiền − còn lại (khớp với [remaining]).
-  int paid(int digits) => debt.amount - remaining(digits);
+  /// Số còn lại theo **tiền tệ của khoản nợ**, tính thẳng từ số gốc (D-042,
+  /// AC-148): không qua số dẫn xuất nên đổi Tiền tệ chính không làm lệch, trả
+  /// đủ là còn đúng 0. Không âm. [digits] chỉ giữ cho chỗ gọi cũ.
+  int remaining([int? digits]) => remainingOf(debt, payments);
+
+  /// Đã trả theo tiền tệ khoản nợ (khớp với [remaining]).
+  int paid([int? digits]) => total - remaining();
 
   /// "Đã xong" (AC-105).
-  bool isSettled(int digits) => remaining(digits) == 0;
+  bool isSettled([int? digits]) => remaining() == 0;
 }
 
-/// Số còn lại của [debt] sau [payments] (xem [DebtView.remaining]).
-int remainingOf(Debt debt, List<DebtPayment> payments, int digits) {
-  var micro = exactMicro(debt.amount, debt.amountMicro, digits);
+/// Số còn lại của [debt] sau [payments], theo tiền tệ khoản nợ. Lần trả luôn
+/// cùng tiền tệ khoản nợ (tiền tệ khoá sau lần trả đầu, AC-133).
+int remainingOf(Debt debt, List<DebtPayment> payments, [int? digits]) {
+  var left = debt.originalAmount ?? debt.amount;
   for (final p in payments) {
-    micro -= exactMicro(p.amount, p.amountMicro, digits);
+    left -= p.originalAmount ?? p.amount;
   }
-  final minor = roundMicroToMinor(micro, digits);
-  return minor < 0 ? 0 : minor;
+  return left < 0 ? 0 : left;
 }
 
 /// Đọc, ghi khoản nợ và lần trả (AC-104..AC-106). Không tạo khoản (Entry),
@@ -180,11 +180,11 @@ class DebtRepository {
     return _db.transaction(() async {
       final view = await find(debtId);
       if (view == null) throw StateError('không có khoản nợ $debtId');
-      final digits = currencyDecimalDigits(
-        await SettingsRepository(_db).readCurrency(),
-      );
-      final remaining = view.remaining(digits);
-      if (amount > remaining) throw DebtOverpaymentException(remaining);
+      // So bằng số gốc theo tiền tệ khoản nợ (G8, AC-158).
+      final remaining = view.remaining();
+      if ((originalAmount ?? amount) > remaining) {
+        throw DebtOverpaymentException(remaining);
+      }
       return _db
           .into(_db.debtPayments)
           .insert(

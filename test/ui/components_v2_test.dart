@@ -208,8 +208,7 @@ void main() {
     ) async {
       final result = await open(
         tester,
-        note:
-            'Nhắc ghi sổ hằng ngày sẽ tắt. Bạn có thể bật lại trong Cài đặt.',
+        note: 'Nhắc ghi sổ hằng ngày sẽ tắt. Bạn có thể bật lại trong Cài đặt.',
       );
       final icon = tester.widget<Icon>(
         find.byIcon(Symbols.settings_backup_restore_rounded),

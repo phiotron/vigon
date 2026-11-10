@@ -101,7 +101,10 @@ class ReminderTapBinder extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     ref.listen(reminderTapProvider, (_, next) {
       // Chỉ nhận đúng đường dẫn của app, không đi theo chuỗi lạ.
-      if (next?.payload == reminderPayload) router.go(reminderPayload);
+      final payload = next?.payload;
+      if (payload == reminderPayload) router.go(reminderPayload);
+      // Nhắc trước hạn (AC-157): mở Khoản nợ / Tiết kiệm.
+      if (payload == '/debts' || payload == '/savings') router.go(payload!);
     });
     return child;
   }

@@ -12,6 +12,7 @@ import '../../data/money.dart';
 import '../../data/repeat.dart';
 import '../../l10n_names.dart';
 import '../../providers.dart';
+import '../settings/currency_picker.dart';
 import '../../ui/amount_display.dart';
 import '../../ui/category_avatar.dart';
 import '../../ui/category_grid.dart';
@@ -58,8 +59,8 @@ class _EntryEditorScreenState extends ConsumerState<EntryEditorScreen> {
   late DateTime _date = dateOnly(ref.read(clockProvider)());
   int? _accountId;
 
-  /// Tiền tệ của số đang gõ: mặc định theo tài khoản, giữ nguyên khi sửa khoản
-  /// (D-037). Số gốc lưu đúng tiền tệ này; `amount` trong DB là số quy về Tiền
+  /// Tiền tệ của số đang gõ: khoản mới mặc định Tiền tệ chính (D-042), đổi
+  /// bằng chip; giữ nguyên khi sửa khoản. Số gốc lưu đúng tiền tệ này; `amount` trong DB là số quy về Tiền
   /// tệ chính.
   String? _currency;
   // Giờ `HH:mm`; khoản mới mặc định giờ lúc mở màn (AC-74), khoản cũ có thể
@@ -385,15 +386,27 @@ class _EntryEditorScreenState extends ConsumerState<EntryEditorScreen> {
           ),
       ],
     );
-    if (picked != null) {
-      setState(() {
-        _accountId = picked.$1;
-        _currency = accounts
-            .where((a) => a.id == picked.$1)
-            .firstOrNull
-            ?.currency;
-      });
-    }
+    // Đổi tài khoản không đổi tiền tệ đang gõ (D-042): khoản mới theo Tiền
+    // tệ chính, đổi bằng chip tiền tệ.
+    if (picked != null) setState(() => _accountId = picked.$1);
+  }
+
+  /// Chip tiền tệ (D-042, AC-147): đổi tiền tệ của số đang gõ, giữ nguyên
+  /// con số đã gõ (chỉ chỉnh số chữ số lẻ).
+  Future<void> _pickCurrency(String current) async {
+    final picked = await showCurrencyPicker(context, current);
+    if (picked == null || picked == current || !mounted) return;
+    final value = evaluateToMinorUnits(
+      _expression,
+      decimalDigits: currencyDecimalDigits(current),
+    );
+    setState(() {
+      _currency = picked;
+      _error = null;
+      if (value != null && _expression.isNotEmpty) {
+        _expression = minorUnitsToInput(value, currencyDecimalDigits(picked));
+      }
+    });
   }
 
   @override
@@ -426,17 +439,9 @@ class _EntryEditorScreenState extends ConsumerState<EntryEditorScreen> {
       ...accounts,
       if (account != null && !accounts.any((a) => a.id == account.id)) account,
     ];
-    // Tiền tệ đang gõ: theo khoản đang sửa, rồi tới tài khoản, rồi Tiền tệ
-    // chính (D-037). Khoản mới chưa chọn tài khoản thì bám tài khoản đầu.
     final primary = ref.watch(currencyProvider).value ?? 'USD';
-    final activeCurrency = _currency ?? account?.currency ?? primary;
-    if (_currency == null && account != null) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (mounted && _currency == null) {
-          setState(() => _currency = account.currency);
-        }
-      });
-    }
+    // Khoản mới nhập bằng Tiền tệ chính (D-042); sửa khoản giữ tiền tệ đã lưu.
+    final activeCurrency = _currency ?? primary;
     final digits = currencyDecimalDigits(activeCurrency);
     final value = evaluateToMinorUnits(_expression, decimalDigits: digits);
     final service = ref.watch(currencyServiceProvider).value;
@@ -512,6 +517,20 @@ class _EntryEditorScreenState extends ConsumerState<EntryEditorScreen> {
                                       }
                                     },
                                   ),
+                                Tooltip(
+                                  message: l.currencyChipTooltip(
+                                    activeCurrency,
+                                  ),
+                                  child: ActionChip(
+                                    avatar: const Icon(
+                                      Symbols.currency_exchange_rounded,
+                                      size: 18,
+                                    ),
+                                    label: Text(activeCurrency),
+                                    onPressed: () =>
+                                        _pickCurrency(activeCurrency),
+                                  ),
+                                ),
                                 ActionChip(
                                   avatar: const Icon(
                                     Symbols.calendar_today_rounded,

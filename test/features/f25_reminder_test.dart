@@ -201,10 +201,7 @@ void main() {
         expect(
           tester
               .widget<SettingsSwitchRow>(
-                find.widgetWithText(
-                  SettingsSwitchRow,
-                  'Nhắc ghi sổ hằng ngày',
-                ),
+                find.widgetWithText(SettingsSwitchRow, 'Nhắc ghi sổ hằng ngày'),
               )
               .value,
           isFalse,

@@ -959,7 +959,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get primaryCurrencyNote =>
-      'Totals, charts and the ≈ line use this currency. Each account keeps its own currency; changing this only changes how amounts are added up and shown, never the amounts you entered.';
+      'Everything is shown and added up in this currency. Amounts recorded in other currencies keep their original value, shown underneath.';
 
   @override
   String get exchangeRates => 'Exchange rates';
@@ -1512,7 +1512,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get savingsClearDue => 'Remove deadline';
 
   @override
-  String get savingsAccount => 'Linked account';
+  String get savingsAccount => 'Account';
 
   @override
   String get savingsNewAccount => 'Create a new account';
@@ -1580,7 +1580,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get savingsDeleteBody =>
-      'The linked account and all records stay. Only the goal is deleted.';
+      'The account and all records stay. Only the goal is deleted.';
 
   @override
   String get savingsDeleted => 'Goal deleted';
@@ -1835,4 +1835,236 @@ class AppLocalizationsEn extends AppLocalizations {
   String queueMatched(String time) {
     return 'Matched with MB email $time';
   }
+
+  @override
+  String get savingsGoalName => 'Goal name';
+
+  @override
+  String get savingsAccountHelper =>
+      'A new account just for this goal. Move money in with Add money.';
+
+  @override
+  String get savingsAccountEditHelper =>
+      'The account that holds this goal\'s money.';
+
+  @override
+  String get savingsAlreadySaved => 'Already saved (optional)';
+
+  @override
+  String get savingsAlreadySavedHelper =>
+      'Money you\'ve already put aside. It becomes the account\'s starting balance.';
+
+  @override
+  String get savingsCurrencyLocked =>
+      'The currency can\'t change once the account has records.';
+
+  @override
+  String get savingsInProgress => 'In progress';
+
+  @override
+  String savingsDoneSection(int count) {
+    return 'Done ($count)';
+  }
+
+  @override
+  String get savingsDone => 'Done';
+
+  @override
+  String savingsDoneOn(String date) {
+    return 'Done · $date';
+  }
+
+  @override
+  String get savingsWithdraw => 'Withdraw';
+
+  @override
+  String get savingsHistory => 'History';
+
+  @override
+  String get savingsHistoryEmpty => 'No money moved yet';
+
+  @override
+  String savingsHistoryAdded(String account) {
+    return 'Added from $account';
+  }
+
+  @override
+  String savingsHistoryWithdrew(String account) {
+    return 'Withdrew to $account';
+  }
+
+  @override
+  String savingsHistorySpent(String what) {
+    return 'Spent: $what';
+  }
+
+  @override
+  String savingsHistoryIncome(String what) {
+    return 'Income: $what';
+  }
+
+  @override
+  String get savingsHistoryStart => 'Already saved';
+
+  @override
+  String savingsBalance(String amount) {
+    return 'Balance $amount';
+  }
+
+  @override
+  String get savingsFromAccount => 'From account';
+
+  @override
+  String get savingsToAccount => 'To account';
+
+  @override
+  String get savingsMoveAmount => 'Amount';
+
+  @override
+  String get savingsFillToTarget => 'Fill to target';
+
+  @override
+  String get savingsWithdrawAll => 'All';
+
+  @override
+  String savingsOverTarget(String amount) {
+    return 'Only $amount more needed';
+  }
+
+  @override
+  String savingsOverBalance(String amount) {
+    return 'Only $amount in this account';
+  }
+
+  @override
+  String savingsSendsApprox(String amount, String account) {
+    return 'Sends $amount from $account at today\'s rate';
+  }
+
+  @override
+  String get savingsNothingToWithdraw => 'This account is empty';
+
+  @override
+  String get savingsReachedTitle => 'Savings goal reached';
+
+  @override
+  String savingsReachedBody(String amount, String goal) {
+    return 'You\'ve saved $amount for $goal.';
+  }
+
+  @override
+  String get savingsReachedOk => 'Great';
+
+  @override
+  String get savingsReopen => 'Reopen';
+
+  @override
+  String get savingsReopened => 'Goal reopened';
+
+  @override
+  String savingsAdded(String amount) {
+    return 'Added $amount';
+  }
+
+  @override
+  String savingsWithdrawn(String amount) {
+    return 'Withdrew $amount';
+  }
+
+  @override
+  String savingsWalletOf(String goal) {
+    return 'Savings · $goal';
+  }
+
+  @override
+  String currencyChipTooltip(String currency) {
+    return 'Currency: $currency';
+  }
+
+  @override
+  String get deadlineReminders => 'Deadline reminders';
+
+  @override
+  String deadlineRemindersValue(int days, String time) {
+    String _temp0 = intl.Intl.pluralLogic(
+      days,
+      locale: localeName,
+      other: '$days days before',
+      one: '1 day before',
+    );
+    return '$_temp0 · $time';
+  }
+
+  @override
+  String get deadlineRemindersOff => 'Off';
+
+  @override
+  String get deadlineRemindersSwitch => 'Remind me before due dates';
+
+  @override
+  String get deadlineRemindersNote =>
+      'For savings goals and debts with a due date. Notifications show the amount left.';
+
+  @override
+  String get deadlineDaysBefore => 'Days before';
+
+  @override
+  String deadlineDaysValue(int days) {
+    String _temp0 = intl.Intl.pluralLogic(
+      days,
+      locale: localeName,
+      other: '$days days',
+      one: '1 day',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get deadlineTime => 'Time';
+
+  @override
+  String get deadlineExplainTitle => 'Turn on deadline reminders?';
+
+  @override
+  String get deadlineExplainBody =>
+      'Vigon will notify you before and on the due date of your savings goals and debts. The notification shows the amount left.';
+
+  @override
+  String get deadlineChannelName => 'Deadline reminders';
+
+  @override
+  String get deadlineChannelDescription =>
+      'Reminders before savings goals and debts are due';
+
+  @override
+  String deadlineWhenDays(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'due in $count days',
+      one: 'due in 1 day',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get deadlineWhenToday => 'due today';
+
+  @override
+  String deadlineDebtLent(String person, String amount, String when) {
+    return 'Debt with $person: $amount left, $when';
+  }
+
+  @override
+  String deadlineDebtBorrowed(String person, String amount, String when) {
+    return 'You owe $person: $amount left, $when';
+  }
+
+  @override
+  String deadlineGoal(String goal, String amount, String when) {
+    return 'Goal $goal: $amount to go, $when';
+  }
+
+  @override
+  String get debtPayRest => 'Pay the rest';
 }

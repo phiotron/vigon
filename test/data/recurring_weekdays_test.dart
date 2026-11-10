@@ -258,6 +258,9 @@ void main() {
     await fresh.customStatement(
       'ALTER TABLE recurring_rules DROP COLUMN weekdays',
     );
+    await fresh.customStatement(
+      'ALTER TABLE savings_goals DROP COLUMN completed_at',
+    );
     await fresh.customStatement('PRAGMA user_version = 5');
     await fresh.close();
 
@@ -270,6 +273,6 @@ void main() {
     );
     final version = await db.customSelect('PRAGMA user_version').getSingle();
     expect(version.read<int>('user_version'), currentSchemaVersion);
-    expect(currentSchemaVersion, 6);
+    expect(currentSchemaVersion, greaterThanOrEqualTo(6));
   });
 }

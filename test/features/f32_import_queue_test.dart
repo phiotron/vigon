@@ -90,7 +90,10 @@ Future<void> _tap(WidgetTester tester, Finder finder) async {
 /// vị trí cuộn cũ (đang ở cuối), còn "Tiết kiệm"/"Khoản nợ" nay nằm gần đầu màn
 /// (nhóm Kế hoạch, 2026-11-10) nên phải cuộn xuống từ trên.
 Future<void> _settingsTop(WidgetTester tester) async {
-  tester.state<ScrollableState>(find.byType(Scrollable).first).position.jumpTo(0);
+  tester
+      .state<ScrollableState>(find.byType(Scrollable).first)
+      .position
+      .jumpTo(0);
   await tester.pumpAndSettle();
 }
 

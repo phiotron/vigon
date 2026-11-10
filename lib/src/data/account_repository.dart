@@ -1,6 +1,7 @@
 import 'package:drift/drift.dart';
 
 import 'database.dart';
+import 'money_sum.dart';
 import 'import_text.dart';
 
 /// Lý do không ẩn hoặc xóa được tài khoản (AC-45, AC-46).
@@ -180,6 +181,18 @@ class AccountRepository {
   Future<void> clearBankLink(int id) =>
       (_db.update(_db.accounts)..where((a) => a.id.equals(id))).write(
         const AccountsCompanion(bank: Value(null), bankLast4: Value(null)),
+      );
+
+  /// Số dư mỗi tài khoản gom theo tiền tệ gốc (D-042, AC-148): dùng để tính
+  /// số dư theo tiền tệ của tài khoản và theo Tiền tệ chính, không sai số.
+  Stream<Map<int, MoneyBag>> watchBalanceBags() => _db
+      .customSelect('SELECT 1', readsFrom: {_db.accounts, _db.entries})
+      .watch()
+      .asyncMap(
+        (_) async => balanceBags(
+          await _db.select(_db.accounts).get(),
+          await _db.select(_db.entries).get(),
+        ),
       );
 
   /// Số dư hiện tại mỗi tài khoản: số dư ban đầu + thu − chi + nhận − chuyển đi (AC-18, AC-19).

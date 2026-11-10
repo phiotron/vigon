@@ -105,6 +105,100 @@ class SavingsGoalRepository {
     });
   }
 
+  /// Tạo mục tiêu cùng **ví mới** (D-043, AC-149): tài khoản tên [accountName],
+  /// tiền tệ [currency], số dư ban đầu = [alreadySaved] (số gốc, ≥ 0;
+  /// [alreadySavedDerived] là số quy về Tiền tệ chính), rồi mục tiêu gắn nó —
+  /// cùng một giao dịch. Trả về (id mục tiêu, id tài khoản).
+  Future<(int, int)> addWithWallet({
+    required String name,
+    required String accountName,
+    required int targetAmount,
+    required int originalTargetAmount,
+    required String currency,
+    int alreadySaved = 0,
+    int? alreadySavedDerived,
+    String? dueDate,
+  }) {
+    _checkTarget(targetAmount);
+    if (alreadySaved < 0) {
+      throw ArgumentError.value(alreadySaved, 'alreadySaved', 'phải ≥ 0');
+    }
+    return _db.transaction(() async {
+      final accountId = await _db
+          .into(_db.accounts)
+          .insert(
+            AccountsCompanion.insert(
+              name: Value(accountName),
+              currency: Value(currency),
+              initialCurrency: Value(currency),
+              initialBalance: Value(alreadySavedDerived ?? alreadySaved),
+              initialBalanceOriginal: Value(alreadySaved),
+            ),
+          );
+      final goalId = await add(
+        name: name,
+        targetAmount: targetAmount,
+        accountId: accountId,
+        dueDate: dueDate,
+        originalTargetAmount: originalTargetAmount,
+        currency: currency,
+      );
+      return (goalId, accountId);
+    });
+  }
+
+  /// Đổi tên ví của mục tiêu (AC-149).
+  Future<void> renameWallet(int accountId, String name) =>
+      (_db.update(_db.accounts)..where((a) => a.id.equals(accountId))).write(
+        AccountsCompanion(name: Value(name), nameKey: const Value(null)),
+      );
+
+  /// Ví đã có khoản nào chưa (để khoá tiền tệ mục tiêu, AC-149).
+  Future<bool> walletHasEntries(int accountId) async {
+    final row =
+        await (_db.select(_db.entries)
+              ..where(
+                (e) =>
+                    e.accountId.equals(accountId) |
+                    e.toAccountId.equals(accountId),
+              )
+              ..limit(1))
+            .getSingleOrNull();
+    return row != null;
+  }
+
+  /// Lịch sử ví (AC-151): mọi khoản làm đổi số dư tài khoản [accountId], mới
+  /// nhất trước.
+  Stream<List<Entry>> watchHistory(int accountId) =>
+      (_db.select(_db.entries)
+            ..where(
+              (e) =>
+                  e.accountId.equals(accountId) |
+                  e.toAccountId.equals(accountId),
+            )
+            ..orderBy([
+              (e) => OrderingTerm.desc(e.date),
+              (e) => OrderingTerm(expression: e.time.isNull()),
+              (e) => OrderingTerm.desc(e.time),
+              (e) => OrderingTerm.desc(e.id),
+            ]))
+          .watch();
+
+  /// Ghi "Đã xong" (AC-153) nếu chưa ghi; trả true khi vừa ghi lần đầu.
+  Future<bool> markCompleted(int id, String date) async {
+    final changed =
+        await (_db.update(_db.savingsGoals)
+              ..where((g) => g.id.equals(id) & g.completedAt.isNull()))
+            .write(SavingsGoalsCompanion(completedAt: Value(date)));
+    return changed > 0;
+  }
+
+  /// "Mở lại" (AC-153): bỏ "Đã xong".
+  Future<void> reopen(int id) =>
+      (_db.update(_db.savingsGoals)..where((g) => g.id.equals(id))).write(
+        const SavingsGoalsCompanion(completedAt: Value(null)),
+      );
+
   /// Sửa tên, số tiền mục tiêu, hạn. Đổi số tiền thì bỏ số chính xác cũ (D-029).
   Future<void> edit(
     int id, {

@@ -118,37 +118,33 @@ void main() {
       debugDefaultTargetPlatformOverride = null;
     });
 
-    test(
-      'mã 1002 (khác nhắc ghi sổ 1001), lặp theo giờ, có payload',
-      () async {
-        expect(autoBackupNotificationId, isNot(reminderNotificationId));
-        final s = IosAutoBackupScheduler();
-        expect(s.usesNotification, isTrue);
-        await s.schedule(
-          const BackupTime(21, 0),
-          title: 'Ví Gọn',
-          body: 'Đến giờ sao lưu Ví Gọn. Chạm để sao lưu.',
-        );
-        final cancel = calls.firstWhere((c) => c.method == 'cancel');
-        expect(cancel.arguments, autoBackupNotificationId);
-        final zoned = calls.singleWhere((c) => c.method == 'zonedSchedule');
-        final args = Map<String, Object?>.from(zoned.arguments as Map);
-        expect(args['id'], autoBackupNotificationId);
-        expect(args['payload'], autoBackupPayload);
-        expect(args['matchDateTimeComponents'], DateTimeComponents.time.index);
-        // Ngày giờ gửi đi đúng 21:00 theo múi giờ đã nạp.
-        expect(args['scheduledDateTime'] as String, contains('T21:00'));
-        // Không hủy mọi thông báo (lịch nhắc F-25 giữ nguyên).
-        expect(calls.where((c) => c.method == 'cancelAll'), isEmpty);
-        expect(
-          calls.where(
-            (c) =>
-                c.method == 'cancel' && c.arguments == reminderNotificationId,
-          ),
-          isEmpty,
-        );
-      },
-    );
+    test('mã 1002 (khác nhắc ghi sổ 1001), lặp theo giờ, có payload', () async {
+      expect(autoBackupNotificationId, isNot(reminderNotificationId));
+      final s = IosAutoBackupScheduler();
+      expect(s.usesNotification, isTrue);
+      await s.schedule(
+        const BackupTime(21, 0),
+        title: 'Ví Gọn',
+        body: 'Đến giờ sao lưu Ví Gọn. Chạm để sao lưu.',
+      );
+      final cancel = calls.firstWhere((c) => c.method == 'cancel');
+      expect(cancel.arguments, autoBackupNotificationId);
+      final zoned = calls.singleWhere((c) => c.method == 'zonedSchedule');
+      final args = Map<String, Object?>.from(zoned.arguments as Map);
+      expect(args['id'], autoBackupNotificationId);
+      expect(args['payload'], autoBackupPayload);
+      expect(args['matchDateTimeComponents'], DateTimeComponents.time.index);
+      // Ngày giờ gửi đi đúng 21:00 theo múi giờ đã nạp.
+      expect(args['scheduledDateTime'] as String, contains('T21:00'));
+      // Không hủy mọi thông báo (lịch nhắc F-25 giữ nguyên).
+      expect(calls.where((c) => c.method == 'cancelAll'), isEmpty);
+      expect(
+        calls.where(
+          (c) => c.method == 'cancel' && c.arguments == reminderNotificationId,
+        ),
+        isEmpty,
+      );
+    });
 
     test('kiểm quyền không hiện hộp thoại', () async {
       final s = IosAutoBackupScheduler();

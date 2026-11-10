@@ -25,7 +25,8 @@ abstract final class LegalActions {
     required String url,
   }) async {
     if (url.isNotEmpty && await _open(Uri.parse(url))) return;
-    if (context.mounted) await Navigator.of(context).push(LegalScreen.route(doc));
+    if (context.mounted)
+      await Navigator.of(context).push(LegalScreen.route(doc));
   }
 
   static Future<void> openPrivacyPolicy(
@@ -62,7 +63,11 @@ abstract final class LegalActions {
   static Future<void> rateApp(BuildContext context) async {
     final AppLocalizations l = AppLocalizations.of(context);
     final candidates = defaultTargetPlatform == TargetPlatform.iOS
-        ? [Uri.parse('https://apps.apple.com/app/id${AppInfo.appStoreId}?action=write-review')]
+        ? [
+            Uri.parse(
+              'https://apps.apple.com/app/id${AppInfo.appStoreId}?action=write-review',
+            ),
+          ]
         : [
             Uri.parse('market://details?id=${AppInfo.androidPackage}'),
             Uri.parse(

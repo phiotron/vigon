@@ -3970,6 +3970,21 @@ class $SavingsGoalsTable extends SavingsGoals
     type: DriftSqlType.int,
     requiredDuringInsert: false,
   );
+  static const VerificationMeta _completedAtMeta = const VerificationMeta(
+    'completedAt',
+  );
+  @override
+  late final GeneratedColumn<String> completedAt = GeneratedColumn<String>(
+    'completed_at',
+    aliasedName,
+    true,
+    additionalChecks: GeneratedColumn.checkTextLength(
+      minTextLength: 10,
+      maxTextLength: 10,
+    ),
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
   @override
   List<GeneratedColumn> get $columns => [
     id,
@@ -3981,6 +3996,7 @@ class $SavingsGoalsTable extends SavingsGoals
     createdAt,
     currency,
     originalTargetAmount,
+    completedAt,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -4060,6 +4076,15 @@ class $SavingsGoalsTable extends SavingsGoals
         ),
       );
     }
+    if (data.containsKey('completed_at')) {
+      context.handle(
+        _completedAtMeta,
+        completedAt.isAcceptableOrUnknown(
+          data['completed_at']!,
+          _completedAtMeta,
+        ),
+      );
+    }
     return context;
   }
 
@@ -4105,6 +4130,10 @@ class $SavingsGoalsTable extends SavingsGoals
         DriftSqlType.int,
         data['${effectivePrefix}original_target_amount'],
       ),
+      completedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}completed_at'],
+      ),
     );
   }
 
@@ -4136,6 +4165,11 @@ class SavingsGoal extends DataClass implements Insertable<SavingsGoal> {
   /// chính. Null ở cột gốc là dữ liệu cũ.
   final String currency;
   final int? originalTargetAmount;
+
+  /// Ngày `YYYY-MM-DD` lần đầu số dư ví ≥ mục tiêu (D-043, AC-153); null là
+  /// đang tiết kiệm. "Đã xong" vĩnh viễn: rút tiền sau đó không xoá cột này,
+  /// chỉ "Mở lại" mới xoá. Thêm ở schema 7.
+  final String? completedAt;
   const SavingsGoal({
     required this.id,
     required this.name,
@@ -4146,6 +4180,7 @@ class SavingsGoal extends DataClass implements Insertable<SavingsGoal> {
     required this.createdAt,
     required this.currency,
     this.originalTargetAmount,
+    this.completedAt,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -4164,6 +4199,9 @@ class SavingsGoal extends DataClass implements Insertable<SavingsGoal> {
     map['currency'] = Variable<String>(currency);
     if (!nullToAbsent || originalTargetAmount != null) {
       map['original_target_amount'] = Variable<int>(originalTargetAmount);
+    }
+    if (!nullToAbsent || completedAt != null) {
+      map['completed_at'] = Variable<String>(completedAt);
     }
     return map;
   }
@@ -4185,6 +4223,9 @@ class SavingsGoal extends DataClass implements Insertable<SavingsGoal> {
       originalTargetAmount: originalTargetAmount == null && nullToAbsent
           ? const Value.absent()
           : Value(originalTargetAmount),
+      completedAt: completedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(completedAt),
     );
   }
 
@@ -4205,6 +4246,7 @@ class SavingsGoal extends DataClass implements Insertable<SavingsGoal> {
       originalTargetAmount: serializer.fromJson<int?>(
         json['originalTargetAmount'],
       ),
+      completedAt: serializer.fromJson<String?>(json['completedAt']),
     );
   }
   @override
@@ -4220,6 +4262,7 @@ class SavingsGoal extends DataClass implements Insertable<SavingsGoal> {
       'createdAt': serializer.toJson<DateTime>(createdAt),
       'currency': serializer.toJson<String>(currency),
       'originalTargetAmount': serializer.toJson<int?>(originalTargetAmount),
+      'completedAt': serializer.toJson<String?>(completedAt),
     };
   }
 
@@ -4233,6 +4276,7 @@ class SavingsGoal extends DataClass implements Insertable<SavingsGoal> {
     DateTime? createdAt,
     String? currency,
     Value<int?> originalTargetAmount = const Value.absent(),
+    Value<String?> completedAt = const Value.absent(),
   }) => SavingsGoal(
     id: id ?? this.id,
     name: name ?? this.name,
@@ -4247,6 +4291,7 @@ class SavingsGoal extends DataClass implements Insertable<SavingsGoal> {
     originalTargetAmount: originalTargetAmount.present
         ? originalTargetAmount.value
         : this.originalTargetAmount,
+    completedAt: completedAt.present ? completedAt.value : this.completedAt,
   );
   SavingsGoal copyWithCompanion(SavingsGoalsCompanion data) {
     return SavingsGoal(
@@ -4265,6 +4310,9 @@ class SavingsGoal extends DataClass implements Insertable<SavingsGoal> {
       originalTargetAmount: data.originalTargetAmount.present
           ? data.originalTargetAmount.value
           : this.originalTargetAmount,
+      completedAt: data.completedAt.present
+          ? data.completedAt.value
+          : this.completedAt,
     );
   }
 
@@ -4279,7 +4327,8 @@ class SavingsGoal extends DataClass implements Insertable<SavingsGoal> {
           ..write('accountId: $accountId, ')
           ..write('createdAt: $createdAt, ')
           ..write('currency: $currency, ')
-          ..write('originalTargetAmount: $originalTargetAmount')
+          ..write('originalTargetAmount: $originalTargetAmount, ')
+          ..write('completedAt: $completedAt')
           ..write(')'))
         .toString();
   }
@@ -4295,6 +4344,7 @@ class SavingsGoal extends DataClass implements Insertable<SavingsGoal> {
     createdAt,
     currency,
     originalTargetAmount,
+    completedAt,
   );
   @override
   bool operator ==(Object other) =>
@@ -4308,7 +4358,8 @@ class SavingsGoal extends DataClass implements Insertable<SavingsGoal> {
           other.accountId == this.accountId &&
           other.createdAt == this.createdAt &&
           other.currency == this.currency &&
-          other.originalTargetAmount == this.originalTargetAmount);
+          other.originalTargetAmount == this.originalTargetAmount &&
+          other.completedAt == this.completedAt);
 }
 
 class SavingsGoalsCompanion extends UpdateCompanion<SavingsGoal> {
@@ -4321,6 +4372,7 @@ class SavingsGoalsCompanion extends UpdateCompanion<SavingsGoal> {
   final Value<DateTime> createdAt;
   final Value<String> currency;
   final Value<int?> originalTargetAmount;
+  final Value<String?> completedAt;
   const SavingsGoalsCompanion({
     this.id = const Value.absent(),
     this.name = const Value.absent(),
@@ -4331,6 +4383,7 @@ class SavingsGoalsCompanion extends UpdateCompanion<SavingsGoal> {
     this.createdAt = const Value.absent(),
     this.currency = const Value.absent(),
     this.originalTargetAmount = const Value.absent(),
+    this.completedAt = const Value.absent(),
   });
   SavingsGoalsCompanion.insert({
     this.id = const Value.absent(),
@@ -4342,6 +4395,7 @@ class SavingsGoalsCompanion extends UpdateCompanion<SavingsGoal> {
     this.createdAt = const Value.absent(),
     this.currency = const Value.absent(),
     this.originalTargetAmount = const Value.absent(),
+    this.completedAt = const Value.absent(),
   }) : name = Value(name),
        targetAmount = Value(targetAmount),
        accountId = Value(accountId);
@@ -4355,6 +4409,7 @@ class SavingsGoalsCompanion extends UpdateCompanion<SavingsGoal> {
     Expression<DateTime>? createdAt,
     Expression<String>? currency,
     Expression<int>? originalTargetAmount,
+    Expression<String>? completedAt,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
@@ -4367,6 +4422,7 @@ class SavingsGoalsCompanion extends UpdateCompanion<SavingsGoal> {
       if (currency != null) 'currency': currency,
       if (originalTargetAmount != null)
         'original_target_amount': originalTargetAmount,
+      if (completedAt != null) 'completed_at': completedAt,
     });
   }
 
@@ -4380,6 +4436,7 @@ class SavingsGoalsCompanion extends UpdateCompanion<SavingsGoal> {
     Value<DateTime>? createdAt,
     Value<String>? currency,
     Value<int?>? originalTargetAmount,
+    Value<String?>? completedAt,
   }) {
     return SavingsGoalsCompanion(
       id: id ?? this.id,
@@ -4391,6 +4448,7 @@ class SavingsGoalsCompanion extends UpdateCompanion<SavingsGoal> {
       createdAt: createdAt ?? this.createdAt,
       currency: currency ?? this.currency,
       originalTargetAmount: originalTargetAmount ?? this.originalTargetAmount,
+      completedAt: completedAt ?? this.completedAt,
     );
   }
 
@@ -4424,6 +4482,9 @@ class SavingsGoalsCompanion extends UpdateCompanion<SavingsGoal> {
     if (originalTargetAmount.present) {
       map['original_target_amount'] = Variable<int>(originalTargetAmount.value);
     }
+    if (completedAt.present) {
+      map['completed_at'] = Variable<String>(completedAt.value);
+    }
     return map;
   }
 
@@ -4438,7 +4499,8 @@ class SavingsGoalsCompanion extends UpdateCompanion<SavingsGoal> {
           ..write('accountId: $accountId, ')
           ..write('createdAt: $createdAt, ')
           ..write('currency: $currency, ')
-          ..write('originalTargetAmount: $originalTargetAmount')
+          ..write('originalTargetAmount: $originalTargetAmount, ')
+          ..write('completedAt: $completedAt')
           ..write(')'))
         .toString();
   }
@@ -10714,6 +10776,7 @@ typedef $$SavingsGoalsTableCreateCompanionBuilder =
       Value<DateTime> createdAt,
       Value<String> currency,
       Value<int?> originalTargetAmount,
+      Value<String?> completedAt,
     });
 typedef $$SavingsGoalsTableUpdateCompanionBuilder =
     SavingsGoalsCompanion Function({
@@ -10726,6 +10789,7 @@ typedef $$SavingsGoalsTableUpdateCompanionBuilder =
       Value<DateTime> createdAt,
       Value<String> currency,
       Value<int?> originalTargetAmount,
+      Value<String?> completedAt,
     });
 
 final class $$SavingsGoalsTableReferences
@@ -10796,6 +10860,11 @@ class $$SavingsGoalsTableFilterComposer
 
   ColumnFilters<int> get originalTargetAmount => $composableBuilder(
     column: $table.originalTargetAmount,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get completedAt => $composableBuilder(
+    column: $table.completedAt,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -10872,6 +10941,11 @@ class $$SavingsGoalsTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get completedAt => $composableBuilder(
+    column: $table.completedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   $$AccountsTableOrderingComposer get accountId {
     final $$AccountsTableOrderingComposer composer = $composerBuilder(
       composer: this,
@@ -10932,6 +11006,11 @@ class $$SavingsGoalsTableAnnotationComposer
 
   GeneratedColumn<int> get originalTargetAmount => $composableBuilder(
     column: $table.originalTargetAmount,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get completedAt => $composableBuilder(
+    column: $table.completedAt,
     builder: (column) => column,
   );
 
@@ -10996,6 +11075,7 @@ class $$SavingsGoalsTableTableManager
                 Value<DateTime> createdAt = const Value.absent(),
                 Value<String> currency = const Value.absent(),
                 Value<int?> originalTargetAmount = const Value.absent(),
+                Value<String?> completedAt = const Value.absent(),
               }) => SavingsGoalsCompanion(
                 id: id,
                 name: name,
@@ -11006,6 +11086,7 @@ class $$SavingsGoalsTableTableManager
                 createdAt: createdAt,
                 currency: currency,
                 originalTargetAmount: originalTargetAmount,
+                completedAt: completedAt,
               ),
           createCompanionCallback:
               ({
@@ -11018,6 +11099,7 @@ class $$SavingsGoalsTableTableManager
                 Value<DateTime> createdAt = const Value.absent(),
                 Value<String> currency = const Value.absent(),
                 Value<int?> originalTargetAmount = const Value.absent(),
+                Value<String?> completedAt = const Value.absent(),
               }) => SavingsGoalsCompanion.insert(
                 id: id,
                 name: name,
@@ -11028,6 +11110,7 @@ class $$SavingsGoalsTableTableManager
                 createdAt: createdAt,
                 currency: currency,
                 originalTargetAmount: originalTargetAmount,
+                completedAt: completedAt,
               ),
           withReferenceMapper: (p0) => p0
               .map(

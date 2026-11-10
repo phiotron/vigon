@@ -8,6 +8,7 @@ import 'data/database.dart';
 import 'data/dates.dart';
 import 'data/entry_repository.dart';
 import 'data/exchange_rate.dart';
+import 'data/money_sum.dart';
 import 'data/period.dart';
 import 'data/rate_repository.dart';
 import 'data/recurring_repository.dart';
@@ -224,10 +225,47 @@ final startupProvider = FutureProvider<void>((ref) async {
       .generateDue(ref.read(clockProvider)());
 });
 
-/// Số dư hiện tại của từng tài khoản (AC-18, AC-19).
-final accountBalancesProvider = StreamProvider<Map<int, int>>(
-  (ref) => ref.watch(accountRepositoryProvider).watchBalances(),
+/// Số dư từng tài khoản gom theo tiền tệ gốc (D-042).
+final accountBalanceBagsProvider = StreamProvider<Map<int, MoneyBag>>(
+  (ref) => ref.watch(accountRepositoryProvider).watchBalanceBags(),
 );
+
+/// Số dư hiện tại của từng tài khoản theo **Tiền tệ chính** (AC-18, AC-19),
+/// cộng gốc rồi quy đổi một lần (AC-148).
+final accountBalancesProvider = Provider<AsyncValue<Map<int, int>>>((ref) {
+  final service = ref.watch(currencyServiceProvider).value;
+  if (service == null) return const AsyncLoading();
+  return ref
+      .watch(accountBalanceBagsProvider)
+      .whenData(
+        (bags) => {
+          for (final e in bags.entries)
+            e.key: e.value.convertTo(service, service.primary) ?? 0,
+        },
+      );
+});
+
+/// Số dư từng tài khoản theo **tiền tệ của chính tài khoản** — tính thẳng từ
+/// số gốc, không quy ngược (AC-148).
+final accountOwnBalancesProvider = Provider<AsyncValue<Map<int, int>>>((ref) {
+  final service = ref.watch(currencyServiceProvider).value;
+  final accounts = ref.watch(allAccountsProvider).value;
+  if (service == null || accounts == null) return const AsyncLoading();
+  final currencyOf = {for (final a in accounts) a.id: a.currency};
+  return ref
+      .watch(accountBalanceBagsProvider)
+      .whenData(
+        (bags) => {
+          for (final e in bags.entries)
+            e.key:
+                e.value.convertTo(
+                  service,
+                  currencyOf[e.key] ?? service.primary,
+                ) ??
+                0,
+        },
+      );
+});
 
 /// Hạn mức chi mỗi tháng; null là chưa đặt (AC-26).
 final budgetProvider = StreamProvider<int?>(

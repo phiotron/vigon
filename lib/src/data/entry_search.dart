@@ -1,6 +1,8 @@
 import 'database.dart';
 import 'summary.dart';
 import 'text_fold.dart';
+import 'money_sum.dart';
+import 'rate_repository.dart';
 
 /// Chuỗi tìm có phải số tiền không: chỉ gồm chữ số và dấu ngăn cách (AC-48).
 final _amountQuery = RegExp(r"^[\d\s.,'’]+$");
@@ -49,19 +51,30 @@ bool _matches(
 
 /// Tổng hiển thị ở đầu kết quả tìm: chỉ khoản chi thì tổng chi, chỉ khoản thu
 /// thì tổng thu, lẫn cả hai thì thu trừ chi (có dấu). Chuyển tiền không tính.
-int searchTotal(List<EntryView> rows) {
-  var income = 0, expense = 0;
+int searchTotal(List<EntryView> rows, {CurrencyService? service}) {
+  // Cộng gốc theo từng tiền tệ rồi quy đổi một lần (D-042, AC-148).
+  final income = MoneyBag(), expense = MoneyBag();
+  var hasIncome = false, hasExpense = false;
   for (final r in rows) {
-    switch (r.entry.type) {
+    final e = r.entry;
+    final amount = service == null ? e.amount : entryOriginal(e);
+    final currency = service == null ? '' : e.currency;
+    switch (e.type) {
       case EntryType.income:
-        income += r.entry.amount;
+        hasIncome = true;
+        income.add(currency, amount);
       case EntryType.expense:
-        expense += r.entry.amount;
+        hasExpense = true;
+        expense.add(currency, amount);
       case EntryType.transfer:
         break;
     }
   }
-  if (income == 0) return expense;
-  if (expense == 0) return income;
-  return income - expense;
+  int total(MoneyBag bag) => service == null
+      ? bag.parts.values.fold(0, (a, b) => a + b)
+      : bag.convertTo(service, service.primary) ?? 0;
+  final i = total(income), x = total(expense);
+  if (!hasIncome) return x;
+  if (!hasExpense) return i;
+  return i - x;
 }

@@ -15,7 +15,7 @@ part 'database.g.dart';
 /// người thụ hưởng, hàng đợi nhập, số tham chiếu đã gặp.
 /// 5: đa tiền tệ (D-037) — tiền tệ của tài khoản, số tiền gốc + tiền tệ của
 /// khoản/định kỳ/nợ/mục tiêu/ngân sách, số nhận của chuyển tiền khác tiền tệ.
-const currentSchemaVersion = 6;
+const currentSchemaVersion = 7;
 
 /// Loại khoản ghi. Chuyển tiền không tính là thu hay chi (AC-19).
 enum EntryType { expense, income, transfer }
@@ -250,6 +250,12 @@ class SavingsGoals extends Table {
   TextColumn get currency =>
       text().withLength(min: 3, max: 3).withDefault(const Constant('USD'))();
   IntColumn get originalTargetAmount => integer().nullable()();
+
+  /// Ngày `YYYY-MM-DD` lần đầu số dư ví ≥ mục tiêu (D-043, AC-153); null là
+  /// đang tiết kiệm. "Đã xong" vĩnh viễn: rút tiền sau đó không xoá cột này,
+  /// chỉ "Mở lại" mới xoá. Thêm ở schema 7.
+  TextColumn get completedAt =>
+      text().withLength(min: 10, max: 10).nullable()();
 }
 
 /// Khoản nợ (Debt record, AC-104..AC-106): sổ ghi nhớ, không phải khoản,
@@ -593,6 +599,11 @@ class AppDatabase extends _$AppDatabase {
       // lại ở bước 3 theo định nghĩa hiện tại (đã có cột).
       if (from < 6 && from >= 3) {
         await m.addColumn(recurringRules, recurringRules.weekdays);
+      }
+      // 6 -> 7: mục tiêu "Đã xong" (D-043). Từ schema 3 trở xuống bảng được
+      // tạo ở bước 4 theo định nghĩa hiện tại (đã có cột).
+      if (from < 7 && from >= 4) {
+        await m.addColumn(savingsGoals, savingsGoals.completedAt);
       }
     },
     beforeOpen: (details) async {

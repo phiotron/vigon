@@ -154,7 +154,9 @@ void main() {
     expect(find.text('Báo lỗi bảo mật'), findsOneWidget);
     expect(find.text('Email liên hệ: ${AppInfo.contactEmail}'), findsOneWidget);
     expect(
-      find.text('Dữ liệu chỉ lưu trên máy này. Ví Gọn không gửi dữ liệu đi đâu.'),
+      find.text(
+        'Dữ liệu chỉ lưu trên máy này. Ví Gọn không gửi dữ liệu đi đâu.',
+      ),
       findsOneWidget,
     );
     await tester.tap(find.text('Giấy phép mã nguồn mở'));

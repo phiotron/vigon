@@ -21,6 +21,7 @@ import 'auto_backup_section.dart';
 import 'budget_dialog.dart';
 import 'currency_picker.dart';
 import 'data_actions.dart';
+import 'deadline_reminder_row.dart';
 import 'email_import_screen.dart';
 import 'rates_format.dart';
 import 'reminder_section.dart';
@@ -136,6 +137,7 @@ class SettingsScreen extends ConsumerWidget {
                 title: l.debts,
                 onTap: () => context.push('/debts'),
               ),
+              const DeadlineReminderRow(),
             ],
           ),
           SettingsGroupTitle(l.currencyPeriodSection),
@@ -239,9 +241,7 @@ class SettingsScreen extends ConsumerWidget {
             cardGap,
             AutoBackupSection(extraRows: [deleteRow]),
           ] else
-            SettingsCard(
-              children: [backupRow, restoreRow, csvRow, deleteRow],
-            ),
+            SettingsCard(children: [backupRow, restoreRow, csvRow, deleteRow]),
           SettingsGroupTitle(l.appearanceLanguage),
           SettingsCard(
             children: [

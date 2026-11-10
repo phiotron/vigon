@@ -946,7 +946,7 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get primaryCurrencyNote =>
-      'Tổng, biểu đồ và dòng ≈ dùng tiền tệ này. Mỗi tài khoản giữ tiền tệ riêng; đổi mục này chỉ đổi cách cộng và hiển thị, không đổi số tiền bạn đã nhập.';
+      'Mọi số được hiển thị và cộng theo tiền tệ này. Khoản ghi bằng tiền tệ khác giữ nguyên số gốc, hiện ở dòng dưới.';
 
   @override
   String get exchangeRates => 'Tỷ giá';
@@ -1497,7 +1497,7 @@ class AppLocalizationsVi extends AppLocalizations {
   String get savingsClearDue => 'Bỏ hạn';
 
   @override
-  String get savingsAccount => 'Tài khoản gắn';
+  String get savingsAccount => 'Tài khoản';
 
   @override
   String get savingsNewAccount => 'Tạo tài khoản mới';
@@ -1562,7 +1562,7 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get savingsDeleteBody =>
-      'Tài khoản gắn và mọi khoản vẫn giữ nguyên. Chỉ mục tiêu bị xoá.';
+      'Tài khoản và mọi khoản vẫn giữ nguyên. Chỉ mục tiêu bị xoá.';
 
   @override
   String get savingsDeleted => 'Đã xoá mục tiêu';
@@ -1816,4 +1816,232 @@ class AppLocalizationsVi extends AppLocalizations {
   String queueMatched(String time) {
     return 'Đã ghép với email MB $time';
   }
+
+  @override
+  String get savingsGoalName => 'Tên mục tiêu';
+
+  @override
+  String get savingsAccountHelper =>
+      'Một tài khoản mới chỉ cho mục tiêu này. Chuyển tiền vào bằng Góp tiền.';
+
+  @override
+  String get savingsAccountEditHelper => 'Tài khoản giữ tiền của mục tiêu này.';
+
+  @override
+  String get savingsAlreadySaved => 'Đã có sẵn (tuỳ chọn)';
+
+  @override
+  String get savingsAlreadySavedHelper =>
+      'Số tiền bạn đã để riêng. Đây là số dư ban đầu của tài khoản.';
+
+  @override
+  String get savingsCurrencyLocked =>
+      'Không đổi được tiền tệ khi tài khoản đã có khoản.';
+
+  @override
+  String get savingsInProgress => 'Đang tiết kiệm';
+
+  @override
+  String savingsDoneSection(int count) {
+    return 'Đã xong ($count)';
+  }
+
+  @override
+  String get savingsDone => 'Đã xong';
+
+  @override
+  String savingsDoneOn(String date) {
+    return 'Đã xong · $date';
+  }
+
+  @override
+  String get savingsWithdraw => 'Rút tiền';
+
+  @override
+  String get savingsHistory => 'Lịch sử';
+
+  @override
+  String get savingsHistoryEmpty => 'Chưa có khoản nào';
+
+  @override
+  String savingsHistoryAdded(String account) {
+    return 'Góp từ $account';
+  }
+
+  @override
+  String savingsHistoryWithdrew(String account) {
+    return 'Rút về $account';
+  }
+
+  @override
+  String savingsHistorySpent(String what) {
+    return 'Chi: $what';
+  }
+
+  @override
+  String savingsHistoryIncome(String what) {
+    return 'Thu: $what';
+  }
+
+  @override
+  String get savingsHistoryStart => 'Đã có sẵn';
+
+  @override
+  String savingsBalance(String amount) {
+    return 'Số dư $amount';
+  }
+
+  @override
+  String get savingsFromAccount => 'Từ tài khoản';
+
+  @override
+  String get savingsToAccount => 'Về tài khoản';
+
+  @override
+  String get savingsMoveAmount => 'Số tiền';
+
+  @override
+  String get savingsFillToTarget => 'Điền đủ';
+
+  @override
+  String get savingsWithdrawAll => 'Rút hết';
+
+  @override
+  String savingsOverTarget(String amount) {
+    return 'Chỉ cần góp thêm $amount';
+  }
+
+  @override
+  String savingsOverBalance(String amount) {
+    return 'Tài khoản chỉ còn $amount';
+  }
+
+  @override
+  String savingsSendsApprox(String amount, String account) {
+    return 'Chuyển $amount từ $account theo tỷ giá hôm nay';
+  }
+
+  @override
+  String get savingsNothingToWithdraw => 'Tài khoản đang trống';
+
+  @override
+  String get savingsReachedTitle => 'Tiết kiệm thành công';
+
+  @override
+  String savingsReachedBody(String amount, String goal) {
+    return 'Bạn đã đủ $amount cho $goal.';
+  }
+
+  @override
+  String get savingsReachedOk => 'Tuyệt';
+
+  @override
+  String get savingsReopen => 'Mở lại';
+
+  @override
+  String get savingsReopened => 'Đã mở lại mục tiêu';
+
+  @override
+  String savingsAdded(String amount) {
+    return 'Đã góp $amount';
+  }
+
+  @override
+  String savingsWithdrawn(String amount) {
+    return 'Đã rút $amount';
+  }
+
+  @override
+  String savingsWalletOf(String goal) {
+    return 'Tiết kiệm · $goal';
+  }
+
+  @override
+  String currencyChipTooltip(String currency) {
+    return 'Tiền tệ: $currency';
+  }
+
+  @override
+  String get deadlineReminders => 'Nhắc trước hạn';
+
+  @override
+  String deadlineRemindersValue(int days, String time) {
+    String _temp0 = intl.Intl.pluralLogic(
+      days,
+      locale: localeName,
+      other: 'Trước $days ngày',
+    );
+    return '$_temp0 · $time';
+  }
+
+  @override
+  String get deadlineRemindersOff => 'Tắt';
+
+  @override
+  String get deadlineRemindersSwitch => 'Nhắc tôi trước hạn';
+
+  @override
+  String get deadlineRemindersNote =>
+      'Cho mục tiêu tiết kiệm và khoản nợ có hạn. Thông báo có số tiền còn lại.';
+
+  @override
+  String get deadlineDaysBefore => 'Nhắc trước';
+
+  @override
+  String deadlineDaysValue(int days) {
+    String _temp0 = intl.Intl.pluralLogic(
+      days,
+      locale: localeName,
+      other: '$days ngày',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get deadlineTime => 'Giờ nhắc';
+
+  @override
+  String get deadlineExplainTitle => 'Bật nhắc trước hạn?';
+
+  @override
+  String get deadlineExplainBody =>
+      'Ví Gọn sẽ báo trước hạn và đúng ngày hạn của mục tiêu tiết kiệm và khoản nợ. Thông báo có số tiền còn lại.';
+
+  @override
+  String get deadlineChannelName => 'Nhắc trước hạn';
+
+  @override
+  String get deadlineChannelDescription =>
+      'Nhắc trước hạn mục tiêu tiết kiệm và khoản nợ';
+
+  @override
+  String deadlineWhenDays(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'đến hạn sau $count ngày',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get deadlineWhenToday => 'đến hạn hôm nay';
+
+  @override
+  String deadlineDebtLent(String person, String amount, String when) {
+    return 'Khoản nợ với $person: còn $amount, $when';
+  }
+
+  @override
+  String deadlineDebtBorrowed(String person, String amount, String when) {
+    return 'Bạn nợ $person: còn $amount, $when';
+  }
+
+  @override
+  String deadlineGoal(String goal, String amount, String when) {
+    return 'Mục tiêu $goal: còn thiếu $amount, $when';
+  }
+
+  @override
+  String get debtPayRest => 'Trả hết';
 }

@@ -40,6 +40,17 @@ class SettingsRepository {
   static const reminderEnabledKey = 'reminderEnabled';
   static const reminderTimeKey = 'reminderTime';
 
+  /// Nhắc trước hạn (F-48, D-044). Mặc định BẬT nên lưu dạng "tắt"; theo máy.
+  static const deadlineReminderOffKey = 'deadlineReminderOff';
+
+  /// Đã giải thích + xin quyền thông báo cho nhắc trước hạn (theo máy).
+  static const deadlinePermissionAskedKey = 'deadlinePermissionAsked';
+
+  /// Số ngày nhắc trước (1–30, mặc định 7) và giờ `HH:mm` (mặc định 09:00);
+  /// đi theo file sao lưu.
+  static const deadlineReminderDaysKey = 'deadlineReminderDays';
+  static const deadlineReminderTimeKey = 'deadlineReminderTime';
+
   /// Bảng tỉ giá tải được gần nhất (D-025), để mất mạng vẫn điền sẵn tỉ giá.
   static const exchangeRatesKey = 'exchangeRates';
 
@@ -279,6 +290,38 @@ class SettingsRepository {
     '${time.minute.toString().padLeft(2, '0')}',
   );
 
+  /// Nhắc trước hạn bật hay tắt (AC-155). Mặc định bật.
+  Stream<bool> watchDeadlineReminderEnabled() =>
+      _watch(deadlineReminderOffKey).map((v) => v != '1');
+
+  Future<void> setDeadlineReminderEnabled(bool on) => on
+      ? _remove(deadlineReminderOffKey)
+      : _write(deadlineReminderOffKey, '1');
+
+  Future<bool> readDeadlinePermissionAsked() =>
+      _read(deadlinePermissionAskedKey).then((v) => v == '1');
+
+  Future<void> setDeadlinePermissionAsked() =>
+      _write(deadlinePermissionAskedKey, '1');
+
+  /// Số ngày nhắc trước hạn, 1–30; thiếu/sai → 7 (AC-155).
+  Stream<int> watchDeadlineReminderDays() =>
+      _watch(deadlineReminderDaysKey).map(parseDeadlineDays);
+
+  Future<void> setDeadlineReminderDays(int days) =>
+      _write(deadlineReminderDaysKey, '${days.clamp(1, 30)}');
+
+  /// Giờ nhắc trước hạn; mặc định 09:00 (AC-155).
+  Stream<TimeOfDay> watchDeadlineReminderTime() =>
+      _watch(deadlineReminderTimeKey)
+          .map((v) => v == null ? defaultDeadlineTime : parseReminderTime(v));
+
+  Future<void> setDeadlineReminderTime(TimeOfDay time) => _write(
+    deadlineReminderTimeKey,
+    '${time.hour.toString().padLeft(2, '0')}:'
+    '${time.minute.toString().padLeft(2, '0')}',
+  );
+
   /// Hạn mức chi mỗi tháng theo đơn vị nhỏ nhất; null là chưa đặt (AC-26).
   Stream<int?> watchBudget() =>
       _watch(budgetKey).map((v) => int.tryParse(v ?? ''));
@@ -323,6 +366,17 @@ class SettingsRepository {
 
 /// Giờ nhắc mặc định (AC-61).
 const defaultReminderTime = TimeOfDay(hour: 20, minute: 0);
+
+/// Giờ mặc định của nhắc trước hạn (D-044).
+const defaultDeadlineTime = TimeOfDay(hour: 9, minute: 0);
+
+/// Số ngày nhắc trước mặc định (D-044).
+const defaultDeadlineDays = 7;
+
+int parseDeadlineDays(String? value) {
+  final n = int.tryParse(value ?? '');
+  return n == null || n < 1 || n > 30 ? defaultDeadlineDays : n;
+}
 
 /// Đọc `HH:mm`; thiếu hoặc sai thì dùng [defaultReminderTime].
 TimeOfDay parseReminderTime(String? value) {

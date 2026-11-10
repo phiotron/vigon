@@ -230,6 +230,9 @@ void main() {
     await fresh.customStatement(
       'ALTER TABLE recurring_rules DROP COLUMN weekdays',
     );
+    await fresh.customStatement(
+      'ALTER TABLE savings_goals DROP COLUMN completed_at',
+    );
     await fresh.customStatement('PRAGMA user_version = 5');
     await fresh.close();
 

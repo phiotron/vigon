@@ -7,25 +7,24 @@ import '../../../l10n/app_localizations.dart';
 import '../../data/database.dart';
 import '../../data/dates.dart';
 import '../../data/money.dart';
-import '../../data/savings_repository.dart';
 import '../../l10n_names.dart';
 import '../../providers.dart';
 import '../../ui/choice_sheet.dart';
 import '../../ui/confirm_dialog.dart';
+import '../../ui/dialog.dart';
 import '../../ui/format.dart';
 import '../../ui/hint.dart';
 import '../../ui/messenger.dart';
 import '../../ui/tokens.g.dart';
 import '../categories/sheet_footer.dart';
+import '../reminder/deadline_reminders.dart';
 import '../settings/budget_dialog.dart' show currencySymbol;
+import '../settings/currency_picker.dart';
 import 'savings_providers.dart';
 
-/// Id giả cho lựa chọn "Tạo tài khoản mới" trong bảng chọn tài khoản (id thật
-/// của tài khoản bắt đầu từ 1).
-const _newAccount = 0;
-
-/// Thêm hoặc sửa mục tiêu tiết kiệm (AC-100): tên ≤ 50, số tiền > 0, hạn tuỳ
-/// chọn, tài khoản gắn (chọn tài khoản chưa gắn mục tiêu khác hoặc tạo mới).
+/// Thêm hoặc sửa mục tiêu tiết kiệm (F-47, AC-149): tên mục tiêu, tên ví
+/// ("Tài khoản"), số tiền mục tiêu + tiền tệ (mặc định Tiền tệ chính), "Đã có
+/// sẵn" (số dư ban đầu của ví), hạn tuỳ chọn. Tạo mới **luôn** tạo ví mới.
 Future<void> showGoalEditor(BuildContext context, {SavingsGoal? goal}) =>
     showModalBottomSheet<void>(
       context: context,
@@ -50,40 +49,57 @@ class _GoalEditor extends ConsumerStatefulWidget {
 
 class _GoalEditorState extends ConsumerState<_GoalEditor> {
   final _name = TextEditingController();
+  final _account = TextEditingController();
   final _target = TextEditingController();
+  final _saved = TextEditingController();
   String? _nameError;
-  String? _targetError;
   String? _accountError;
+  String? _targetError;
+  String? _savedError;
   DateTime? _due;
-  int _accountId = _newAccount;
-
-  /// Tiền tệ của số tiền mục tiêu (D-037): theo tài khoản gắn, đổi tài khoản
-  /// thì đổi theo; khi sửa thì giữ tiền tệ đã lưu.
   String? _currency;
+
+  /// Ô tên ví còn theo tên mục tiêu (người dùng chưa tự sửa).
+  bool _accountFollowsName = true;
+
+  /// Ví đã có khoản → khoá tiền tệ (AC-149).
+  bool _currencyLocked = false;
   bool _saving = false;
+  bool _loaded = false;
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
+    if (_loaded) return;
+    _loaded = true;
     final g = widget.goal;
-    if (g != null && _name.text.isEmpty) {
-      _name.text = g.name;
-      _currency ??= g.currency;
-      final digits = currencyDecimalDigits(g.currency);
-      _target.text = amountInput(
-        context,
-        g.originalTargetAmount ?? g.targetAmount,
-        digits,
-      );
-      _due = g.dueDate == null ? null : parseDateKey(g.dueDate!);
-      _accountId = g.accountId;
-    }
+    if (g == null) return;
+    _name.text = g.name;
+    _currency = g.currency;
+    _target.text = amountInput(
+      context,
+      g.originalTargetAmount ?? g.targetAmount,
+      currencyDecimalDigits(g.currency),
+    );
+    _due = g.dueDate == null ? null : parseDateKey(g.dueDate!);
+    _accountFollowsName = false;
+    final l = AppLocalizations.of(context);
+    final accounts = ref.read(allAccountsProvider).value ?? const <Account>[];
+    final wallet = accounts.where((a) => a.id == g.accountId).firstOrNull;
+    if (wallet != null) _account.text = accountLabel(l, wallet);
+    ref.read(savingsRepositoryProvider).walletHasEntries(g.accountId).then((
+      has,
+    ) {
+      if (mounted) setState(() => _currencyLocked = has);
+    });
   }
 
   @override
   void dispose() {
     _name.dispose();
+    _account.dispose();
     _target.dispose();
+    _saved.dispose();
     super.dispose();
   }
 
@@ -100,66 +116,72 @@ class _GoalEditorState extends ConsumerState<_GoalEditor> {
     if (picked != null) setState(() => _due = dateOnly(picked));
   }
 
-  /// Tài khoản chọn được khi tạo: tài khoản hiện chưa gắn mục tiêu nào (AC-100).
-  Future<void> _pickAccount(Set<int> linked, List<Account> accounts) async {
-    final l = AppLocalizations.of(context);
-    final picked = await showChoiceSheet<int>(
-      context,
-      title: l.savingsAccount,
-      selected: _accountId,
-      options: [
-        ChoiceOption(
-          _newAccount,
-          l.savingsNewAccount,
-          icon: Symbols.add_circle_rounded,
-        ),
-        for (final a in accounts)
-          if (!linked.contains(a.id))
-            ChoiceOption(
-              a.id,
-              accountLabel(l, a),
-              icon: Symbols.account_balance_wallet_rounded,
-            ),
-      ],
-    );
-    if (picked != null) {
-      final id = picked.$1;
-      setState(() {
-        _accountId = id;
-        // Mục tiêu theo tiền tệ của tài khoản (D-037); tài khoản mới dùng
-        // Tiền tệ chính.
-        _currency = id == _newAccount
-            ? ref.read(currencyProvider).value ?? 'USD'
-            : accounts.where((a) => a.id == id).firstOrNull?.currency;
-        _accountError = null;
-      });
+  Future<void> _pickCurrency() async {
+    final primary = ref.read(currencyProvider).value ?? 'USD';
+    final current = _currency ?? primary;
+    final picked = await showCurrencyPicker(context, current);
+    if (picked == null || picked == current || !mounted) return;
+    // Giữ nguyên chữ số đã gõ, chỉ đổi số chữ số lẻ cho hợp tiền tệ mới.
+    String reformat(TextEditingController c) {
+      final text = c.text.trim();
+      if (text.isEmpty) return text;
+      final parsed = parseAmountField(
+        context,
+        text,
+        currencyDecimalDigits(current),
+      );
+      return parsed == null
+          ? text
+          : amountInput(context, parsed, currencyDecimalDigits(picked));
     }
+
+    setState(() {
+      _target.text = reformat(_target);
+      _saved.text = reformat(_saved);
+      _currency = picked;
+    });
   }
 
   Future<void> _save() async {
     if (_saving) return;
     final l = AppLocalizations.of(context);
     final name = _name.text.trim();
+    final accountName = _account.text.trim().isEmpty
+        ? name
+        : _account.text.trim();
     final primary = ref.read(currencyProvider).value ?? 'USD';
     final currency = _currency ?? primary;
     final digits = currencyDecimalDigits(currency);
     final text = _target.text.trim();
-    final amountOriginal = text.isEmpty
+    final target = text.isEmpty
         ? null
         : parseAmountField(context, text, digits);
+    final savedText = _saved.text.trim();
+    final saved = savedText.isEmpty
+        ? 0
+        : parseAmountField(context, savedText, digits);
     setState(() {
       _nameError = name.isEmpty ? l.nameRequired : null;
-      _targetError = amountOriginal == null
+      _accountError = null;
+      _targetError = target == null
           ? (text.isEmpty ? l.amountMustBePositive : l.invalidExpression)
-          : (amountOriginal <= 0 ? l.amountMustBePositive : null);
+          : (target <= 0 ? l.amountMustBePositive : null);
+      _savedError = saved == null
+          ? l.invalidExpression
+          : (saved < 0 ? l.amountMustBePositive : null);
     });
-    if (_nameError != null || amountOriginal == null || amountOriginal <= 0) {
+    if (_nameError != null ||
+        _targetError != null ||
+        _savedError != null ||
+        target == null ||
+        saved == null) {
       return;
     }
-    // [targetAmount] trong DB là số quy về Tiền tệ chính (D-037).
+    // Cột dẫn xuất trong DB là số quy về Tiền tệ chính (D-037).
     final service = await ref.read(currencyServiceProvider.future);
-    final amount = service.toPrimary(amountOriginal, currency);
-    if (amount == null) {
+    final derived = service.toPrimary(target, currency);
+    final savedDerived = service.toPrimary(saved, currency);
+    if (derived == null || savedDerived == null) {
       if (mounted) {
         setState(() => _targetError = l.rateMissing(currency, service.primary));
       }
@@ -168,45 +190,45 @@ class _GoalEditorState extends ConsumerState<_GoalEditor> {
     _saving = true;
     final repo = ref.read(savingsRepositoryProvider);
     final dueKey = _due == null ? null : dateKey(_due!);
-    try {
-      final g = widget.goal;
-      if (g != null) {
-        await repo.edit(
-          g.id,
-          name: name,
-          targetAmount: amount,
-          originalTargetAmount: amountOriginal,
-          currency: currency,
-          dueDate: dueKey,
-        );
-      } else if (_accountId == _newAccount) {
-        await repo.addWithNewAccount(
-          name: name,
-          targetAmount: amount,
-          originalTargetAmount: amountOriginal,
-          currency: currency,
-          dueDate: dueKey,
-        );
-      } else {
-        await repo.add(
-          name: name,
-          targetAmount: amount,
-          originalTargetAmount: amountOriginal,
-          currency: currency,
-          accountId: _accountId,
-          dueDate: dueKey,
-        );
-      }
-    } on AccountHasGoalException {
-      // Tài khoản vừa bị mục tiêu khác chiếm (hiếm): báo rồi cho chọn lại.
-      _saving = false;
-      if (mounted) {
-        setState(() {
-          _accountId = _newAccount;
-          _accountError = l.savingsAccountTaken;
-        });
-      }
-      return;
+    final g = widget.goal;
+    if (g != null) {
+      await repo.edit(
+        g.id,
+        name: name,
+        targetAmount: derived < 1 ? 1 : derived,
+        originalTargetAmount: target,
+        currency: _currencyLocked ? null : currency,
+        dueDate: dueKey,
+      );
+      await repo.renameWallet(g.accountId, accountName);
+    } else {
+      await repo.addWithWallet(
+        name: name,
+        accountName: accountName,
+        targetAmount: derived < 1 ? 1 : derived,
+        originalTargetAmount: target,
+        currency: currency,
+        alreadySaved: saved,
+        alreadySavedDerived: savedDerived,
+        dueDate: dueKey,
+      );
+    }
+    if (!mounted) return;
+    // Lần đầu có hạn: giải thích + xin quyền thông báo nhắc hạn (AC-155),
+    // ngay trên bảng này rồi mới đóng.
+    if (dueKey != null) {
+      await ensureDeadlinePermission(
+        context,
+        ref,
+        explain: () => showConfirmDialog(
+          context,
+          icon: Symbols.notifications_rounded,
+          iconTone: VgDialogTone.neutral,
+          title: l.deadlineExplainTitle,
+          body: l.deadlineExplainBody,
+          action: l.reminderContinue,
+        ),
+      );
     }
     if (mounted) Navigator.pop(context);
   }
@@ -222,10 +244,46 @@ class _GoalEditorState extends ConsumerState<_GoalEditor> {
       style: ConfirmStyle.danger,
     );
     if (!ok || !mounted) return;
-    await ref.read(savingsRepositoryProvider).delete(widget.goal!.id);
-    if (!mounted) return;
+    final repo = ref.read(savingsRepositoryProvider);
     Navigator.pop(context);
+    await repo.delete(widget.goal!.id);
     showMessage(l.savingsDeleted);
+  }
+
+  Widget _amountField({
+    required TextEditingController controller,
+    required String label,
+    required String currency,
+    String? helper,
+    String? error,
+  }) {
+    final primary = ref.watch(currencyProvider).value ?? 'USD';
+    final service = ref.watch(currencyServiceProvider).value;
+    final typed = parseAmountField(
+      context,
+      controller.text.trim(),
+      currencyDecimalDigits(currency),
+    );
+    final converted = typed == null || currency == primary
+        ? null
+        : service?.toPrimary(typed, currency);
+    return TextField(
+      controller: controller,
+      keyboardType: const TextInputType.numberWithOptions(decimal: true),
+      inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'[0-9.,]'))],
+      style: const TextStyle(fontFeatures: [FontFeature.tabularFigures()]),
+      onChanged: (_) => setState(() {}),
+      decoration: InputDecoration(
+        labelText: label,
+        suffixText: currencySymbol(currency),
+        helperText: converted == null
+            ? helper
+            : '≈ ${money(context, primary, converted)}',
+        helperMaxLines: 3,
+        errorText: error,
+        errorMaxLines: 3,
+      ),
+    );
   }
 
   @override
@@ -234,29 +292,9 @@ class _GoalEditorState extends ConsumerState<_GoalEditor> {
     final scheme = Theme.of(context).colorScheme;
     final primary = ref.watch(currencyProvider).value ?? 'USD';
     final currency = _currency ?? primary;
-    final digits = currencyDecimalDigits(currency);
-    final service = ref.watch(currencyServiceProvider).value;
-    final typed = parseAmountField(context, _target.text.trim(), digits);
-    final converted = typed == null || currency == primary
-        ? null
-        : service?.toPrimary(typed, currency);
     final goal = widget.goal;
-    final visible = ref.watch(accountsProvider).value ?? const <Account>[];
-    final all = ref.watch(allAccountsProvider).value ?? visible;
-    final linked = <int>{
-      for (final g in ref.watch(savingsGoalsProvider).value ?? const [])
-        g.accountId,
-    };
-    final accountName = _accountId == _newAccount
-        ? l.savingsNewAccount
-        : all
-                  .where((a) => a.id == _accountId)
-                  .map((a) => accountLabel(l, a))
-                  .firstOrNull ??
-              '';
-    final hint = goal != null
-        ? l.savingsAccountFixed
-        : (_accountId == _newAccount ? l.savingsNewAccountNote : '');
+    EdgeInsets pad([double top = VgSpace.s2]) =>
+        EdgeInsets.fromLTRB(VgSpace.s4, top, VgSpace.s4, 0);
     return SafeArea(
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -269,59 +307,87 @@ class _GoalEditorState extends ConsumerState<_GoalEditor> {
                 children: [
                   SheetHeader(goal == null ? l.savingsAdd : l.savingsEdit),
                   Padding(
-                    padding: const EdgeInsets.fromLTRB(
-                      VgSpace.s4,
-                      VgSpace.s2,
-                      VgSpace.s4,
-                      0,
-                    ),
+                    padding: pad(),
                     child: TextField(
                       controller: _name,
                       maxLength: 50,
                       autofocus: goal == null,
+                      onChanged: (v) {
+                        if (_accountFollowsName) _account.text = v;
+                      },
                       decoration: InputDecoration(
-                        labelText: l.name,
+                        labelText: l.savingsGoalName,
                         errorText: _nameError,
                       ),
                     ),
                   ),
                   Padding(
-                    padding: const EdgeInsets.fromLTRB(
-                      VgSpace.s4,
-                      VgSpace.s2,
-                      VgSpace.s4,
-                      0,
-                    ),
+                    padding: pad(),
                     child: TextField(
-                      controller: _target,
-                      keyboardType: const TextInputType.numberWithOptions(
-                        decimal: true,
-                      ),
-                      inputFormatters: [
-                        FilteringTextInputFormatter.allow(RegExp(r'[0-9.,]')),
-                      ],
-                      style: const TextStyle(
-                        fontFeatures: [FontFeature.tabularFigures()],
-                      ),
-                      onChanged: (_) => setState(() {}),
+                      controller: _account,
+                      maxLength: 50,
+                      onChanged: (_) => _accountFollowsName = false,
                       decoration: InputDecoration(
-                        labelText: l.savingsTarget,
-                        suffixText: currencySymbol(currency),
-                        helperText: converted == null
-                            ? null
-                            : '≈ ${money(context, primary, converted)}',
-                        errorText: _targetError,
-                        errorMaxLines: 3,
+                        labelText: l.savingsAccount,
+                        prefixIcon: const Icon(
+                          Symbols.account_balance_wallet_rounded,
+                        ),
+                        helperText: goal == null
+                            ? l.savingsAccountHelper
+                            : l.savingsAccountEditHelper,
+                        helperMaxLines: 3,
+                        errorText: _accountError,
                       ),
                     ),
                   ),
                   Padding(
-                    padding: const EdgeInsets.fromLTRB(
-                      VgSpace.s4,
-                      VgSpace.s3,
-                      VgSpace.s4,
-                      0,
+                    padding: pad(),
+                    child: _amountField(
+                      controller: _target,
+                      label: l.savingsTarget,
+                      currency: currency,
+                      error: _targetError,
                     ),
+                  ),
+                  Padding(
+                    padding: pad(),
+                    child: InkWell(
+                      borderRadius: BorderRadius.circular(VgRadius.sm),
+                      onTap: _currencyLocked ? null : _pickCurrency,
+                      child: InputDecorator(
+                        decoration: InputDecoration(
+                          labelText: l.currency,
+                          suffixIcon: Icon(
+                            _currencyLocked
+                                ? Symbols.lock_rounded
+                                : Symbols.arrow_drop_down_rounded,
+                          ),
+                        ),
+                        child: Text(currencyCodeLabel(currency)),
+                      ),
+                    ),
+                  ),
+                  if (_currencyLocked)
+                    Padding(
+                      padding: pad(),
+                      child: VgHint(
+                        l.savingsCurrencyLocked,
+                        icon: Symbols.lock_rounded,
+                      ),
+                    ),
+                  if (goal == null)
+                    Padding(
+                      padding: pad(VgSpace.s3),
+                      child: _amountField(
+                        controller: _saved,
+                        label: l.savingsAlreadySaved,
+                        currency: currency,
+                        helper: l.savingsAlreadySavedHelper,
+                        error: _savedError,
+                      ),
+                    ),
+                  Padding(
+                    padding: pad(VgSpace.s3),
                     child: Wrap(
                       spacing: VgSpace.s2,
                       crossAxisAlignment: WrapCrossAlignment.center,
@@ -343,51 +409,20 @@ class _GoalEditorState extends ConsumerState<_GoalEditor> {
                       ],
                     ),
                   ),
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(
-                      VgSpace.s4,
-                      VgSpace.s3,
-                      VgSpace.s4,
-                      0,
-                    ),
-                    child: goal == null
-                        ? _AccountField(
-                            label: l.savingsAccount,
-                            value: accountName,
-                            error: _accountError,
-                            onTap: () => _pickAccount(linked, visible),
-                          )
-                        : _AccountField(
-                            label: l.savingsAccount,
-                            value: accountName,
-                          ),
-                  ),
-                  if (hint.isNotEmpty)
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(
-                        VgSpace.s4,
-                        VgSpace.s2,
-                        VgSpace.s4,
-                        0,
-                      ),
-                      child: VgHint(hint),
-                    ),
                   if (goal != null)
                     Padding(
-                      padding: const EdgeInsets.fromLTRB(
-                        VgSpace.s4,
-                        VgSpace.s3,
-                        VgSpace.s4,
-                        0,
-                      ),
-                      child: TextButton.icon(
-                        style: TextButton.styleFrom(
-                          foregroundColor: scheme.error,
-                          minimumSize: const Size(0, VgSize.tapMin),
+                      padding: pad(VgSpace.s3),
+                      child: Align(
+                        alignment: AlignmentDirectional.centerStart,
+                        child: TextButton.icon(
+                          style: TextButton.styleFrom(
+                            foregroundColor: scheme.error,
+                            minimumSize: const Size(0, VgSize.tapMin),
+                          ),
+                          icon: const Icon(Symbols.delete_rounded),
+                          label: Text(l.savingsDelete),
+                          onPressed: _delete,
                         ),
-                        icon: const Icon(Symbols.delete_rounded),
-                        label: Text(l.savingsDelete),
-                        onPressed: _delete,
                       ),
                     ),
                   const SizedBox(height: VgSpace.s2),
@@ -406,55 +441,6 @@ class _GoalEditorState extends ConsumerState<_GoalEditor> {
             ],
           ),
         ],
-      ),
-    );
-  }
-}
-
-/// Ô chỉ đọc có mũi tên ▾ để mở bảng chọn tài khoản; [onTap] null = không đổi
-/// được (khi sửa).
-class _AccountField extends StatelessWidget {
-  const _AccountField({
-    required this.label,
-    required this.value,
-    this.error,
-    this.onTap,
-  });
-
-  final String label;
-  final String value;
-  final String? error;
-  final VoidCallback? onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    final scheme = Theme.of(context).colorScheme;
-    final field = InputDecorator(
-      decoration: InputDecoration(
-        labelText: label,
-        errorText: error,
-        enabled: onTap != null,
-        suffixIcon: onTap == null
-            ? null
-            : const Icon(Symbols.arrow_drop_down_rounded),
-      ),
-      child: Text(
-        value,
-        style: VgType.bodyMd.copyWith(
-          color: onTap == null ? scheme.onSurfaceVariant : scheme.onSurface,
-        ),
-      ),
-    );
-    if (onTap == null) return field;
-    return Semantics(
-      button: true,
-      label: '$label: $value',
-      excludeSemantics: true,
-      onTap: onTap,
-      child: InkWell(
-        borderRadius: BorderRadius.circular(VgRadius.sm),
-        onTap: onTap,
-        child: field,
       ),
     );
   }
