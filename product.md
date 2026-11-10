@@ -1,110 +1,88 @@
-# Vigon (Ví Gọn) — Product brief for Hi‑Fi UI design (v3, version 2.0)
+# Vigon (Ví Gọn) — Product brief for Hi‑Fi UI design (v4, whole app)
 
-> **What this file is for:** the brief to send to **Claude Design** to produce Hi‑Fi mockups (UX/UI optimised) for the
-> mobile app **Vigon** (Vietnamese name **Ví Gọn**, "tidy wallet") on **Android + iOS**. It says *what* each screen must
-> do and *why*; *how it looks* is Claude Design's proposal, within the limits in §2 and §11.
+> **What this file is for:** the brief to send to **Claude Design** to produce Hi‑Fi, UX‑optimised mockups of the
+> **whole** mobile app **Vigon** (Vietnamese name **Ví Gọn**, "tidy wallet") on **Android + iOS**. It describes *what*
+> every screen must do and *why*; *how it looks* is Claude Design's proposal, within the limits in §2 and §11.
 >
-> **Starting point = the app as it is today.** Version 1.x (records, ring chart, budgets, accounts, backup, PIN, widget,
-> reminder — SPEC F‑01..F‑26) is already designed and implemented from the approved **Hi‑Fi P1 + P2 design system**
-> (`design/hifi/`, tokens v2, Be Vietnam Pro, Material Symbols Rounded). **Upgrade, don't redesign:** keep its tokens,
-> component vocabulary and the look of every screen that already has a frame. This brief asks for **three things**:
+> **Why v4:** v3 (2026‑11‑06) only described the 2.0 delta. Since then the app changed a lot (multi‑currency with a
+> *main currency*, rates screen, onboarding, weekday repeats, regrouped Settings, inline About, email import live,
+> savings wallets, deadline reminders…). v4 **replaces v3 completely** and describes the app **as it is now + what is
+> still to be built**, so one brief covers everything.
 >
-> 1. 🆕 **Draw the 2.0 screens that have no mockup yet** (Overview, Statistics, Calendar, Savings, Debts, Import queue,
->    Email import, Advanced filter, Excel/PDF export, biometric unlock, budget warnings, time field, currency
->    conversion dialogs…). These are the priority — §5 Part B.
-> 2. 🔁 **Re‑compose the app shell:** a new **5‑tab bottom navigation** (§4) and a restructured **More** tab that replaces
->    today's long Settings list. Home keeps its look and its ≤ 3‑tap logging flow.
-> 3. 🇬🇧 **English is now the default language** (no "follow the device" option). All frames are drawn in **English**
->    first; Vietnamese variants are only for checking text length (§2.4).
+> **Starting point:** the approved **Hi‑Fi P1 + P2 design system** in `design/hifi/` (tokens v2, Be Vietnam Pro, Material
+> Symbols Rounded). **Upgrade, don't redesign:** keep token names, component vocabulary and the look of screens that
+> already have a frame; draw everything that has none.
 >
-> Internal code `A002-vigon` · Bundle ID `com.phiotron.vigon` · Brief v3 · 2026‑11‑06 (replaces v2 of 2026‑11‑05).
-> Glossary: `CONTEXT.md`. Specification: `docs/SPEC.md` (F‑01..F‑42, AC‑01..AC‑126). Copy quoted below is the real copy
-> from `lib/l10n/app_en.arb` / `app_vi.arb` when it exists; copy a design needs that does not exist yet → mark `NEW:` in
-> the mockup so the developer adds it to both `.arb` files.
+> Internal code `A002-vigon` · Bundle ID `com.phiotron.vigon` · Brief **v4 · 2026‑11‑10** (replaces v3).
+> Glossary: `CONTEXT.md`. Behaviour spec: `docs/SPEC.md` (F‑01..F‑48, AC‑01..AC‑158). Decisions: `docs/DECISIONS.md`
+> (D‑001..D‑044). Copy below is the **real copy** from `lib/l10n/app_en.arb` / `app_vi.arb` (shown `EN | VI`); copy that
+> does not exist yet is marked **NEW:** — keep it, the developer adds it to both files.
 
-**Frame status legend** (on every screen heading):
-- ✅ **Drawn** — an approved frame exists in `design/hifi/` (frame numbers like 01, 05…). Refresh only; keep the look.
-- 🟡 **Changed** — exists and is drawn, but this brief changes it (tab bar, new rows, new states).
-- 🆕 **No frame** — implemented in the app from shared components but **never designed**, or not built yet. **Draw it.**
-- 🤖 Android only · 🍏 needs an iOS note (§9).
+**Status legend** (on every screen heading)
+- ✅ **Built + drawn** — implemented and an approved frame exists in `design/hifi/`. Refresh only.
+- 🔨 **Built, no frame** — implemented from shared components but never designed. **Draw it** (priority).
+- 🆕 **Not built** — specified, waiting for this mockup. **Draw it.**
+- 🟡 **Changed** — drawn before, but behaviour/layout changed since (see notes).
+- 🤖 Android only · 🍏 iOS note in §9.
 
 ---
 
 ## Contents
 1. Product overview
 2. Design constraints
-3. Business rules the designer must know
-4. Information architecture and navigation (**new 5‑tab shell**)
-5. Screens — Part A: existing screens (refresh) · Part B: 2.0 screens (draw)
-6. Surfaces outside the app (widget, notifications, icon)
+3. Business rules (complete)
+4. Information architecture and navigation
+5. Screens (A Home & logging · B Records · C Money structure · D Plans: budget, savings, debts · E Currency · F Email import · G Settings & data · H Security · I First run · J Insights to build)
+6. Surfaces outside the app
 7. Key flows
-8. Sample data for mockups
+8. Sample data
 9. iOS notes
 10. UX weak points → opportunities · Out of scope
-11. Deliverables requested from Claude Design
+11. Deliverables
 
 ---
 
 ## 1. Product overview
 
 ### 1.1 One line
-**Vigon** — record income and expenses in seconds, see at a glance where the money went, and (new in 2.0) let your
-**bank's receipt emails** fill in expenses for you — all offline‑first, no account, no analytics, nothing sent to a
-server.
+**Vigon** — record income and expenses in seconds, in any currency, see at a glance where the money went, save toward
+goals, remember debts, and optionally let your **bank's receipt emails** fill in expenses — offline, no account, no ads,
+no analytics, nothing sent to a developer server.
 
 ### 1.2 Problem
-People who want to know where their money goes each month give up because apps take too many steps, ask for an
-account, or send data to a server. Vigon logs an expense in a few seconds, shows spending by category, and in 2.0 adds
-the "whole picture" (overview, statistics, calendar, savings goals, debts) plus **optional** email import so manual typing
-is needed less.
+People who want to know where their money goes give up because apps take too many steps, ask for an account, or send
+data away. Expats and travellers also juggle **several currencies** and get confusing totals. Vigon logs an expense in a
+few seconds, adds everything up in **one main currency the user picks**, and keeps the original amount visible underneath.
 
-### 1.3 What is new in version 2.0 (the delta this brief designs)
-| Area | New |
-|---|---|
-| **Shell** | Bottom navigation with 5 tabs: Home · Overview · Stats · Calendar · More |
-| **Overview** (F‑35) | Total balance, "Income − expense" and "Budget left" tiles, 6‑month income/expense bars, change vs last month |
-| **Statistics** (F‑36) | Income/expense bar chart by sub‑period, top 5 spending categories, biggest spending day, balance history line |
-| **Calendar** (F‑38) | Month grid with daily spend, tap a day → its records |
-| **Budget warnings** (F‑37) | "Almost over" state from a threshold (default 80 %), optional local notification with percentages only |
-| **Advanced filter** (F‑39) | Amount range, several categories, date range, combined with search |
-| **Time of entry** (F‑27) | Optional time on every record |
-| **Savings** (F‑33) | Goals linked to an account; progress; "Add money" = transfer |
-| **Debts** (F‑34) | Memo list: lent / borrowed, partial payments, due date |
-| **Email import** (F‑28..F‑32) | Add a mailbox (Gmail/Yahoo/iCloud, app password) → MB Bank receipt emails become a **queue** where you pick the category; remembered suggestions |
-| **Export** (F‑40) | Excel (.xlsx) and PDF report next to backup and CSV |
-| **Biometrics** (F‑41) | Fingerprint / Face ID unlock on top of the PIN |
-| **Language / currency** (D‑036) | English default; Settings offers English / Tiếng Việt; first‑run currency is USD; changing currency converts every amount with a live exchange rate (D‑025) |
-
-### 1.4 Target users (personas)
-
+### 1.3 Personas
 | Persona | Situation | What they need from the UI |
 |---|---|---|
-| **Linh, 27, office worker (HCMC), Android** | Pays several times a day; logs right after paying, standing, **one hand**, weak signal; has an MB Bank account | Widget → Expense → amount → category = saved. Receipt emails from MB land in a **queue** she clears in 20 seconds with one thumb |
-| **Minh, 20, student, iPhone** | Small budget; food is the risky category | Monthly budget + a **food limit**, "Almost over 82 %" warning, a savings goal "New laptop" |
-| **Cô Hạnh, 52, keeps the family's market money** | Not tech‑savvy, Vietnamese only, large system text, worried about losing data | Big targets, readable at 200 %, plain words; automatic backup set up once; a debt memo for who owes her |
-| **Alex, 34, expat (EN), Android** | USD, several accounts, wants numbers | Overview, Statistics, Calendar, filter by amount range, Excel/PDF export for taxes, fingerprint unlock |
+| **Linh, 27, office worker (HCMC), Android, VI** | Pays several times a day, one hand, weak signal; MB Bank account | Widget → Expense → amount → category = saved. MB receipt emails land in a **queue** she clears with one thumb |
+| **Minh, 20, student, iPhone, VI** | Small budget; saving for a laptop | Monthly budget + food limit, a savings goal with its own wallet, a reminder 7 days before the deadline |
+| **Cô Hạnh, 52, keeps the family's market money, VI** | Not tech‑savvy, large system text, fears losing data | Big targets, 200 % text, plain words; automatic backup set once; debt memo with due‑date reminders |
+| **Alex, 34, expat, EN, Android** | Main currency **USD**, cash in **VND**, card in **USD**, savings in **EUR** | Everything shown in USD on top, the original ₫/€ amount underneath; exact totals; exchange‑rate screen; Excel/PDF later |
 
-### 1.5 Core jobs (priority order)
-1. **Log an expense right after paying** — from Home, the widget or the reminder notification (unchanged).
-2. **Clear the import queue** — pick a category for each bank‑email record (new).
-3. **See where money went** — Home ring (period), Overview (month vs month), Statistics, Calendar.
-4. **Find and fix records** — list, search, advanced filter, edit, delete with undo.
-5. **Stay within budget** and **save toward goals**; remember **debts**.
-6. **Keep data safe and private** — backup (manual/auto, optionally encrypted), PIN + biometrics, hide in app switcher.
-7. **Report** — CSV, Excel, PDF.
+### 1.4 Core jobs (priority order)
+1. **Log an expense right after paying** — Home ring, − / +, widget, reminder notification.
+2. **See where money went** — Home ring per period, Records list, (to build) Overview, Statistics, Calendar.
+3. **Find and fix records** — list, search, edit, delete with undo, (to build) advanced filter.
+4. **Plan** — monthly budget + category limits, **savings goals with their own wallet**, **debt memo**, deadline reminders.
+5. **Handle several currencies without thinking** — main currency on top, original underneath, exact sums, rates screen.
+6. **Clear the email import queue** — pick a category per MB Bank receipt.
+7. **Keep data safe and private** — backup (manual/auto, encrypted), PIN, hide in app switcher, (to build) biometrics.
 
-### 1.6 Design principles
-1. **Offline & private by design.** No sign‑in, no cloud, no analytics. Email import is optional, runs on the phone, reads
-   only bank receipts, and says so in plain words wherever it asks for a mailbox.
-2. **Log an entry in ≤ 3 taps** (AC‑02, excluding digit taps). Ring icon → digits → **Save** (2 taps); **−** → digits →
-   **Choose category** → tap category = **saved** (3 taps, D‑018). The new tab bar must not add a tap to this.
-3. **Calm, compact finance UI.** Numbers are the hero; colour sparingly; no gamification, no alarm walls.
-4. **Thumb zone first.** Primary actions in the bottom half; the tab bar sits at the bottom, so keep primary buttons
-   clear of it (§4.3).
-5. **Never rely on colour alone.** Income/expense carry a sign or word; "Almost over" / "Over" carry icon + text.
-6. **Forgiving.** Single records delete with 5‑s Undo; queue "Skip" confirms; passwords always warn "if you forget it,
-   the file can't be opened".
-7. **Same app on both platforms**, except OS‑owned behaviour (§9).
+### 1.5 Design principles
+1. **Offline & private by design.** No sign‑in, no cloud, no analytics. Network is used only for the daily exchange‑rate
+   table and, if the user adds a mailbox, for reading bank receipt emails on the phone.
+2. **Log an entry in ≤ 3 taps** (AC‑02, digits excluded): ring icon → digits → **Save**; **−** → digits → **Choose
+   category** → tap category = **saved** (D‑018). Nothing may add a tap to this.
+3. **Main currency first (NEW, D‑042).** Every amount shows the **main currency big on top** and, only when the record is in
+   another currency, the **original amount small underneath**. One currency → one line.
+4. **Calm, compact finance UI.** Numbers are the hero; colour sparingly; celebrate a finished savings goal once, quietly.
+5. **Thumb zone first.** Primary actions in the bottom half; sheets over full pages for short tasks.
+6. **Never colour alone.** Income/expense carry a sign or word; Almost over / Over / Overdue / Done carry icon + text.
+7. **Forgiving.** Deletes have 5‑s Undo or a confirm; limits are explained ("Only $40.00 more needed").
+8. **Same app on both platforms**, except OS‑owned behaviour (§9).
 
 ---
 
@@ -112,556 +90,593 @@ is needed less.
 
 ### 2.1 Platforms, frames, orientation
 - **Android** (Material 3, edge‑to‑edge) and **iOS 16+** (adaptive Material, not Cupertino widgets). One shared layout.
-- **Base frames:** Android **360 × 800 dp** (smallest supported) and iPhone 15/16 **393 × 852 pt**; must hold at 412 × 915.
-- **Portrait only**, phone only (no tablet/landscape). Respect safe areas (status bar, gesture bar, Dynamic Island, Home
-  indicator).
+- **Base frames:** Android **360 × 800 dp** (smallest supported) and iPhone **393 × 852 pt**; must hold at 412 × 915.
+- **Portrait, phone only.** Respect safe areas (status bar, gesture bar, Dynamic Island, Home indicator).
 
-### 2.2 Theme and visual starting point (keep — this is the approved system)
-- **Light, Dark, System** theme (AC‑35); every in‑app frame in both. (Only the *language* lost its "System" option.)
-- Tokens: `design/hifi/tokens/tokens.json` (v2) is the source of truth and is wired into the app
-  (`lib/src/ui/tokens.g.dart`). Primary `#2E7D6B`/`#8CD5BF`; income `#2E7D32`/`#81C784`; expense `#C62828`/`#EF9A9A`; error
-  `#BA1A1A`/`#FFB4AB`; 16 category colours `cat-01…16`. Type **Be Vietnam Pro** with **tabular figures**; 12 type styles.
-  Icons **Material Symbols Rounded** (filled for category icons, outlined for actions).
-- You may refine tokens, **keep token names**, and list every change (§11.4). Contrast ≥ 4.5:1 text / 3:1 large text &
-  icons in both themes (AC‑40). **New semantic need:** a **warning** colour pair for "Almost over" (distinct from
-  `error` "Over" and from `expense`) and a neutral **info** surface for "from email" markers — propose tokens
-  `warning`, `on-warning`, `warning-container`.
-- **Category colours and icons are user data** (ARGB int + icon key, in backups): keep keys and the 16 colour slots.
-- **Brand (D‑009):** logo "two stacked cards", background `#0E5244`, back card `#8CD5BF` −14°, front card `#F7FAF8` +8°,
-  dot `#E65100`. Wordmark is now **"Vigon"** in English, **"Ví Gọn"** in Vietnamese. Final app icon exists; use the logo only
-  where it helps (About, Lock, widget, empty states). Never coins, $, piggy bank, wallet with flap, leaf or donut as logo.
-- **Navigation changed:** v1 had *no tab bar*. 2.0 introduces a **5‑tab bottom bar** (§4). Add the component (label +
-  icon, selected pill using `secondary-container`, 80 dp high incl. safe area, works at 200 % text — labels may wrap to two
-  lines or the bar switches to icons + selected label at ≥ 130 %).
+### 2.2 Theme and visual system (keep)
+- **Light / Dark / System** theme; every in‑app frame in both.
+- Tokens: `design/hifi/tokens/tokens.json` (v2) → `lib/src/ui/tokens.g.dart`. Primary `#2E7D6B`/`#8CD5BF`; income
+  `#2E7D32`/`#81C784`; expense `#C62828`/`#EF9A9A`; error `#BA1A1A`/`#FFB4AB`; 16 category colours `cat-01…16`. Type **Be
+  Vietnam Pro** with **tabular figures**, 12 type styles. Icons **Material Symbols Rounded**.
+- Keep token names; list every change (§11.4). Contrast ≥ 4.5:1 text / 3:1 large text & icons in both themes.
+  **Needed:** a **warning** pair (`warning`, `on-warning`, `warning-container`) for *Almost over* and *Due soon*, distinct from
+  `error` (*Over*, *Overdue*) and from `expense`; a **success** accent for *Goal completed* that is not the income green.
+- Category colours/icons are **user data** (keys in backups) — keep the 16 slots and icon keys.
+- **Brand (D‑009):** logo "two stacked cards" (bg `#0E5244`, back card `#8CD5BF` −14°, front `#F7FAF8` +8°, dot `#E65100`).
+  Wordmark **Vigon** (EN) / **Ví Gọn** (VI). Never coins, $, piggy bank, wallet‑with‑flap, leaf or donut as the logo.
 
-### 2.3 Accessibility (WCAG 2.2 AA target)
-- **Touch targets ≥ 48 × 48 dp / 44 × 44 pt** (`tap-min` 48, `tap-key` 56, `tap-main` 64).
-- **Text scale up to 200 %** without clipping (AC‑38). At ≥ 130 %: amounts move under row titles, 3‑way segmented controls
-  stack, areas above keypads scroll, button pairs wrap, **tab bar shows icons + label of selected tab only**.
-- Every control has a spoken label; **every chart (ring, bars, line, calendar) has a text alternative** (one sentence + a
-  hidden table); live regions for typed amounts and PIN progress; TalkBack and VoiceOver. 2 px `focus` ring; respect
-  "reduce motion".
+### 2.3 Accessibility (WCAG 2.2 AA)
+- Touch targets ≥ 48 dp / 44 pt (`tap-min` 48, `tap-key` 56, `tap-main` 64).
+- **Text scale up to 200 %** without clipping: at ≥ 130 % amounts move under row titles, segmented controls stack, areas
+  above keypads scroll, button pairs wrap, the **two‑line money block** (main + original) stays together.
+- Every control has a spoken label; every chart has a one‑sentence summary + hidden table; live regions for typed amounts and
+  PIN progress; TalkBack and VoiceOver; 2 px focus ring; respect reduce‑motion.
+- Two‑line money reads as one phrase: "3 dollars 85, original 100,000 dong".
 
 ### 2.4 Languages and copy length
-- **English (default) and Vietnamese.** First launch is English on every phone; the user can switch in Settings
-  (English / Tiếng Việt). **Draw every frame in English**; additionally draw **VI variants** (light) for the screens listed
-  in §11.2 to check that Vietnamese (≈ 20–40 % longer) still fits.
-- Brand name: **Vigon** (EN) · **Ví Gọn** (VI). Widget button text and the launcher label follow the **device** language
-  (OS‑owned); everything inside the app follows the app language.
-- Riskiest long strings (EN | VI):
+- **English (default on first launch) and Vietnamese**, chosen in onboarding and in Settings (no "follow device").
+  Draw every frame in **English**; draw **VI variants** for the screens in §11.2 (VI is ≈ 20–40 % longer).
+- Widget button text and launcher label follow the device language (OS‑owned).
+- Riskiest strings (EN | VI):
 
-| Key | EN | VI | Where it bites |
+| Key | EN | VI | Where |
 |---|---|---|---|
+| `primaryCurrencyNote` | Totals, charts and the ≈ line use this currency… (to be rewritten, see S‑E1) | … | Settings |
 | `emailIntroRead` | Vigon reads your bank's transfer receipt emails in the mailbox you add, then puts them in a queue for you to pick a category. | Ví Gọn đọc email biên lai chuyển tiền của ngân hàng trong hộp thư bạn thêm, rồi đưa vào hàng đợi để bạn chọn danh mục. | Email intro |
-| `queueCurrencyNote` | The email is in {emailCurrency} but the app uses {appCurrency}. You'll enter the amount in the next step. | Email bằng {emailCurrency} nhưng app đang dùng {appCurrency}. Bạn sẽ nhập số tiền ở bước sau. | Queue card |
-| `savingsAccountFixed` | The linked account can't be changed. To link a different account, delete the goal and create it again. | (VI longer) | Goal editor note |
-| `debtNote` | A reminder list only: it doesn't count in income, expenses or account balances. | Chỉ là danh sách ghi nhớ: không tính vào thu, chi hay số dư tài khoản. | Debts header |
-| `emailScheduleAndroid` | Vigon checks email when you open the app and about every hour while it's closed. Pull down to check now. | (VI longer) | Mailbox screen |
-| `pinWarning` / `forgotPinBody` / `autoBackupNote` / `backupNote` | see v2 copy in the app (`app_en.arb`) | | Settings subtitles |
-| Period title (week) | Nov 2 – Nov 8, 2026 | 2 thg 11 – 8 thg 11, 2026 | Period header |
+| `queueCurrencyNote` | The email is in {emailCurrency} but the account uses {appCurrency}. You'll enter the amount in the next step. | Email bằng {emailCurrency}, tài khoản đang dùng {appCurrency}. Bạn nhập số tiền ở bước tiếp theo. | Queue card |
+| `debtsNote` | A reminder list only: it doesn't count in income, expenses or account balances. | Chỉ là sổ ghi nhớ: không tính vào thu, chi hay số dư tài khoản. | Debts header |
+| `onboardingCurrencyHint` | Totals, charts and budgets use this currency. Your Cash account starts in it; you can add accounts in other currencies later. | Tổng, biểu đồ và ngân sách tính theo tiền tệ này. Tài khoản Tiền mặt cũng dùng tiền tệ này; sau này vẫn thêm được tài khoản tiền tệ khác. | Onboarding |
+| NEW deadline notification | Debt with An: 2,000,000 ₫ left, due in 7 days | Khoản nợ với An: còn 2.000.000 ₫, đến hạn sau 7 ngày | Lock screen |
 
-### 2.5 Number, currency and date formatting
-- **One currency for the whole app; default USD** on first launch (D‑036). All active ISO 4217 codes (~156), 0/2/3
-  decimals. Changing currency opens the **conversion dialog** (§5 Part B, N‑14): every amount in the app is converted at a
-  live rate fetched once (with manual rate fallback).
-- Money display follows the **app language**: EN `$1,250.00`, `₫1,250,000`; VI `1.250.000 ₫`. Negative `-$200.00`.
-  Money is stored exactly (6 hidden decimals) but **always displayed rounded** to the currency's decimals.
-- **Large numbers** up to 10¹² minor units; totals can be larger → ring centre, tiles, chart labels must scale or wrap.
-- Percent one decimal (`53.7%` / `53,7%`); sums to 100.0. Short date `Nov 3, 2026`; today = Today. **Time** `12:02` follows the
-  device 12/24 h setting (`12:02 PM`). Compact chart/calendar amounts: EN `50K`, `1.2M`; VI `50k`, `1,2tr`.
-- **CSV / Excel / PDF** follow the app language (CSV VI: `;` separator, `,` decimal).
+### 2.5 Money, currency and date formatting — **read this, it changed (D‑042)**
+- **Every record has its own currency** (ISO 4217, ~156 codes, 0/2/3 decimals): accounts, records, transfers (sent and received
+  amounts), repeating records, monthly budget, category limits, savings goals, debts and their payments.
+- The user picks one **Main currency** (`primaryCurrency`: "Main currency | Tiền tệ chính"). **All totals, charts, budgets and
+  balances are shown in it.**
+- **Two‑line money block (core component, NEW behaviour):**
+  - **Line 1 (big, `amount-*` style):** the amount **in the main currency**.
+  - **Line 2 (small, `body-sm`, `on-surface-variant`):** the **original** amount in its own currency — **only when it differs**.
+  - Same currency → only line 1. Missing rate → line 1 shows the original and line 2 reads `rateMissing` in `error` colour
+    ("No rate for {from} to {to}. This amount is left out of totals." | "Không có tỷ giá từ {from} sang {to}. Số tiền này
+    không vào tổng.").
+  - Example (main USD): *Beef pho* → **$3.85** / 100,000 ₫ · *Taxi* → **$12.00** (USD, one line) · *Paris hotel* → **$108.70** / €100.00.
+  - The old design (original big, "≈ main" small) is **wrong now** — redraw every place that shows it.
+- **New records default to the main currency** with a **currency chip** to switch (S‑A3). Editing keeps the saved currency.
+- **Exact sums (D‑042):** totals add originals per currency to the smallest unit, then convert and round **once**. Switching the
+  main currency back and forth never changes any amount. A total may differ by a cent from adding the rounded rows by hand —
+  that's fine, don't design a "rounding" note for it.
+- Display follows app language: EN `$1,250.00`, `₫1,250,000`; VI `1.250.000 ₫`, `1.250,00 US$`. Negative `-$200.00`.
+  Up to 10¹² minor units per amount; totals can be larger → hero numbers must scale or wrap.
+- Percent one decimal (`53.7%` / `53,7%`). Short date `Nov 3, 2026` / `3 thg 11, 2026`; Today. Time `12:02` (device 12/24 h).
+  Compact amounts (charts/calendar): EN `50K`, `1.2M`; VI `50k`, `1,2tr`.
 
 ---
 
-## 3. Business rules the designer must know
+## 3. Business rules (complete, as built + decided)
 
-Unchanged v1 rules (summarised) — **1** Entry = income/expense, amount ≥ 0, category, account, date (**+ optional time**),
-note ≤ 200. **2** Transfer ≠ income/expense; own section in lists; changes account balances. **3** Two balances: *period
-balance* (Home/Entries: income − expense of the viewed period) vs *account balance* (Accounts: starting + income −
-expense ± transfers, all time). **4** Period: Day/Week/Month/Year/All time/Custom; week start and month start day in
-Settings; period and account filter live in memory. **5** Account filter (≥ 2 visible accounts). **6** Ring icons =
-expense categories, last slot "More categories". **7** Choosing a category saves when the key reads "Choose category".
-**8** Repeating records generated on open. **9** Budgets: monthly total (Home bar) + optional per‑category limits.
-**10** Accounts: hide / delete rules. **11** Search matches note, category, amount. **12** Delete = 5‑s undo.
-**13** Manual backup `.vigon` (optional password, AES‑256‑GCM). **14** Auto backup: daily at a chosen hour (default 21:00),
-always encrypted, keeps 2 files; Android background, iPhone via a notification. **15** Daily reminder (generic text).
-**16** Widget Expense/Income (Android + iOS). **17** Hide content in app switcher (Android + iOS cover). **18** PIN lock
-(4 digits). Details: `docs/SPEC.md`.
+**Recording**
+1. **Record (Entry)** = Expense or Income: amount > 0, category, account, date, optional **time** (new records default to now;
+   old and generated ones show "No time set"), note ≤ 200, **currency** (default main currency), source (manual / MB email).
+2. **Transfer** moves money between two accounts; ≠ income/expense; not in charts, totals, budgets. Different currencies →
+   **sent** and **received** amounts are both entered and stored.
+3. **Two balances:** *Period balance* (Home/Records: income − expense of the viewed period) vs *Account balance* (Accounts:
+   starting balance + income − expense ± transfers, all time). Name them so they can't be confused.
+4. **Period:** Day / Week / Month / Year / All time / Custom range ("View by" sheet); ‹ › or swipe; week start (Mon/Sun) and
+   month start day (1–28) in Settings. Period and account filter live in memory only.
+5. **Account filter** (when ≥ 2 visible accounts) applies to Home and Records.
+6. Ring icons = expense categories in order; last slot **More categories (⋯)** when they don't fit.
+7. **Save on category pick:** when the big key reads "Choose category", tapping a category saves (D‑018).
+8. **Repeating records:** Daily · Weekly · **Choose days…** (weekday chips like an alarm; all 7 = Daily; if today isn't a chosen
+   day, today's record is *not* saved and the first one is shown: "First: Fri 6/11") · Monthly · Yearly. Generated on open.
+   Pause / resume; edit amount, note, frequency, category, account.
+9. **Delete** a record → 5‑s **Undo** bar.
 
-**New / changed in 2.0:**
+**Money structure**
+10. **Accounts:** name, currency, starting balance (may be negative), visible/hidden. Hidden accounts still count in balances;
+    delete only when unused; ≥ 1 visible account always. **Savings wallets** (rule 16) are normal accounts with a goal badge.
+11. **Categories:** expense/income, name, icon (31), colour (16), order, optional **category limit** (expense). Deleting moves
+    its records to another category of the same type.
+12. **Currencies and rates:** main currency in Settings; rate table auto‑checked on open/return, downloaded at most once a day,
+    "Update now"; offline → last saved table; never downloaded → built‑in fallback table (dated). **Rates screen** lists only
+    **pairs in use** and lets the user **override** a rate (preview on the first account in that currency). Missing rate →
+    amount left out of totals with a visible note.
 
-19. **Time (F‑27):** every record may have a time `HH:mm`; new records default to "now"; old and recurring‑generated
-    records show "No time set". Same‑day lists order by time (latest first).
-20. **Email import (F‑28..F‑32):** Settings → "Import from bank email". The user adds up to **3 mailboxes** (Gmail, Yahoo,
-    iCloud) with an **app password** (never the main password; stored only in Keystore/Keychain). Vigon searches only for
-    **MB Bank** receipt emails, read‑only. Android checks about hourly in the background; iPhone only when the app is
-    opened. Only **successful outgoing transfers** become items; each item is a **queue item**, *not yet a record* — it is
-    excluded from every total, chart, budget and balance until the user picks a category.
-21. **Matching:** if the user already typed the same expense (same account, same amount, ±2 h), the email attaches to it
-    silently ("Matched with MB email 12:02" bar with Undo) instead of entering the queue. A small ✉ marks email‑sourced
-    records on rows.
-22. **Auto‑created account:** the first email for a bank account creates "MB Bank …1234" (balance 0) and shows a card at
-    the top of the queue: *Created account MB Bank …1234 · Attach to an existing account*.
-23. **Queue item actions:** pick a category (a **suggested** one is pre‑highlighted from past choices for the same payee, but
-    still needs one tap), **Edit before saving**, **Move to my account** (becomes a transfer), **Skip** (with confirm). If the
-    email's currency differs from the app's, the amount is entered manually.
-24. **Savings goal:** name, target, optional deadline, linked account (existing unlinked one or a new one). Progress =
-    linked account balance ÷ target. **Add money** opens Transfer pre‑filled; totals/budgets do not change. Reached = balance ≥
-    target ("Reached" with ✓ and text).
-25. **Debts:** memo only — person, direction (I lent / I borrowed), amount, date, optional due date, note, payments. Does
-    not touch records, accounts, totals.
-26. **Overview month** is independent of Home's period; totals include all accounts (hidden ones too) and **exclude** queue
-    items. "vs last month" shows % change of spending and of income with an arrow **and** the words up/down; last month 0 → "—".
-27. **Budget states:** *normal* · **Almost over** (≥ threshold, default 80 %, adjustable 50–95 %) · **Over by X**. Optional
-    local notification at the threshold and at 100 %, once per budget per month, **percentages only, never amounts**.
-28. **Advanced filter:** amount range + several categories (income and expense) + date range, AND‑combined with search and
-    account filter; results are a flat list with "N records · spent X · income Y"; each condition is a removable chip.
-29. **Biometrics:** only offered when PIN is on and the phone has enrolled biometrics; PIN remains the fallback.
-30. **Export:** Excel (.xlsx: Records / By category / Debts sheets) and PDF (A4 report) for a chosen range, via the system
-    share sheet.
-31. **Currency change (D‑025/D‑029):** choosing another currency opens "Convert to X?" with a live rate both ways, an
-    example (before → after), a rounding warning and "Use a different rate" manual entry; offline/failed → clear error +
-    manual rate. Converting there and back returns the original numbers.
+**Plans**
+13. **Monthly budget** (one total limit, current month by month start day, all accounts) → Home bar; **category limits** →
+    small bars on Records category rows. Budget has its own **currency selector** (default main currency); shown main‑first.
+    States: normal · **Almost over** (≥ threshold, default 80 %, adjustable 50–95 % — *to build*) · **Over by X**.
+14. **Debts (memo only):** person, direction **I lent** / **I borrowed**, amount, currency (locked after first payment), date,
+    optional due date, note; **payments** (never more than what's left: "More than the remaining {remaining}"); remaining 0 →
+    **Settled** (collapsed section). Overdue → word + icon. Debts never touch accounts or totals. **Deleting a debt returns to
+    the Debts list** (bug fixed — it used to jump to Settings).
+15. **Deadline reminder (NEW, D‑044):** one global setting — on by default, **7 days** before (1–30), at **09:00** (changeable).
+    Every savings goal and debt with a due date that isn't done gets a notification **N days before** and **on the due date**,
+    **with the amount still left**, even when PIN lock is on (user's choice).
+16. **Savings goal = its own wallet (NEW, D‑043):**
+    - Creating a goal **always creates a new account** (the *wallet*), never links an existing one. Form: goal name, **Account**
+      (wallet name, pre‑filled with the goal name), target amount + currency (default main), **Already saved** (wallet's
+      starting balance, default 0), optional deadline.
+    - Why: if a goal used "Cash" with 8,000,000 ₫ of food money, a 5,000,000 ₫ goal would be "done" instantly. A wallet starts at 0.
+    - The wallet is a **normal account**: spend from it, receive into it, withdraw any time — even before the goal is done.
+    - **Progress = wallet balance** (in the goal's currency) vs target.
+    - **Add money** = transfer from any account into the wallet, **capped at what's still missing** ("Fill to target" button).
+      **Withdraw** = transfer out, capped at the wallet balance.
+    - **History** = every movement of the wallet (add +, withdraw −, spending/income recorded directly, the starting amount) —
+      always sums to the balance; items deletable with Undo.
+    - First time balance ≥ target → **"Savings goal reached"** dialog with the amount, goal moves to a collapsed **Done** section.
+      **Done is permanent** (withdrawing later doesn't bring it back); **Reopen** in the goal detail.
+    - Deleting a goal keeps the wallet as a normal account and every record.
+
+**Import, data, privacy**
+17. **Email import (MB Bank only):** up to 3 mailboxes (Gmail / Yahoo / iCloud) with an **app password** (Keystore/Keychain);
+    read‑only; Android checks about hourly + on open, iPhone on open; only **successful outgoing transfers**. Each becomes a
+    **queue item** — *not a record yet*, excluded from all totals — until the user picks a category, **Move to my account**
+    (transfer), **Edit before saving** or **Skip**. Payee suggestions remembered. First email of an unknown MB account
+    auto‑creates "MB Bank …1234". A record typed by hand that matches an email (same account, amount, ±2 h) is matched silently
+    with an Undo bar. Email currency ≠ account currency → amount typed manually.
+18. **Backup:** manual `.vigon` file (optional password, AES‑256‑GCM) via share sheet; **Restore** replaces everything after a
+    check + confirm; **Auto backup** daily at a chosen hour (default 21:00) into a user‑picked folder, always encrypted, keeps 2
+    files, status line. **CSV export** (language‑aware). (To build: Excel, PDF.)
+19. **PIN lock** (4 digits) on open and after > 1 min in background, also from widget/notifications; it does **not** encrypt.
+    Forgot PIN → only "Delete all data". **Hide content in app switcher.** (To build: fingerprint / Face ID on top of PIN.)
+20. **Daily reminder** ("Have you recorded your spending today?") at a chosen time (default 20:00), **no figures**. **Budget
+    notifications** (to build) show **percentages only**. **Deadline reminders** show amounts (rule 15).
+21. **Onboarding** (fresh install only): Language → Welcome → Main currency → Reminder → PIN; Skip = defaults (English, USD,
+    reminder off, no PIN).
+22. **Delete all data:** two confirms; wipes everything incl. goals, debts, queue, mailboxes; recreates defaults.
 
 ---
 
 ## 4. Information architecture and navigation
 
-### 4.1 New app shell — 5 bottom tabs (decided 2026‑11‑06)
+### 4.1 Today (built)
+- **Home `/`** is the root. App bar: title + account filter (when ≥ 2 accounts) + **Records** icon + **Settings** gear.
+- Everything else is a pushed full screen or a bottom sheet with back/close. **Settings** is the hub for Categories, Accounts,
+  Budget, Repeating, **Savings**, **Debts**, Main currency, Rates, Email import & Queue, Security, Reminder, Data, Appearance &
+  language, About (9 titled groups, S‑G1).
 
-| Tab | Icon (Material Symbols Rounded) | Root route | Contains |
+### 4.2 Decided for 2.0 (draw it): 5‑tab shell
+| Tab | Icon | Root | Contains |
 |---|---|---|---|
-| **Home** | `home` / `donut_large` | `/` | Existing Home: period header, ring, budget bar, balance bar, − / + |
-| **Overview** | `dashboard` | `/overview` | N‑01 |
-| **Stats** | `monitoring` | `/stats` | N‑02 |
-| **Calendar** | `calendar_month` | `/calendar` | N‑03 |
-| **More** | `menu` / `more_horiz` | `/more` | N‑05 hub: Records, Savings, Debts, Import queue, Categories, Accounts, Repeating, Settings groups, About |
+| **Home** | `donut_large` | `/` | Home as today |
+| **Overview** | `dashboard` | `/overview` | S‑J1 (to build) |
+| **Stats** | `monitoring` | `/stats` | S‑J2 (to build) |
+| **Calendar** | `calendar_month` | `/calendar` | S‑J3 (to build) |
+| **More** | `menu` | `/more` | Hub: Records · Savings · Debts · Queue (badge) · Categories · Accounts · Repeating · Settings |
 
-- The tab bar is **visible on the five root screens only**. Any pushed screen (New/Edit entry, Entries list, Savings, Debts,
-  Queue, Settings sub‑pages, dialogs, sheets) is full screen with a back/close and **no tab bar**.
-- **Home keeps its identity:** the − / + buttons, ring icons and ≤ 3‑tap logging stay. Design where the tab bar sits relative
-  to the − / + buttons so the primary buttons remain the strongest elements (they are the app's core). Home's
-  top‑bar icons become: wallet (account filter) · queue badge (when items wait) — the receipt/records icon moves into the
-  balance bar tap and **More → Records**; the gear moves into **More**.
-- **Quick add on other tabs (proposal):** Overview/Stats/Calendar may show a compact "+" action (FAB or top‑bar) → New
-  entry. Mark as proposal; show both with and without.
-- **Badges:** the **More** tab (and the Home top‑bar queue icon) shows a count badge when queue items wait ("3"); also a
-  one‑line **banner under the Home period header**: *3 records waiting for a category* → opens the queue.
-- Deep links (widget, notification) still open **New entry** (through the PIN lock) — unchanged; budget notifications open
-  **Overview**.
+- Tab bar only on the 5 roots; pushed screens have no tab bar. **The − / + buttons on Home stay the strongest elements**; the bar
+  must not add a tap to logging.
+- Queue badge on More (and a one‑line Home banner "3 records waiting for a category").
+- Deep links: widget/daily reminder → New entry; deadline reminder → Debt detail / Goal detail; budget notification → Overview.
+  All through the PIN lock.
+- **Deliver both:** the current Home+Settings navigation (refresh) **and** the 5‑tab shell — the app moves to tabs when J‑screens ship.
 
-### 4.2 Routes
-
-| Route | Screen | SCR / N |
+### 4.3 Routes
+| Route | Screen | ID |
 |---|---|---|
-| `/` | Home | SCR‑01 |
-| `/overview` · `/stats` · `/calendar` | Overview · Statistics · Calendar | N‑01 · N‑02 · N‑03 |
-| `/more` | More hub | N‑05 |
-| `/entry/new`, `/entry/:id` | New / edit entry (**+ time field**) | SCR‑05/06 + N‑04 |
-| `/entries` | Records list + search + **Filter** | SCR‑10/11 + N‑04 |
-| `/savings` | Savings goals (+ editor, contribute) | N‑06 |
-| `/debts` | Debts (+ editor, detail, payment) | N‑07 |
-| `/import-queue` | Import queue | N‑08 |
-| `/settings/email-import` | Email import intro / mailbox list / add | N‑09 |
-| `/settings` | Settings (now a sub‑page of More) | SCR‑12 (re‑grouped) |
-| `/categories` `/accounts` `/transfer` `/recurring` | as v2 | SCR‑15…22 |
-| overlay | Lock (+ biometric) | SCR‑23 + N‑12 |
+| `/onboarding` | First‑run steps | S‑I1 |
+| `/` | Home | S‑A1 |
+| `/entry/new?type=&category=` · `/entry/:id` | New / edit record | S‑A3 |
+| `/entries` | Records + search | S‑B1 |
+| `/transfer` · `/transfer/:id` | Transfer | S‑C3 |
+| `/accounts` | Accounts | S‑C1 |
+| `/categories` | Categories | S‑C2 |
+| `/recurring` | Repeating records | S‑B3 |
+| `/savings` | Savings (+ detail, editor, add/withdraw sheets) | S‑D2 |
+| `/debts` | Debts (+ detail, editor, payment) | S‑D3 |
+| `/rates` | Exchange rates | S‑E2 |
+| `/import-queue` · `/import-queue/suggestions` | Queue · Remembered suggestions | S‑F2 |
+| `/email-import` · `/email-import/add` | Email import · Add mailbox | S‑F1 |
+| `/settings` | Settings | S‑G1 |
+| overlay | Lock | S‑H1 |
+| `/overview` `/stats` `/calendar` `/more` | to build | S‑J1..J4 |
 
-### 4.3 Navigation map
-
+### 4.4 Map
 ```
-Tabs:  Home "/" │ Overview │ Stats │ Calendar │ More
-Home ─ −/+ , ring icon, ⋯ ─► New entry (time, account, repeat…)         (no tab bar)
-     ─ banner "3 records waiting" ─► Import queue (N-08)
-     ─ balance bar ─► Records (/entries) ─ 🔍 search · Filter (N-04)
-Overview ─ month ‹ › · tiles · bars · vs last month ─ "Set a budget" ─► budget dialog
-Stats ─ period "View by" (same sheet as Home) · account filter · charts
-Calendar ─ tap a day ─► day sheet/list (tap record ─► Edit)
-More ─ Records · Savings · Debts · Import queue (badge) · Categories · Accounts · Repeating records
-     ─ Settings ─► Appearance & language · Currency · Budget & warnings · Security (PIN, biometrics, hide content)
-                    · Reminders · Data (backup, auto backup, restore, CSV, Excel, PDF, delete all) · Email import · About
-Savings ─ goal ─► Add money (Transfer pre-filled) · edit · delete
-Debts ─ debt ─► detail with payments ─► add payment
-Import queue ─ item ─► save to category · edit first · move to my account · skip ; ─ "Remembered suggestions"
-Email import ─ intro ─► Add mailbox (provider, address, app password, steps) ─► Connected / error
-Outside: Widget · Reminder · Budget-warning notification · Recents cover
+Home ─ ring icon / − / + / ⋯ ─► New record (keypad, currency chip, date, time, account, repeat, note)
+     ─ balance bar / Records icon ─► Records ─ search
+     ─ budget bar ─► Budget dialog
+     ─ gear ─► Settings
+Settings ─ Categories & accounts: Categories · Accounts
+         ─ Plan: Monthly budget · Repeating · Savings · Debts · NEW Deadline reminder
+         ─ Currency & period: Main currency · Exchange rates · Week start · Month start day
+         ─ Email import: Import from bank email · Items awaiting a category
+         ─ Security: PIN lock · Hide content in app switcher
+         ─ Reminder: Daily reminder + time
+         ─ Data: Backup · Restore · Auto backup · Export CSV · Delete all data
+         ─ Appearance & language (sheet) · About (inline card)
+Savings ─ goal card ─► Goal detail ─ Add money · Withdraw · History · Edit · Delete · Reopen
+Debts ─ debt row ─► Debt detail ─ Add payment · Payments · Edit · Delete (→ back to Debts)
+Outside: Widget · Daily reminder · NEW Deadline reminder · Budget notification (to build) · Recents cover
 ```
 
 ---
 
 ## 5. Screens
 
-Per screen: **Status · Purpose · Components · States · Interactions · Copy (EN | VI) · Accessibility.**
+Per screen: **Status · Purpose · Components · States · Copy (EN | VI) · A11y.** Existing copy is in the `.arb` files; don't
+invent new copy for unchanged screens.
 
-### Part A — existing screens (refresh; keep the approved look unless noted)
+### A — Home & logging
 
-| SCR | Screen | Status | What to do |
-|---|---|---|---|
-| 01 | **Home** | 🟡 | Add tab bar, queue banner + badge, move gear/records icon (see §4.1). Show **filtered‑account chip** (v2 weak point #1) and "Almost over" budget state. Keep ring, ⋯ slot, − / +, empty state |
-| 02 | "View by" sheet + range calendar | ✅ | Refresh; reused by **Stats** (Overview has its own month header) |
-| 03 | Account filter menu | ✅ | Refresh; also on Stats, Calendar, Entries |
-| 04 | Monthly budget dialog | ✅ | Refresh; add warning‑threshold row link ("Warn me at 80 %") |
-| 05 | **New entry + keypad** | 🟡 | **Add the Time field** next to Date (N‑04). Keep keypad and D‑018 flow |
-| 06 | Edit entry | 🟡 | Time field incl. "No time set"; "From email" source line (✉ MB Bank · ref ending 4821) |
-| 07–09 | Category grid, Repeat/Account sheets, Date picker | ✅ | Refresh |
-| 10 | **Records list** | 🟡 | Rows show time and ✉ marker; header gets **Filter** button next to search; category budget bars show the Almost‑over state |
-| 11 | Search | ✅ | Refresh; combine with Filter chips (N‑04) |
-| 12 | **Settings** | 🟡 | Becomes a sub‑page of More, **regrouped** (N‑05b): Appearance & language (language = 2‑option segmented **English / Tiếng Việt**, **no "System"**) · Currency · Budget & warnings · Security · Reminders · Data · Email import · About |
-| 13 | Currency picker | 🟡 | Add the conversion flow (N‑14) after choosing |
-| 14 | Month‑start menu | ✅ | Refresh |
-| 15–16 | Categories, edit sheet, delete+move | ✅ | Refresh |
-| 17–18 | Accounts, edit sheet | 🟡 | Add **"From email MB"** label under linked accounts; linked‑account marker; savings‑goal linked accounts show a goal chip |
-| 19 | Transfer | 🟡 | Support pre‑fill from "Add money" (To = goal account); time field |
-| 20–21 | Repeating records + edit | ✅ | Refresh |
-| 22 | About | ✅ | Refresh; wordmark Vigon |
-| 23–25 | Lock, PIN, Forgot PIN | 🟡 | Add the biometric button/state on Lock (N‑12) |
-| 26–29 | Backup export, restore, CSV, delete all | ✅ | Refresh; **Export row group now has CSV · Excel · PDF** (N‑11) |
-| 30–31 | Reminder dialogs, Auto backup | ✅ | Refresh (auto backup now: daily at chosen hour, keeps 2 files, status "Checked, nothing new") |
-| 32–33 | Shared dialog/snackbar, Settings iOS | ✅ | Refresh |
+#### S‑A1 · Home `/` ✅🟡 (frames 01, 07)
+**Purpose:** log fast; see the period at a glance.
+**Components:** app bar (title, account filter chip *proposal: show the active account as a chip*, Records, Settings) ·
+period header ‹ **November 2026** › (tap → "View by" sheet, swipe changes period) · **ring chart** of expenses by category
+with the period total in the centre (**main currency**) and category icons around it (last slot ⋯) · **budget bar** (Spent X of
+Y, Over by X; to build: Almost over) · **balance bar** (period income − expense, main currency, tap → Records) · big **− Expense**
+/ **+ Income** buttons. Queue banner when items wait ("3 records waiting for a category").
+**Changed:** every amount main‑currency; ring total uses exact sums.
+**States:** empty (first launch: friendly, points to − / ring) · normal · many categories (⋯) · budget over · negative balance ·
+filtered account · missing rate note ("1 amount left out — no rate") · 200 % · VI.
 
-Home / Entries / Settings copy is as in `lib/l10n/app_en.arb`; do not invent new copy for unchanged screens.
+#### S‑A2 · "View by" sheet + range calendar ✅ (frame 02) · Account filter menu ✅ (03)
+Refresh only.
 
-### Part B — 2.0 screens to draw (🆕, priority)
+#### S‑A3 · New / edit record `/entry/new`, `/entry/:id` 🟡 (frames 05, 06)
+**Purpose:** type an amount and save in ≤ 3 taps.
+**Components:** type toggle (Expense / Income) · **amount display** (live expression, e.g. `120+35`) with the **currency chip**
+right next to it (**NEW**: `USD ▾`; default = main currency; tap → currency picker with search, recent/used currencies on top).
+When the chosen currency ≠ main, show line 2 live: "≈ $3.85" under "100,000 ₫" *while typing* (input is in the chosen currency;
+this preview is the one place the converted line sits under the input) · chip row: **Date** · **Time** (12:02 / No time set) ·
+**Account** (sheet lists accounts with their balance, main‑first) · **Repeat** (sheet: None, Daily, Weekly, Choose days…, Monthly,
+Yearly; "First: Fri 6/11" line) · **Note** · keypad (digits, `000`/`.`, ⌫, ÷ × − +, =) · big key **Choose category** / **Save**.
+Edit adds: source line for email records ("From MB email · ref …4821"), Delete.
+**States:** new expense · new income · currency ≠ main · missing rate for chosen currency (inline error, can't save) · Choose
+days with first‑occurrence line · edit old record with no time · from email · 200 % (area above keypad scrolls) · VI.
 
-#### N‑01 · Overview — `/overview` (tab) 🆕  (F‑35, AC‑107, AC‑108)
-**Purpose:** "How am I doing this month?" in one glance.
-**Components (top → bottom):**
-1. App bar "Overview" + account‑independent note (all accounts). Month header ‹ **November 2026** › (own month, default
-   current month by month‑start day; independent of Home's period; swipe also changes month).
-2. **Total balance** hero card: sum of all accounts (hidden included), `amount-xl`, caption "All accounts".
-3. Two **tiles side by side:** *Income − expenses* (signed, green/red + sign) and *Budget left* (amount; if over: "Over by X"
-   with icon; if no budget: a tonal **Set a budget** button; Almost‑over state uses warning tokens).
-4. **Bar chart — income vs expenses, last 6 months** ending at the chosen month; paired bars (income green, expense red),
-   month labels, selected month highlighted; tap a bar → shows exact values in a callout; text alternative table.
-5. **vs last month** card: two rows — *Spending* ▲ **up 25 %** / ▼ down, *Income* ▲/▼ — arrow + words + %, "—" when last
-   month is 0; one‑sentence summary ("You spent 25 % more than in October").
-6. Optional: **Savings strip** (top goal progress) and **Debts strip** (owed to you / you owe) linking to N‑06/N‑07 — propose,
-   keep calm.
-**States:** normal · no data this month (friendly empty with link to Home) · no budget · budget Almost over · over ·
-large numbers · negative total balance · text 200 % (tiles stack) · queue items waiting (a note "3 records waiting are not
-counted yet").
-**Copy (existing/NEW):** Total balance · Income − expenses · Budget left · Over by {amount} · Set a budget · vs last month ·
-Spending up/down {n}% · NEW: strings above marked NEW.
-**A11y:** every tile one sentence; chart table "October: income $2,100, expenses $1,500 …".
+#### S‑A4 · Category grid sheet ✅ (07–09) · Repeat sheet 🟡 (Choose days chips, frame 21 family) · Date/time pickers (OS)
 
-#### N‑02 · Statistics — `/stats` (tab) 🆕  (F‑36, AC‑109, AC‑110)
-**Purpose:** analyse a chosen period.
-**Components:** period header + "View by" (reuse SCR‑02) + account filter · **Income/expense bar chart** whose sub‑periods
-depend on the period (Week → 7 days; Month → days; Year → 12 months; All time → years; custom ≤ 31 d days, ≤ 366 d months,
-else years) · **Top 5 spending categories** list (icon, name, amount, % bar) · **Biggest spending day** card (date + amount;
-hidden for Day period) · **Balance history** line (total balance at the end of each sub‑period) · the existing donut/percent by
-category can be reached via a "By category" segmented switch or kept on Home — **propose** the cleanest arrangement.
-**States:** empty period (single empty illustration, no empty charts) · one data point · long VI labels · 10 000 records
-(must feel instant) · negative balance in line · text 200 %.
-**Interactions:** tap bar → callout; tap category → Records filtered to it; reduce‑motion‑safe animation.
+### B — Records
 
-#### N‑03 · Calendar — `/calendar` (tab) 🆕  (F‑38, AC‑114)
-**Purpose:** see spending day by day.
-**Components:** month header ‹ › (swipe) · week‑start aware 7‑column grid (reuse `range_calendar` look): each day shows the
-**compact day spending** (`50K`, `1.2M`) and a **dot** if there was income; today outlined; selected day filled · below the
-grid a **day panel**: date, day totals (spent · income), then the day's records (edit, swipe‑delete + undo, like Records) ·
-account filter.
-**States:** empty month · busy month (6 rows) · day with 15 records (panel scrolls) · future days muted · large amounts
-truncated gracefully · text 200 % (grid cells show amount only on selection) · queue items are not shown.
-**A11y:** cell reads "November 6, spent $250.00, income recorded".
+#### S‑B1 · Records `/entries` ✅🟡 (frames 10, 11)
+**Components:** period header + account filter · summary (income, expense, balance — main currency) · list grouped by day
+(day header with day total) · **record row**: category avatar, note/title, account · time, ✉ marker for email records, and the
+**two‑line money block** on the right (main big, original small) · category rows with limit bars · transfers section.
+Search mode (frame 11): field, "All time" chip, results "N records · total X".
+**Changed:** rows main‑first. *(To build: Filter button + chips — S‑J5.)*
+**States:** empty period · many records · long notes · mixed currencies · search no match · 200 % · VI.
 
-#### N‑04 · Time field, Records filter, record rows 🆕  (F‑27, F‑39, AC‑74..76, AC‑115)
-- **Time field** on New/Edit entry and Transfer: a row next to Date: *Time · 12:02* → system time picker; Edit of old record
-  shows *Time · No time set* with a "Set time" affordance; changing the date keeps the time.
-- **Record rows** show `12:02` next to the account name, and a small ✉ for email‑sourced records.
-- **Filter sheet** (opened by **Filter** button beside the search icon in Records): Amount range (two fields From/To; error
-  below if From > To), Categories (multi‑select grid, expense + income groups), Date range (reuse range calendar), buttons
-  **Clear** / **Apply**. Active filters appear as **removable chips** under the search bar; result header "12 records ·
-  spent $420.00 · income $0.00"; "Clear filters" link. Combine with search text and account filter (AND).
-- States: no results · many chips (wraps to 2 lines) · VI long labels.
+#### S‑B2 · Undo bar ✅ — "Deleted · Undo" 5 s.
 
-#### N‑05 · More tab (hub) and regrouped Settings 🆕🟡
-**More hub** (list of cards/rows with icons, calm, scannable): *Records* · *Savings* · *Debts* · *Import queue* (badge) ·
-*Categories* · *Accounts* · *Repeating records* · *Settings* · *About*. Show a small status summary on some rows (e.g.
-Savings "2 goals", Debts "$80 owed to you", Queue "3 waiting").
-**Settings (regrouped, replaces the ~25‑row list; v2 weak point #3):** group cards with titles and status chips —
-**Appearance & language** (Theme: System/Light/Dark · Language: **English | Tiếng Việt**) · **Money** (Currency → conversion
-flow, first day of week, month start day, monthly budget, **Warn me at 80 %** stepper 50–95 %, **Budget notifications**
-switch) · **Security** (PIN, **fingerprint/Face ID** switch + reason when unavailable, hide in app switcher) · **Reminders**
-(daily reminder + time) · **Widget** (show amounts) · **Data** (Export backup, Restore, **Export CSV / Excel / PDF**, Automatic
-backup status chip OK/error, Delete all data) · **Auto import** (Import from bank email → status "No mailbox yet" /
-"1 mailbox · Connected") · **Info** (About, privacy policy). Propose sub‑pages only where clearer (e.g. *Backup & data*) —
-mark as proposal. iOS variant hides nothing now (all features exist on iOS; only Android‑specific copy differs, §9).
+#### S‑B3 · Repeating records `/recurring` ✅🟡 (frames 20, 21)
+List of series (amount main‑first, frequency label incl. "Mon, Tue", next date, Paused); edit sheet with Choose days.
 
-#### N‑06 · Savings — `/savings` 🆕  (F‑33, AC‑100..103)
-**Purpose:** keep goals visible and motivating without gamification.
-**List:** one card per goal: name, **progress bar** (+ % text), "Saved $3,000 of $10,000", "$7,000 to go", deadline chip
-("12 days left" / "Overdue 3 days"), **Reached** ✓ state (text + icon), **Add money** button. Header "Savings", FAB/Top
-action **Add goal**. Empty state: "No savings goals yet. Set a goal, then add money to it over time." with illustration.
-**Goal editor (sheet/page):** Name (≤ 50) · Target amount · Deadline (optional, "Remove deadline") · **Linked account**
-radio list: existing unlinked accounts + "Create a new account" (note: named like the goal, starts at 0); fixed‑after‑create
-note; error "This account is already linked to another goal". Delete goal confirm (accounts/records stay).
-**Add money:** opens Transfer (SCR‑19) with *To* = goal account, *From* = default account; after save, goal progress animates.
-**States:** 1 goal · 6 goals · reached · overdue · no deadline · account balance fell below target (lost "Reached") · text 200 %
-· long names · need another account (hint "You need another account to add money from").
+### C — Money structure
 
-#### N‑07 · Debts — `/debts` 🆕  (F‑34, AC‑104..106)
-**List:** header note "A reminder list only: it doesn't count in income, expenses or account balances." Two groups with totals —
-**Owed to you** (I lent) and **You owe** (I borrowed): row = person, amount remaining, "Paid $20 of $100" mini bar, due chip
-("Due Dec 1" / **Overdue** word + icon). Collapsible **Settled (n)** section. Add debt button.
-**Editor:** Person · Direction (segmented: I lent / I borrowed) · Amount · Date · Due date (optional) · Note (≤ 200).
-**Detail:** big remaining amount, progress, **Payments** list (date, amount, delete), **Add payment** (amount; error "More
-than the remaining $60"), edit, delete debt confirm ("Its payments are deleted too. No record or account balance is
-affected."). Settled state with ✓ "Settled".
-**States:** empty · both groups · overdue · settled · long person name · large amounts · 200 % text.
+#### S‑C1 · Accounts `/accounts` ✅🟡 (frames 17, 18)
+**Components:** total balance (main currency, exact) · account rows: icon, name, **currency code chip** (e.g. `VND`), balance as
+two‑line block (main big / own currency small) · badges: **Savings wallet** (goal name chip, NEW), "From MB email" · hidden
+accounts collapsible · edit sheet (name, currency, starting balance, hide/show, delete rules).
+**States:** one account · mixed currencies · wallet accounts · hidden open · last visible · used vs unused · 200 % · VI.
 
-#### N‑08 · Import queue — `/import-queue` 🆕  (F‑32, AC‑95..99) — **the most important new screen**
-**Purpose:** turn bank‑email items into records with one tap each, quickly, one‑handed.
-**Layout:** app bar "Queue" (+ overflow: *Remembered suggestions*). Optional top **info card**: "Created account MB Bank …1234 ·
-Attach to an existing account · Dismiss". Then a **vertical list of item cards** (or a pager — propose; the list must show
-2 items without scrolling at 360 × 800):
-- **Item header:** date + time (from the email), **amount** (`amount-l`, expense colour), payee ("LE VAN KHACH" or "Unknown
-  payee"), transfer content (1–2 lines), "From MB Bank …4821" account line, small ✉ marker.
-- **Category grid** (same avatar grid as the entry editor, expense categories, scrollable horizontally or 2 rows with ⋯): if a
-  **suggestion** exists, that category is pre‑selected, tagged **Suggested**, and the primary button reads **Save to Food**;
-  tapping another category saves to that one; with no suggestion, tapping a category saves immediately (D‑018 behaviour).
-- **Secondary actions:** *Edit before saving* · *Move to my account* · *Skip*.
-- **Currency mismatch variant:** note "The email is in VND but the app uses USD. You'll enter the amount in the next step."
-  and the primary action opens the entry editor with an empty amount.
-- After saving: item collapses out with a snackbar "Saved to Food" (+ Undo proposal). A **reverse‑match bar** can appear after
-  saving a manual record: "Matched with MB email 12:02 · Undo".
-**Empty state:** "Nothing is waiting. When a new receipt email arrives, it shows up here for you to pick a category." + pull‑to‑check
-hint (Android: "checks about every hour"; iPhone: "checks when you open the app").
-**Dialogs/sheets:** *Move to account* (account list incl. savings goals' accounts) · *Skip this record?* ("It leaves the queue and
-won't be imported again from this email.") · *Attach to account* · *Remembered suggestions* screen (list: payee → category/
-account, delete suggestion; empty text).
-**States:** 1 item · 12 items · long payee/content · suggestion vs none · currency mismatch · account auto‑created card ·
-loading while checking mail (pull‑to‑refresh) · error line · 200 % text (grid scrolls, buttons stack) · dark.
+#### S‑C2 · Categories `/categories` ✅ (15, 16) — refresh; limit field has its currency (main‑first display).
 
-#### N‑09 · Email import — `/settings/email-import` 🆕  (F‑28, AC‑78..83)
-1. **Intro (first open):** title "Record spending from receipt emails"; four reassurance lines with icons (read the bank's
-   receipts only · on this phone only, never sent anywhere · nothing changed/deleted/marked read · needs an **app password**, not
-   your main password) + "Only MB Bank is supported for now." + iPhone note; primary **Add mailbox**.
-2. **Add mailbox:** Provider (Gmail / Yahoo / iCloud, segmented or cards) · Email address · **App password** (masked, show
-   toggle) · numbered **"Create an app password"** steps for the chosen provider with a button that opens the provider's page in
-   the browser · **Connect** → inline progress → "Connected" or a clear error (*Wrong address or app password* · *IMAP is turned
-   off for this mailbox* · *No internet connection* · *Couldn't make a secure connection…*).
-3. **Mailbox list / status:** each mailbox card: address, provider, status chip (Connected / Paused — *Enter the app password
-   again*), "Last check: 10:05", "2 MB emails couldn't be read" (warning, tap to explain: the email format may have changed),
-   **Re‑enter password**, **Remove mailbox** (confirm: "Vigon will stop reading email from … and delete the app password…").
-   Footer: schedule note (Android hourly vs iPhone on open) and **Remembered suggestions** link. Max 3 mailboxes message.
-**States:** none · connecting · connected · error variants · paused · limit reached · iPhone vs Android notes · 200 % text.
+#### S‑C3 · Transfer `/transfer` ✅🟡 (frame 19)
+From / To account pickers (balances main‑first), amount; **different currencies → two fields "You send" / "They receive"** with
+the current rate shown and editable; date, time, note. Pre‑filled when opened from elsewhere.
 
-#### N‑10 · Budget warning states and notification 🆕  (F‑37, AC‑111..113)
-- Budget bar (Home), "Budget left" tile (Overview) and category budget rows (Records) get **three visual states**: normal ·
-  **Almost over** (warning tokens, icon + "Used 82 %") · **Over by X** (error). Show all three on each place.
-- Settings: **Warn me at** stepper/segmented (50–95 %, step 5, default 80) with a live example ("$4,000 of $5,000"); **Budget
-  notifications** switch (default off) with an explain sheet before the OS permission prompt.
-- **Notification** (Android + iOS): "Monthly budget November: 80% used" · "Food: 100% of the November limit used" — **percentages
-  only, no amounts, even with PIN off**. Show lock screen appearance, light + dark.
+### D — Plans: budget, savings, debts
 
-#### N‑11 · Export Excel & PDF 🆕  (F‑40, AC‑116..118)
-Settings → Data lists **Export CSV · Export Excel · Export PDF**. Tapping Excel/PDF opens a **range sheet**: Current period ·
-Custom range (calendar) · All time, a short description of what is included (Excel: Records, By category, Debts sheets; PDF: A4
-report with totals, category table, record list), and **Export** → progress → system share sheet. States: preparing (progress
-for big ranges), done, error, empty range ("No records in this range"). Also draw a **PDF page preview** (A4: title "Income &
-expense report — November 2026", totals row, category table with % bars, records table) in light only, to guide the
-generated layout (fonts: Be Vietnam Pro embedded).
+#### S‑D1 · Monthly budget dialog ✅🟡 (frame 04)
+Amount + **Currency** selector (default main); live line 2 in main currency when it differs; Remove budget. *(To build: "Warn me
+at 80 %" link — S‑J6.)*
 
-#### N‑12 · Biometric unlock 🆕  (F‑41, AC‑119/120)
-- Settings → Security: switch **Unlock with fingerprint** (Android) / **Face ID / Touch ID** (iPhone), default off; hidden while
-  PIN is off; disabled with a one‑line reason when no biometrics are enrolled; turning on asks for one authentication.
-- **Lock screen** (SCR‑23) states: biometric prompt auto‑shown (system sheet placeholder) · fell back to PIN pad with a
-  **biometric button** to retry · wrong biometric/cancelled · temporarily locked by the OS. PIN pad stays fully usable.
+#### S‑D2 · Savings `/savings` 🔨🟡 — **redesigned (F‑47, D‑043), priority**
+**List screen**
+- App bar "Savings | Tiết kiệm", FAB **Add goal | Thêm mục tiêu**.
+- **In progress** section: one card per goal — name, wallet name (small, with wallet icon), **progress bar + %**, "Saved {have}
+  of {target} | Đã có {have} / {target}" (main‑first two‑line block when the goal currency ≠ main), "{amount} to go | Còn thiếu
+  {amount}", deadline chip ("12 days left", **Due soon** in warning colour within the reminder window, "3 days overdue" in error),
+  primary **Add money | Góp tiền**. Tap card → Goal detail.
+- **Done (n)** collapsed section (NEW): goal name, ✓ **Done** + date reached, final amount.
+- Empty: "No savings goals yet. Set a goal, then add money to it over time." + illustration (no piggy bank cliché — propose).
+**Goal editor (sheet)** — NEW fields
+1. **Goal name** (≤ 50) — NEW label "Goal name | Tên mục tiêu".
+2. **Account** — wallet name (≤ 50), pre‑filled with the goal name. Label **"Account | Tài khoản"** (was "Linked account | Tài khoản
+   gắn"). Helper NEW: "A new account just for this goal. Move money in with Add money. | Một tài khoản mới chỉ cho mục tiêu này.
+   Chuyển tiền vào bằng Góp tiền."
+3. **Target amount** + **currency bar** (default main currency; locked once the wallet has records — helper explains).
+4. **Already saved** (optional, ≥ 0, default 0) — NEW "Already saved (optional) | Đã có sẵn (tuỳ chọn)"; helper "Money you've
+   already put aside. It becomes the account's starting balance."
+5. **Deadline (optional)** chip + Remove deadline.
+6. Edit mode: Delete goal ("The account and all records stay. Only the goal is deleted.").
+**Goal detail (sheet or page — propose)** — NEW, mirrors Debt detail
+- Header: goal name, wallet name, status (In progress / ✓ Done / Overdue).
+- Big progress ring or bar, "Saved X of Y", "Z to go", deadline, reminder hint ("We'll remind you 7 days before").
+- Buttons: **Add money** (hidden when Done) · **Withdraw | Rút tiền** (NEW) · Edit · Delete · **Reopen | Mở lại** (Done only).
+- **History | Lịch sử** (NEW): newest first; row = date, type icon + label (**Added from Cash** +, **Withdrew to Cash** −, **Spent:
+  Flight tickets** −, **Already saved** +), amount (main‑first two‑line when needed), delete (with Undo). Footer: "Balance {amount}".
+**Add money sheet** (NEW): amount field in the goal currency with **Fill to target** chip; **From account** list = every visible
+account except the wallet, each with its balance (main‑first two‑line); date; error "Only {amount} more needed | Chỉ cần góp
+thêm {amount}"; cross‑currency note "Sends ≈ 2,550,000 ₫ from Cash at today's rate". Save.
+**Withdraw sheet** (NEW): amount ≤ wallet balance (error "Only {amount} in this account"), **To account**, date. Save.
+**Goal reached dialog** (NEW): calm celebration (subtle confetti or check burst, reduce‑motion aware), title **"Savings goal
+reached | Tiết kiệm thành công"**, body "You've saved {amount} for {goal}. | Bạn đã đủ {amount} cho {goal}.", buttons **Great |
+Tuyệt** · **Withdraw**. The card then animates into Done.
+**States:** empty · 1 goal · 6 goals · goal in EUR with main USD · just reached (dialog) · Done list · withdrawn after done (still
+Done) · overdue · due soon · add‑money over the cap (error) · only one other account · long names · 200 % · VI · dark.
 
-#### N‑13 · Language & first launch 🟡
-- **Settings → Language** is a 2‑option segmented control **English | Tiếng Việt** (selected = English by default). Draw it
-  in both languages.
-- There is **no onboarding or language prompt**: first launch opens Home in English with USD and an empty state (design a
-  friendlier empty Home pointing at − / ring icons).
+#### S‑D3 · Debts `/debts` 🔨🟡 (F‑34)
+**List:** header note `debtsNote`; two groups with totals (main currency) — **Owed to you | Người khác nợ bạn** and **You owe |
+Bạn nợ người khác**; row = person, remaining (two‑line), "Paid {paid} of {total}" mini bar, due chip (**Due soon** warning /
+**Overdue** error with icon); collapsible **Settled (n)**; Add debt.
+**Editor:** Person · Direction segmented (I lent / I borrowed) · Amount + **currency bar** (default main; locked after first
+payment) · Date · Due date (optional) · Note.
+**Detail:** person, direction, amount, date, due, note, big **Remaining**, **Payments** list (date, amount, delete), **Add payment**
+(amount ≤ remaining; "More than the remaining {remaining}"; propose a "Pay the rest" chip), Edit, **Delete → closes the detail and
+stays on Debts** (snackbar "Debt deleted").
+**States:** empty · both groups · foreign‑currency debt · overdue · due soon · settled · 200 % · VI · dark.
 
-#### N‑14 · Currency conversion dialogs 🆕  (F‑07, AC‑70..73, D‑025/D‑029)
-Settings → Currency → pick (searchable list; current pinned) → **Convert to X?** dialog: loading "Fetching exchange rate…" →
-two‑way rate ("1 VND = 0.0000385 USD" · "1 USD = 25,974 VND"), date, attribution "Rates By Exchange Rate API" (tappable),
-**example** (latest record before → after), rounding warning, advice to export a backup first, buttons **Cancel / Convert**,
-**Use a different rate** (manual field "1 A = ? B", swap direction). **Error variant** (offline / no rate): reason line, manual rate
-field pre‑filled with the last known rate and its date, **Try again / Continue / Cancel**; field error for ≤ 0. Success snackbar
-"Converted all amounts to USD". States: loading · success · manual · error · 200 % text · VI.
+#### S‑D4 · Deadline reminder setting + notification 🆕 (F‑48, D‑044)
+- Settings → Plan → row **"Deadline reminders | Nhắc trước hạn"** (NEW) with value "7 days before · 09:00 | Trước 7 ngày · 09:00".
+  Opens a sheet: switch (default on), **Days before** stepper/picker 1–30 (default 7), **Time** (system time picker, default
+  09:00), note "For savings goals and debts with a due date. Notifications show the amount left." First turn‑on → explain dialog
+  → OS permission; denied → switch off + "Open settings".
+- **Notification (lock screen + shade, Android + iOS, light + dark):** title "Vigon"; body examples —
+  "Debt with An: 2,000,000 ₫ left, due in 7 days" · "You owe Bình: $500.00 left, due today" · "Goal Trip: €300.00 to go, due in
+  7 days" (VI: "Khoản nợ với An: còn 2.000.000 ₫, đến hạn sau 7 ngày" · "Bạn nợ Bình: còn 500,00 US$, đến hạn hôm nay" ·
+  "Mục tiêu Du lịch: còn thiếu 300,00 €, hạn sau 7 ngày"). Amount in the item's own currency. Tap → detail.
 
-#### N‑15 · Records matched from email (small components) 🆕
-- **✉ source marker** on record rows and in Edit entry ("From MB email · reference ending 4821").
-- **Match undo bar** (snackbar‑like): "Matched with MB email 12:02 · Undo".
-- **Home queue banner** and **More‑tab badge** (§4.1) — show all states: 0 (hidden), 1, 12, 99+.
+### E — Currency
+
+#### S‑E1 · Main currency 🟡 (frame 13)
+Settings → Currency & period → **Main currency** → searchable picker (current pinned). After choosing: snackbar
+`primaryCurrencyChanged` ("Main currency is now {currency}. The amounts you entered are unchanged."). No conversion dialog any more
+(v3's N‑14 is obsolete). **Rewrite `primaryCurrencyNote`** NEW: "Everything is shown and added up in this currency. Amounts
+recorded in other currencies keep their original value, shown underneath." | "Mọi số được hiển thị và cộng theo tiền tệ này.
+Khoản ghi bằng tiền tệ khác giữ nguyên số gốc, hiện ở dòng dưới."
+
+#### S‑E2 · Exchange rates `/rates` 🔨
+Intro `ratesIntro`; status chip (Auto · updated today / Offline · rates from yesterday / Built‑in estimate / Set by you); **Update
+now**; list of **pairs in use** only ("1 VND equals 0.0000385 USD"), each tappable → override sheet (auto value, "Your rate · 1 EUR
+=", preview "Cash: 500,000 ₫ ≈ $19.25", Save this rate / Restore automatic); offline banner; source attribution link.
+**States:** auto · offline · built‑in · manual override · no pairs ("Everything is in USD, so there's nothing to convert.") · 200 %.
+
+#### S‑E3 · Currency picker ✅🟡 — reused by record, account, budget, debt, goal; show "In use" group on top.
+
+### F — Email import
+
+#### S‑F1 · Email import `/email-import`, `/email-import/add` 🔨
+Intro (title `emailIntroTitle`, four reassurance lines with icons, `emailIntroBanks`, iPhone note, **Add mailbox**) → Add mailbox
+(provider Gmail/Yahoo/iCloud, address, app password with show toggle, numbered steps per provider + "Open the app password page",
+Connect → progress → Connected / error variants) → mailbox list (status chip Connected / Paused, last check, "2 MB emails couldn't
+be read", Re‑enter password, Remove mailbox confirm; schedule note Android vs iPhone; max 3).
+
+#### S‑F2 · Queue `/import-queue` + Remembered suggestions 🔨 — **important**
+Item cards: date + time, amount (two‑line if the email currency ≠ main), payee (or "Unknown payee"), content, "From MB Bank
+…4821", ✉; category grid with **Suggested** pre‑selected → **Save to Food**; secondary **Edit before saving · Move to my account ·
+Skip** (confirm). Currency‑mismatch note. Auto‑created account card ("Created account MB Bank …4821 · Attach to an existing account
+· Dismiss"). Pull to check. Empty state `queueEmpty`. Suggestions screen: payee → category/account, delete.
+Must clear 2 items without scrolling at 360 × 800 and work at 200 %.
+
+#### S‑F3 · Match bar ✅‑ish — "Matched with MB email 12:02 · Undo".
+
+### G — Settings & data
+
+#### S‑G1 · Settings `/settings` 🔨🟡 (frame 12 is the old layout)
+Nine titled groups of cards (as built): **Categories & accounts** (Categories, Accounts) · **Plan** (Monthly budget, Repeating
+records, Savings, Debts, **NEW Deadline reminders**) · **Currency & period** (Main currency, Exchange rates with status, Week start,
+Month start day) · **Email import** (Import from bank email · status, Items awaiting a category · count) · **Security** (PIN lock +
+warning, Hide content in app switcher 🤖/🍏) · **Reminder** (Daily reminder switch, Reminder time) · **Data** (Backup, Restore, Auto
+backup section with folder/status/Back up now, Export CSV, Delete all data last) · **Appearance & language** (one row opening a
+sheet: Theme System/Light/Dark + Language English/Tiếng Việt) · **About** (inline card: Version `1.0.0 (1)`, Privacy policy, Terms
+of use, Open‑source licences, Rate Vigon 🤖, Send feedback, Report a security issue; footer "Data is stored only on this phone…").
+Use status chips/values on the right (e.g. "Auto · today", "1 mailbox", "3 awaiting", "7 days before · 09:00").
+**States:** top / middle / bottom scroll positions · iOS (no Rate row) · 200 % · VI · dark.
+
+#### S‑G2 · Backup / restore / password dialogs / CSV / delete all ✅ (26–29) · Auto backup ✅ (31) — refresh; make all password
+dialogs one family.
+
+#### S‑G3 · Legal page (offline reader) 🔨 — opened when the browser can't; simple readable article.
+
+### H — Security
+
+#### S‑H1 · Lock / Set PIN / Forgot PIN ✅ (23–25) — refresh. *(To build: biometric — S‑J8.)*
+
+### I — First run
+
+#### S‑I1 · Onboarding `/onboarding` 🔨 (F‑44)
+Five steps with "Step n of 5", Skip on steps 2–5, system Back steps back:
+1. **Choose your language** (English pre‑selected / Tiếng Việt, applies instantly).
+2. **Welcome to Vigon** — three benefits (Record in 3 taps · See where your money goes · Private by design) + **Get started**.
+3. **Your main currency** — USD pre‑selected, USD / VND quick options + "Choose another currency…"; hint `onboardingCurrencyHint`.
+4. **A daily reminder to record** — time 20:00 (tap to change), **Turn on reminder** (asks OS permission) / **Not now**.
+5. **Lock Vigon with a PIN?** — **Set a PIN** / Not now.
+**States:** each step light/dark, VI, 200 %, permission denied bar.
+
+### J — Insights and extras to build (🆕, from SPEC 3d — draw them; all amounts main‑currency, exact sums)
+
+#### S‑J1 · Overview `/overview` 🆕 (F‑35)
+Own month ‹ › · **Total balance** (all accounts incl. hidden, main currency) · tiles **Income − expenses** and **Budget left** (Over
+by X / Set a budget / Almost over) · **6‑month income vs expense bars** · **vs last month** (Spending up 25 % … arrow + words; "—"
+when last month is 0) · optional strips: top savings goal, debts owed/you owe. States: empty month, no budget, almost over, over,
+negative total, queue items not counted note, 200 %.
+
+#### S‑J2 · Statistics `/stats` 🆕 (F‑36)
+Period header + View by + account filter · income/expense bars by sub‑period (Week → days, Month → days, Year → months, All →
+years; custom ≤ 31 d days, ≤ 366 d months, else years) · **Top 5 spending categories** (amount, % bar) · **Biggest spending day** ·
+**Balance history** line. Empty period = one empty state, never empty charts. Must feel instant with 10 000 records.
+
+#### S‑J3 · Calendar `/calendar` 🆕 (F‑38)
+Month grid (week‑start aware), each day shows compact spend (`50K` / `1,2tr`) and a dot for income; tap → day panel with totals and
+the day's records (edit, swipe delete + Undo). A11y "November 6, spent $250.00, income recorded".
+
+#### S‑J4 · More hub `/more` 🆕 — rows with small status: Records · Savings "2 in progress" · Debts "$80 owed to you" · Queue "3
+waiting" · Categories · Accounts · Repeating · Settings.
+
+#### S‑J5 · Records filter 🆕 (F‑39) — Filter button beside search → sheet: amount range From/To (error if From > To), categories
+multi‑select (expense + income), date range; Clear / Apply; removable chips; header "12 records · spent $420.00 · income $0.00".
+
+#### S‑J6 · Budget warnings 🆕 (F‑37) — Almost over state on Home bar, Overview tile, category rows; Settings "Warn me at 80 %"
+(50–95, step 5, live example) + **Budget notifications** switch (default off). Notification **percentages only**: "Monthly budget
+November: 80% used" · "Food: 100% of the November limit used".
+
+#### S‑J7 · Export Excel & PDF 🆕 (F‑40) — Data group: Export CSV · Excel · PDF; range sheet (current period / custom / all time),
+what's included, progress, share sheet; empty range message; **A4 PDF preview** (title "Income & expense report — November 2026",
+totals, category table with %, records table; Be Vietnam Pro).
+
+#### S‑J8 · Biometric unlock 🆕 (F‑41) — Security switch "Unlock with fingerprint" / "Face ID / Touch ID" (only when PIN on; disabled
+with reason when not enrolled); Lock states: prompt auto‑shown, fallback PIN with biometric retry button, cancelled, OS‑locked.
 
 ---
 
 ## 6. Surfaces outside the app
-
 | EXT | Surface | Status | Notes |
 |---|---|---|---|
-| 01 | Home‑screen widget 2×2 / 4×2 (Android, iPhone) | ✅ refresh | Expense / Income buttons; no amounts unless allowed and PIN off; "Open the app to update"; launcher label follows device language. Widget title row shows the logo + "Vigon" |
-| 02 | Daily reminder notification | ✅ refresh | Generic text, no figures |
-| 03 | Budget‑warning notification | 🆕 | Percentages only (N‑10) |
-| 04 | Recents / app‑switcher cover (Android + iPhone) | ✅ refresh | Blank/blurred with logo |
-| 05 | OS sheets & pickers (placeholders) | — | Share sheet, file/folder picker, biometric prompt, notification permission |
+| 01 | Home‑screen widget 2×2 / 4×2 (Android, iPhone) | ✅ | Expense / Income buttons; amounts only if allowed and PIN off; "Open the app to update" |
+| 02 | Daily reminder notification | ✅ | Generic text, no figures |
+| 03 | Budget notification | 🆕 | Percentages only |
+| 04 | Recents / app‑switcher cover | ✅ | Blank with logo |
+| 05 | OS sheets & pickers | — | Share sheet, file/folder picker, time picker, permission prompt, biometric prompt |
 | 06 | App icon incl. Android monochrome | ✅ | unchanged |
+| **07** | **Deadline reminder notification** | 🆕 | **With amount left** (S‑D4); separate channel "Deadline reminders" |
 
 ---
 
 ## 7. Key flows (prototype these)
-
-- **F1 Log an expense:** ring **Food** → `4.50` → **Save** (2 taps) · **−** → amount → Choose category → tap Food = saved (3 taps)
-  · set a **time**. The tab bar must not add taps.
-- **F2 Clear the queue:** Home banner "3 records waiting" → Queue → item 1 has **Suggested: Food** → **Save to Food** → snackbar;
-  item 2 no suggestion → tap **Shopping** = saved; item 3 → **Move to my account** → account list → saved as transfer; item 4 →
-  **Skip** → confirm.
-- **F3 Add a mailbox:** More → Settings → Import from bank email → intro → Add mailbox → Gmail → steps → address + app password →
-  Connect → Connected → mailbox card with last check.
-- **F4 Match:** type a $12.00 coffee at "MB Bank …1234" 12:00 → 12:02 email arrives → silent match, row shows ✉ "12:00".
-- **F5 Overview → Stats → Calendar:** change Overview month, tap a bar, "Set a budget" → dialog; Stats → Week → tap Food in top‑5
-  → Records filtered; Calendar → tap Nov 6 → day panel → edit a record.
-- **F6 Budget warning:** raise spending past 80 % → Home bar turns Almost over; past 100 % → Over; notification at the lock screen.
-- **F7 Savings:** More → Savings → Add goal "New laptop" $1,200, deadline Mar 1, create new account → Add money $100 → progress.
-- **F8 Debts:** Add debt "Hạnh owes me" $100 → add payment $40 → progress 40 % → settle → Settled section.
-- **F9 Filter:** Records → Filter → $5–$20, Food + Transport, Nov 1–15 → chips → results header → Clear filters.
-- **F10 Export:** Settings → Data → Export PDF → range sheet → progress → share sheet · Excel the same.
-- **F11 Biometrics:** Settings → Security → turn on fingerprint → cold start → prompt → success; cancel → PIN pad.
-- **F12 Switch language & currency:** Settings → Language → Tiếng Việt (instant) · Currency → VND → conversion dialog (rate, example) →
-  Convert → "Converted all amounts to VND"; error variant offline → manual rate.
-- **F13 Unchanged v1 flows:** search, period & filter, accounts hide/delete, transfer, repeating, backup/restore/CSV, auto
-  backup, reminder, PIN, wipe data (frames exist; refresh only).
+- **F1 Log an expense:** ring **Food** → `4.50` → Save (2 taps) · − → amount → Choose category → Food = saved (3 taps).
+- **F2 Log in another currency:** main USD → − → tap currency chip → VND → `100000` (preview "≈ $3.85") → Food → saved; the row
+  shows **$3.85** with 100,000 ₫ underneath.
+- **F3 Switch main currency:** Settings → Main currency → VND → snackbar; Home ring, Records, Accounts now show ₫ big and the
+  original $ amounts underneath; switch back → identical numbers.
+- **F4 Savings goal end‑to‑end:** Savings → Add goal "Trip", account "Trip fund", target 5,000,000 ₫, already saved 1,000,000 ₫,
+  deadline Dec 31 → card 20 % → Add money 2,000,000 ₫ from Cash → History shows it → try 3,000,000 ₫ more → error "Only
+  2,000,000 ₫ more needed" → Fill to target → **Savings goal reached** dialog → card moves to Done → Withdraw 500,000 ₫ to Cash →
+  still Done.
+- **F5 Spend from the wallet before done:** New record → account "Trip fund" → 300,000 ₫ flight deposit → goal progress drops,
+  History shows "Spent: flight deposit".
+- **F6 Debt:** Add debt "An owes me" $100, due in 10 days → payment $40 → try $70 → error → "Pay the rest" $60 → Settled → delete
+  → stays on Debts.
+- **F7 Deadline reminder:** Settings → Deadline reminders → 7 days · 09:00 → (7 days before) lock‑screen notification "Debt with
+  An: $60.00 left, due in 7 days" → tap → PIN → Debt detail.
+- **F8 Rates:** Settings → Exchange rates → offline banner → tap VND pair → set own rate → preview → Save → totals update.
+- **F9 Queue:** banner → Queue → Suggested Food → Save to Food; next → Shopping; next → Move to my account; next → Skip.
+- **F10 Add a mailbox:** Email import → intro → Add mailbox → Gmail → steps → Connect → Connected.
+- **F11 Onboarding:** fresh install → Tiếng Việt → Bắt đầu → VND → Bật nhắc → Để sau → Home empty state.
+- **F12 To build:** Overview → Stats → Calendar; Filter; Budget warning; Export PDF; Biometrics.
 
 ---
 
 ## 8. Sample data for mockups
-Currency **USD** (EN base), VND/VI variants for checks. Mock "today" = **2026‑11‑26**, period **November 2026**.
+**Main currency USD** (EN frames); VI frames use **main VND** with the same data. Mock today **2026‑11‑26**, period **November 2026**.
+Rates (built‑in style): 1 USD = 25,974 VND · 1 EUR = 1.087 USD.
 
-**Accounts:** Cash (start $120.00) · Bank card ($900.00) · E‑wallet ($40.00) · **MB Bank …4821** (auto‑created, $0.00, label "From
-MB email") · *hidden:* Old credit card (−$50.00) · *savings goal accounts:* "New laptop" ($300.00). Long‑name test: "Family savings
-account for the house deposit".
-**November expenses by category** (total **$1,840.00**): Home $540.00 (29.3 %) · Food $495.00 (26.9 %) · Shopping $215.00 ·
-Bills $170.00 · Transport $130.00 · Family $90.00 · Entertainment $80.00 · Health $50.00 · Other $20.00 · Education $0 (no records).
-**Income:** Salary $2,300.00 + Bonus $200.00 = **$2,500.00**. **Period balance** $660.00. **Total balance (all accounts)** $2,060.00.
-**Monthly budget** $2,000.00 → "Used 92 %" (Almost over). Over‑budget variant $1,700.00 → "Over by $140.00". Normal variant $2,800.00
-(66 %). **Category limits:** Food $450.00 → Over by $45.00 · Shopping $300.00 → 72 % · Transport $160.00 → Almost over 81 %.
-**Last 6 months (income / expenses):** Jun 2,300/1,520 · Jul 2,300/1,610 · Aug 2,350/1,700 · Sep 2,300/1,480 · Oct 2,300/1,470 ·
-Nov 2,500/1,840 → "Spending up 25 % vs October".
-**Biggest spending day:** Nov 14 — $310.00. **Calendar day cells:** Nov 1 `$540` (rent) · Nov 5 dot (salary) · Nov 6 `250` · Nov 14 `310`
-· Nov 26 `4.50`.
-**Records (with time):** Nov 26 12:02 "Beef pho" Food $4.50 ✉ · Nov 25 18:40 "Groceries" Food $32.00 · Nov 1 — "November rent"
-Home $540.00 (series, no time) · Nov 20 "Electricity" Bills $68.00 · Nov 18 07:50 "Ride to work" Transport $3.50 · Nov 5 Salary $2,300.00
-(series) · Nov 10 Transfer Bank card → Cash $200.00.
-**Queue items (3)** (MB emails are in VND): (1) Nov 26 12:02 **50,000 ₫** "LE VAN KHACH — tra tien com" from MB …4821,
-*Suggested: Food* · (2) Nov 26 09:15 **1,200,000 ₫** "CONG TY ABC — thanh toan hoa don", no suggestion · (3) Nov 25 20:30
-**2,000,000 ₫** payee = the user's own e‑wallet → "Move to my account" candidate. Show the **currency mismatch** note since app =
-USD, and a second set where app = VND so amounts are directly usable. Auto‑created account card: "Created account MB Bank …4821".
-**Savings:** "New laptop" $300 of $1,200 (25 %), deadline Mar 1, 2027 → 95 days left · "Emergency fund" $1,500 of $1,500 → **Reached** ·
-"Trip" $50 of $800, deadline Oct 31 → **Overdue 26 days**.
-**Debts:** Owed to you — Hạnh $100 (paid $40 → $60 remaining, due Dec 1), Tuấn $20 (due Nov 20 → **Overdue**) → "$80 remaining";
-You owe — Landlord $30 → "$30 remaining"; Settled (1): Minh $15.
-**Mailbox:** gmail "linh.nguyen@gmail.com" Connected, Last check 10:05, "2 MB emails couldn't be read" (variant); paused variant.
-**Suggestions:** "CONG TY ABC" → Food · "TAP HOA CO LAN" → Shopping.
-**Advanced filter example:** $5–$20 · Food + Transport · Nov 1–15 · results "9 records · spent $87.50".
-**Auto backup:** folder "Vigon backups" (Google Drive) · "Last: Nov 25, 21:04" · "Checked 21:00 — nothing new" · error variant.
-**Reminder:** on, 20:00. **Widget:** "Spent this month: $1,840 / $2,000". **Notifications:** "Monthly budget November: 80% used".
-**Stress:** 25 expense categories · category name 50 chars · amount `1,000,000,000,000` · note 200 chars · KWD `1,250.000` ·
-20 savings goals · 30 debts · 99+ queue items · month with 10 000 records (Stats/Calendar) · negative total balance.
+**Accounts:** Cash **VND** start 2,000,000 ₫ → balance **$238.70 / 6,200,000 ₫** · Bank card **USD** $900.00 · E‑wallet **VND**
+1,040,000 ₫ → $40.04 / 1,040,000 ₫ · **MB Bank …4821** VND (from email) 0 ₫ · Savings wallets: **Trip fund** VND 4,000,000 ₫
+(goal Trip) · **Laptop fund** USD $300.00 · **Paris fund** EUR €250.00 · hidden: Old credit card USD −$50.00. Long name: "Family
+savings account for the house deposit".
+**November expenses** (main USD, exact total **$1,840.00**): Home $540.00 (29.3 %) · Food $495.00 · Shopping $215.00 · Bills $170.00 ·
+Transport $130.00 · Family $90.00 · Entertainment $80.00 · Health $50.00 · Other $20.00 · Education none.
+**Income:** Salary $2,300.00 + Bonus $200.00. **Period balance** $660.00. **Monthly budget** $2,000.00 → 92 % (Almost over);
+over variant $1,700 → "Over by $140.00". Category limits: Food $450 → Over by $45.00 · Transport $160 → 81 %.
+**Records (mixed currencies, main‑first):** Nov 26 12:02 "Beef pho" Food **$3.85** / 100,000 ₫ ✉ · Nov 25 18:40 "Groceries" Food
+**$32.00** · Nov 24 "Hotel deposit" Entertainment **$108.70** / €100.00 · Nov 20 "Electricity" Bills **$26.18** / 680,000 ₫ · Nov 18
+07:50 "Ride to work" Transport **$3.50** · Nov 1 "November rent" Home **$540.00** (repeating, no time) · Nov 10 Transfer Bank card →
+Cash **$200.00** → received 5,194,800 ₫ · Missing‑rate variant: "Gift" 50,000 XAF → "No rate for XAF to USD…".
+**Savings (In progress):** Trip — target 5,000,000 ₫ (**$192.50**), saved 4,000,000 ₫ → 80 %, due Dec 3 → **Due soon** (7 days) ·
+Laptop — $300 of $1,200 (25 %), due Mar 1, 2027 · Paris — €250 of €800 (**$271.75 of $869.60**), no deadline. **Done (1):** Emergency
+fund — $1,500 reached Oct 12. History of Trip: Nov 1 Already saved +1,000,000 ₫ · Nov 5 Added from Cash +2,000,000 ₫ · Nov 12 Spent:
+flight deposit −300,000 ₫ · Nov 20 Added from E‑wallet +1,300,000 ₫ → balance 4,000,000 ₫.
+**Debts:** Owed to you — An $100 (paid $40 → **$60 left**, due Dec 3 → Due soon), Tuấn 500,000 ₫ (**$19.25** / 500,000 ₫, due Nov 20 →
+Overdue) · You owe — Landlord $30 · Settled (1): Minh $15.
+**Notifications:** deadline "Debt with An: $60.00 left, due in 7 days" · daily reminder · (to build) budget "Monthly budget November:
+80% used".
+**Queue (3, MB VND):** 50,000 ₫ "LE VAN KHACH — tra tien com" Suggested Food · 1,200,000 ₫ "CONG TY ABC" · 2,000,000 ₫ to own e‑wallet.
+**Rates screen:** pairs VND→USD (auto, today), EUR→USD (Set by you: 1.090).
+**Stress:** 25 categories · 50‑char names · amount `1,000,000,000,000` · 200‑char note · KWD `1,250.000` · 20 goals · 30 debts · 99+
+queue · 10 000 records · negative total balance · 6 currencies in use.
 
 ---
 
 ## 9. iOS notes
-All 2.0 features exist on iPhone. Differences:
 | Topic | iPhone | Android |
 |---|---|---|
-| Back | Visible back arrow + edge swipe on every pushed screen (**no tab bar on pushed screens**) | Arrow + system Back (Back on a root tab → Home → exit) |
-| Email checks | Only when the app is opened/returned to (say so in the UI) | Also about hourly in the background |
-| Auto backup | Chosen folder via Files; a notification at the chosen time, tap to back up; catches up on open | Background job, no notification |
-| Widget | WidgetKit (iOS 16+) via App Group | AppWidget 2×2 / 4×2 |
-| Hide in switcher | Brand cover (no screenshot blocking) | Secure window |
-| Biometrics | Face ID / Touch ID | Fingerprint (strong biometrics only) |
-| Reminder | Exact time | Approximate time |
-Draw iPhone frames for every N‑screen; show the iPhone‑specific copy where it differs. Tab bar uses the platform's safe area;
-keep the Material look (not Cupertino).
+| Back | Back arrow + edge swipe | Arrow + system Back |
+| Email checks | Only on open/return | Also ~hourly in background |
+| Auto backup | Folder via Files; a notification at the chosen time, tap to back up | Background job |
+| Widget | WidgetKit (iOS 16+) | AppWidget 2×2 / 4×2 |
+| Hide in switcher | Brand cover | Secure window |
+| Reminders (daily + deadline) | Exact time | Approximate time (daily); deadline exact‑ish |
+| Rate the app | Hidden until App Store id exists | Opens Play |
+| Biometrics (to build) | Face ID / Touch ID | Fingerprint (strong only) |
+Draw iPhone frames for every 🔨/🆕 screen; Material look, iOS safe areas.
 
 ---
 
 ## 10. UX weak points → opportunities · Out of scope
 
-### 10.1 Please solve in the design (within the feature set; behaviour changes = mark as proposal)
-1. **Tab bar vs the − / + buttons on Home** — keep logging effortless; the buttons must stay the dominant elements.
-2. **Where "Records" lives** now that the receipt icon moves (balance bar + More). Is that discoverable enough? Propose.
-3. **Settings is long** — the regrouped layout (N‑05) is your chance to cut scanning cost; status chips for auto backup, email,
-   notifications, biometrics.
-4. **Account filter invisible** — show the active account as a chip on Home, Stats, Calendar, Records.
-5. **"Balance" means two things** (period net on Home vs total balance on Overview) — name and place them so they cannot be confused.
-6. **Queue speed** — 12 items must be clearable fast with one thumb; consider swipe, sticky bottom action bar, or pager.
-   Prove it at 360 × 800 and at 200 % text.
-7. **Imported money vs real money** — make it obvious that queue items are **not counted yet** (and where they will appear).
-8. **Trust UI for email** — wording and visual calm so the permission feels safe; show where the password lives (phone only).
-9. **Charts at a glance and for screen readers** — every chart needs a text table; colour never the only encoding.
-10. **Empty states** for Overview, Stats, Calendar, Savings, Debts, Queue — friendly, not sad; point to the next action.
-11. **Almost over vs Over** — distinct, accessible, not alarmist.
-12. **Password dialogs** (backup, restore, auto backup, mailbox) should look like one family.
+### 10.1 Please solve in the design
+1. **Two‑line money everywhere** — make main‑first + original‑below one clean component that works in rows, cards, totals, sheets,
+   at 200 % and in VI; never confuse it with "income vs expense" colour.
+2. **Savings wallet mental model** — make it obvious a goal has *its own* account (badge in Accounts, wallet name on the card), that
+   Add money moves money from another account, and that withdrawing is allowed.
+3. **Caps that teach** — Add money / payment limits should prevent errors gracefully ("Fill to target", "Pay the rest") rather than
+   only showing red text.
+4. **Goal reached moment** — rewarding but calm; Done section that still feels like an achievement list.
+5. **Due soon vs Overdue** — warning vs error, with words; consistent across savings, debts, notifications.
+6. **Settings length** — 9 groups; use right‑side status values so users don't open rows to check state.
+7. **"Balance" means two things** — period net vs account/total balance; name and place them distinctly.
+8. **Account filter visibility** — active account as a chip.
+9. **Queue speed** — one thumb, 12 items fast.
+10. **Empty states** for Savings, Debts, Queue, Rates (no pairs), Overview/Stats/Calendar.
+11. **Password dialogs** (backup, restore, auto backup, mailbox) as one family.
 
-### 10.2 Out of scope — don't draw in main frames
-- Cloud sync, sign‑in, servers; banks other than MB Bank; reading SMS or notifications; receipt photos/OCR; AI features.
-- Multiple currencies at once; shared/family accounts; investments.
-- Ads, subscriptions, Pro tier, analytics, crash SDKs. Tablet / landscape. Onboarding/tutorial.
+### 10.2 Out of scope — don't draw
+Cloud sync, sign‑in, servers; banks other than MB; SMS / notification reading; receipt photos / OCR; AI; shared/family accounts;
+investments; historical exchange rates; ads, subscriptions, analytics; tablet/landscape.
 
 ---
 
-## 11. Deliverables requested from Claude Design
+## 11. Deliverables
 
 ### 11.1 Priority
-1. **P0 — shell:** 5‑tab bar component + Home with tab bar/banner/badge + More hub + regrouped Settings (N‑05) — everything
-   else hangs on these.
-2. **P1 — new screens:** N‑01 Overview · N‑02 Stats · N‑03 Calendar · N‑08 Queue · N‑09 Email import · N‑06 Savings · N‑07 Debts ·
-   N‑04 Time/Filter/rows · N‑10 Budget states · N‑12 Biometrics · N‑11 Export · N‑14 Currency conversion · N‑15 small components.
-3. **P2 — refresh** every ✅/🟡 frame in Part A for consistency (keep their look).
-4. **P3 — VI variants and 200 % text** for the screens in §11.2.
+1. **P0 — money component + changed core:** two‑line money block (all contexts), Home, New record with currency chip, Records,
+   Accounts, Transfer cross‑currency, Budget dialog.
+2. **P1 — Plans:** Savings (list, editor, detail + history, add money, withdraw, reached dialog, Done), Debts (list, editor, detail,
+   payment), Deadline reminder setting + notification.
+3. **P2 — built but never drawn:** Settings (9 groups) + Appearance sheet + About card, Rates + override, Onboarding 5 steps, Email
+   import, Queue + suggestions, Legal reader.
+4. **P3 — to build:** 5‑tab shell + More, Overview, Stats, Calendar, Filter, Budget warnings, Export, Biometrics.
+5. **P4 — refresh** remaining ✅ frames; VI variants; 200 % text.
 
 ### 11.2 Frames
-For **each platform** (Android 360 × 800 dp; iPhone 393 × 852 pt) × **light + dark**: every screen with its states.
-- **VI variants** (light): Home, New entry, Overview, Stats, Calendar, Queue (item + currency note), Email import (add mailbox),
-  Savings, Debts, More, Settings (all groups), Filter sheet, Conversion dialog, Lock.
-- **200 % text** (one platform, light): Home with tab bar, Overview, Stats, Calendar, Queue, Savings, Debts, Add mailbox, Settings.
-- **Stress:** see §8.
-- **Prototype links** for flows F1–F12 (§7).
+Each platform (Android 360 × 800 dp; iPhone 393 × 852 pt) × light + dark, every screen with its states.
+- **VI variants** (light, main VND): Home, New record (currency chip), Records, Accounts, Savings list + detail + editor, Add money,
+  Reached dialog, Debts + detail, Deadline reminder sheet + notification, Settings (all groups), Rates, Onboarding, Queue.
+- **200 % text** (one platform, light): Home, New record, Records, Accounts, Savings list + detail, Debts detail, Settings, Rates,
+  Onboarding step 3, Queue.
+- **Prototype links** for F1–F11.
 
-### 11.3 File naming (1:1 with routes)
-`design/hifi/<platform>/<theme>/<NN>_<slug>__<state>.png` + matching HTML export. `<platform>` = `android|ios`, `<theme>` =
-`light|dark`. Keep existing SCR numbers 01–33 and EXT numbers; **new numbers** continue from **34**:
+### 11.3 File naming
+`design/hifi/<platform>/<theme>/<NN>_<slug>__<state>.png` + HTML. Keep numbers 01–33 and v3's 34–48; new numbers:
 
-| No. | Screen | Slug |
+| No. | Screen | Slug examples |
 |---|---|---|
-| 34 | Overview | `overview` |
-| 35 | Statistics | `stats` |
-| 36 | Calendar | `calendar` (`__day-panel`) |
-| 37 | More hub | `more` |
-| 38 | Settings (regrouped) | `settings` (`__top`, `__money`, `__data`) |
-| 39 | Records filter | `entries~filter`, `entries__filtered` |
-| 40 | Time field | `entry-new__time`, `entry-id__no-time` |
-| 41 | Savings | `savings`, `savings~edit`, `savings__reached` |
-| 42 | Debts | `debts`, `debts~edit`, `debts~detail`, `debts~payment` |
-| 43 | Import queue | `queue` (`__suggested`, `__currency`, `__empty`), `queue~move`, `queue~skip`, `queue~suggestions` |
-| 44 | Email import | `email-intro`, `email-add`, `email-connected`, `email-error`, `email-paused` |
-| 45 | Budget states | `home__almost-over`, `overview__almost-over`, `settings~budget-warning` |
-| 46 | Export Excel / PDF | `settings~export-range`, `export-pdf-preview` |
-| 47 | Biometrics | `settings__biometric`, `lock__biometric` |
-| 48 | Currency conversion | `settings~convert`, `settings~convert-error` |
-| EXT‑03 | Budget notification | `ext-budget-notification` |
-| 00 | App shell / tab bar | `shell~tabs` (component states) |
+| 00 | Money block + shell components | `money~two-line`, `shell~tabs` |
+| 41 | Savings (redesigned) | `savings`, `savings__done-open`, `savings~edit`, `savings~detail`, `savings~detail__done`, `savings~add-money`, `savings~add-money__cap`, `savings~withdraw`, `savings~reached` |
+| 42 | Debts | `debts`, `debts~edit`, `debts~detail`, `debts~payment`, `debts~payment__over` |
+| 49 | Onboarding | `onboarding__1-language` … `__5-pin` |
+| 50 | Exchange rates | `rates`, `rates__offline`, `rates~override`, `rates__none` |
+| 51 | Deadline reminders | `settings~deadline-reminder`, `ext-deadline-notification` |
+| 52 | Appearance & language sheet / About card | `settings~appearance`, `settings__about` |
+| 53 | New record currency chip | `entry-new__currency`, `entry-new~currency-picker` |
+| 54 | Transfer cross‑currency | `transfer__two-currencies` |
+| 55 | Legal reader | `legal` |
+| 34–40, 43–48 | as v3 (Overview, Stats, Calendar, More, Settings, Filter, Time, Queue, Email, Budget states, Export, Biometrics); **48 Currency conversion is obsolete — skip** | |
 
 ### 11.4 Design system page
-- **Tokens** as JSON in the **same schema as `design/hifi/tokens/tokens.json`** + CSS variables; keep names; a changelog of
-  added/removed/changed tokens. Required additions: `warning`, `on-warning`, `warning-container` (+ dark), tab‑bar tokens
-  (height, indicator, label style), chart tokens (series colours for income/expense/line, gridline, axis label, selected
-  highlight) and calendar cell tokens. Everything must map to Flutter `ColorScheme`, `ThemeExtension ViGonColors`,
-  `TextTheme` (12 styles, tabular amounts) and `VgSpace/VgRadius/VgTap`.
-- **Component sheet** (default, pressed, focused, disabled, error, selected; light + dark): **bottom navigation**, **stat tile**,
-  **progress bar (goal, debt, budget — normal/almost/over)**, **bar chart (paired)**, **line chart**, **calendar grid cell**,
-  **queue item card**, **suggested chip**, **source ✉ marker**, **status chip (OK / paused / error)**, **banner (queue)**, **filter
-  chip (removable)**, **range sheet**, **segmented control (language)**, **stepper (threshold)**, plus all v2 components (ring,
-  keypad, buttons, rows, dialogs incl. password forms, snackbar, PIN pad, widget, notification).
-- **Motion notes** (150–250 ms, reduce‑motion aware): tab switch, chart draw‑in, goal progress fill, queue item saved → collapse,
-  period/month change, keypad press, sheet open/close, snackbar.
-- **Icon list:** final glyph for every new action/destination (tabs, Savings, Debts, Queue, Email, Filter, Export, Biometric, ✉).
+- **Tokens** as JSON in the schema of `design/hifi/tokens/tokens.json` + CSS variables; keep names; changelog. Required additions:
+  `warning` / `on-warning` / `warning-container`, `success` accent for Done, tab‑bar tokens, chart tokens, calendar cell tokens,
+  **money block** spec (line 1 / line 2 styles, spacing, alignment start/end, 200 % behaviour).
+- **Component sheet** (default, pressed, focused, disabled, error, selected; light + dark): two‑line money block, currency chip,
+  currency bar (form field), progress bar (goal / debt / budget: normal · due soon / almost · over / overdue · done), history row,
+  amount field with "Fill to target" chip, account picker row with balance, celebration dialog, status chip, stepper (days before),
+  bottom navigation, stat tile, bar/line chart, calendar cell, queue card, suggested chip, ✉ marker, banner, filter chip, segmented
+  control, plus all v2 components (ring, keypad, rows, dialogs, snackbar, PIN pad, widget, notification).
+- **Motion** (150–250 ms, reduce‑motion aware): progress fill, goal → Done, reached burst, sheet open/close, period change, keypad.
+- **Icon list** for every new action (Add money, Withdraw, History, Wallet, Deadline reminder, Reopen, Currency chip).
 
 ### 11.5 Format
-claude.ai link + HTML/PNG export per frame, saved into `apps/A002-vigon/design/hifi/` with §11.3 names. Include a short
-**assumptions page** (what you decided where this brief left room) and the **token changelog**.
+claude.ai link + HTML/PNG per frame into `apps/A002-vigon/design/hifi/` with §11.3 names, plus an **assumptions page** (what you
+decided where this brief left room) and the **token changelog**.

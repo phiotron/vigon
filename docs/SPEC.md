@@ -227,6 +227,7 @@ Ràng buộc chung của 3d:
 - AC-99: **"Bỏ qua"** xoá mục khỏi hàng đợi (số tham chiếu được nhớ, AC-86) sau hộp xác nhận. Hàng đợi **không** vào file sao lưu *(mặc định)*; khôi phục không xoá hàng đợi hiện có nhưng mục có số tham chiếu đã nằm trong khoản của file khôi phục bị bỏ khỏi hàng đợi. [T]
 
 ### F-33 · Tiết kiệm
+> AC-100..AC-102 được thay bởi F-47 (D-043, 2026-11-10): mục tiêu luôn tạo ví mới, có Chi tiết + lịch sử, Góp/Rút có giới hạn, Đã xong.
 - AC-100: Màn **"Tiết kiệm"** (vào từ Tổng quan và Cài đặt; vị trí theo mockup phiên #4): tạo Savings goal gồm tên (≤ 50 ký tự), số tiền mục tiêu > 0, hạn (ngày, *(mặc định)* tuỳ chọn), và Account gắn: chọn Account có sẵn chưa gắn mục tiêu khác, hoặc "Tạo tài khoản mới" (tên = tên mục tiêu, số dư ban đầu 0). Một Account gắn tối đa một mục tiêu. [T]
 - AC-101: **Tiến độ** = số dư hiện tại của Account gắn (gồm số dư ban đầu) so với mục tiêu: thanh %, "Đã có X / Y", "Còn thiếu Z"; có hạn thì "Còn N ngày" hoặc "Quá hạn N ngày". Số dư ≥ mục tiêu → **"Đã đạt"** (dấu ✓ kèm chữ). Rút tiền khỏi Account làm tiến độ giảm và có thể mất "Đã đạt". Ví dụ: mục tiêu 10.000.000, Account có 3.000.000 → 30%, còn thiếu 7.000.000. [T]
 - AC-102: **"Góp tiền"** mở màn Chuyển tiền với "Đến" = Account của mục tiêu, "Từ" = tài khoản mặc định; lưu ra một Transfer bình thường: tổng thu, tổng chi, biểu đồ, ngân sách **không đổi**; Tổng số dư (AC-107) không đổi. [T]
@@ -234,7 +235,7 @@ Ràng buộc chung của 3d:
 
 ### F-34 · Khoản nợ (sổ ghi nhớ)
 - AC-104: Màn **"Khoản nợ"**: thêm Debt record gồm người (≤ 50 ký tự), chiều **"Cho vay"** (người khác nợ bạn) hoặc **"Đi vay"** (bạn nợ người khác), số tiền > 0, ngày, hạn (tuỳ chọn), ghi chú (≤ 200 ký tự). Danh sách chia hai nhóm "Người khác nợ bạn" / "Bạn nợ người khác", mỗi nhóm có tổng còn lại. [T]
-- AC-105: Thêm **lần trả** (số tiền > 0, ngày; không vượt số còn lại, vượt thì báo lỗi); còn lại = số tiền − tổng các lần trả; về 0 → **"Đã xong"**, chuyển xuống mục "Đã xong" (thu gọn). Xoá lần trả thì tính lại. Quá hạn mà chưa xong → "Quá hạn" (chữ, không chỉ màu). **Không có thông báo nhắc hạn**. [T]
+- AC-105: Thêm **lần trả** (số tiền > 0, ngày; không vượt số còn lại, vượt thì báo lỗi); còn lại = số tiền − tổng các lần trả; về 0 → **"Đã xong"**, chuyển xuống mục "Đã xong" (thu gọn). Xoá lần trả thì tính lại. Quá hạn mà chưa xong → "Quá hạn" (chữ, không chỉ màu). ~~**Không có thông báo nhắc hạn**~~ → có nhắc trước hạn từ 2026-11-10 (F-48). [T]
 - AC-106: Khoản nợ và lần trả **không** tạo khoản (Entry), không đổi số dư Account nào, không vào thu/chi, biểu đồ, ngân sách hay Tổng số dư. Có trong file sao lưu; được quy đổi khi đổi tiền tệ (AC-122). [T]
 
 ### F-35 · Tổng quan (màn riêng, D-034)
@@ -343,6 +344,31 @@ Mục này thay cách hiểu "một tiền tệ toàn app" ở F-07 (AC-21, AC-7
 ### Sửa F-29 · Đọc email MB thật (2026-11-10)
 - AC-145: Thư MB thật chỉ có `text/html` soạn bằng Outlook/Word, nhãn bị ngắt dòng trong mã nguồn (`Ng&#224;y,⏎ gi&#7901; giao d&#7883;ch`). `htmlToText` coi mọi khoảng trắng/xuống dòng **trong mã nguồn** là một dấu cách (như trình duyệt), chỉ thẻ khối (`<br>`, `</p>`, `</div>`, `</tr>`…) mới xuống dòng. Mẫu thật đã che: `test/import/samples/mb/real_outlook_2026-11-09.html`. Thư cũ đã bị đếm "không đọc được" **không** đọc lại; chỉ thư mới. Địa chỉ gửi xác nhận `mbebanking@mbbank.com.vn`. [T]
 
+## 3g. Tiền tệ chính hiển thị trước, ví tiết kiệm, nhắc trước hạn (người dùng chốt 2026-11-10)
+
+Mục này sửa cách hiển thị của 3e (AC-128) và sửa F-33, F-34. Chỗ nào mâu thuẫn với mục trước thì theo mục này.
+
+### F-46 · Tiền tệ chính đứng trước, cộng chính xác (D-042)
+- AC-146: **Mọi nơi** hiện số tiền (dòng khoản, số dư tài khoản, mục tiêu tiết kiệm, khoản nợ, lần trả, ngân sách, hạn mức danh mục, tổng, bảng chọn tài khoản): **số theo Tiền tệ chính to ở trên, số gốc nhỏ ở dưới**. Cùng tiền tệ thì chỉ một dòng. Thiếu tỷ giá thì dòng trên là số gốc, dòng dưới ghi "Thiếu tỷ giá". Ví dụ: Tiền tệ chính USD, khoản 100.000 ₫ → "$3.85" trên, "100.000 ₫" dưới. Thay câu "Danh sách hiện số gốc và dòng ≈" của AC-128. [T]
+- AC-147: Khoản **mới** (màn Nhập khoản) mặc định nhập bằng **Tiền tệ chính**, có chip tiền tệ để đổi sang mã khác. Tài khoản khác tiền tệ vẫn nhận được khoản đó, số dư tự quy đổi. Sửa khoản cũ thì giữ tiền tệ đã lưu. Ngân sách tháng, hạn mức danh mục, khoản nợ, mục tiêu tiết kiệm có thanh chọn tiền tệ (mặc định Tiền tệ chính) và hiện theo AC-146. Thay "Entry thường lấy Currency của Account" của AC-127. [T]
+- AC-148: **Cộng chính xác:** mọi tổng (số dư tài khoản, tổng chi/thu, ngân sách đã dùng, còn lại của nợ, tiến độ tiết kiệm, tổng số dư) được cộng **theo từng tiền tệ gốc tới đơn vị nhỏ nhất**, rồi mới quy đổi và làm tròn **một lần**. Không bao giờ quy ngược một số đã làm tròn về tiền gốc. Số theo tiền gốc (số dư ₫ của tài khoản ₫, còn lại USD của khoản nợ USD) luôn tính thẳng từ số gốc nên **không lệch dù Tiền tệ chính là gì**. Ví dụ: (a) Tài khoản ₫ có 3 khoản chi 10.000 ₫, Tiền tệ chính USD → số dư ₫ đúng −30.000 ₫, không phải −29.9xx ₫; (b) đổi Tiền tệ chính VND → USD → VND, mọi số ₫ giữ nguyên từng đồng; (c) khoản nợ 100 USD khi Tiền tệ chính là VND, trả 40 USD + 60 USD → còn đúng 0, "Đã xong"; trả 60,01 USD ở lần hai → lỗi vượt. Tổng theo Tiền tệ chính có thể lệch 1–2 đơn vị nhỏ nhất so với cộng tay các dòng đã làm tròn (được chấp nhận). [T]
+
+### F-47 · Ví tiết kiệm, lịch sử, góp/rút, Đã xong (D-043) — thay AC-100..AC-102
+- AC-149: Tạo mục tiêu **luôn tạo một tài khoản mới** (ví tiết kiệm), không gắn tài khoản có sẵn. Form: **Tên mục tiêu** (≤ 50), **Tài khoản** (tên ví ≤ 50, điền sẵn bằng tên mục tiêu, sửa được; chữ cũ "Tài khoản gắn" đổi thành "Tài khoản"), **Số tiền mục tiêu** > 0 + thanh tiền tệ (mặc định Tiền tệ chính), **Đã có sẵn** (số dư ban đầu của ví, ≥ 0, mặc định 0), **Hạn** (tuỳ chọn). Ví có tiền tệ của mục tiêu. Sửa mục tiêu: đổi được tên, tên ví, số tiền, hạn; tiền tệ khoá khi ví đã có khoản. Mục tiêu cũ đang gắn tài khoản có sẵn giữ nguyên. Ví dụ: Tiền mặt có 8.000.000 ₫, tạo "Du lịch" 5.000.000 ₫ → ví "Du lịch" số dư 0, tiến độ 0% (không lấy 8 triệu của Tiền mặt). [T]
+- AC-150: Ví là **tài khoản bình thường**: chi/thu thẳng từ ví, chuyển tiền ra/vào được bất cứ lúc nào, kể cả trước khi xong. **Tiến độ = số dư ví** (theo tiền tệ mục tiêu) so với mục tiêu. [T]
+- AC-151: Chạm thẻ mục tiêu mở **Chi tiết** (như Khoản nợ): tiến độ, "Đã có X / Y", "Còn thiếu Z", hạn, **Lịch sử** = mọi khoản làm đổi số dư ví (Góp +, Rút −, chi/thu ghi thẳng; dòng "Đã có sẵn" nếu > 0), mới nhất trước, xoá được (có Hoàn tác); cộng lại luôn bằng số dư ví. Nút **Góp tiền**, **Rút tiền**, Sửa, Xoá. [T]
+- AC-152: **Góp tiền**: số tiền (theo tiền tệ ví) > 0 và **≤ số còn thiếu** (vượt → lỗi "Chỉ cần góp thêm Z"; nút "Điền đủ" điền đúng Z), **Từ tài khoản** liệt kê mọi tài khoản hiện khác ví kèm số dư theo AC-146, ngày (mặc định hôm nay). Lưu ra một Transfer từ tài khoản đó vào ví; khác tiền tệ thì số gửi quy theo tỷ giá hiện tại, lưu cả hai số (AC-132). Màn Chuyển tiền thường không bị chặn vượt. **Rút tiền**: số tiền > 0 và ≤ số dư ví, "Về tài khoản", ngày → Transfer từ ví ra. Tổng thu/chi, ngân sách, Tổng số dư không đổi. [T]
+- AC-153: Khi số dư ví lần đầu ≥ mục tiêu (sau Góp, hoặc khi mở màn Tiết kiệm nếu đủ bằng cách khác) → ghi thời điểm hoàn thành, hiện hộp **"Tiết kiệm thành công"** · "Bạn đã đủ 5.000.000 ₫ cho Du lịch" (nút "Tuyệt", "Rút tiền"), mục tiêu chuyển xuống nhóm **"Đã xong"** (thu gọn) ở màn Tiết kiệm. Đã xong là **vĩnh viễn**: rút/chi sau đó không đưa mục tiêu về lại; có "Mở lại" trong Chi tiết (xoá thời điểm hoàn thành, kiểm lại ngay). Đã xong thì không còn nút Góp, vẫn còn Rút. [T]
+- AC-154: Xoá mục tiêu không xoá ví hay khoản nào (ví ở lại thành tài khoản thường). Schema **v7** thêm `savings_goals.completed_at`; migration 6→7 giữ dữ liệu; file sao lưu mang cột mới, file cũ thiếu thì null. [T]
+
+### F-48 · Nhắc trước hạn (D-044) — bỏ "Không có thông báo nhắc hạn" của AC-105
+- AC-155: Cài đặt → Kế hoạch → **"Nhắc trước hạn"**: công tắc (*mặc định bật*), số ngày 1–30 (*mặc định 7*), giờ (*mặc định 09:00*). Một cài đặt chung cho mọi mục tiêu tiết kiệm và khoản nợ **có hạn, chưa xong**. Bật lần đầu thì giải thích rồi mới xin quyền thông báo như AC-61; từ chối thì công tắc về tắt. Số ngày và giờ đi theo file sao lưu; công tắc là cài đặt theo máy. [T]
+- AC-156: Mỗi mục báo **hai lần**: N ngày trước hạn và đúng ngày hạn, vào giờ đã chọn; mốc đã qua thì bỏ; N lớn hơn số ngày còn lại thì chỉ báo ngày hạn. Xếp lại lịch khi mở app, khi quay lại từ nền, khi mục tiêu/khoản nợ/lần trả/khoản trong ví đổi, khi đổi cài đặt; xong hoặc xoá thì huỷ. Kênh thông báo riêng "Nhắc hạn". [T]
+- AC-157: Nội dung **có số tiền còn lại, kể cả khi bật PIN** (người dùng chọn): "Khoản nợ với An: còn 2.000.000 ₫, đến hạn sau 7 ngày", "Bạn nợ Bình: còn 500 $, đến hạn hôm nay", "Mục tiêu Du lịch: còn thiếu 1.500.000 ₫, hạn sau 7 ngày". Số theo tiền tệ của mục. Chạm mở Khoản nợ / Chi tiết mục tiêu (qua Màn khoá nếu bật). [T]
+
+### Sửa F-34 · Khoản nợ (2026-11-10)
+- AC-158: Xoá khoản nợ từ Chi tiết → đóng Chi tiết, **ở lại màn Khoản nợ** (lỗi cũ: về Cài đặt). Còn lại/đã trả/tổng nhóm tính bằng số gốc (AC-148); lần trả vượt số còn lại báo lỗi như AC-105. [T]
+
 ## 4. Ngoài phạm vi (cố ý KHÔNG làm)
 Đã đưa vào phạm vi (giữ dòng gạch để biết lịch sử):
 - ~~Bản iOS~~: vào phạm vi ngày 2026-11-04 theo PLAN-001 (người dùng duyệt), xem mục 5 "iOS" và D-011; chỉ icon đơn sắc (F-23) là riêng Android (D-022).
@@ -363,7 +389,7 @@ Vẫn ngoài phạm vi:
 - Khớp số dư tự động (khoản "điều chỉnh số dư"), lấy số dư ban đầu từ email, tự ghép chuyển tiền giữa hai tài khoản (thay bằng lựa chọn "Chuyển sang tài khoản của tôi" trong hàng đợi, AC-98) (D-033).
 - Gmail API / OAuth, Outlook/Hotmail, máy chủ IMAP tuỳ ý (D-031); gửi, xoá hay đánh dấu thư.
 - Kết nối thẳng ngân hàng (open banking, API ngân hàng), thanh toán từ app.
-- Nhắc hạn khoản nợ; khoản nợ làm đổi số dư tài khoản (F-34 chỉ là sổ ghi nhớ).
+- ~~Nhắc hạn khoản nợ~~ (vào phạm vi 2026-11-10, F-48); khoản nợ làm đổi số dư tài khoản (F-34 chỉ là sổ ghi nhớ).
 
 Các mục còn hiệu lực từ bản 1.1, 1.2 và lần gộp (cần người dùng làm hoặc quyết, vì phá cam kết hiện tại của app hoặc cần việc riêng):
 | Mục | Vì sao chưa làm |

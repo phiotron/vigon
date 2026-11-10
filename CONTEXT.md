@@ -6,6 +6,7 @@
 > `design/current/ui-spec.md` — bản sau khi gộp v1.2 + PLAN-001 (2026-11-05). 🤖 = chỉ Android (ẩn trên iOS, D-019).
 > ⚠ = code, SPEC hoặc thiết kế đang lệch nhau — xem mục "Chỗ lệch" ở cuối.
 > **2.0** = thuật ngữ của SPEC 3d (F-27..F-42, D-030..D-035), thêm 2026-11-06 và thu hẹp cùng ngày (chỉ nhập khoản chi từ email MB qua hàng đợi; không đọc thông báo, không quét/ảnh hoá đơn), **SPEC 3d chưa duyệt**: chưa có trong code; chữ UI (VI) là đề xuất, chốt khi viết `.arb`.
+> **D-042..D-044** (2026-11-10): Tiền tệ chính đứng trước + Exact sum; Savings wallet / Withdrawal / Goal completed; Deadline reminder — SPEC 3g.
 > **D-037** (2026-11-09): đa tiền tệ — thay hàng **Currency** cũ bằng bộ thuật ngữ Currency / Primary currency / Original amount / Derived amount / Exchange rate; SPEC mục 3e (F-43, AC-127..AC-135), đã có trong code.
 
 ## Ghi chép và phân loại
@@ -19,8 +20,9 @@
 | **Income** | Thu (khoản thu) | Entry làm tăng tiền, có danh mục thu. Ghi qua nút "+" hoặc nút Thu của Widget. | "revenue" |
 | **Transfer** | Chuyển tiền | Entry loại `transfer` từ Account nguồn sang Account đích. **Không** phải thu/chi: không vào biểu đồ, tổng thu/chi, Period balance, Budget, Category budget; chỉ đổi Account balance. | "chuyển khoản" (dễ nhầm chuyển khoản ngân hàng / chuyển khoản sang danh mục khác) |
 | **Amount** | Số tiền (dẫn xuất) | Số nguyên theo Minor unit của **Primary currency**, tối đa 10¹² đơn vị nhỏ nhất; là số dùng để cộng tổng và hiện ở tổng/biểu đồ. Với bản ghi khác tiền tệ, đây là số quy từ **Original amount** tại **Exchange rate** hiện tại (D-037). Người dùng gõ phải > 0; có thể 0 khi quy đổi một số rất nhỏ. | số thực, "giá" |
-| **Original amount** | Số tiền gốc | Số người dùng nhập, lưu `int` theo Minor unit của **Currency** của bản ghi; **không đổi** khi đổi Primary currency hay tỷ giá. Cột `original*` trong cơ sở dữ liệu; Transfer có thêm số nhận gốc và tiền tệ nhận. | "số quy đổi", "số hiển thị" |
-| **Derived amount** | Số dẫn xuất | Số quy từ Original amount về Primary currency tại tỷ giá hiện tại; dùng để cộng tổng, biểu đồ, thanh ngân sách (các cột `amount` / `budget` / `targetAmount` / `initialBalance`). Không hiện thay số gốc ở danh sách/chi tiết. | "số gốc" |
+| **Original amount** | Số tiền gốc | Số người dùng nhập, lưu `int` theo Minor unit của **Currency** của bản ghi; **không đổi** khi đổi Primary currency hay tỷ giá. Hiện **nhỏ ở dưới** số theo Primary currency khi khác tiền tệ (D-042). Cột `original*` trong cơ sở dữ liệu; Transfer có thêm số nhận gốc và tiền tệ nhận. | "số quy đổi", "số hiển thị" |
+| **Derived amount** | Số dẫn xuất | Số quy từ Original amount về Primary currency tại tỷ giá hiện tại; dùng để cộng tổng, biểu đồ, thanh ngân sách (các cột `amount` / `budget` / `targetAmount` / `initialBalance`). Là số **to ở trên** mọi nơi (D-042); tổng không cộng các số này mà cộng Original amount theo từng Currency rồi quy đổi một lần (**Exact sum**). | "số gốc" |
+| **Exact sum** | Cộng chính xác | Cách cộng mọi tổng (D-042): gom Original amount theo từng Currency tới Minor unit, quy đổi bằng tỷ giá phân số, làm tròn **một lần**. Số theo tiền gốc (vd số dư ₫ của Account ₫) luôn tính thẳng từ Original amount, không quy ngược từ số dẫn xuất. | "quy ngược", "fromPrimary" |
 | **Exact amount** | Số tiền chính xác | Số giữ 6 chữ số lẻ trên đơn vị chính (micro, 10⁻⁶), ẩn; di sản của cách quy đổi toàn bộ cũ (D-029), bị xoá khi số dẫn xuất được tính lại từ số gốc khác tiền tệ. Không có (null) = đúng bằng Amount. | "số gốc", "số thật" |
 | **Minor unit** | Đơn vị nhỏ nhất | Đơn vị lưu tiền: theo số chữ số thập phân ISO (VND 0, USD 2, KWD 3). | |
 | **Amount expression** | Phép tính | Chuỗi gõ trên Keypad (vd `120+35`), tính ra Amount khi lưu hoặc bấm "=". | "công thức" |
@@ -95,10 +97,14 @@
 
 | Term (code) | VI | Định nghĩa | Tránh dùng |
 |---|---|---|---|
-| **Savings goal** | Mục tiêu tiết kiệm | Tên, số tiền mục tiêu, hạn (tuỳ chọn), gắn **một Account**; tiến độ = Account balance của Account đó; "Đã đạt" khi số dư ≥ mục tiêu. Một Account gắn tối đa một mục tiêu. | "hũ", "sổ tiết kiệm" (không phải sổ ngân hàng) |
-| **Contribution** | Góp tiền | Một **Transfer** vào Account của Savings goal. Không phải thu/chi; không đổi tổng thu/chi, ngân sách, Total balance. | "nạp", "gửi tiết kiệm", "thu" |
+| **Savings goal** | Mục tiêu tiết kiệm | Tên, số tiền mục tiêu (Currency riêng, mặc định Primary currency), hạn (tuỳ chọn) và **một Savings wallet** riêng. Tiến độ = Account balance của ví; lần đầu ví ≥ mục tiêu thì thành **Goal completed** (D-043). | "hũ", "sổ tiết kiệm" (không phải sổ ngân hàng), "tài khoản gắn" (chữ cũ) |
+| **Savings wallet** | Tài khoản (ví tiết kiệm) | Account **luôn tạo mới** cùng Savings goal: tên người dùng nhập, số dư ban đầu = "Đã có sẵn", Currency của mục tiêu. Là Account bình thường: chi, thu, chuyển ra/vào bất cứ lúc nào. Mục tiêu cũ (trước D-043) có thể dùng Account có sẵn. | "ví" trong code (code là Account), "tài khoản gắn" |
+| **Contribution** | Góp tiền | Một **Transfer** từ Account bất kỳ **vào** Savings wallet, qua bảng Góp: không vượt số còn thiếu. Không phải thu/chi; không đổi tổng thu/chi, ngân sách, Total balance. | "nạp", "gửi tiết kiệm", "thu" |
+| **Withdrawal** | Rút tiền | Một **Transfer** từ Savings wallet ra Account khác, không vượt số dư ví; làm tiến độ giảm nhưng không bỏ Goal completed. | "huỷ tiết kiệm", "chi" |
+| **Savings history** | Lịch sử (của mục tiêu) | Mọi Entry làm đổi số dư Savings wallet (Góp, Rút, chi/thu ghi thẳng) + số dư ban đầu; cộng lại bằng số dư ví. | "lịch sử góp" khi chỉ nói về Contribution |
+| **Goal completed** | Đã xong (tiết kiệm thành công) | Trạng thái **vĩnh viễn** từ lần đầu số dư ví ≥ mục tiêu: hộp "Tiết kiệm thành công", mục tiêu xuống nhóm "Đã xong"; chỉ "Mở lại" mới bỏ. Khác "Đã xong" của Debt record (theo số còn lại). | "Đã đạt" (chữ cũ, đổi theo số dư từng lúc) |
 | **Debt record** | Khoản nợ | Sổ ghi nhớ: người, chiều **Cho vay** (người khác nợ bạn) / **Đi vay** (bạn nợ), số tiền, ngày, hạn, ghi chú, các **Debt payment** (Lần trả); còn lại = số tiền − đã trả; về 0 là "Đã xong". **Không phải Entry**: không đụng Account, không tính thu/chi. | "khoản vay" (dễ nhầm Entry), "tài khoản nợ" |
-| **Debt payment** | Lần trả | Một lần trả của Debt record (số tiền, ngày); không vượt số còn lại; không tạo Entry. | "thanh toán" |
+| **Debt payment** | Lần trả | Một lần trả của Debt record (số tiền, ngày); không vượt số còn lại (so bằng Original amount, không qua số dẫn xuất); không tạo Entry. | "thanh toán" |
 | **Overview** (Dashboard) | Tổng quan | **Màn riêng** (màn chính giữ nguyên), có chọn tháng riêng: Total balance, "Thu − chi tháng", Remaining budget, cột thu–chi 6 tháng, "So với tháng trước". | "màn chính", "trang chủ" (màn chính là màn ghi nhanh hiện có) |
 | **Statistics** | Thống kê | Màn phân tích theo Period: cột thu/chi theo kỳ con, 5 danh mục chi nhiều nhất, ngày chi nhiều nhất, đường lịch sử Total balance. | "báo cáo" (dành cho PDF) |
 | **Spending calendar** | Lịch (lịch chi tiêu) | Lưới tháng, mỗi ngày hiện tổng chi rút gọn và chấm nếu có thu; chạm ngày mở các khoản của ngày đó. | "lịch hẹn", "Custom range" |
@@ -110,7 +116,7 @@
 
 | Term (code) | VI | Định nghĩa | Tránh dùng |
 |---|---|---|---|
-| **Currency** | Tiền tệ (của bản ghi) | Mã ISO 4217 gắn với Account, Entry, Recurring series, Savings goal, Debt, Debt payment, Budget tháng và Category budget. Mặc định khi tạo = Currency của Account (hoặc Primary currency nếu không có Account). Đổi Currency của bản ghi không đổi Original amount (D-037). | "tiền tệ chính" (dành cho Primary currency) |
+| **Currency** | Tiền tệ (của bản ghi) | Mã ISO 4217 gắn với Account, Entry, Recurring series, Savings goal, Debt, Debt payment, Budget tháng và Category budget. Mặc định khi tạo = **Primary currency** (D-042; khoản mới có chip đổi tiền tệ); Account vẫn có Currency riêng cho số dư. Đổi Currency của bản ghi không đổi Original amount (D-037). | "tiền tệ chính" (dành cho Primary currency) |
 | **Primary currency** | Tiền tệ chính | Mã ISO 4217 người dùng chọn trong Cài đặt; mọi tổng, biểu đồ, ngân sách và dòng `≈` quy về mã này. Đổi Primary currency chỉ đổi cách cộng/hiển thị, **không** sửa số gốc; đổi qua lại không mất dữ liệu (D-037). | "tiền tệ mặc định", "base currency" |
 | **Exchange rate** | Tỷ giá | Hệ số quy đổi giữa hai Currency tại một ngày; lấy từ **Rate table**, **Fallback rates** hoặc **Rate override**. Mọi quy đổi dùng tỷ giá hiện tại, **không** lưu tỷ giá lịch sử (D-037). | "tỉ giá" (thống nhất "tỷ giá" trong chữ UI) |
 | **Rate table** | Bảng tỷ giá | Bảng tỷ giá công khai tải qua HTTPS (`open.er-api.com`), lưu trong máy kèm ngày; tự kiểm tra khi mở app/quay lại, tải tối đa 1 lần/ngày, có "Cập nhật ngay". | "tỷ giá trực tuyến" |
@@ -139,6 +145,7 @@
 | **Forgot PIN** | Quên mã | Không có máy chủ nên không lấy lại được PIN; lối ra duy nhất là Delete all data (thêm hai bước xác nhận). | "đặt lại mật khẩu" |
 | **Privacy screen** 🤖 (code `secureWindow`) ⚠ | Che nội dung khi chuyển app | Công tắc: Android chặn chụp màn hình và hiện thẻ trống trong danh sách app gần đây (F-22). | "chế độ riêng tư", "ẩn app" |
 | **Reminder** | Nhắc ghi sổ (nhắc ghi sổ hằng ngày) | Thông báo cục bộ mỗi ngày vào **Reminder time** (mặc định 20:00), nội dung chung chung, **không chứa số liệu**; chạm mở Nhập khoản chi (qua Lock screen nếu bật). Android + iOS (F-25). Tên cũ "nhắc ghi chép" (đổi 2026-11-10). | "push", "nhắc nhở thanh toán", "alert", "nhắc ghi chép" |
+| **Deadline reminder** | Nhắc trước hạn | Thông báo cục bộ cho mỗi Savings goal / Debt record có hạn và chưa xong: N ngày trước hạn (mặc định 7, 1–30) và đúng ngày hạn, vào giờ đặt riêng (mặc định 09:00); một cài đặt chung. **Có số tiền còn lại**, kể cả khi bật PIN (D-044). Khác Reminder và Budget alert. | "nhắc nhở thanh toán", "nhắc nợ" |
 | **Reminder time** | Giờ nhắc | Giờ của Reminder, chọn bằng bộ chọn giờ hệ thống; Android là giờ xấp xỉ. | |
 | **Notification permission** | Quyền gửi thông báo | Quyền của hệ điều hành, chỉ xin khi bật Reminder và sau hộp giải thích "Bật nhắc ghi sổ?". | |
 | **Widget** 🤖 | Widget (màn hình chính) | Widget Android 2×2 "Ví Gọn" có nút **Chi** / **Thu** mở Nhập khoản; dòng trạng thái tùy Widget amounts (F-26). | "tiện ích" trong chữ (UI giữ "widget") |
