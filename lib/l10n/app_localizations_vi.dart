@@ -2044,4 +2044,56 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get debtPayRest => 'Trả hết';
+
+  @override
+  String mainFirstNote(String currency) {
+    return 'theo $currency';
+  }
+
+  @override
+  String get homeEmptyTitle => 'Bắt đầu với khoản chi đầu tiên';
+
+  @override
+  String get homeEmptyBody =>
+      'Chạm một danh mục trên vòng, hoặc chạm −. Chỉ mất ba lần chạm.';
+
+  @override
+  String fromEmailRef(String ref) {
+    return 'Từ email MB · mã tham chiếu đuôi $ref';
+  }
+
+  @override
+  String get setTime => 'Đặt giờ';
+
+  @override
+  String get mbLinked => 'Từ email MB';
+
+  @override
+  String get savingsWallet => 'Ví tiết kiệm';
+
+  @override
+  String totalInMain(String currency) {
+    return 'Tổng theo $currency';
+  }
+
+  @override
+  String get accountCurrencyLabel => 'Tiền tệ của tài khoản';
+
+  @override
+  String get youReceive => 'Bên nhận được';
+
+  @override
+  String get queueNotCountedNote =>
+      'Chưa được tính: khoản ở đây chỉ vào tổng, biểu đồ và ngân sách sau khi bạn lưu.';
+
+  @override
+  String get widgetSpentLabel => 'Tháng này đã chi';
+
+  @override
+  String widgetOfBudget(String budget, String percent) {
+    return 'trên $budget · $percent';
+  }
+
+  @override
+  String get almostOver => 'Sắp vượt';
 }

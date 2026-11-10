@@ -7,7 +7,6 @@ import 'package:vigon/src/data/savings_repository.dart';
 import 'package:vigon/src/features/savings/savings_screen.dart';
 
 import '../helpers.dart';
-import 'entry_flow_test.dart' show typeKeys;
 
 SavingsGoalRepository _goals(AppDatabase db) => SavingsGoalRepository(db);
 
@@ -142,71 +141,77 @@ void main() {
     await disposeApp(tester, db);
   });
 
-  testWidgets('tạo mục tiêu với tài khoản mới: tài khoản tên = tên mục tiêu, '
-      'số dư 0 (AC-100)', (tester) async {
+  Finder inSheet(Finder f) =>
+      find.descendant(of: find.byType(BottomSheet), matching: f);
+
+  testWidgets('tạo mục tiêu luôn tạo ví mới; "Đã có sẵn" là số dư ban đầu '
+      '(AC-149)', (tester) async {
     final db = await pumpApp(tester);
     await goTo(tester, '/savings');
     await tester.tap(find.text('Thêm mục tiêu'));
     await settle(tester);
-    await tester.enterText(find.widgetWithText(TextField, 'Tên'), 'Mua xe');
+    await tester.enterText(
+      find.widgetWithText(TextField, 'Tên mục tiêu'),
+      'Mua xe',
+    );
+    await settle(tester);
+    // Ô "Tài khoản" tự theo tên mục tiêu.
+    expect(find.widgetWithText(TextField, 'Mua xe'), findsNWidgets(2));
     await tester.enterText(
       find.widgetWithText(TextField, 'Số tiền mục tiêu'),
       '10000000',
     );
-    expect(find.text('Tạo tài khoản mới'), findsOneWidget);
+    await tester.enterText(
+      find.widgetWithText(TextField, 'Đã có sẵn (tuỳ chọn)'),
+      '2000000',
+    );
     await tester.tap(find.text('Lưu'));
     await settle(tester);
 
     final goals = await tester.runAsync(() => _goals(db).all());
-    expect(goals!.single.name, 'Mua xe');
-    expect(goals.single.targetAmount, 10000000);
-    expect(goals.single.dueDate, isNull);
+    final g = goals!.single;
+    expect(
+      (g.name, g.originalTargetAmount, g.currency),
+      ('Mua xe', 10000000, 'VND'),
+    );
     final accounts = await tester.runAsync(() => db.select(db.accounts).get());
-    final account = accounts!.firstWhere((a) => a.id == goals.single.accountId);
-    expect(account.name, 'Mua xe');
-    expect(account.initialBalance, 0);
     expect(accounts, hasLength(2));
-    // Thẻ mục tiêu: tiến độ 0.
-    expect(findPlainText('Đã có 0 ₫ / 10.000.000 ₫'), findsOneWidget);
-    expect(findPlainText('Còn thiếu 10.000.000 ₫'), findsOneWidget);
+    final wallet = accounts!.firstWhere((a) => a.id == g.accountId);
+    expect(
+      (wallet.name, wallet.currency, wallet.initialBalanceOriginal),
+      ('Mua xe', 'VND', 2000000),
+    );
+    expect(findPlainText('Đã có 2.000.000 ₫ / 10.000.000 ₫'), findsOneWidget);
+    expect(findPlainText('Còn thiếu 8.000.000 ₫'), findsOneWidget);
     await disposeApp(tester, db);
   });
 
-  testWidgets('gắn tài khoản có sẵn: tài khoản đã gắn mục tiêu khác không '
-      'được đưa ra để chọn (AC-100)', (tester) async {
+  testWidgets('đặt tên ví riêng khác tên mục tiêu (AC-149)', (tester) async {
     final db = await pumpApp(tester);
-    await _seedGoal(tester, db, name: 'Quỹ A');
-    await _insertAccount(tester, db, 'Thẻ B', 500000);
     await goTo(tester, '/savings');
     await tester.tap(find.text('Thêm mục tiêu'));
     await settle(tester);
-    await tester.enterText(find.widgetWithText(TextField, 'Tên'), 'Quỹ B');
+    await tester.enterText(
+      find.widgetWithText(TextField, 'Tên mục tiêu'),
+      'Du lịch',
+    );
+    await tester.enterText(
+      find.widgetWithText(TextField, 'Tài khoản'),
+      'Quỹ du lịch',
+    );
     await tester.enterText(
       find.widgetWithText(TextField, 'Số tiền mục tiêu'),
-      '2000000',
+      '5000000',
     );
-    await tester.tap(find.text('Tạo tài khoản mới'));
-    await settle(tester);
-    expect(find.text('Thẻ B'), findsOneWidget);
-    expect(find.text('Tiền mặt'), findsOneWidget);
-    // "Quỹ A" đã gắn mục tiêu: chỉ còn ở thẻ mục tiêu phía sau, không trong bảng.
-    expect(
-      find.descendant(
-        of: find.byType(BottomSheet),
-        matching: find.text('Quỹ A'),
-      ),
-      findsNothing,
-    );
-    await tester.tap(find.text('Thẻ B'));
-    await settle(tester);
     await tester.tap(find.text('Lưu'));
     await settle(tester);
-    final goals = await tester.runAsync(() => _goals(db).all());
-    expect(goals, hasLength(2));
-    final b = goals!.firstWhere((g) => g.name == 'Quỹ B');
+    final g = (await tester.runAsync(() => _goals(db).all()))!.single;
     final accounts = await tester.runAsync(() => db.select(db.accounts).get());
-    expect(accounts!.firstWhere((a) => a.id == b.accountId).name, 'Thẻ B');
-    expect(accounts, hasLength(3)); // không tạo thêm tài khoản
+    expect(
+      accounts!.firstWhere((a) => a.id == g.accountId).name,
+      'Quỹ du lịch',
+    );
+    expect(g.name, 'Du lịch');
     await disposeApp(tester, db);
   });
 
@@ -225,19 +230,17 @@ void main() {
       await settle(tester);
       expect(find.text('Nhập tên'), findsOneWidget);
       expect(find.text('Số tiền phải lớn hơn 0'), findsOneWidget);
-      await tester.enterText(find.widgetWithText(TextField, 'Tên'), 'a' * 60);
       final name = tester.widget<TextField>(
-        find.widgetWithText(TextField, 'Tên'),
+        find.widgetWithText(TextField, 'Tên mục tiêu'),
       );
       expect(name.maxLength, 50);
-      final goals = await tester.runAsync(() => _goals(db).all());
-      expect(goals, isEmpty);
+      expect(await tester.runAsync(() => _goals(db).all()), isEmpty);
       await disposeApp(tester, db);
     },
   );
 
   testWidgets('tiến độ: 3.000.000 / 10.000.000 → 30%, còn thiếu 7.000.000 '
-      '(AC-101)', (tester) async {
+      '(AC-150)', (tester) async {
     final db = await pumpApp(tester);
     await _seedGoal(tester, db);
     await goTo(tester, '/savings');
@@ -247,19 +250,25 @@ void main() {
     await disposeApp(tester, db);
   });
 
-  testWidgets('đạt mục tiêu hiện "Đã đạt"; rút tiền thì mất (AC-101)', (
-    tester,
-  ) async {
+  testWidgets('đủ tiền: hộp "Tiết kiệm thành công", chuyển xuống "Đã xong"; '
+      'chi bớt sau đó vẫn Đã xong (AC-153)', (tester) async {
     final db = await pumpApp(tester);
-    final (_, accountId) = await _seedGoal(
+    final (goalId, accountId) = await _seedGoal(
       tester,
       db,
       target: 5000000,
       balance: 5000000,
     );
     await goTo(tester, '/savings');
-    expect(find.text('Đã đạt'), findsOneWidget);
-    expect(find.textContaining('Còn thiếu'), findsNothing);
+    expect(find.text('Tiết kiệm thành công'), findsOneWidget);
+    expect(findPlainText('Bạn đã đủ 5.000.000 ₫ cho Du lịch.'), findsOneWidget);
+    await tester.tap(find.text('Tuyệt'));
+    await settle(tester);
+    final g = await tester.runAsync(() => _goals(db).find(goalId));
+    expect(g!.completedAt, '2026-11-03');
+    expect(find.text('Đã xong (1)'), findsOneWidget);
+    expect(find.text('Đang tiết kiệm'), findsNothing);
+    // Chi bớt từ ví: vẫn Đã xong, không chúc mừng lại.
     await insertEntry(
       tester,
       db,
@@ -268,123 +277,118 @@ void main() {
       categoryId: 1,
       accountId: accountId,
     );
-    expect(find.text('Đã đạt'), findsNothing);
-    expect(findPlainText('Còn thiếu 1.000.000 ₫'), findsOneWidget);
+    expect(find.text('Đã xong (1)'), findsOneWidget);
+    expect(find.text('Tiết kiệm thành công'), findsNothing);
     await disposeApp(tester, db);
   });
 
-  testWidgets('hạn: "Còn N ngày", "Quá hạn N ngày"; đã đạt thì không quá hạn '
-      '(AC-101)', (tester) async {
+  testWidgets('hạn: "Còn N ngày", "Quá hạn N ngày" (AC-150)', (tester) async {
     final db = await pumpApp(tester); // hôm nay 2026-11-03
     await _seedGoal(tester, db, name: 'Sắp tới', due: '2026-11-10');
     await _seedGoal(tester, db, name: 'Trễ', due: '2026-11-01');
-    await _seedGoal(
-      tester,
-      db,
-      name: 'Xong rồi',
-      due: '2026-10-01',
-      balance: 10000000,
-    );
     await goTo(tester, '/savings');
     expect(find.text('Còn 7 ngày'), findsOneWidget);
     expect(find.text('Quá hạn 2 ngày'), findsOneWidget);
-    expect(find.text('Đã đạt'), findsOneWidget);
     await disposeApp(tester, db);
   });
 
-  testWidgets('Góp tiền mở màn Chuyển tiền: Đến = tài khoản mục tiêu, Từ = '
-      'tài khoản mặc định; lưu là Transfer, thu chi không đổi (AC-102)', (
-    tester,
-  ) async {
+  testWidgets('Góp tiền: không vượt số còn thiếu, "Điền đủ" điền đúng, lưu là '
+      'chuyển tiền từ Tiền mặt (AC-152)', (tester) async {
     final db = await pumpApp(tester);
     final (_, accountId) = await _seedGoal(tester, db);
     await goTo(tester, '/savings');
-    await tester.tap(find.text('Góp tiền'));
+    await tester.tap(find.widgetWithText(FilledButton, 'Góp tiền'));
     await settle(tester);
-    expect(find.text('Chuyển tiền'), findsWidgets);
-    expect(
-      find.descendant(
-        of: find.byKey(const ValueKey('transfer-to')),
-        matching: find.text('Du lịch'),
-      ),
-      findsOneWidget,
+    expect(inSheet(find.text('Tiền mặt')), findsOneWidget);
+    await tester.enterText(
+      inSheet(find.widgetWithText(TextField, 'Số tiền')),
+      '8000000',
     );
-    expect(
-      find.descendant(
-        of: find.byKey(const ValueKey('transfer-from')),
-        matching: find.text('Tiền mặt'),
-      ),
-      findsOneWidget,
-    );
-    await typeKeys(tester, '500000');
-    await tester.tap(find.text('Lưu'));
+    await tester.tap(inSheet(find.widgetWithText(FilledButton, 'Góp tiền')));
+    await settle(tester);
+    expect(findPlainText('Chỉ cần góp thêm 7.000.000 ₫'), findsOneWidget);
+    expect(await tester.runAsync(() => db.select(db.entries).get()), isEmpty);
+    await tester.tap(inSheet(find.textContaining('Điền đủ')));
+    await settle(tester);
+    await tester.tap(inSheet(find.widgetWithText(FilledButton, 'Góp tiền')));
     await settle(tester);
 
     final rows = await tester.runAsync(() => db.select(db.entries).get());
     final t = rows!.single;
-    expect(t.type, EntryType.transfer);
-    expect(t.toAccountId, accountId);
-    expect(t.accountId, 1);
-    expect(t.amount, 500000);
-    // Quay lại màn Tiết kiệm: tiến độ tăng 500.000.
-    expect(findPlainText('Đã có 3.500.000 ₫ / 10.000.000 ₫'), findsOneWidget);
-    // Tổng thu, tổng chi của kỳ không đổi.
-    await goTo(tester, '/');
-    expect(findSemanticsLabel('Số dư: 0 ₫, Tháng 11 năm 2026'), findsOneWidget);
-    await disposeApp(tester, db);
-  });
-
-  testWidgets('Góp tiền khi tài khoản mục tiêu là tài khoản hiện đầu tiên: Từ '
-      'là tài khoản khác', (tester) async {
-    final db = await pumpApp(tester);
-    final other = await _insertAccount(tester, db, 'Thẻ', 0);
-    expect(other, 2);
-    await _insertGoal(
-      tester,
-      db,
-      name: 'Quỹ chung',
-      target: 1000000,
-      accountId: 1,
+    expect(
+      (t.type, t.accountId, t.toAccountId, t.originalAmount),
+      (EntryType.transfer, 1, accountId, 7000000),
     );
-    await goTo(tester, '/savings');
-    await tester.tap(find.text('Góp tiền'));
+    // Đủ mục tiêu → chúc mừng.
+    expect(find.text('Tiết kiệm thành công'), findsOneWidget);
+    await tester.tap(find.text('Tuyệt'));
     await settle(tester);
+    // Thu, chi của kỳ không đổi.
+    await goTo(tester, '/');
     expect(
-      find.descendant(
-        of: find.byKey(const ValueKey('transfer-from')),
-        matching: find.text('Thẻ'),
-      ),
-      findsOneWidget,
-    );
-    expect(
-      find.descendant(
-        of: find.byKey(const ValueKey('transfer-to')),
-        matching: find.text('Tiền mặt'),
-      ),
+      findSemanticsLabel('Số dư: 0 ₫, Tháng 11 năm 2026 · theo VND'),
       findsOneWidget,
     );
     await disposeApp(tester, db);
   });
 
-  testWidgets('Góp tiền khi không còn tài khoản nào khác: báo, không mở màn '
-      'Chuyển tiền', (tester) async {
+  testWidgets('Chi tiết: Rút tiền không vượt số dư; Lịch sử hiện lần rút '
+      '(AC-151, AC-152)', (tester) async {
+    final db = await pumpApp(tester);
+    final (_, accountId) = await _seedGoal(tester, db);
+    await goTo(tester, '/savings');
+    await tester.tap(find.text('Du lịch').first);
+    await settle(tester);
+    expect(find.text('Lịch sử'), findsOneWidget);
+    expect(find.text('Đã có sẵn'), findsOneWidget);
+    await tester.tap(find.widgetWithText(FilledButton, 'Rút tiền'));
+    await settle(tester);
+    await tester.enterText(
+      find.widgetWithText(TextField, 'Số tiền').last,
+      '4000000',
+    );
+    await tester.tap(find.widgetWithText(FilledButton, 'Rút tiền').last);
+    await settle(tester);
+    expect(findPlainText('Tài khoản chỉ còn 3.000.000 ₫'), findsOneWidget);
+    await tester.enterText(
+      find.widgetWithText(TextField, 'Số tiền').last,
+      '1000000',
+    );
+    await tester.tap(find.widgetWithText(FilledButton, 'Rút tiền').last);
+    await settle(tester);
+    final rows = await tester.runAsync(() => db.select(db.entries).get());
+    final t = rows!.single;
+    expect(
+      (t.accountId, t.toAccountId, t.originalAmount),
+      (accountId, 1, 1000000),
+    );
+    expect(find.text('Rút về Tiền mặt'), findsOneWidget);
+    expect(
+      findPlainText('Đã có 2.000.000 ₫ / 10.000.000 ₫ · 20%'),
+      findsOneWidget,
+    );
+    await disposeApp(tester, db);
+  });
+
+  testWidgets('Góp tiền khi không còn tài khoản nào khác: báo trong bảng', (
+    tester,
+  ) async {
     final db = await pumpApp(tester);
     await _insertGoal(tester, db, name: 'Quỹ', target: 1000, accountId: 1);
     await goTo(tester, '/savings');
-    await tester.tap(find.text('Góp tiền'));
+    await tester.tap(find.widgetWithText(FilledButton, 'Góp tiền'));
     await settle(tester);
     expect(
       find.text('Cần có thêm một tài khoản khác để góp tiền'),
       findsOneWidget,
     );
-    expect(find.text('Chuyển tiền'), findsNothing);
     await disposeApp(tester, db);
   });
 
-  testWidgets('sửa mục tiêu: tài khoản gắn không đổi được; giữ số tiền thì '
-      'giữ số chính xác (D-029)', (tester) async {
+  testWidgets('sửa mục tiêu: đổi tên mục tiêu và tên ví; giữ số tiền thì giữ '
+      'số chính xác (D-029)', (tester) async {
     final db = await pumpApp(tester);
-    final (goalId, _) = await _seedGoal(tester, db, target: 5);
+    final (goalId, accountId) = await _seedGoal(tester, db);
     await tester.runAsync(
       () =>
           (db.update(db.savingsGoals)..where((g) => g.id.equals(goalId))).write(
@@ -392,69 +396,62 @@ void main() {
           ),
     );
     await goTo(tester, '/savings');
-    await tester.tap(find.byTooltip('Sửa mục tiêu'));
+    await tester.tap(find.text('Du lịch').first);
     await settle(tester);
-    expect(find.textContaining('Tài khoản gắn không đổi được'), findsOneWidget);
+    await tester.tap(find.widgetWithText(TextButton, 'Sửa mục tiêu'));
+    await settle(tester);
     await tester.enterText(
-      find.widgetWithText(TextField, 'Tên'),
+      find.widgetWithText(TextField, 'Tên mục tiêu'),
       'Du lịch Đà Lạt',
     );
-    await tester.tap(find.text('Lưu'));
-    await settle(tester);
-    var g = await tester.runAsync(() => _goals(db).find(goalId));
-    expect(g!.name, 'Du lịch Đà Lạt');
-    expect(g.targetAmount, 5);
-    expect(
-      g.targetAmountMicro,
-      4500000,
-    ); // số tiền không đổi → giữ số chính xác
-    // Đổi số tiền thì bỏ số chính xác cũ.
-    await tester.tap(find.byTooltip('Sửa mục tiêu'));
-    await settle(tester);
     await tester.enterText(
-      find.widgetWithText(TextField, 'Số tiền mục tiêu'),
-      '20000000',
+      find.widgetWithText(TextField, 'Tài khoản'),
+      'Quỹ ĐL',
     );
     await tester.tap(find.text('Lưu'));
     await settle(tester);
-    g = await tester.runAsync(() => _goals(db).find(goalId));
-    expect(g!.targetAmount, 20000000);
-    expect(g.targetAmountMicro, isNull);
+    final g = await tester.runAsync(() => _goals(db).find(goalId));
+    expect(g!.name, 'Du lịch Đà Lạt');
+    expect(g.targetAmountMicro, 4500000);
+    final accounts = await tester.runAsync(() => db.select(db.accounts).get());
+    expect(accounts!.firstWhere((a) => a.id == accountId).name, 'Quỹ ĐL');
     await disposeApp(tester, db);
   });
 
-  testWidgets('xoá mục tiêu sau hộp xác nhận: tài khoản và khoản giữ nguyên '
-      '(AC-103)', (tester) async {
-    final db = await pumpApp(tester);
-    final (_, accountId) = await _seedGoal(tester, db);
-    await insertEntry(
-      tester,
-      db,
-      type: EntryType.income,
-      amount: 1000,
-      categoryId: 11,
-      accountId: accountId,
-    );
-    await goTo(tester, '/savings');
-    await tester.tap(find.byTooltip('Sửa mục tiêu'));
-    await settle(tester);
-    await tester.tap(find.text('Xoá mục tiêu'));
-    await settle(tester);
-    expect(find.text('Xoá mục tiêu?'), findsOneWidget);
-    // Hủy thì vẫn còn.
-    await tester.tap(find.text('Hủy'));
-    await settle(tester);
-    expect(await tester.runAsync(() => _goals(db).all()), hasLength(1));
-    await tester.tap(find.text('Xoá mục tiêu'));
-    await settle(tester);
-    await tester.tap(find.widgetWithText(FilledButton, 'Xóa'));
-    await settle(tester);
-    expect(await tester.runAsync(() => _goals(db).all()), isEmpty);
-    final accounts = await tester.runAsync(() => db.select(db.accounts).get());
-    expect(accounts!.any((a) => a.id == accountId), isTrue);
-    final entries = await tester.runAsync(() => db.select(db.entries).get());
-    expect(entries, hasLength(1));
-    expect(find.text('Đã xoá mục tiêu'), findsOneWidget);
-    await disposeApp(tester, db);
-  });
+  testWidgets(
+    'xoá mục tiêu sau hộp xác nhận: ví và khoản giữ nguyên, ở lại màn '
+    'Tiết kiệm (AC-154)',
+    (tester) async {
+      final db = await pumpApp(tester);
+      final (_, accountId) = await _seedGoal(tester, db);
+      await insertEntry(
+        tester,
+        db,
+        type: EntryType.income,
+        amount: 1000,
+        categoryId: 11,
+        accountId: accountId,
+      );
+      await goTo(tester, '/savings');
+      await tester.tap(find.text('Du lịch').first);
+      await settle(tester);
+      await tester.tap(find.widgetWithText(TextButton, 'Sửa mục tiêu'));
+      await settle(tester);
+      await tester.tap(find.text('Xoá mục tiêu'));
+      await settle(tester);
+      expect(find.text('Xoá mục tiêu?'), findsOneWidget);
+      await tester.tap(find.widgetWithText(FilledButton, 'Xóa'));
+      await settle(tester);
+      expect(await tester.runAsync(() => _goals(db).all()), isEmpty);
+      final accounts = await tester.runAsync(
+        () => db.select(db.accounts).get(),
+      );
+      expect(accounts!.any((a) => a.id == accountId), isTrue);
+      final entries = await tester.runAsync(() => db.select(db.entries).get());
+      expect(entries, hasLength(1));
+      expect(find.text('Đã xoá mục tiêu'), findsOneWidget);
+      expect(find.textContaining('Chưa có mục tiêu tiết kiệm'), findsOneWidget);
+      await disposeApp(tester, db);
+    },
+  );
 }

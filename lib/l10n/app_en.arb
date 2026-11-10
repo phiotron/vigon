@@ -680,5 +680,27 @@
   "@deadlineDebtBorrowed": {"placeholders": {"person": {"type": "String"}, "amount": {"type": "String"}, "when": {"type": "String"}}},
   "deadlineGoal": "Goal {goal}: {amount} to go, {when}",
   "@deadlineGoal": {"placeholders": {"goal": {"type": "String"}, "amount": {"type": "String"}, "when": {"type": "String"}}},
-  "debtPayRest": "Pay the rest"
+  "debtPayRest": "Pay the rest",
+
+  "mainFirstNote": "in {currency}",
+  "@mainFirstNote": {"placeholders": {"currency": {"type": "String"}}},
+  "homeEmptyTitle": "Start with your first expense",
+  "homeEmptyBody": "Tap a category on the ring, or tap −. It takes three taps.",
+
+  "fromEmailRef": "From MB email · reference ending {ref}",
+  "@fromEmailRef": {"placeholders": {"ref": {"type": "String"}}},
+  "setTime": "Set time",
+  "mbLinked": "From MB email",
+  "savingsWallet": "Savings wallet",
+  "totalInMain": "Total in {currency}",
+  "@totalInMain": {"placeholders": {"currency": {"type": "String"}}},
+  "accountCurrencyLabel": "Account currency",
+  "youReceive": "They receive",
+
+  "queueNotCountedNote": "Not counted yet: items here join totals, charts and budgets only after you save them.",
+
+  "widgetSpentLabel": "Spent this month",
+  "widgetOfBudget": "of {budget} · {percent}",
+  "@widgetOfBudget": {"placeholders": {"budget": {"type": "String"}, "percent": {"type": "String"}}},
+  "almostOver": "Almost over"
 }

@@ -40,7 +40,10 @@ void main() {
       findsOneWidget,
     );
 
-    // Mở từ hàng ngôn ngữ cũng ra cùng bảng kéo.
+    // Mở từ hàng ngôn ngữ cũng ra cùng bảng kéo. Cài đặt dài thêm (hàng
+    // "Nhắc trước hạn", F-48) nên kéo tới đúng hàng trước khi chạm.
+    await tester.ensureVisible(languageRow);
+    await tester.pumpAndSettle();
     await tester.tap(languageRow);
     await settle(tester);
     expect(find.byType(AppearanceSheet), findsOneWidget);

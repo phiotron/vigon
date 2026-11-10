@@ -314,6 +314,9 @@ void main() {
     );
     expect(payments, isEmpty);
     expect(find.text('Đã xoá khoản nợ'), findsOneWidget);
+    // Ở lại màn Khoản nợ, không bị đẩy về màn trước (AC-158).
+    expect(find.textContaining('Chưa có khoản nợ nào'), findsOneWidget);
+    expect(find.widgetWithText(AppBar, 'Khoản nợ'), findsOneWidget);
     await disposeApp(tester, db);
   });
 
@@ -332,7 +335,7 @@ void main() {
     final accounts = await tester.runAsync(() => db.select(db.accounts).get());
     expect(accounts!.single.initialBalance, 0);
     await goTo(tester, '/');
-    expect(findSemanticsLabel('Số dư: 0 ₫, Tháng 11 năm 2026'), findsOneWidget);
+    expect(findSemanticsLabel('Số dư: 0 ₫, Tháng 11 năm 2026 · theo VND'), findsOneWidget);
     await disposeApp(tester, db);
   });
 }

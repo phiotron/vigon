@@ -46,7 +46,12 @@ class _DebtDetail extends ConsumerWidget {
       // Đã xoá (hoặc chưa nạp): không có gì để hiện.
       if (all.hasValue) {
         WidgetsBinding.instance.addPostFrameCallback((_) {
-          if (context.mounted) Navigator.maybePop(context);
+          // Chỉ đóng khi bảng này còn là route trên cùng: lúc đang chạy hoạt
+          // ảnh đóng (đã pop) mà dữ liệu biến mất thì maybePop sẽ đóng nhầm
+          // màn bên dưới (AC-158).
+          if (context.mounted && (ModalRoute.of(context)?.isCurrent ?? false)) {
+            Navigator.maybePop(context);
+          }
         });
       }
       return const SizedBox(height: 120);

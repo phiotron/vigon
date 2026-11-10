@@ -667,5 +667,23 @@
   "@deadlineDebtBorrowed": {"placeholders": {"person": {"type": "String"}, "amount": {"type": "String"}, "when": {"type": "String"}}},
   "deadlineGoal": "Mục tiêu {goal}: còn thiếu {amount}, {when}",
   "@deadlineGoal": {"placeholders": {"goal": {"type": "String"}, "amount": {"type": "String"}, "when": {"type": "String"}}},
-  "debtPayRest": "Trả hết"
+  "debtPayRest": "Trả hết",
+
+  "mainFirstNote": "theo {currency}",
+  "homeEmptyTitle": "Bắt đầu với khoản chi đầu tiên",
+  "homeEmptyBody": "Chạm một danh mục trên vòng, hoặc chạm −. Chỉ mất ba lần chạm.",
+
+  "fromEmailRef": "Từ email MB · mã tham chiếu đuôi {ref}",
+  "setTime": "Đặt giờ",
+  "mbLinked": "Từ email MB",
+  "savingsWallet": "Ví tiết kiệm",
+  "totalInMain": "Tổng theo {currency}",
+  "accountCurrencyLabel": "Tiền tệ của tài khoản",
+  "youReceive": "Bên nhận được",
+
+  "queueNotCountedNote": "Chưa được tính: khoản ở đây chỉ vào tổng, biểu đồ và ngân sách sau khi bạn lưu.",
+
+  "widgetSpentLabel": "Tháng này đã chi",
+  "widgetOfBudget": "trên {budget} · {percent}",
+  "almostOver": "Sắp vượt"
 }

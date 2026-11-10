@@ -15,18 +15,30 @@ String currencyCodeLabel(String code) {
 
 /// Chọn tiền tệ (AC-53, SCR-13, §10.1 #15): sheet toàn màn, ✕ = giữ nguyên.
 /// Trả về mã đã chọn, hoặc null nếu đóng.
-Future<String?> showCurrencyPicker(BuildContext context, String current) =>
-    showModalBottomSheet<String>(
-      context: context,
-      isScrollControlled: true,
-      useSafeArea: true,
-      builder: (context) => CurrencyPickerSheet(current: current),
-    );
+///
+/// [primaryNote]: hiện ghi chú "đổi tiền tệ không sửa số đã nhập…" — chỉ dành
+/// cho chọn **Tiền tệ chính**; chọn tiền cho một khoản/ngân sách/nợ thì không.
+Future<String?> showCurrencyPicker(
+  BuildContext context,
+  String current, {
+  bool primaryNote = false,
+}) => showModalBottomSheet<String>(
+  context: context,
+  isScrollControlled: true,
+  useSafeArea: true,
+  builder: (context) =>
+      CurrencyPickerSheet(current: current, primaryNote: primaryNote),
+);
 
 class CurrencyPickerSheet extends StatefulWidget {
-  const CurrencyPickerSheet({super.key, required this.current});
+  const CurrencyPickerSheet({
+    super.key,
+    required this.current,
+    this.primaryNote = false,
+  });
 
   final String current;
+  final bool primaryNote;
 
   @override
   State<CurrencyPickerSheet> createState() => _CurrencyPickerSheetState();
@@ -168,14 +180,15 @@ class _CurrencyPickerSheetState extends State<CurrencyPickerSheet> {
 
     // Dòng 0 là ghi chú, dòng 1 là tiền tệ đang dùng (ẩn khi đang tìm, A09);
     // danh sách dựng lười.
-    final head = showPinned ? 2 : 1;
+    final noteRows = widget.primaryNote ? 1 : 0;
+    final head = noteRows + (showPinned ? 1 : 0);
     final list = ListView.builder(
       keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
       padding: const EdgeInsets.only(bottom: VgSpace.s6),
       itemCount: head + (_shown.isEmpty ? 1 : _shown.length),
       itemBuilder: (context, i) {
-        if (i == 0) return note();
-        if (showPinned && i == 1) return pinned();
+        if (noteRows == 1 && i == 0) return note();
+        if (showPinned && i == noteRows) return pinned();
         if (_shown.isEmpty) {
           return Padding(
             padding: const EdgeInsets.only(top: 40),

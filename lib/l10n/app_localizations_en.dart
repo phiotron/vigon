@@ -2067,4 +2067,56 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get debtPayRest => 'Pay the rest';
+
+  @override
+  String mainFirstNote(String currency) {
+    return 'in $currency';
+  }
+
+  @override
+  String get homeEmptyTitle => 'Start with your first expense';
+
+  @override
+  String get homeEmptyBody =>
+      'Tap a category on the ring, or tap −. It takes three taps.';
+
+  @override
+  String fromEmailRef(String ref) {
+    return 'From MB email · reference ending $ref';
+  }
+
+  @override
+  String get setTime => 'Set time';
+
+  @override
+  String get mbLinked => 'From MB email';
+
+  @override
+  String get savingsWallet => 'Savings wallet';
+
+  @override
+  String totalInMain(String currency) {
+    return 'Total in $currency';
+  }
+
+  @override
+  String get accountCurrencyLabel => 'Account currency';
+
+  @override
+  String get youReceive => 'They receive';
+
+  @override
+  String get queueNotCountedNote =>
+      'Not counted yet: items here join totals, charts and budgets only after you save them.';
+
+  @override
+  String get widgetSpentLabel => 'Spent this month';
+
+  @override
+  String widgetOfBudget(String budget, String percent) {
+    return 'of $budget · $percent';
+  }
+
+  @override
+  String get almostOver => 'Almost over';
 }

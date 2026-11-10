@@ -191,6 +191,8 @@ final _states = <String, Future<void> Function(_Env e)>{
   },
   'SCR-17 tài khoản, mục ẩn mở': (e) async {
     await _row(e, (l) => l.accounts);
+    // Thẻ tổng đầu màn đẩy mục ẩn xuống dưới ở 200%: kéo tới rồi mới chạm.
+    await _reveal(e, e.l.archivedAccountsCount(1));
     await _tap(e, find.text(e.l.archivedAccountsCount(1)));
   },
   'SCR-18 sửa tài khoản chưa dùng': (e) async {

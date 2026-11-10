@@ -9,9 +9,15 @@ import '../../data/database.dart';
 import '../../data/money.dart';
 import '../../l10n_names.dart';
 import '../../providers.dart';
+import '../savings/savings_providers.dart';
 import '../../ui/choice_sheet.dart';
 import '../../ui/format.dart';
 import '../../ui/money_lines.dart';
+import '../../ui/status.dart';
+import '../../ui/theme.dart';
+import '../../data/exchange_rate.dart';
+import '../../data/money_sum.dart';
+import '../settings/rates_format.dart';
 import 'account_manage.dart';
 import '../categories/sheet_footer.dart';
 import '../../ui/tokens.g.dart';
@@ -37,6 +43,10 @@ class AccountsScreen extends ConsumerWidget {
     final own =
         ref.watch(accountOwnBalancesProvider).value ?? const <int, int>{};
     final large = isLargeText(context);
+    final goalOf = {
+      for (final g in ref.watch(savingsGoalsProvider).value ?? const [])
+        g.accountId: g.name,
+    };
     // Số dư: Tiền tệ chính to ở trên, số theo tiền tệ tài khoản nhỏ ở dưới
     // (D-042). Cả hai tính thẳng từ số gốc, không quy ngược (AC-148).
     Widget balance(Account a) => MoneyLines(
@@ -69,6 +79,7 @@ class AccountsScreen extends ConsumerWidget {
         // Đệm đáy để nút + không che dòng cuối.
         padding: const EdgeInsets.only(bottom: 88),
         children: [
+          const _TotalHero(),
           for (final a in accounts)
             ListTile(
               leading: SizedBox(
@@ -81,7 +92,37 @@ class AccountsScreen extends ConsumerWidget {
                 maxLines: large ? null : 1,
                 overflow: large ? null : TextOverflow.ellipsis,
               ),
-              subtitle: large ? balance(a) : null,
+              // Dòng phụ: mã tiền tệ + nhãn "Ví tiết kiệm" (D-043) / "Từ email
+              // MB" (AC-89) (mockup v4 SCR-17).
+              subtitle: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Wrap(
+                    spacing: VgSpace.s2,
+                    runSpacing: VgSpace.s1,
+                    crossAxisAlignment: WrapCrossAlignment.center,
+                    children: [
+                      Text(a.currency),
+                      if (goalOf[a.id] != null)
+                        Tooltip(
+                          message: l.savingsWalletOf(goalOf[a.id]!),
+                          child: StatusChip(
+                            label: l.savingsWallet,
+                            icon: Symbols.savings_rounded,
+                            tone: StatusTone.ok,
+                          ),
+                        ),
+                      if (a.bank != null)
+                        StatusChip(
+                          label: l.mbLinked,
+                          icon: Symbols.mail_rounded,
+                          tone: StatusTone.info,
+                        ),
+                    ],
+                  ),
+                  if (large) balance(a),
+                ],
+              ),
               trailing: large ? null : balance(a),
               onTap: () => showAccountEditor(context, account: a),
             ),
@@ -93,6 +134,84 @@ class AccountsScreen extends ConsumerWidget {
         onPressed: () => showAccountEditor(context),
         icon: const Icon(Symbols.add_rounded),
         label: Text(l.addAccount, style: VgType.labelLg),
+      ),
+    );
+  }
+}
+
+/// Thẻ "Tổng theo USD" đầu màn Tài khoản (mockup v4 SCR-17 `.ov-hero`):
+/// cộng số dư mọi tài khoản đang hiện theo từng tiền tệ gốc rồi quy đổi MỘT
+/// lần (AC-148); khi có tiền tệ khác thì ghi độ mới của tỷ giá, chạm mở Tỷ giá.
+class _TotalHero extends ConsumerWidget {
+  const _TotalHero();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l = AppLocalizations.of(context);
+    final service = ref.watch(currencyServiceProvider).value;
+    final accounts = ref.watch(accountsProvider).value;
+    final bags = ref.watch(accountBalanceBagsProvider).value;
+    if (service == null || accounts == null || bags == null) {
+      return const SizedBox.shrink();
+    }
+    final primary = service.primary;
+    final total = MoneyBag();
+    for (final a in accounts) {
+      final bag = bags[a.id];
+      if (bag != null) total.addBag(bag);
+    }
+    final amount = total.convertTo(service, primary) ?? 0;
+    final foreign = accounts.any((a) => a.currency != primary);
+    final muted = Theme.of(context).colorScheme.onSurfaceVariant;
+    String? rates;
+    if (foreign) {
+      final table = ref.watch(rateTableProvider).value ?? RateTable.fallback;
+      final used = ref.watch(usedCurrenciesProvider).value ?? const <String>{};
+      rates =
+          '${ratesSummaryLabel(l, table, used, primary, ref.watch(clockProvider)())}'
+          ' · ${l.exchangeRates}';
+    }
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(
+        VgSpace.s4,
+        VgSpace.s2,
+        VgSpace.s4,
+        VgSpace.s3,
+      ),
+      child: Material(
+        color: context.vg.surfaceContainerLow,
+        borderRadius: BorderRadius.circular(VgRadius.lg),
+        child: InkWell(
+          borderRadius: BorderRadius.circular(VgRadius.lg),
+          onTap: foreign ? () => context.push('/rates') : null,
+          child: Padding(
+            padding: const EdgeInsets.all(VgSpace.s4),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  l.totalInMain(primary),
+                  style: VgType.bodySm.copyWith(color: muted),
+                ),
+                const SizedBox(height: VgSpace.s1),
+                FittedBox(
+                  fit: BoxFit.scaleDown,
+                  alignment: AlignmentDirectional.centerStart,
+                  child: Text(
+                    money(context, primary, amount),
+                    style: VgType.amountXl.copyWith(
+                      color: Theme.of(context).colorScheme.onSurface,
+                    ),
+                  ),
+                ),
+                if (rates != null) ...[
+                  const SizedBox(height: VgSpace.s1),
+                  Text(rates, style: VgType.bodySm.copyWith(color: muted)),
+                ],
+              ],
+            ),
+          ),
+        ),
       ),
     );
   }
@@ -270,7 +389,9 @@ class _AccountEditorState extends ConsumerState<_AccountEditor> {
                       onTap: _pickCurrency,
                       borderRadius: BorderRadius.circular(8),
                       child: InputDecorator(
-                        decoration: InputDecoration(labelText: l.currency),
+                        decoration: InputDecoration(
+                          labelText: l.accountCurrencyLabel,
+                        ),
                         child: Row(
                           children: [
                             Expanded(

@@ -1,6 +1,7 @@
 import 'package:drift/drift.dart';
 
 import 'database.dart';
+import 'table_watch.dart';
 import 'money_sum.dart';
 import 'import_text.dart';
 
@@ -42,10 +43,10 @@ class AccountRepository {
       _ordered((a) => a.archived.equals(true)).watch();
 
   /// Tài khoản có khoản (đi hoặc đến) hay chuỗi định kỳ trỏ tới không (AC-45).
-  Stream<bool> watchInUse(int id) => _db
-      .customSelect('SELECT 1', readsFrom: {_db.entries, _db.recurringRules})
-      .watch()
-      .asyncMap((_) => isInUse(id));
+  Stream<bool> watchInUse(int id) => watchTables(_db, [
+    _db.entries,
+    _db.recurringRules,
+  ]).asyncMap((_) => isInUse(id));
 
   Future<bool> isInUse(int id) async {
     final inEntries =
@@ -185,10 +186,8 @@ class AccountRepository {
 
   /// Số dư mỗi tài khoản gom theo tiền tệ gốc (D-042, AC-148): dùng để tính
   /// số dư theo tiền tệ của tài khoản và theo Tiền tệ chính, không sai số.
-  Stream<Map<int, MoneyBag>> watchBalanceBags() => _db
-      .customSelect('SELECT 1', readsFrom: {_db.accounts, _db.entries})
-      .watch()
-      .asyncMap(
+  Stream<Map<int, MoneyBag>> watchBalanceBags() =>
+      watchTables(_db, [_db.accounts, _db.entries]).asyncMap(
         (_) async => balanceBags(
           await _db.select(_db.accounts).get(),
           await _db.select(_db.entries).get(),
@@ -196,10 +195,8 @@ class AccountRepository {
       );
 
   /// Số dư hiện tại mỗi tài khoản: số dư ban đầu + thu − chi + nhận − chuyển đi (AC-18, AC-19).
-  Stream<Map<int, int>> watchBalances() => _db
-      .customSelect('SELECT 1', readsFrom: {_db.accounts, _db.entries})
-      .watch()
-      .asyncMap(
+  Stream<Map<int, int>> watchBalances() =>
+      watchTables(_db, [_db.accounts, _db.entries]).asyncMap(
         (_) async => balances(
           await _db.select(_db.accounts).get(),
           await _db.select(_db.entries).get(),

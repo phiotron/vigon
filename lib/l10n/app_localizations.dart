@@ -3505,6 +3505,90 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Pay the rest'**
   String get debtPayRest;
+
+  /// No description provided for @mainFirstNote.
+  ///
+  /// In en, this message translates to:
+  /// **'in {currency}'**
+  String mainFirstNote(String currency);
+
+  /// No description provided for @homeEmptyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Start with your first expense'**
+  String get homeEmptyTitle;
+
+  /// No description provided for @homeEmptyBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap a category on the ring, or tap −. It takes three taps.'**
+  String get homeEmptyBody;
+
+  /// No description provided for @fromEmailRef.
+  ///
+  /// In en, this message translates to:
+  /// **'From MB email · reference ending {ref}'**
+  String fromEmailRef(String ref);
+
+  /// No description provided for @setTime.
+  ///
+  /// In en, this message translates to:
+  /// **'Set time'**
+  String get setTime;
+
+  /// No description provided for @mbLinked.
+  ///
+  /// In en, this message translates to:
+  /// **'From MB email'**
+  String get mbLinked;
+
+  /// No description provided for @savingsWallet.
+  ///
+  /// In en, this message translates to:
+  /// **'Savings wallet'**
+  String get savingsWallet;
+
+  /// No description provided for @totalInMain.
+  ///
+  /// In en, this message translates to:
+  /// **'Total in {currency}'**
+  String totalInMain(String currency);
+
+  /// No description provided for @accountCurrencyLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Account currency'**
+  String get accountCurrencyLabel;
+
+  /// No description provided for @youReceive.
+  ///
+  /// In en, this message translates to:
+  /// **'They receive'**
+  String get youReceive;
+
+  /// No description provided for @queueNotCountedNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Not counted yet: items here join totals, charts and budgets only after you save them.'**
+  String get queueNotCountedNote;
+
+  /// No description provided for @widgetSpentLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Spent this month'**
+  String get widgetSpentLabel;
+
+  /// No description provided for @widgetOfBudget.
+  ///
+  /// In en, this message translates to:
+  /// **'of {budget} · {percent}'**
+  String widgetOfBudget(String budget, String percent);
+
+  /// No description provided for @almostOver.
+  ///
+  /// In en, this message translates to:
+  /// **'Almost over'**
+  String get almostOver;
 }
 
 class _AppLocalizationsDelegate

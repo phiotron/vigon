@@ -290,7 +290,11 @@ class SettingsScreen extends ConsumerWidget {
     WidgetRef ref,
     String current,
   ) async {
-    final picked = await showCurrencyPicker(context, current);
+    final picked = await showCurrencyPicker(
+      context,
+      current,
+      primaryNote: true,
+    );
     if (picked == null || picked == current || !context.mounted) return;
     final settings = ref.read(settingsRepositoryProvider);
     final db = ref.read(databaseProvider);

@@ -1,6 +1,7 @@
 import 'package:drift/drift.dart';
 
 import 'database.dart';
+import 'table_watch.dart';
 
 /// Lần trả vượt số còn lại (AC-105).
 class DebtOverpaymentException implements Exception {
@@ -53,10 +54,8 @@ class DebtRepository {
   final AppDatabase _db;
 
   /// Mọi khoản nợ (mới nhất trước) kèm lần trả.
-  Stream<List<DebtView>> watchAll() => _db
-      .customSelect('SELECT 1', readsFrom: {_db.debts, _db.debtPayments})
-      .watch()
-      .asyncMap((_) => all());
+  Stream<List<DebtView>> watchAll() =>
+      watchTables(_db, [_db.debts, _db.debtPayments]).asyncMap((_) => all());
 
   Future<List<DebtView>> all() async {
     final debts =

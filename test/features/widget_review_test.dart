@@ -140,7 +140,13 @@ void main() {
       final db = memoryDatabase();
       await addExpense(tester, db, 1000, '2026-10-20'); // kỳ 15/10 - 14/11
       await addExpense(tester, db, 200, '2026-11-03');
-      await tester.runAsync(() => SettingsRepository(db).setMonthStartDay(15));
+      await tester.runAsync(() async {
+        final settings = SettingsRepository(db);
+        await settings.setMonthStartDay(15);
+        // Khoản ghi bằng VND; Tiền tệ chính cũng VND (như pumpApp) để tổng
+        // không bị quy sang USD (D-042).
+        await settings.ensureCurrency(defaultCode: 'VND');
+      });
       final container = ProviderContainer(
         overrides: [
           databaseProvider.overrideWithValue(db),

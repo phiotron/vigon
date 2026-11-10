@@ -25,8 +25,9 @@ abstract final class LegalActions {
     required String url,
   }) async {
     if (url.isNotEmpty && await _open(Uri.parse(url))) return;
-    if (context.mounted)
+    if (context.mounted) {
       await Navigator.of(context).push(LegalScreen.route(doc));
+    }
   }
 
   static Future<void> openPrivacyPolicy(

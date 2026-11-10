@@ -19,6 +19,7 @@ import '../../ui/category_grid.dart';
 import '../../ui/choice_sheet.dart';
 import '../../ui/format.dart';
 import '../../ui/messenger.dart';
+import '../../ui/status.dart';
 import '../../ui/theme.dart';
 import '../import_queue/import_queue_actions.dart';
 import '../import_queue/import_queue_providers.dart';
@@ -593,12 +594,33 @@ class _EntryEditorScreenState extends ConsumerState<EntryEditorScreen> {
                                       Symbols.account_balance_wallet_rounded,
                                       size: 18,
                                     ),
-                                    label: Text(accountLabel(l, account)),
+                                    // Tài khoản khác Tiền tệ chính ghi kèm mã
+                                    // tiền tệ (mockup v4 SCR-05 foreign).
+                                    label: Text(
+                                      account.currency == primary
+                                          ? accountLabel(l, account)
+                                          : '${accountLabel(l, account)} · '
+                                                '${account.currency}',
+                                    ),
                                     onPressed: () => _pickAccount(pickable),
                                   ),
                               ],
                             ),
                           ),
+                          // Khoản lưu/ghép từ email MB: dải nguồn (mockup v4
+                          // SCR-06 from-email); mọi thứ vẫn sửa được.
+                          if (_original case final o?
+                              when o.source == EntrySource.emailMb ||
+                                  o.referenceNumber != null)
+                            InfoBanner(
+                              icon: Symbols.mail_rounded,
+                              text: switch (o.referenceNumber) {
+                                final r? when r.length >= 4 => l.fromEmailRef(
+                                  r.substring(r.length - 4),
+                                ),
+                                _ => l.mbLinked,
+                              },
+                            ),
                           // "Chọn thứ" (F-45): ngày của khoản đầu tiên — có
                           // thể không phải hôm nay (D-040).
                           if (_repeat?.isPickDays == true)
