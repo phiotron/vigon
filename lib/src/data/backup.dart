@@ -25,7 +25,7 @@ String _checksum(Object tables) =>
     sha256.convert(utf8.encode(jsonEncode(tables))).toString();
 
 /// Cài đặt "theo máy", không đi theo file sao lưu: công tắc hiện số tiền trên
-/// widget (AC-64) và công tắc nhắc ghi chép (AC-61). Hai việc này phải do người
+/// widget (AC-64) và công tắc nhắc ghi sổ (AC-61). Hai việc này phải do người
 /// dùng bật trên chính máy này (có lời cảnh báo, có xin quyền), nên khi xuất
 /// không ghi vào file và khi khôi phục không áp từ file (kể cả file cũ 1.0/1.1
 /// còn chứa chúng); khôi phục xong cả hai về tắt. Giờ nhắc vẫn đi theo file.

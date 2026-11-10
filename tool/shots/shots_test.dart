@@ -497,15 +497,18 @@ Future<void> _tapText(_Ctx c, String text) async {
 }
 
 /// Cuộn danh sách chính tới [text] rồi đặt nó ở [alignment] (0 = mép trên).
+///
+/// Bám `.first` để chịu được chữ trùng: tiêu đề nhóm "Giới thiệu" trùng chữ với
+/// dòng mở màn (2026-11-10).
 Future<void> _reveal(_Ctx c, String text, {double alignment = 0.5}) async {
-  final f = find.text(text);
+  final f = find.text(text).first;
   await c.t.scrollUntilVisible(
     f,
     300,
     scrollable: find.byType(Scrollable).first,
   );
   await c.t.pumpAndSettle();
-  await Scrollable.ensureVisible(c.t.element(f.first), alignment: alignment);
+  await Scrollable.ensureVisible(c.t.element(f), alignment: alignment);
   await settle(c.t);
 }
 
@@ -645,7 +648,7 @@ Future<void> _reminderTap(
 }) async {
   c.reminder.permission = !deny;
   await _openSettings(c);
-  final label = _l(c, 'Daily reminder', 'Nhắc ghi chép hằng ngày');
+  final label = _l(c, 'Daily reminder', 'Nhắc ghi sổ hằng ngày');
   await _reveal(c, label);
   await _tapText(c, label);
   if (cont) {
@@ -730,7 +733,7 @@ final _p1 = <_Shot>[
   // SCR-13 Tiền tệ.
   for (final n in ['default', 'vi'])
     _Shot('13_settings~currency__$n', (c) async {
-      await _settingsRow(c, _l(c, 'Currency', 'Tiền tệ'));
+      await _settingsRow(c, _l(c, 'Main currency', 'Tiền tệ chính'));
     }, settings: true),
   for (final (n, q) in [('searching', 'dol'), ('no-match', 'zzz')])
     _Shot('13_settings~currency__$n', (c) async {
@@ -848,7 +851,7 @@ final _p1 = <_Shot>[
     );
     await c.t.pumpAndSettle();
   }),
-  // SCR-30 Nhắc ghi chép.
+  // SCR-30 Nhắc ghi sổ.
   for (final n in ['explain', 'vi'])
     _Shot('30_settings~reminder__$n', (c) => _reminderTap(c)),
   for (final n in ['denied', 'denied-vi'])
@@ -950,7 +953,9 @@ final _p2 = <_Shot>[
   _Shot('P2_9.1_about', (c) async {
     await _openSettings(c);
     await _reveal(c, 'Giới thiệu');
-    await _tapText(c, 'Giới thiệu');
+    // Tiêu đề nhóm trùng chữ với dòng mở màn → bấm dòng (mục cuối).
+    await c.t.tap(find.text('Giới thiệu').last);
+    await settle(c.t);
   }),
   _Shot('P2_2.1_home_empty', _none, data: _Data.empty),
 ];

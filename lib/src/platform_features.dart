@@ -7,7 +7,7 @@ import 'package:flutter/foundation.dart';
 /// - widget màn hình chính (F-26): Android AppWidget; iOS WidgetKit + App Group;
 /// - che nội dung ở màn đa nhiệm (F-22): Android `FLAG_SECURE`; iOS lớp phủ
 ///   khi app rời trạng thái hoạt động (không chặn được chụp màn hình).
-/// Nhắc ghi chép (F-25) chạy trên cả hai nền tảng. Nền tảng khác: ẩn mục.
+/// Nhắc ghi sổ (F-25) chạy trên cả hai nền tảng. Nền tảng khác: ẩn mục.
 ///
 /// Đọc [defaultTargetPlatform] mỗi lần gọi để test đổi được bằng
 /// `debugDefaultTargetPlatformOverride`.

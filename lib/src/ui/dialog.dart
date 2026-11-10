@@ -11,7 +11,7 @@ enum VgDialogTone {
   /// `error`: xác nhận xóa, cảnh báo (mặc định, như 1.4, 8.9).
   danger,
 
-  /// `ink-muted`: hộp thoại thường (khôi phục, nhắc ghi chép).
+  /// `ink-muted`: hộp thoại thường (khôi phục, nhắc ghi sổ).
   neutral,
 }
 

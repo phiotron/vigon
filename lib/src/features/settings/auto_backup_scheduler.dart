@@ -6,7 +6,7 @@ import 'package:timezone/timezone.dart' as tz;
 import '../../data/backup_schedule.dart';
 import '../reminder/reminder_scheduler.dart';
 
-/// Mã thông báo "Đến giờ sao lưu" (iOS). Khác mã nhắc ghi chép
+/// Mã thông báo "Đến giờ sao lưu" (iOS). Khác mã nhắc ghi sổ
 /// [reminderNotificationId] để hai lịch không đè nhau (F-25, D-026).
 const autoBackupNotificationId = 1002;
 
@@ -101,7 +101,7 @@ class AndroidAutoBackupScheduler implements AutoBackupScheduler {
 /// iOS: iOS không cho app đã đóng tự chạy đúng giờ, nên đúng giờ đã chọn hiện
 /// một thông báo cục bộ lặp hằng ngày; chạm vào (hay mở app bất kỳ lúc nào sau
 /// giờ đó) thì đường bù sao lưu chạy (D-026). Dùng chung plugin
-/// `flutter_local_notifications` với nhắc ghi chép: plugin được khởi tạo MỘT lần
+/// `flutter_local_notifications` với nhắc ghi sổ: plugin được khởi tạo MỘT lần
 /// ở `reminderReadyProvider` (khởi tạo lại sẽ thay hàm nhận chạm), nên lớp này
 /// không gọi `initialize`.
 class IosAutoBackupScheduler implements AutoBackupScheduler {

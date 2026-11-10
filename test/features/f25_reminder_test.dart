@@ -86,11 +86,11 @@ void main() {
       expect(fake.permissionRequests, 0);
       await openSettings(tester);
       await scrollToReminder(tester);
-      expect(find.text('Nhắc ghi chép'), findsOneWidget);
+      expect(find.text('Nhắc ghi sổ'), findsOneWidget);
       expect(
         tester
             .widget<SettingsSwitchRow>(
-              find.widgetWithText(SettingsSwitchRow, 'Nhắc ghi chép hằng ngày'),
+              find.widgetWithText(SettingsSwitchRow, 'Nhắc ghi sổ hằng ngày'),
             )
             .value,
         isFalse,
@@ -123,14 +123,14 @@ void main() {
         );
         await openSettings(tester);
         await scrollToReminder(tester);
-        await tester.ensureVisible(find.text('Nhắc ghi chép hằng ngày'));
+        await tester.ensureVisible(find.text('Nhắc ghi sổ hằng ngày'));
         await tester.pump();
-        await tester.tap(find.text('Nhắc ghi chép hằng ngày'));
+        await tester.tap(find.text('Nhắc ghi sổ hằng ngày'));
         await settle(tester);
         expect(
           find.text(
-            'Ví Gọn sẽ gửi một thông báo mỗi ngày vào giờ bạn chọn để nhắc ghi '
-            'khoản. Thông báo không chứa số liệu.',
+            'Ví Gọn sẽ gửi một thông báo mỗi ngày vào giờ bạn chọn để nhắc bạn '
+            'ghi lại chi tiêu. Thông báo không chứa số liệu.',
           ),
           findsOneWidget,
         );
@@ -148,9 +148,9 @@ void main() {
           isFalse,
         );
 
-        await tester.ensureVisible(find.text('Nhắc ghi chép hằng ngày'));
+        await tester.ensureVisible(find.text('Nhắc ghi sổ hằng ngày'));
         await tester.pump();
-        await tester.tap(find.text('Nhắc ghi chép hằng ngày'));
+        await tester.tap(find.text('Nhắc ghi sổ hằng ngày'));
         await settle(tester);
         await tester.tap(find.text('Tiếp tục'));
         await settle(tester);
@@ -164,9 +164,9 @@ void main() {
         expect(fake.scheduled.single.body, 'Hôm nay bạn đã ghi chi tiêu chưa?');
 
         final cancelsBefore = fake.cancels;
-        await tester.ensureVisible(find.text('Nhắc ghi chép hằng ngày'));
+        await tester.ensureVisible(find.text('Nhắc ghi sổ hằng ngày'));
         await tester.pump();
-        await tester.tap(find.text('Nhắc ghi chép hằng ngày'));
+        await tester.tap(find.text('Nhắc ghi sổ hằng ngày'));
         await settle(tester);
         expect(fake.cancels, cancelsBefore + 1);
         expect(fake.log.last, 'cancel');
@@ -190,9 +190,9 @@ void main() {
         );
         await openSettings(tester);
         await scrollToReminder(tester);
-        await tester.ensureVisible(find.text('Nhắc ghi chép hằng ngày'));
+        await tester.ensureVisible(find.text('Nhắc ghi sổ hằng ngày'));
         await tester.pump();
-        await tester.tap(find.text('Nhắc ghi chép hằng ngày'));
+        await tester.tap(find.text('Nhắc ghi sổ hằng ngày'));
         await settle(tester);
         await tester.tap(find.text('Tiếp tục'));
         await settle(tester);
@@ -203,7 +203,7 @@ void main() {
               .widget<SettingsSwitchRow>(
                 find.widgetWithText(
                   SettingsSwitchRow,
-                  'Nhắc ghi chép hằng ngày',
+                  'Nhắc ghi sổ hằng ngày',
                 ),
               )
               .value,

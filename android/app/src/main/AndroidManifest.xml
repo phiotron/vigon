@@ -4,7 +4,7 @@
          D-031: và đọc email biên lai qua IMAP/TLS (993) tới Gmail/Yahoo/iCloud khi người dùng thêm
          hộp thư. Không gửi dữ liệu người dùng cho nhà phát triển, không SDK, không analytics. -->
     <uses-permission android:name="android.permission.INTERNET"/>
-    <!-- F-25 nhắc ghi chép: hai quyền này. Không báo thức chính xác. -->
+    <!-- F-25 nhắc ghi sổ: hai quyền này. Không báo thức chính xác. -->
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
     <!-- Plugin thông báo tự thêm VIBRATE; app không rung nên gỡ để khỏi thêm quyền ngoài danh sách. -->

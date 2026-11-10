@@ -8,8 +8,8 @@ import 'package:vigon/src/data/database.dart';
 import 'package:vigon/src/data/period.dart';
 import 'package:vigon/src/data/pin_service.dart';
 import 'package:vigon/src/data/settings_repository.dart';
-
 import 'package:vigon/src/providers.dart';
+import 'package:vigon/src/ui/settings_rows.dart';
 
 import '../helpers.dart';
 
@@ -141,14 +141,16 @@ void main() {
     final db = await pumpApp(tester);
     await tester.tap(find.byTooltip('Cài đặt'));
     await settle(tester);
+    // Nhóm "Giới thiệu" có tiêu đề trùng chữ với dòng mở màn (2026-11-10).
+    final aboutRow = find.widgetWithText(SettingsNavRow, 'Giới thiệu');
     await tester.dragUntilVisible(
-      find.text('Giới thiệu'),
+      aboutRow,
       find.byType(ListView).first,
       const Offset(0, -300),
     );
-    await tester.ensureVisible(find.text('Giới thiệu'));
+    await tester.ensureVisible(aboutRow);
     await settle(tester);
-    await tester.tap(find.text('Giới thiệu'));
+    await tester.tap(aboutRow);
     await settle(tester);
     expect(find.text('Phiên bản 1.0.0 (1)'), findsOneWidget);
     expect(find.text('Chính sách quyền riêng tư'), findsOneWidget);

@@ -5,6 +5,7 @@ import 'package:material_symbols_icons/symbols.dart';
 
 import '../../../l10n/app_localizations.dart';
 import '../../platform_features.dart';
+import '../../data/exchange_rate.dart';
 import '../../data/rate_repository.dart';
 import '../../providers.dart';
 import '../../ui/choice_segments.dart';
@@ -14,20 +15,25 @@ import '../../ui/settings_rows.dart';
 import '../../ui/tokens.g.dart';
 import '../import_queue/import_queue_providers.dart';
 import '../lock/app_lock.dart';
+import 'appearance_sheet.dart';
 import 'auto_backup_section.dart';
 import 'budget_dialog.dart';
 import 'currency_picker.dart';
 import 'data_actions.dart';
 import 'email_import_screen.dart';
+import 'rates_format.dart';
 import 'reminder_section.dart';
 import 'secure_window.dart';
 import 'settings_lead.dart';
 import 'widget_section.dart';
 
 /// Cài đặt (SCR-12, iOS SCR-33; CHANGELOG P2 5.1–5.5): nhóm là thẻ
-/// `surface-container-low`, tiêu đề nhóm màu `primary`; nhóm không tiêu đề giữ
-/// không tiêu đề (A18). Thứ tự: Giao diện · Ngôn ngữ · {Danh mục, Tài khoản} ·
-/// {Ngân sách … Tháng bắt đầu} · Bảo mật · Nhắc ghi chép · Dữ liệu · Xóa ·
+/// `surface-container-low`, tiêu đề nhóm màu `primary`; mọi nhóm đều có tiêu
+/// đề. Thứ tự (2026-11-10): Danh mục & tài khoản · Kế hoạch (ngân sách, định
+/// kỳ, tiết kiệm, nợ) · Tiền tệ & kỳ (tiền tệ chính, tỷ giá, ngày đầu tuần,
+/// tháng bắt đầu) · Nhập tự động (email ngân hàng, khoản chờ chọn danh mục) ·
+/// Bảo mật · Nhắc ghi sổ · Dữ liệu (kết thúc bằng Xóa toàn bộ dữ liệu) ·
+/// Giao diện & ngôn ngữ (một nhóm, hai hàng cùng mở bảng kéo — D-038) ·
 /// Giới thiệu. Mục chỉ có khi nền tảng hỗ trợ (D-022) đọc cờ trong
 /// `platform_features.dart`.
 class SettingsScreen extends ConsumerWidget {
@@ -46,44 +52,49 @@ class SettingsScreen extends ConsumerWidget {
     final pinEnabled = ref.watch(pinEnabledProvider).value ?? false;
     final scheme = Theme.of(context).colorScheme;
     final queueCount = ref.watch(importQueueCountProvider).value ?? 0;
+    final now = ref.watch(clockProvider)();
 
     const cardGap = SizedBox(height: SettingsCard.gap);
+
+    // Ba hàng sao lưu tay + hàng xóa dùng chung cho cả hai nền tảng: trên
+    // Android hàng xóa nối vào cuối thẻ Sao lưu tự động, trên iOS đứng cuối
+    // thẻ Dữ liệu (không có sao lưu tự động).
+    final backupRow = SettingsNavRow(
+      icon: Symbols.upload_file_rounded,
+      title: l.backup,
+      value: l.backupNote,
+      chevron: false,
+      onTap: () => exportBackupFile(context, ref),
+    );
+    final restoreRow = SettingsNavRow(
+      icon: Symbols.settings_backup_restore_rounded,
+      title: l.restore,
+      chevron: false,
+      onTap: () => restoreFromFile(context, ref),
+    );
+    final csvRow = SettingsNavRow(
+      icon: Symbols.table_view_rounded,
+      title: l.exportCsv,
+      // Định dạng CSV theo ngôn ngữ app (F-18).
+      value: l.localeName == 'vi' ? l.csvFormatVi : l.csvFormatEn,
+      chevron: false,
+      onTap: () => exportCsvFile(context, ref),
+    );
+    final deleteRow = SettingsNavRow(
+      icon: Symbols.delete_forever_rounded,
+      title: l.deleteAll,
+      danger: true,
+      onTap: () => deleteEverything(context, ref),
+    );
 
     return Scaffold(
       appBar: AppBar(title: Text(l.settings)),
       body: ListView(
         padding: const EdgeInsets.only(bottom: VgSpace.s6),
         children: [
-          SettingsGroupTitle(l.theme, first: true),
-          SettingsCard(
-            children: [
-              SettingsSegmentRow(
-                segments: ChoiceSegments<ThemeMode>(
-                  options: [
-                    (ThemeMode.system, l.themeSystem),
-                    (ThemeMode.light, l.themeLight),
-                    (ThemeMode.dark, l.themeDark),
-                  ],
-                  selected: themeMode,
-                  onChanged: repo.setThemeMode,
-                ),
-              ),
-            ],
-          ),
-          SettingsGroupTitle(l.language),
-          SettingsCard(
-            children: [
-              SettingsSegmentRow(
-                segments: ChoiceSegments<String>(
-                  options: [('en', 'English'), ('vi', 'Tiếng Việt')],
-                  selected: localeCode.isEmpty ? 'en' : localeCode,
-                  onChanged: repo.setLocaleCode,
-                ),
-              ),
-            ],
-          ),
-          // Nhóm không tiêu đề (A18): cách nhóm trên 24.
-          const SizedBox(height: VgSpace.s6),
+          // Nhóm đầu (A24): danh mục & tài khoản — thứ hay sửa nhất, đứng
+          // trên cùng như A001; nhóm đầu không có lề trên.
+          SettingsGroupTitle(l.categoriesAccountsSection, first: true),
           SettingsCard(
             children: [
               SettingsNavRow(
@@ -98,11 +109,11 @@ class SettingsScreen extends ConsumerWidget {
               ),
             ],
           ),
-          cardGap,
+          SettingsGroupTitle(l.planSection),
           SettingsCard(
             children: [
               SettingsNavRow(
-                icon: Symbols.savings_rounded,
+                icon: Symbols.payments_rounded,
                 title: l.budget,
                 value: budget == null
                     ? l.budgetNotSet
@@ -115,14 +126,30 @@ class SettingsScreen extends ConsumerWidget {
                 onTap: () => context.push('/recurring'),
               ),
               SettingsNavRow(
+                icon: Symbols.savings_rounded,
+                title: l.savings,
+                onTap: () => context.push('/savings'),
+              ),
+              SettingsNavRow(
+                icon: Symbols.handshake_rounded,
+                title: l.debts,
+                onTap: () => context.push('/debts'),
+              ),
+            ],
+          ),
+          SettingsGroupTitle(l.currencyPeriodSection),
+          SettingsCard(
+            children: [
+              SettingsNavRow(
                 icon: Symbols.currency_exchange_rounded,
                 title: l.primaryCurrency,
                 value: currencyCodeLabel(currency),
                 onTap: () => _pickCurrency(context, ref, currency),
               ),
               SettingsNavRow(
-                icon: Symbols.currency_exchange_rounded,
+                icon: Symbols.refresh_rounded,
                 title: l.exchangeRates,
+                value: _ratesSummary(ref, l, now, currency),
                 onTap: () => context.push('/rates'),
               ),
               // Ngày đầu tuần: hai nút chọn một thay cho chạm để đổi (§10.1 #4).
@@ -147,27 +174,18 @@ class SettingsScreen extends ConsumerWidget {
               ),
             ],
           ),
-          cardGap,
-          // 2.0: Tiết kiệm, Khoản nợ, Hàng đợi (điểm vào tạm; vị trí cuối cùng
-          // theo mockup phiên #4).
+          // Nhập tự động: nguồn nhập từ email ngân hàng và các khoản email còn
+          // chờ chọn danh mục dùng chung một thẻ.
+          SettingsGroupTitle(l.emailImportGroup),
           SettingsCard(
             children: [
-              SettingsNavRow(
-                icon: Symbols.savings_rounded,
-                title: l.savings,
-                onTap: () => context.push('/savings'),
-              ),
-              SettingsNavRow(
-                icon: Symbols.handshake_rounded,
-                title: l.debts,
-                onTap: () => context.push('/debts'),
-              ),
+              const EmailImportRow(),
               SettingsNavRow(
                 icon: Symbols.inbox_rounded,
-                title: l.importQueue,
+                title: l.importQueueRow,
                 value: queueCount == 0
                     ? l.importQueueNone
-                    : l.importQueueCount(queueCount),
+                    : l.importQueueRowCount(queueCount),
                 onTap: () => context.push('/import-queue'),
               ),
             ],
@@ -200,8 +218,8 @@ class SettingsScreen extends ConsumerWidget {
             ],
           ),
           const ReminderSection(),
-          // F-28: Nhập từ email ngân hàng (hộp thư IMAP).
-          const EmailImportEntry(),
+          // Nhóm Dữ liệu: sao lưu tay, CSV, sao lưu tự động (Android) và dòng
+          // nguy hiểm luôn nằm cuối nhóm.
           SettingsGroupTitle(l.dataSection),
           Padding(
             padding: const EdgeInsets.fromLTRB(
@@ -215,44 +233,38 @@ class SettingsScreen extends ConsumerWidget {
               style: VgType.bodySm.copyWith(color: scheme.onSurfaceVariant),
             ),
           ),
+          if (supportsAutoBackup) ...[
+            SettingsCard(children: [backupRow, restoreRow, csvRow]),
+            cardGap,
+            AutoBackupSection(extraRows: [deleteRow]),
+          ] else
+            SettingsCard(
+              children: [backupRow, restoreRow, csvRow, deleteRow],
+            ),
+          SettingsGroupTitle(l.appearanceLanguage),
           SettingsCard(
             children: [
               SettingsNavRow(
-                icon: Symbols.upload_file_rounded,
-                title: l.backup,
-                value: l.backupNote,
-                chevron: false,
-                onTap: () => exportBackupFile(context, ref),
+                icon: Symbols.palette_rounded,
+                title: l.theme,
+                value: switch (themeMode) {
+                  ThemeMode.system => l.themeSystem,
+                  ThemeMode.light => l.themeLight,
+                  ThemeMode.dark => l.themeDark,
+                },
+                valueInline: true,
+                onTap: () => showAppearanceSheet(context),
               ),
               SettingsNavRow(
-                icon: Symbols.settings_backup_restore_rounded,
-                title: l.restore,
-                chevron: false,
-                onTap: () => restoreFromFile(context, ref),
-              ),
-              SettingsNavRow(
-                icon: Symbols.table_view_rounded,
-                title: l.exportCsv,
-                // Định dạng CSV theo ngôn ngữ app (F-18).
-                value: l.localeName == 'vi' ? l.csvFormatVi : l.csvFormatEn,
-                chevron: false,
-                onTap: () => exportCsvFile(context, ref),
+                icon: Symbols.translate_rounded,
+                title: l.language,
+                value: localeCode == 'vi' ? 'Tiếng Việt' : 'English',
+                valueInline: true,
+                onTap: () => showAppearanceSheet(context),
               ),
             ],
           ),
-          if (supportsAutoBackup) ...[cardGap, const AutoBackupSection()],
-          cardGap,
-          SettingsCard(
-            children: [
-              SettingsNavRow(
-                icon: Symbols.delete_forever_rounded,
-                title: l.deleteAll,
-                danger: true,
-                onTap: () => deleteEverything(context, ref),
-              ),
-            ],
-          ),
-          cardGap,
+          SettingsGroupTitle(l.about),
           SettingsCard(
             children: [
               SettingsNavRow(
@@ -265,6 +277,18 @@ class SettingsScreen extends ConsumerWidget {
         ],
       ),
     );
+  }
+
+  /// "Tự động · hôm qua" · "Có sẵn" · "Bạn đặt tay" như A001.
+  String _ratesSummary(
+    WidgetRef ref,
+    AppLocalizations l,
+    DateTime now,
+    String primary,
+  ) {
+    final table = ref.watch(rateTableProvider).value ?? RateTable.fallback;
+    final used = ref.watch(usedCurrenciesProvider).value ?? const <String>{};
+    return ratesSummaryLabel(l, table, used, primary, now);
   }
 
   /// Chọn Tiền tệ chính (D-037): chỉ đổi cách cộng/hiển thị, không ghi đè số

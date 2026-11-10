@@ -31,10 +31,22 @@ class AppLocalizationsVi extends AppLocalizations {
   String get language => 'Ngôn ngữ';
 
   @override
-  String get reminderSection => 'Nhắc ghi chép';
+  String get appearanceLanguage => 'Giao diện & ngôn ngữ';
 
   @override
-  String get reminderSwitch => 'Nhắc ghi chép hằng ngày';
+  String get categoriesAccountsSection => 'Danh mục & tài khoản';
+
+  @override
+  String get planSection => 'Kế hoạch';
+
+  @override
+  String get currencyPeriodSection => 'Tiền tệ & kỳ';
+
+  @override
+  String get reminderSection => 'Nhắc ghi sổ';
+
+  @override
+  String get reminderSwitch => 'Nhắc ghi sổ hằng ngày';
 
   @override
   String get reminderSwitchNote =>
@@ -44,11 +56,11 @@ class AppLocalizationsVi extends AppLocalizations {
   String get reminderTime => 'Giờ nhắc';
 
   @override
-  String get reminderExplainTitle => 'Bật nhắc ghi chép?';
+  String get reminderExplainTitle => 'Bật nhắc ghi sổ?';
 
   @override
   String get reminderExplainBody =>
-      'Ví Gọn sẽ gửi một thông báo mỗi ngày vào giờ bạn chọn để nhắc ghi khoản. Thông báo không chứa số liệu.';
+      'Ví Gọn sẽ gửi một thông báo mỗi ngày vào giờ bạn chọn để nhắc bạn ghi lại chi tiêu. Thông báo không chứa số liệu.';
 
   @override
   String get reminderContinue => 'Tiếp tục';
@@ -61,7 +73,7 @@ class AppLocalizationsVi extends AppLocalizations {
   String get reminderOpenSettings => 'Mở cài đặt';
 
   @override
-  String get reminderChannelName => 'Nhắc ghi chép';
+  String get reminderChannelName => 'Nhắc ghi sổ';
 
   @override
   String get reminderChannelDescription => 'Nhắc ghi chi tiêu mỗi ngày';
@@ -202,6 +214,9 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get save => 'Lưu';
+
+  @override
+  String get done => 'Xong';
 
   @override
   String get delete => 'Xóa';
@@ -847,6 +862,99 @@ class AppLocalizationsVi extends AppLocalizations {
   }
 
   @override
+  String ratesSummaryAuto(String ago) {
+    return 'Tự động · $ago';
+  }
+
+  @override
+  String get ratesSummaryBuiltIn => 'Có sẵn';
+
+  @override
+  String get ratesSummaryManual => 'Bạn đặt tay';
+
+  @override
+  String ratesIntro(String currency) {
+    return 'Số dư và tổng quy về $currency. Tỷ giá tự cập nhật mỗi ngày khi có mạng; bạn có thể tự đặt để ghi đè.';
+  }
+
+  @override
+  String ratesAuto(String ago) {
+    return 'Tự động · cập nhật $ago';
+  }
+
+  @override
+  String ratesAutoOffline(String ago) {
+    return 'Ngoại tuyến · tỷ giá từ $ago';
+  }
+
+  @override
+  String get ratesBuiltIn => 'Tự động · tỷ giá ước tính có sẵn';
+
+  @override
+  String get ratesManual => 'Bạn đặt tay';
+
+  @override
+  String ratesPairLabel(String from, String rate, String to) {
+    return '1 $from bằng $rate $to';
+  }
+
+  @override
+  String get ratesAgoToday => 'hôm nay';
+
+  @override
+  String get ratesAgoYesterday => 'hôm qua';
+
+  @override
+  String ratesAgoDays(int count) {
+    return '$count ngày trước';
+  }
+
+  @override
+  String get ratesOfflineTitle => 'Bạn đang ngoại tuyến';
+
+  @override
+  String get ratesOfflineBody =>
+      'Đang dùng tỷ giá gần nhất. Sẽ cập nhật khi có mạng trở lại.';
+
+  @override
+  String get ratesListedNote =>
+      'Chỉ hiện các loại tiền mà dữ liệu của bạn đang dùng.';
+
+  @override
+  String ratesNoneUsed(String currency) {
+    return 'Mọi số liệu của bạn đều tính bằng $currency, không cần quy đổi.';
+  }
+
+  @override
+  String ratesLinkFailed(String url) {
+    return 'Không mở được. Bạn có thể tự mở $url.';
+  }
+
+  @override
+  String get rateUseAuto => 'Dùng tỷ giá tự động';
+
+  @override
+  String rateAutoValue(String rate, String ago) {
+    return '$rate · cập nhật $ago';
+  }
+
+  @override
+  String rateAutoValueBuiltIn(String rate) {
+    return '$rate · tỷ giá ước tính có sẵn';
+  }
+
+  @override
+  String rateYours(String from) {
+    return 'Tỷ giá của bạn · 1 $from =';
+  }
+
+  @override
+  String get rateSave => 'Lưu tỷ giá này';
+
+  @override
+  String get rateRestoreAuto => 'Khôi phục tự động';
+
+  @override
   String rateMissing(String from, String to) {
     return 'Không có tỷ giá từ $from sang $to. Số tiền này không vào tổng.';
   }
@@ -858,11 +966,11 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get restoreSwitchesNote =>
-      'Nhắc ghi chép hằng ngày và số tiền trên widget sẽ tắt. Bạn có thể bật lại trong Cài đặt.';
+      'Nhắc ghi sổ hằng ngày và số tiền trên widget sẽ tắt. Bạn có thể bật lại trong Cài đặt.';
 
   @override
   String get restoreSwitchesNoteIos =>
-      'Nhắc ghi chép hằng ngày sẽ tắt. Bạn có thể bật lại trong Cài đặt.';
+      'Nhắc ghi sổ hằng ngày sẽ tắt. Bạn có thể bật lại trong Cài đặt.';
 
   @override
   String archivedAccountsCount(int count) {
@@ -1455,6 +1563,19 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get importQueue => 'Hàng đợi';
+
+  @override
+  String get importQueueRow => 'Khoản chờ chọn danh mục';
+
+  @override
+  String importQueueRowCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count khoản chờ',
+    );
+    return '$_temp0';
+  }
 
   @override
   String importQueueCount(int count) {

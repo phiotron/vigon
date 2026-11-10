@@ -1,6 +1,6 @@
 // D10 (D-026): lịch sao lưu theo giờ chọn — Android qua kênh
 // `vigon/backup_schedule` (báo thức nền), iOS thông báo cục bộ hằng ngày khác
-// mã nhắc ghi chép; provider đồng bộ đặt/hủy lịch theo cấu hình; phía Kotlin và
+// mã nhắc ghi sổ; provider đồng bộ đặt/hủy lịch theo cấu hình; phía Kotlin và
 // manifest đúng hợp đồng (không quyền báo thức chính xác, đặt lại lịch).
 import 'dart:io';
 
@@ -119,7 +119,7 @@ void main() {
     });
 
     test(
-      'mã 1002 (khác nhắc ghi chép 1001), lặp theo giờ, có payload',
+      'mã 1002 (khác nhắc ghi sổ 1001), lặp theo giờ, có payload',
       () async {
         expect(autoBackupNotificationId, isNot(reminderNotificationId));
         final s = IosAutoBackupScheduler();

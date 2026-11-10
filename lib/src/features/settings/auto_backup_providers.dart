@@ -57,7 +57,7 @@ final autoBackupScheduleSyncProvider = Provider<void>((ref) {
   final state = ref.watch(autoBackupStateProvider);
   final localeCode = ref.watch(localeCodeProvider);
   final scheduler = ref.watch(autoBackupSchedulerProvider);
-  // iOS dùng chung plugin thông báo với nhắc ghi chép: chờ nó khởi tạo xong.
+  // iOS dùng chung plugin thông báo với nhắc ghi sổ: chờ nó khởi tạo xong.
   final ready = scheduler.usesNotification
       ? ref.watch(reminderReadyProvider).hasValue
       : true;

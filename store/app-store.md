@@ -3,7 +3,7 @@
 Bản nháp để dán vào App Store Connect ở phiên điều phối #3. Người dùng duyệt tên và nội dung trước khi nộp.
 Nội dung phải khớp với Play (`store/listing.md`) và với code; không hứa điều code không làm. Viết 2026-11-04; cập nhật 2026-11-05
 sau khi gộp bản 1.2 với giao diện/iOS (D-019): thêm tính năng 1.1/1.2 **có trên iPhone** (tìm kiếm, ẩn tài khoản, ngân sách theo
-danh mục, đủ tiền tệ ISO, nhắc ghi chép hằng ngày, đặt mật khẩu cho file sao lưu). ~~Widget, sao lưu tự động, che nội dung chỉ có
+danh mục, đủ tiền tệ ISO, nhắc ghi sổ hằng ngày, đặt mật khẩu cho file sao lưu). ~~Widget, sao lưu tự động, che nội dung chỉ có
 trên Android~~ → **thay bằng D-022 (2026-11-05): iOS có đủ widget màn hình chính, sao lưu tự động vào thư mục chọn trong app
 Tệp, che nội dung ở màn chuyển app** — đã đưa vào mô tả, What's New, Review Notes, App Privacy và quy cách ảnh (phiên con D6).
 Chỉ **icon đơn sắc (F-23)** vẫn chỉ Android → không nhắc. Không nhắc nền tảng khác trong metadata (App Review 2.3.1, 2.3.10).
@@ -18,7 +18,7 @@ UserDefaults `CA92.1` + `1C8F.1` — thêm ở D4 cho bookmark thư mục và Ap
 không khoá `NS…UsageDescription`, không `UIFileSharingEnabled`; icon `AppIcon` đủ cỡ, bản 1024×1024 RGB không alpha (PLAN-001).
 Widget extension `VigonWidgetExtension` (`com.phiotron.vigon.VigonWidget`, min **iOS 16.0**, App Group `group.com.phiotron.vigon`) có
 `PrivacyInfo.xcprivacy` riêng (không tracking, không thu thập; UserDefaults `1C8F.1`) — D4, commit `6ed915c` (kiểm lại 2026-11-05).
-Tính năng theo nền tảng (`lib/src/platform_features.dart`, D-022 thay phần iOS của D-019): iOS **có** nhắc ghi chép (thông báo cục bộ,
+Tính năng theo nền tảng (`lib/src/platform_features.dart`, D-022 thay phần iOS của D-019): iOS **có** nhắc ghi sổ (thông báo cục bộ,
 xin quyền khi bật), mật khẩu file sao lưu, tìm kiếm, ẩn tài khoản, ngân sách theo danh mục, tiền tệ ISO, **widget, sao lưu
 tự động, che nội dung ở màn chuyển app**; iOS **không có** icon đơn sắc. Nếu `ios/` hoặc danh sách này đổi, sửa lại "Mô tả", "Ảnh chụp",
 "Export compliance", "App Privacy".
@@ -168,7 +168,7 @@ DỄ DÙNG
 Miễn phí. Không mua trong app.
 ```
 
-- **What's New** (dùng cho TestFlight / bản sau): `Bản đầu tiên: ghi khoản nhanh, tìm kiếm, biểu đồ theo danh mục, tài khoản và chuyển tiền, khoản định kỳ, ngân sách tháng và theo danh mục, nhắc ghi chép hằng ngày, widget, sao lưu có mật khẩu và sao lưu tự động, xuất CSV, khóa PIN.`
+- **What's New** (dùng cho TestFlight / bản sau): `Bản đầu tiên: ghi khoản nhanh, tìm kiếm, biểu đồ theo danh mục, tài khoản và chuyển tiền, khoản định kỳ, ngân sách tháng và theo danh mục, nhắc ghi sổ hằng ngày, widget, sao lưu có mật khẩu và sao lưu tự động, xuất CSV, khóa PIN.`
 
 Điểm khác bản Play có chủ đích: "VoiceOver" thay "TalkBack"; ~~iOS không có khái niệm "quyền Internet" nên viết "không kết nối Internet"~~
 (D-025: cả hai bản nay cùng viết "chỉ dùng mạng để tải bảng tỉ giá công khai khi đổi tiền tệ");
@@ -219,7 +219,7 @@ Location" của D8 lần 1, commit `18075d3`). Cùng lý do với Data safety �
   - Không SDK bên thứ ba thu dữ liệu: các gói dùng (`drift`/SQLite, `flutter_secure_storage`, `share_plus`, `file_picker`,
     `path_provider`, `package_info_plus`, `url_launcher`, `fl_chart`, `crypto`, `cryptography`, `flutter_local_notifications`,
     `timezone`, `flutter_timezone`, `material_symbols_icons`) chỉ chạy trên máy (SBOM `docs/sbom/vigon.cdx.json`).
-  - Nhắc ghi chép (bản 1.2) là thông báo cục bộ do iOS lên lịch trên máy, không qua máy chủ, không push (APNs), không chứa số liệu.
+  - Nhắc ghi sổ (bản 1.2) là thông báo cục bộ do iOS lên lịch trên máy, không qua máy chủ, không push (APNs), không chứa số liệu.
   - File sao lưu/CSV chỉ rời máy khi người dùng tự chọn đích trong share sheet; nhà phát triển không nhận.
   - DB của app được loại khỏi sao lưu iCloud/máy tính (D-021), nên dữ liệu không rời máy qua đường sao lưu của iOS. (Kể cả khi có,
     sao lưu iCloud do Apple và người dùng kiểm soát, nhà phát triển không truy cập → cũng không tính là "thu thập".)

@@ -40,7 +40,7 @@ Ví Gọn giúp bạn ghi chép thu chi hằng ngày thật nhanh và biết ti�
 • Ngân sách tháng có thanh tiến độ và cảnh báo khi vượt, thêm ngân sách riêng cho từng danh mục nếu muốn.
 • Đủ các loại tiền tệ theo chuẩn ISO, có ô tìm. Đổi tiền tệ thì mọi số tiền được quy đổi theo tỉ giá tải về (hoặc tỉ giá bạn tự nhập).
 
-**Nhắc ghi chép**
+**Nhắc ghi sổ**
 • Tùy chọn, mặc định tắt: mỗi ngày một thông báo vào giờ bạn chọn, tạo ngay trên máy và không chứa số liệu. App chỉ xin quyền thông báo khi bạn bật tính năng này.
 
 **Riêng tư**
@@ -107,10 +107,10 @@ Theo D-022 (2026-11-05, thay phần iOS của D-019) widget, sao lưu tự độ
 che nội dung — Android chặn chụp màn hình + ẩn ảnh xem trước; iPhone chỉ che ở màn chuyển app, không chặn chụp màn hình;
 sao lưu tự động (D-026, 2026-11-06) — Android tự chạy nền đúng giờ chọn kể cả khi app đóng; iPhone hiện thông báo đúng giờ, chạm hoặc mở app thì sao lưu (iPhone không cho app đóng tự chạy), thư mục chọn trong app Tệp; cả hai bù khi lỡ giờ, tối đa mỗi ngày một lần khi dữ liệu đổi;
 bản App Store cần iOS 16.0 trở lên (D-024). Chỉ **icon đơn sắc** (F-23) là của riêng Android.
-Nhắc ghi chép, mật khẩu file sao lưu, tìm kiếm, ẩn tài khoản, ngân sách theo danh mục, đủ tiền tệ ISO cũng có ở cả hai.
+Nhắc ghi sổ, mật khẩu file sao lưu, tìm kiếm, ẩn tài khoản, ngân sách theo danh mục, đủ tiền tệ ISO cũng có ở cả hai.
 
 ## Ghi chú phát hành (Play "Release notes", ≤ 500 ký tự mỗi ngôn ngữ)
-- vi (231): `Bản đầu tiên: ghi khoản nhanh, tìm kiếm, biểu đồ theo danh mục, tài khoản và chuyển tiền, khoản định kỳ, ngân sách tháng và theo danh mục, nhắc ghi chép hằng ngày, widget, sao lưu có mật khẩu và sao lưu tự động, xuất CSV, khóa PIN.`
+- vi (231): `Bản đầu tiên: ghi khoản nhanh, tìm kiếm, biểu đồ theo danh mục, tài khoản và chuyển tiền, khoản định kỳ, ngân sách tháng và theo danh mục, nhắc ghi sổ hằng ngày, widget, sao lưu có mật khẩu và sao lưu tự động, xuất CSV, khóa PIN.`
 - en (227): `First release: quick entry, search, category chart, accounts and transfers, recurring records, monthly and per-category budgets, daily reminder, home screen widget, password-protected and automatic backup, CSV export, PIN lock.`
 - Bản closed test: dùng cùng câu, thêm dòng "Bản thử — góp ý giúp mình qua nút Gửi phản hồi trên trang Play." (`store/closed-test-plan.md`).
 
@@ -170,8 +170,8 @@ ExchangeRate-API: `apps/A001-subnest/store/forms/google-play.md` mục 6).
   khoá không rời máy.
 - Đây là đánh giá theo định nghĩa của Play; đọc lại hướng dẫn Data safety ngày điền.
 - Quyền của app (đúng `AndroidManifest.xml` và manifest đã gộp của bản release trong `build/app/intermediates/merged_manifests/release/`, kiểm lại 2026-11-05 sau D-025): **3 quyền** —
-  `INTERNET` (D-025, quyền thường, tự cấp khi cài; chỉ để tải bảng tỉ giá khi người dùng đổi tiền tệ) và 2 quyền chỉ phục vụ Nhắc ghi chép:
-  `POST_NOTIFICATIONS` — quyền chạy (runtime) trên Android 13+, **chỉ xin sau lời giải thích khi người dùng bật** Nhắc ghi chép; từ chối thì app vẫn dùng bình thường.
+  `INTERNET` (D-025, quyền thường, tự cấp khi cài; chỉ để tải bảng tỉ giá khi người dùng đổi tiền tệ) và 2 quyền chỉ phục vụ Nhắc ghi sổ:
+  `POST_NOTIFICATIONS` — quyền chạy (runtime) trên Android 13+, **chỉ xin sau lời giải thích khi người dùng bật** Nhắc ghi sổ; từ chối thì app vẫn dùng bình thường.
   `RECEIVE_BOOT_COMPLETED` — quyền thường, **Android tự cấp khi cài, không hộp thoại**; chỉ để đặt lại lịch nhắc sau khi khởi động lại máy, không đọc dữ liệu nào. (Bản nháp trước ghi "đều tùy chọn" là sai với quyền này.)
   Ngoài ra chỉ có quyền nội bộ `com.phiotron.vigon.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION` (AndroidX tự thêm). Không `ACCESS_NETWORK_STATE`, không `SCHEDULE_EXACT_ALARM`, không quyền bộ nhớ (thư mục sao lưu chọn qua Storage Access Framework). Plugin thông báo tự thêm `VIBRATE`, manifest đã gỡ (`tools:node="remove"`). Trang Play sẽ liệt kê các quyền này (Internet hiện dưới nhóm "Khác"/"Network") — khớp mô tả.
 - Widget: số tiền trên widget chỉ nằm trong bộ nhớ riêng của app và màn hình chờ, mặc định không hiện, luôn ẩn khi khóa PIN bật.

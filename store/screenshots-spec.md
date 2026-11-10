@@ -33,7 +33,7 @@ che nội dung → ảnh 8 widget dùng cho cả hai; ảnh "chữ cỡ lớn" t
 |---|---|---|---|---|
 | 1 | Màn chính, giao diện sáng | Kỳ "Tháng 11/2026", biểu đồ vòng đủ 8 danh mục, thanh ngân sách ~87% | Biết tiền đi đâu | See where your money goes |
 | 2 | Nhập khoản | Loại Chi, bàn phím đang có phép tính `45.000+30.000`, danh mục Ăn uống đang chọn, nút Lưu thấy rõ | Ghi một khoản trong 3 chạm | Log it in three taps |
-| 3 | Cài đặt, nhóm Bảo mật + Dữ liệu | Thấy "Khóa bằng mã PIN", "Nhắc ghi chép" (Android: bật, 20:00; iPhone trên simulator CI có thể để tắt vì không chạm được hộp thoại quyền), "Xuất bản sao lưu", "Xuất CSV", "Che nội dung khi chuyển app", "Sao lưu tự động" (cả hai nền tảng, D-022; dòng chú thích dưới công tắc khác nhau theo nền tảng — chụp đúng chữ thật) | Dữ liệu chỉ ở trên máy bạn | Your data stays on your phone |
+| 3 | Cài đặt, các nhóm Bảo mật → Nhắc ghi sổ → Dữ liệu | Thấy "Khóa bằng mã PIN", "Nhắc ghi sổ hằng ngày" (Android: bật, 20:00; iPhone trên simulator CI có thể để tắt vì không chạm được hộp thoại quyền), "Xuất bản sao lưu", "Xuất CSV", "Che nội dung khi chuyển app", "Sao lưu tự động" (cả hai nền tảng, D-022; dòng chú thích dưới công tắc khác nhau theo nền tảng — chụp đúng chữ thật) | Dữ liệu chỉ ở trên máy bạn | Your data stays on your phone |
 | 4 | Các khoản | Gom theo danh mục, có phần trăm, ≥ 6 dòng; dòng Ăn uống có thanh hạn mức danh mục và chữ "Vượt 420.000" (F-20) | Ngân sách cho từng danh mục | A budget for every category |
 | 5 | Khoản định kỳ | 3 chuỗi: Tiền nhà (tháng), Internet (tháng), Học phí (tháng) | Khoản định kỳ tự ghi | Recurring bills, added for you |
 | 6 | Tài khoản + chuyển tiền | 3 tài khoản: Tiền mặt, Ngân hàng, Thẻ tín dụng; có 1 khoản chuyển | Nhiều ví, chuyển qua lại | Cash, bank and card in one place |
@@ -82,7 +82,7 @@ Tài khoản: Tiền mặt 2.150.000 · Ngân hàng 14.870.000 · Thẻ tín d�
 Total spent 2,604.75 · balance 1,595.25 · monthly budget **3,000.00** (~87%). Accounts: Cash, Bank, Credit card; one transfer.
 Nhập khoản ảnh 2 (en): `12.50+8.75`, category Food.
 
-Cài đặt cho ảnh: Nhắc ghi chép bật lúc 20:00 trên Android (trên iPhone chỉ bật nếu cấp được quyền thông báo, không thì để tắt); khoá PIN **tắt** khi chụp ảnh 8 (để widget hiện số), bật lại cũng được cho ảnh 3.
+Cài đặt cho ảnh: Nhắc ghi sổ bật lúc 20:00 trên Android (trên iPhone chỉ bật nếu cấp được quyền thông báo, không thì để tắt); khoá PIN **tắt** khi chụp ảnh 8 (để widget hiện số), bật lại cũng được cho ảnh 3.
 Kiểm trước khi chụp: không thông báo, không tên người thật, không email, giờ trên thanh trạng thái 9:41, pin đầy, sóng đầy.
 
 ## 4. Cách chụp (vì máy làm việc là Windows, không có iPhone)

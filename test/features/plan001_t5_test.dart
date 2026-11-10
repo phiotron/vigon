@@ -18,13 +18,18 @@ Future<void> _enterPin(WidgetTester tester, String pin) async {
 }
 
 /// Mở Cài đặt rồi kéo tới dòng [text] và bấm vào.
+///
+/// `find.text(text).last` vì nhóm "Giới thiệu" có tiêu đề trùng chữ với dòng mở
+/// màn (2026-11-10): dòng luôn nằm sau tiêu đề nhóm. Kéo thì bám finder chưa
+/// lọc (`.last` ném lỗi khi chưa có mục nào được dựng).
 Future<void> _openSetting(WidgetTester tester, String text) async {
   await tester.tap(find.byTooltip('Cài đặt'));
   await settle(tester);
   await tester.scrollUntilVisible(find.text(text), 200);
-  await tester.ensureVisible(find.text(text));
+  final row = find.text(text).last;
+  await tester.ensureVisible(row);
   await settle(tester);
-  await tester.tap(find.text(text));
+  await tester.tap(row);
   await settle(tester);
 }
 

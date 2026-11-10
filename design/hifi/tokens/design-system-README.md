@@ -15,7 +15,7 @@
 
 ## Content
 
-- Vietnamese is the default, English the second language, and both are first-class. Design in EN, then check VI on the tightest frames: VI strings run up to 2× longer ("Tất cả thời gian", "Nhắc ghi chép hằng ngày").
+- Vietnamese is the default, English the second language, and both are first-class. Design in EN, then check VI on the tightest frames: VI strings run up to 2× longer ("Tất cả thời gian", "Nhắc ghi sổ hằng ngày").
 - Write short sentences that say what will happen: "Delete all data", not "Are you sure?". The cancel button is always "Cancel" / "Hủy". No emoji, no "I", no all-caps words.
 - Money: VI `1.250.000 ₫` (non-breaking space before ₫), EN `₫1,250,000`; tabular figures; negative account balances `-₫85,000` in normal ink. Flat search lists add − / + because they mix income and expense.
 - Every new string is marked **NEW** (dotted underline in the frames) and listed with EN + VI for both `.arb` files. P1 adds 12 keys; the full list is in `design/hifi/index.html`.

@@ -10,7 +10,7 @@ import '../../ui/messenger.dart';
 import '../../ui/settings_rows.dart';
 import '../reminder/reminder_providers.dart';
 
-/// Nhóm "Nhắc ghi chép" trong Cài đặt (AC-61, SCR-30): tiêu đề nhóm, thẻ gồm
+/// Nhóm "Nhắc ghi sổ" trong Cài đặt (AC-61, SCR-30): tiêu đề nhóm, thẻ gồm
 /// công tắc và giờ nhắc. Giờ nhắc sửa được cả khi công tắc tắt (chỉ lưu giờ).
 class ReminderSection extends ConsumerWidget {
   const ReminderSection({super.key});

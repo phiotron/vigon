@@ -86,6 +86,14 @@ Future<void> _tap(WidgetTester tester, Finder finder) async {
   await settle(tester);
 }
 
+/// Đưa danh sách Cài đặt về đầu. Mở lại màn bằng `go('/settings')` có thể giữ
+/// vị trí cuộn cũ (đang ở cuối), còn "Tiết kiệm"/"Khoản nợ" nay nằm gần đầu màn
+/// (nhóm Kế hoạch, 2026-11-10) nên phải cuộn xuống từ trên.
+Future<void> _settingsTop(WidgetTester tester) async {
+  tester.state<ScrollableState>(find.byType(Scrollable).first).position.jumpTo(0);
+  await tester.pumpAndSettle();
+}
+
 void main() {
   testWidgets('hàng đợi trống: hiện hướng dẫn', (tester) async {
     final db = await pumpApp(tester);
@@ -443,22 +451,23 @@ void main() {
     await disposeApp(tester, db);
   });
 
-  testWidgets('Cài đặt có mục Tiết kiệm, Khoản nợ, Hàng đợi (có số mục chờ) '
-      'mở đúng màn', (tester) async {
+  testWidgets('Cài đặt có mục Tiết kiệm, Khoản nợ, Khoản chờ chọn danh mục '
+      '(có số mục chờ) mở đúng màn', (tester) async {
     final db = await pumpApp(tester);
     await goTo(tester, '/settings');
-    await tester.scrollUntilVisible(find.text('Hàng đợi'), 200);
+    await tester.scrollUntilVisible(find.text('Khoản chờ chọn danh mục'), 200);
     expect(find.text('Tiết kiệm'), findsOneWidget);
     expect(find.text('Khoản nợ'), findsOneWidget);
     expect(find.text('Không có khoản nào đang chờ'), findsOneWidget);
     await _item(tester, db);
     await _item(tester, db, ref: 'REF0002');
-    expect(find.text('2 khoản chờ chọn danh mục'), findsOneWidget);
-    await tester.scrollUntilVisible(find.text('Hàng đợi'), 200);
-    await tester.tap(find.text('Hàng đợi'));
+    expect(find.text('2 khoản chờ'), findsOneWidget);
+    await tester.scrollUntilVisible(find.text('Khoản chờ chọn danh mục'), 200);
+    await tester.tap(find.text('Khoản chờ chọn danh mục'));
     await settle(tester);
     expect(find.text(_payee), findsWidgets);
     await goTo(tester, '/settings');
+    await _settingsTop(tester);
     await tester.scrollUntilVisible(find.text('Tiết kiệm'), 200);
     await tester.ensureVisible(find.text('Tiết kiệm'));
     await settle(tester);
@@ -466,6 +475,7 @@ void main() {
     await settle(tester);
     expect(find.text('Thêm mục tiêu'), findsOneWidget);
     await goTo(tester, '/settings');
+    await _settingsTop(tester);
     await tester.scrollUntilVisible(find.text('Khoản nợ'), 200);
     await tester.ensureVisible(find.text('Khoản nợ'));
     await settle(tester);

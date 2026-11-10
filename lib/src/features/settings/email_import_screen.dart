@@ -29,32 +29,23 @@ String mailErrorText(AppLocalizations l, MailErrorKind kind) => switch (kind) {
   MailErrorKind.server => l.emailErrorServer,
 };
 
-/// Mục "Nhập từ email ngân hàng" trong Cài đặt (AC-78): nhóm "Nhập tự động",
-/// một dòng mở màn hộp thư, giá trị là số hộp thư.
-class EmailImportEntry extends ConsumerWidget {
-  const EmailImportEntry({super.key});
+/// Dòng "Nhập từ email ngân hàng" trong nhóm "Nhập tự động" của Cài đặt
+/// (AC-78): mở màn hộp thư, giá trị là số hộp thư. Nhóm và thẻ do màn Cài đặt
+/// dựng, để dòng "Khoản chờ chọn danh mục" nằm chung một thẻ.
+class EmailImportRow extends ConsumerWidget {
+  const EmailImportRow({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l = AppLocalizations.of(context);
     final count = ref.watch(mailboxesProvider).value?.length ?? 0;
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        SettingsGroupTitle(l.emailImportGroup),
-        SettingsCard(
-          children: [
-            SettingsNavRow(
-              icon: Symbols.mail_rounded,
-              title: l.emailImport,
-              value: count == 0
-                  ? l.emailImportNoMailbox
-                  : l.emailImportMailboxCount(count),
-              onTap: () => context.push(emailImportRoute),
-            ),
-          ],
-        ),
-      ],
+    return SettingsNavRow(
+      icon: Symbols.mail_rounded,
+      title: l.emailImport,
+      value: count == 0
+          ? l.emailImportNoMailbox
+          : l.emailImportMailboxCount(count),
+      onTap: () => context.push(emailImportRoute),
     );
   }
 }

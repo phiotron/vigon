@@ -140,6 +140,30 @@ abstract class AppLocalizations {
   /// **'Language'**
   String get language;
 
+  /// No description provided for @appearanceLanguage.
+  ///
+  /// In en, this message translates to:
+  /// **'Appearance & language'**
+  String get appearanceLanguage;
+
+  /// No description provided for @categoriesAccountsSection.
+  ///
+  /// In en, this message translates to:
+  /// **'Categories & accounts'**
+  String get categoriesAccountsSection;
+
+  /// No description provided for @planSection.
+  ///
+  /// In en, this message translates to:
+  /// **'Plan'**
+  String get planSection;
+
+  /// No description provided for @currencyPeriodSection.
+  ///
+  /// In en, this message translates to:
+  /// **'Currency & period'**
+  String get currencyPeriodSection;
+
   /// No description provided for @reminderSection.
   ///
   /// In en, this message translates to:
@@ -463,6 +487,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Save'**
   String get save;
+
+  /// No description provided for @done.
+  ///
+  /// In en, this message translates to:
+  /// **'Done'**
+  String get done;
 
   /// No description provided for @delete.
   ///
@@ -1616,6 +1646,144 @@ abstract class AppLocalizations {
   /// **'{account}: {amount} ≈ {converted}'**
   String ratesPreviewBalance(String account, String amount, String converted);
 
+  /// No description provided for @ratesSummaryAuto.
+  ///
+  /// In en, this message translates to:
+  /// **'Auto · {ago}'**
+  String ratesSummaryAuto(String ago);
+
+  /// No description provided for @ratesSummaryBuiltIn.
+  ///
+  /// In en, this message translates to:
+  /// **'Built-in'**
+  String get ratesSummaryBuiltIn;
+
+  /// No description provided for @ratesSummaryManual.
+  ///
+  /// In en, this message translates to:
+  /// **'Set by you'**
+  String get ratesSummaryManual;
+
+  /// No description provided for @ratesIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'Balances and totals are in {currency}. Rates update once a day when you\'re online; you can set your own to override.'**
+  String ratesIntro(String currency);
+
+  /// No description provided for @ratesAuto.
+  ///
+  /// In en, this message translates to:
+  /// **'Auto · updated {ago}'**
+  String ratesAuto(String ago);
+
+  /// No description provided for @ratesAutoOffline.
+  ///
+  /// In en, this message translates to:
+  /// **'Offline · rates from {ago}'**
+  String ratesAutoOffline(String ago);
+
+  /// No description provided for @ratesBuiltIn.
+  ///
+  /// In en, this message translates to:
+  /// **'Auto · built-in estimate'**
+  String get ratesBuiltIn;
+
+  /// No description provided for @ratesManual.
+  ///
+  /// In en, this message translates to:
+  /// **'Set by you'**
+  String get ratesManual;
+
+  /// No description provided for @ratesPairLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'1 {from} equals {rate} {to}'**
+  String ratesPairLabel(String from, String rate, String to);
+
+  /// No description provided for @ratesAgoToday.
+  ///
+  /// In en, this message translates to:
+  /// **'today'**
+  String get ratesAgoToday;
+
+  /// No description provided for @ratesAgoYesterday.
+  ///
+  /// In en, this message translates to:
+  /// **'yesterday'**
+  String get ratesAgoYesterday;
+
+  /// No description provided for @ratesAgoDays.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} days ago'**
+  String ratesAgoDays(int count);
+
+  /// No description provided for @ratesOfflineTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'re offline'**
+  String get ratesOfflineTitle;
+
+  /// No description provided for @ratesOfflineBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Using the latest rates. They\'ll update when you\'re back online.'**
+  String get ratesOfflineBody;
+
+  /// No description provided for @ratesListedNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Only currencies your data uses are shown.'**
+  String get ratesListedNote;
+
+  /// No description provided for @ratesNoneUsed.
+  ///
+  /// In en, this message translates to:
+  /// **'Everything is in {currency}, so there\'s nothing to convert.'**
+  String ratesNoneUsed(String currency);
+
+  /// No description provided for @ratesLinkFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t open it. You can visit {url} yourself.'**
+  String ratesLinkFailed(String url);
+
+  /// No description provided for @rateUseAuto.
+  ///
+  /// In en, this message translates to:
+  /// **'Use automatic rate'**
+  String get rateUseAuto;
+
+  /// No description provided for @rateAutoValue.
+  ///
+  /// In en, this message translates to:
+  /// **'{rate} · updated {ago}'**
+  String rateAutoValue(String rate, String ago);
+
+  /// No description provided for @rateAutoValueBuiltIn.
+  ///
+  /// In en, this message translates to:
+  /// **'{rate} · built-in estimate'**
+  String rateAutoValueBuiltIn(String rate);
+
+  /// No description provided for @rateYours.
+  ///
+  /// In en, this message translates to:
+  /// **'Your rate · 1 {from} ='**
+  String rateYours(String from);
+
+  /// No description provided for @rateSave.
+  ///
+  /// In en, this message translates to:
+  /// **'Save this rate'**
+  String get rateSave;
+
+  /// No description provided for @rateRestoreAuto.
+  ///
+  /// In en, this message translates to:
+  /// **'Restore automatic'**
+  String get rateRestoreAuto;
+
   /// No description provided for @rateMissing.
   ///
   /// In en, this message translates to:
@@ -2593,6 +2761,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Queue'**
   String get importQueue;
+
+  /// No description provided for @importQueueRow.
+  ///
+  /// In en, this message translates to:
+  /// **'Items awaiting a category'**
+  String get importQueueRow;
+
+  /// No description provided for @importQueueRowCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, other{{count} awaiting}}'**
+  String importQueueRowCount(int count);
 
   /// No description provided for @importQueueCount.
   ///

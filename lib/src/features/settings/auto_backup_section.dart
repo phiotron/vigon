@@ -25,8 +25,13 @@ export 'backup_password_dialogs.dart' show AutoBackupPasswordDialog;
 /// công tắc + phụ đề; bật thì dưới là thư mục, dòng trạng thái (⏱ / ✓ / dải
 /// lỗi), dòng "Lần tới" và cặp nút, rồi hàng "Giờ sao lưu" (D-026, chọn giờ
 /// như A14). Trên iOS dùng chữ riêng (D-022).
+///
+/// [extraRows] nối thêm vào cuối thẻ để màn Cài đặt đặt dòng "Xóa toàn bộ dữ
+/// liệu" làm hàng cuối của nhóm Dữ liệu.
 class AutoBackupSection extends ConsumerStatefulWidget {
-  const AutoBackupSection({super.key});
+  const AutoBackupSection({super.key, this.extraRows = const []});
+
+  final List<Widget> extraRows;
 
   @override
   ConsumerState<AutoBackupSection> createState() => _AutoBackupSectionState();
@@ -160,6 +165,7 @@ class _AutoBackupSectionState extends ConsumerState<AutoBackupSection>
             value: _timeOfDay(state.time).format(context),
             onTap: running ? null : () => pickBackupTime(context, ref),
           ),
+        ...widget.extraRows,
       ],
     );
   }

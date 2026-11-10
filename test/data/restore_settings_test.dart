@@ -11,7 +11,7 @@ import 'package:vigon/src/data/settings_repository.dart';
 import '../helpers.dart';
 
 /// Khôi phục không được mang theo công tắc "theo máy" (AC-61, AC-63, AC-64):
-/// hiện số tiền trên widget và nhắc ghi chép chỉ do người dùng bật trên máy này.
+/// hiện số tiền trên widget và nhắc ghi sổ chỉ do người dùng bật trên máy này.
 
 /// Thay bảng settings của file rồi tính lại mã băm: một file "hợp lệ" như bản
 /// 1.0/1.1 đã xuất kèm hai công tắc.

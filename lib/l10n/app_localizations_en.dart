@@ -31,6 +31,18 @@ class AppLocalizationsEn extends AppLocalizations {
   String get language => 'Language';
 
   @override
+  String get appearanceLanguage => 'Appearance & language';
+
+  @override
+  String get categoriesAccountsSection => 'Categories & accounts';
+
+  @override
+  String get planSection => 'Plan';
+
+  @override
+  String get currencyPeriodSection => 'Currency & period';
+
+  @override
   String get reminderSection => 'Reminder';
 
   @override
@@ -204,6 +216,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get save => 'Save';
+
+  @override
+  String get done => 'Done';
 
   @override
   String get delete => 'Delete';
@@ -859,6 +874,98 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String ratesSummaryAuto(String ago) {
+    return 'Auto · $ago';
+  }
+
+  @override
+  String get ratesSummaryBuiltIn => 'Built-in';
+
+  @override
+  String get ratesSummaryManual => 'Set by you';
+
+  @override
+  String ratesIntro(String currency) {
+    return 'Balances and totals are in $currency. Rates update once a day when you\'re online; you can set your own to override.';
+  }
+
+  @override
+  String ratesAuto(String ago) {
+    return 'Auto · updated $ago';
+  }
+
+  @override
+  String ratesAutoOffline(String ago) {
+    return 'Offline · rates from $ago';
+  }
+
+  @override
+  String get ratesBuiltIn => 'Auto · built-in estimate';
+
+  @override
+  String get ratesManual => 'Set by you';
+
+  @override
+  String ratesPairLabel(String from, String rate, String to) {
+    return '1 $from equals $rate $to';
+  }
+
+  @override
+  String get ratesAgoToday => 'today';
+
+  @override
+  String get ratesAgoYesterday => 'yesterday';
+
+  @override
+  String ratesAgoDays(int count) {
+    return '$count days ago';
+  }
+
+  @override
+  String get ratesOfflineTitle => 'You\'re offline';
+
+  @override
+  String get ratesOfflineBody =>
+      'Using the latest rates. They\'ll update when you\'re back online.';
+
+  @override
+  String get ratesListedNote => 'Only currencies your data uses are shown.';
+
+  @override
+  String ratesNoneUsed(String currency) {
+    return 'Everything is in $currency, so there\'s nothing to convert.';
+  }
+
+  @override
+  String ratesLinkFailed(String url) {
+    return 'Couldn\'t open it. You can visit $url yourself.';
+  }
+
+  @override
+  String get rateUseAuto => 'Use automatic rate';
+
+  @override
+  String rateAutoValue(String rate, String ago) {
+    return '$rate · updated $ago';
+  }
+
+  @override
+  String rateAutoValueBuiltIn(String rate) {
+    return '$rate · built-in estimate';
+  }
+
+  @override
+  String rateYours(String from) {
+    return 'Your rate · 1 $from =';
+  }
+
+  @override
+  String get rateSave => 'Save this rate';
+
+  @override
+  String get rateRestoreAuto => 'Restore automatic';
+
+  @override
   String rateMissing(String from, String to) {
     return 'No rate for $from to $to. This amount is left out of totals.';
   }
@@ -1473,6 +1580,19 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get importQueue => 'Queue';
+
+  @override
+  String get importQueueRow => 'Items awaiting a category';
+
+  @override
+  String importQueueRowCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count awaiting',
+    );
+    return '$_temp0';
+  }
 
   @override
   String importQueueCount(int count) {

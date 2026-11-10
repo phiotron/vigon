@@ -151,7 +151,7 @@ Future<void> restoreFromFile(BuildContext context, WidgetRef ref) async {
     iconTone: VgDialogTone.neutral,
     title: l.restore,
     body: l.restoreConfirm,
-    // Nhắc ghi chép và số tiền trên widget là cài đặt của máy, về tắt sau khi
+    // Nhắc ghi sổ và số tiền trên widget là cài đặt của máy, về tắt sau khi
     // khôi phục. iOS cũng có widget (D-022) nên dùng chung một câu.
     note: l.restoreSwitchesNote,
     action: l.confirm,

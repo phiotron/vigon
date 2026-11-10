@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Icon nhỏ thanh trạng thái / thông báo nhắc ghi chép (F-25, EXT-02, A16): lấy NGUYÊN hình của
+<!-- Icon nhỏ thanh trạng thái / thông báo nhắc ghi sổ (F-25, EXT-02, A16): lấy NGUYÊN hình của
      lớp đơn sắc launcher (ic_launcher_monochrome.xml, F-23, logo "hai thẻ xếp chồng" D-009), tô trắng
      (Android chỉ dùng kênh alpha). Khung nhìn 64 cắt sát logo trong vùng 108 của icon thích ứng
      (dịch -22) để logo lấp đầy ô 24dp. Sửa logo thì chép lại path từ file monochrome. -->

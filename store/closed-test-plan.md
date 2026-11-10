@@ -1,7 +1,7 @@
 # Closed testing trên Google Play — Ví Gọn (tài khoản cá nhân)
 
 Viết 2026-11-04. Mục đích: đủ điều kiện xin quyền **production** cho tài khoản Play **cá nhân** mới (COMPLIANCE P-09).
-Bắt đầu **càng sớm càng tốt với build hiện tại của `main`** — từ 2026-11-05 đã gộp bản 1.2 (F-01..F-26: nhắc ghi chép, widget, sao lưu tự động…) và giao diện mới PLAN-001; các build sửa lỗi/chỉnh UI sau đó đẩy tiếp vào cùng track mà không làm mất ngày đã đếm.
+Bắt đầu **càng sớm càng tốt với build hiện tại của `main`** — từ 2026-11-05 đã gộp bản 1.2 (F-01..F-26: nhắc ghi sổ, widget, sao lưu tự động…) và giao diện mới PLAN-001; các build sửa lỗi/chỉnh UI sau đó đẩy tiếp vào cùng track mà không làm mất ngày đã đếm.
 Closed test cũng là dịp **thử tay các AC [M] của bản 1.2 trên nhiều máy Android thật** (mục "Nhờ tester thử") — việc này đang chặn production (`docs/RELEASE.md`).
 
 ## Luật cần đạt (kiểm lại trong Play Console Help ngày bắt đầu — luật có thể đổi)
@@ -78,7 +78,7 @@ Nguồn tester gợi ý: người thân, đồng nghiệp, bạn bè dùng Andro
 
 ## Nhờ tester thử (tính năng cần máy thật, `docs/SPEC.md` mục 3c, `docs/TESTING.md` M-1..M-7)
 Gửi kèm tin mời hoặc tin nhắc ngày 3. Mỗi tester chọn 1–2 mục, báo lại "được / không được + đời máy + Android mấy":
-- **Nhắc ghi chép:** Cài đặt → Nhắc ghi chép → bật, chọn giờ gần (ví dụ sau 5 phút). Hộp giải thích hiện trước hộp thoại quyền? Thông báo có tới đúng giờ (sai vài phút là bình thường)? Chạm thông báo có mở màn Nhập khoản chi? Khởi động lại máy rồi hôm sau còn nhắc không?
+- **Nhắc ghi sổ:** Cài đặt → Nhắc ghi sổ → bật, chọn giờ gần (ví dụ sau 5 phút). Hộp giải thích hiện trước hộp thoại quyền? Thông báo có tới đúng giờ (sai vài phút là bình thường)? Chạm thông báo có mở màn Nhập khoản chi? Khởi động lại máy rồi hôm sau còn nhắc không?
 - **Widget:** thêm widget Ví Gọn ra màn hình chính; chạm "Chi"/"Thu" mở đúng màn? Bật "Hiện số tiền trên widget" thì số hiện; bật khoá PIN thì số biến mất?
 - **Sao lưu tự động:** bật, chọn một thư mục trong Google Drive hoặc bộ nhớ máy, đặt mật khẩu, bấm "Sao lưu ngay" → file `vigon-auto-…` có trong thư mục? Khôi phục file đó trên máy khác bằng mật khẩu?
 - **Che nội dung khi chuyển app:** bật rồi mở danh sách app gần đây — Ví Gọn có hiện màn trống, chụp màn hình bị chặn?

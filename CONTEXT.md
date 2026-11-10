@@ -136,15 +136,15 @@
 | **PIN pad** | Bàn phím PIN | Bàn phím 3×4 ở Màn khóa và màn Đặt mã. Khác Keypad. | |
 | **Forgot PIN** | Quên mã | Không có máy chủ nên không lấy lại được PIN; lối ra duy nhất là Delete all data (thêm hai bước xác nhận). | "đặt lại mật khẩu" |
 | **Privacy screen** 🤖 (code `secureWindow`) ⚠ | Che nội dung khi chuyển app | Công tắc: Android chặn chụp màn hình và hiện thẻ trống trong danh sách app gần đây (F-22). | "chế độ riêng tư", "ẩn app" |
-| **Reminder** | Nhắc ghi chép (nhắc ghi chép hằng ngày) | Thông báo cục bộ mỗi ngày vào **Reminder time** (mặc định 20:00), nội dung chung chung, **không chứa số liệu**; chạm mở Nhập khoản chi (qua Lock screen nếu bật). Android + iOS (F-25). | "push", "nhắc nhở thanh toán", "alert" |
+| **Reminder** | Nhắc ghi sổ (nhắc ghi sổ hằng ngày) | Thông báo cục bộ mỗi ngày vào **Reminder time** (mặc định 20:00), nội dung chung chung, **không chứa số liệu**; chạm mở Nhập khoản chi (qua Lock screen nếu bật). Android + iOS (F-25). Tên cũ "nhắc ghi chép" (đổi 2026-11-10). | "push", "nhắc nhở thanh toán", "alert", "nhắc ghi chép" |
 | **Reminder time** | Giờ nhắc | Giờ của Reminder, chọn bằng bộ chọn giờ hệ thống; Android là giờ xấp xỉ. | |
-| **Notification permission** | Quyền gửi thông báo | Quyền của hệ điều hành, chỉ xin khi bật Reminder và sau hộp giải thích "Bật nhắc ghi chép?". | |
+| **Notification permission** | Quyền gửi thông báo | Quyền của hệ điều hành, chỉ xin khi bật Reminder và sau hộp giải thích "Bật nhắc ghi sổ?". | |
 | **Widget** 🤖 | Widget (màn hình chính) | Widget Android 2×2 "Ví Gọn" có nút **Chi** / **Thu** mở Nhập khoản; dòng trạng thái tùy Widget amounts (F-26). | "tiện ích" trong chữ (UI giữ "widget") |
 | **Widget amounts** 🤖 | Hiện số tiền trên widget | Công tắc (mặc định tắt): khi bật VÀ PIN tắt, widget hiện "Tháng này đã chi X (/ hạn mức)"; PIN bật → "Đã khóa bằng PIN"; qua tháng mà app chưa mở → "Mở app để cập nhật". | |
 | **Deep link** | Mở thẳng màn nhập khoản | Đường vào từ Widget hoặc Reminder; app chỉ nhận đúng `/entry/new?type=expense|income`, luôn qua Lock screen. | "liên kết" chung chung |
 | **Monochrome icon** 🤖 | Biểu tượng đơn sắc | Lớp `monochrome` của icon thích ứng để Android 13+ tô màu theo hình nền; cùng logo "hai thẻ xếp chồng" (F-23, D-009). | |
 | **Theme** | Giao diện | Theo hệ thống · Sáng · Tối. | "chủ đề" trong chữ |
-| **Language** | Ngôn ngữ | Theo máy · Tiếng Việt · English. Chữ trên nút Widget theo ngôn ngữ **máy**, còn lại theo ngôn ngữ app. | |
+| **Language** | Ngôn ngữ | English (mặc định) · Tiếng Việt. Chữ trên nút Widget theo ngôn ngữ **máy**, còn lại theo ngôn ngữ app. | |
 
 ## Chỗ lệch giữa code, SPEC và thiết kế
 

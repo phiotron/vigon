@@ -10,13 +10,13 @@ Checklist xưởng dùng kèm: `D:\Mobile App\playbook\checklists\release-androi
   `.github/workflows/release-ios.yml`) nên tự tăng mỗi lần build ký — không trùng với versionCode Android, đó là bình thường.
 - Store: Google Play [x] · App Store [x] (iOS thêm vào bản 1 ngày 2026-11-04, D-001) · phân phối nội bộ [ ]
 - Android: minSdk 24 (Android 7.0), targetSdk 36 (kiểm bằng `aapt2 dump badging`, 2026-11-03). Quyền (bản 1.2): chỉ `POST_NOTIFICATIONS`
-  và `RECEIVE_BOOT_COMPLETED` cho nhắc ghi chép (D-015); từ D-025 thêm `INTERNET` chỉ để tải tỉ giá khi đổi tiền tệ (`test/manifest_test.dart`; kiểm lại bằng `aapt2 dump permissions`).
+  và `RECEIVE_BOOT_COMPLETED` cho nhắc ghi sổ (D-015); từ D-025 thêm `INTERNET` chỉ để tải tỉ giá khi đổi tiền tệ (`test/manifest_test.dart`; kiểm lại bằng `aapt2 dump permissions`).
 - iOS: min iOS 16.0 (D-024), **chỉ iPhone**, chỉ dọc, tên hiển thị `Ví Gọn`, không khoá `NS…UsageDescription`,
   `ITSAppUsesNonExemptEncryption` = **`true`** (D-020: F-21 dùng AES-256-GCM Dart thuần trên iOS; bán ở Pháp → khai báo mã hoá Pháp, mục
   "Khai báo mã hoá cho Pháp" bên dưới), DB **loại khỏi sao lưu iCloud/máy tính** (D-021, giống Android `allowBackup=false`) — cả hai đã có trong
   code (commit `8441b6a`, 2026-11-05; CHƯA thấy CI iOS xanh), `ios/Runner/PrivacyInfo.xcprivacy` (commit `9438ddd`).
   Widget (extension `VigonWidgetExtension`, App Group `group.com.phiotron.vigon`), sao lưu tự động, che nội dung có cả iOS (D-022);
-  chỉ icon đơn sắc là riêng Android; nhắc ghi chép có cả iOS (D-019). Ký bản App Store phải gồm cả extension (2 bundle id).
+  chỉ icon đơn sắc là riêng Android; nhắc ghi sổ có cả iOS (D-019). Ký bản App Store phải gồm cả extension (2 bundle id).
 - Tài khoản nhà phát triển: **cá nhân** trên cả hai store (2026-11-04) → tên người bán hiện công khai là họ tên thật; Play bắt closed test.
 
 ## Ký ứng dụng — Android

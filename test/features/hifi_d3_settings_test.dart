@@ -24,8 +24,10 @@ Future<void> _openSettings(WidgetTester tester) async {
 }
 
 /// Dựng hết danh sách Cài đặt (màn rất cao) để tìm mọi hàng.
+/// ListView dựng lười: danh sách ở 200% đã cao hơn 12.600dp, nên màn test
+/// phải đủ cao (45.000 / 3 = 15.000dp) mới dựng tới thẻ cuối.
 void _tallScreen(WidgetTester tester) {
-  tester.view.physicalSize = const Size(1080, 30000);
+  tester.view.physicalSize = const Size(1080, 45000);
 }
 
 void main() {
@@ -38,13 +40,19 @@ void main() {
       await settle(tester);
 
       expect(find.byType(SettingsCard), findsWidgets);
-      for (final t in ['Giao diện', 'Ngôn ngữ', 'Bảo mật', 'Dữ liệu']) {
+      for (final t in [
+        'Danh mục & tài khoản',
+        'Kế hoạch',
+        'Tiền tệ & kỳ',
+        'Nhập tự động',
+        'Bảo mật',
+        'Nhắc ghi sổ',
+        'Dữ liệu',
+        'Giao diện & ngôn ngữ',
+        'Giới thiệu',
+      ]) {
         expect(find.widgetWithText(SettingsGroupTitle, t), findsOneWidget);
       }
-      expect(
-        find.widgetWithText(SettingsGroupTitle, 'Nhắc ghi chép'),
-        findsOneWidget,
-      );
       // Tiền tệ chính: giá trị là phụ đề.
       expect(
         find.descendant(
@@ -177,7 +185,8 @@ void main() {
         _tallScreen(tester);
         await settle(tester);
         expect(tester.takeException(), isNull);
-        expect(find.text('Giới thiệu'), findsOneWidget);
+        // Tiêu đề nhóm và dòng mở màn Giới thiệu cùng chữ (2026-11-10).
+        expect(find.text('Giới thiệu'), findsNWidgets(2));
         await disposeApp(tester, db);
       });
     }

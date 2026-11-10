@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:material_symbols_icons/symbols.dart';
 
+import 'format.dart';
 import 'tokens.g.dart';
 
 /// Thành phần màn Cài đặt v2 (SettingsRows.html, SCR-12/33, CHANGELOG P2
@@ -44,11 +45,16 @@ class SettingsCard extends StatelessWidget {
     required this.children,
     this.dividers = true,
     this.margin = const EdgeInsets.symmetric(horizontal: VgSpace.s4),
+    this.dividerIndent = 56,
   });
 
   final List<Widget> children;
   final bool dividers;
   final EdgeInsetsGeometry margin;
+
+  /// Vạch chia thụt vào để thẳng cột chữ của hàng có icon (56). Hàng không có
+  /// icon đầu (cặp tỷ giá) dùng lề 16.
+  final double dividerIndent;
 
   /// Khoảng giữa hai thẻ liền nhau.
   static const gap = VgSpace.s3;
@@ -62,7 +68,7 @@ class SettingsCard extends StatelessWidget {
           Divider(
             height: 1,
             thickness: 1,
-            indent: 56,
+            indent: dividerIndent,
             color: scheme.outlineVariant,
           ),
         c,
@@ -87,12 +93,17 @@ class SettingsCard extends StatelessWidget {
 /// tên body-md, [value] là phụ đề body-sm màu chữ phụ (hàng cao tối thiểu 72
 /// `row-two-line`; không có phụ đề thì 56), mũi tên › khi chạm được. [danger]:
 /// icon và chữ màu `error`, không mũi tên (Xóa toàn bộ dữ liệu).
+///
+/// [valueInline]: giá trị nằm bên phải trước mũi tên (hàng một dòng 56, cách
+/// A001) thay vì làm phụ đề dưới tên — dùng cho "Giao diện → Theo hệ thống"
+/// và "Ngôn ngữ → English" (D-038).
 class SettingsNavRow extends StatelessWidget {
   const SettingsNavRow({
     super.key,
     this.icon,
     required this.title,
     this.value,
+    this.valueInline = false,
     this.onTap,
     this.danger = false,
     this.trailing,
@@ -102,6 +113,11 @@ class SettingsNavRow extends StatelessWidget {
   final IconData? icon;
   final String title;
   final String? value;
+
+  /// true: [value] căn phải, một dòng (tối đa 2 khi chữ lớn), không thành
+  /// phụ đề; hàng giữ chiều cao 56 như hàng một dòng.
+  final bool valueInline;
+
   final VoidCallback? onTap;
   final bool danger;
 
@@ -117,6 +133,10 @@ class SettingsNavRow extends StatelessWidget {
     final scheme = Theme.of(context).colorScheme;
     final ink = danger ? scheme.error : scheme.onSurface;
     final muted = danger ? scheme.error : scheme.onSurfaceVariant;
+    // Chữ ≥130%: giá trị xuống dòng dưới tên (như `ValueRow` của A001) để
+    // không bị cắt ở màn 360 dp (AC-38).
+    final inline = valueInline && value != null && !isLargeText(context);
+    final twoLine = value != null && !inline;
     final end =
         trailing ??
         (onTap != null && !danger && chevron
@@ -130,7 +150,7 @@ class SettingsNavRow extends StatelessWidget {
         onTap: onTap,
         child: ConstrainedBox(
           constraints: BoxConstraints(
-            minHeight: value != null ? VgSize.rowTwoLine : VgSize.tapKey,
+            minHeight: twoLine ? VgSize.rowTwoLine : VgSize.tapKey,
           ),
           child: Padding(
             padding: const EdgeInsets.symmetric(
@@ -149,7 +169,7 @@ class SettingsNavRow extends StatelessWidget {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Text(title, style: VgType.bodyMd.copyWith(color: ink)),
-                      if (value != null)
+                      if (twoLine)
                         Text(
                           value!,
                           style: VgType.bodySm.copyWith(
@@ -159,6 +179,24 @@ class SettingsNavRow extends StatelessWidget {
                     ],
                   ),
                 ),
+                if (valueInline && value != null) ...[
+                  const SizedBox(width: VgSpace.s2),
+                  ConstrainedBox(
+                    // Như A001: giá trị không chiếm quá nửa hàng.
+                    constraints: BoxConstraints(
+                      maxWidth: MediaQuery.sizeOf(context).width * 0.5,
+                    ),
+                    child: Text(
+                      value!,
+                      textAlign: TextAlign.end,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: VgType.bodyMd.copyWith(
+                        color: scheme.onSurfaceVariant,
+                      ),
+                    ),
+                  ),
+                ],
                 if (end != null) ...[const SizedBox(width: VgSpace.s1), end],
               ],
             ),

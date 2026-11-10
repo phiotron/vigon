@@ -245,7 +245,7 @@ class SettingsRepository {
   Future<void> setWidgetShowAmounts(bool on) =>
       on ? _write(widgetShowAmountsKey, '1') : _remove(widgetShowAmountsKey);
 
-  /// Nhắc ghi chép hằng ngày bật hay tắt (AC-61). Mặc định tắt.
+  /// Nhắc ghi sổ hằng ngày bật hay tắt (AC-61). Mặc định tắt.
   Stream<bool> watchReminderEnabled() =>
       _watch(reminderEnabledKey).map((v) => v == '1');
 

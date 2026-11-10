@@ -76,7 +76,7 @@ tz.TZDateTime nextReminderInstant(
 bool _localZoneReady = false;
 
 /// Nạp dữ liệu múi giờ và đặt `tz.local` theo múi giờ của máy (một lần). Dùng
-/// chung cho lịch nhắc ghi chép (F-25) và thông báo giờ sao lưu iOS (D-026).
+/// chung cho lịch nhắc ghi sổ (F-25) và thông báo giờ sao lưu iOS (D-026).
 Future<void> ensureLocalTimeZone() async {
   if (_localZoneReady) return;
   tzdata.initializeTimeZones();

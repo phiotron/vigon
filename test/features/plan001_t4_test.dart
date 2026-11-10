@@ -7,6 +7,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:vigon/src/data/account_repository.dart';
 import 'package:vigon/src/data/database.dart';
+import 'package:vigon/src/features/settings/appearance_sheet.dart';
+import 'package:vigon/src/ui/settings_rows.dart';
 
 import '../helpers.dart';
 
@@ -151,24 +153,39 @@ void main() {
       'lỗi (5.1, 5.2)', (tester) async {
     final db = await pumpApp(tester);
     await _open(tester, '/settings');
-    final scheme = Theme.of(tester.element(find.text('Giao diện'))).colorScheme;
-    for (final title in ['Giao diện', 'Ngôn ngữ']) {
+    final scheme = Theme.of(tester.element(find.text('Danh mục & tài khoản')))
+        .colorScheme;
+    // Màn dài hơn màn hình: cuộn tới từng tiêu đề rồi mới kiểm. Thứ tự nhóm
+    // chốt 2026-11-10 (Danh mục & tài khoản · Kế hoạch · Tiền tệ & kỳ · Nhập tự
+    // động · Bảo mật · Nhắc ghi sổ · Dữ liệu · Giao diện & ngôn ngữ · Giới
+    // thiệu).
+    for (final title in [
+      'Danh mục & tài khoản',
+      'Kế hoạch',
+      'Tiền tệ & kỳ',
+      'Nhập tự động',
+      'Bảo mật',
+      'Nhắc ghi sổ',
+      'Dữ liệu',
+      'Giao diện & ngôn ngữ',
+      'Giới thiệu',
+    ]) {
+      final groupTitle = find.widgetWithText(SettingsGroupTitle, title);
+      await tester.scrollUntilVisible(groupTitle, 200);
       expect(
-        tester.widget<Text>(find.text(title)).style?.color,
+        tester
+            .widget<Text>(
+              find.descendant(of: groupTitle, matching: find.text(title)),
+            )
+            .style
+            ?.color,
         scheme.primary,
       );
     }
-    // Bản 1.2 thêm nhóm Nhắc ghi chép, sao lưu tự động… nên màn dài hơn:
-    // cuộn tới từng tiêu đề rồi mới kiểm (sửa khi gộp nhánh 2026-11-05).
-    for (final title in ['Bảo mật', 'Dữ liệu']) {
-      await tester.scrollUntilVisible(find.text(title), 200);
-      expect(
-        tester.widget<Text>(find.text(title)).style?.color,
-        scheme.primary,
-      );
-    }
-    await tester.scrollUntilVisible(find.text('Xóa toàn bộ dữ liệu'), 200);
+    // "Xóa toàn bộ dữ liệu" là hàng cuối nhóm Dữ liệu, nằm trên vị trí đang
+    // cuộn nên kéo ngược lên.
     final danger = find.text('Xóa toàn bộ dữ liệu');
+    await tester.scrollUntilVisible(danger, -200);
     expect(
       tester.renderObject<RenderParagraph>(danger).text.style?.color,
       scheme.error,
@@ -183,8 +200,18 @@ void main() {
     addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
     final db = await pumpApp(tester);
     await _open(tester, '/settings');
-    final system = tester.getTopLeft(find.text('Theo hệ thống'));
-    final light = tester.getTopLeft(find.text('Sáng'));
+    await tester.scrollUntilVisible(find.text('Giao diện'), 300);
+    await tester.ensureVisible(find.text('Giao diện'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Giao diện'));
+    await settle(tester);
+    final sheet = find.byType(AppearanceSheet);
+    final system = tester.getTopLeft(
+      find.descendant(of: sheet, matching: find.text('Theo hệ thống')),
+    );
+    final light = tester.getTopLeft(
+      find.descendant(of: sheet, matching: find.text('Sáng')),
+    );
     expect(light.dy, greaterThan(system.dy));
     expect(tester.takeException(), isNull);
     await disposeApp(tester, db);
@@ -196,7 +223,15 @@ void main() {
     await tester.runAsync(_loadAppFont);
     final db = await pumpApp(tester);
     await _open(tester, '/settings');
-    final system = find.text('Theo hệ thống');
+    await tester.scrollUntilVisible(find.text('Giao diện'), 300);
+    await tester.ensureVisible(find.text('Giao diện'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Giao diện'));
+    await settle(tester);
+    final system = find.descendant(
+      of: find.byType(AppearanceSheet),
+      matching: find.text('Theo hệ thống'),
+    );
     expect(
       tester.getTopLeft(find.text('Sáng')).dy,
       closeTo(tester.getTopLeft(system).dy, 1),

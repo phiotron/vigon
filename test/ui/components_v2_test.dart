@@ -209,7 +209,7 @@ void main() {
       final result = await open(
         tester,
         note:
-            'Nhắc ghi chép hằng ngày sẽ tắt. Bạn có thể bật lại trong Cài đặt.',
+            'Nhắc ghi sổ hằng ngày sẽ tắt. Bạn có thể bật lại trong Cài đặt.',
       );
       final icon = tester.widget<Icon>(
         find.byIcon(Symbols.settings_backup_restore_rounded),
@@ -231,7 +231,7 @@ void main() {
           textScale: 2,
           brightness: brightness,
           body: List.filled(12, _long).join(' '),
-          note: 'Nhắc ghi chép hằng ngày sẽ tắt.',
+          note: 'Nhắc ghi sổ hằng ngày sẽ tắt.',
         );
         expect(tester.takeException(), isNull);
         final screen = tester.getRect(find.byType(Scaffold));

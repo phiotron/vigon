@@ -1,6 +1,6 @@
 // D9 (thử máy 2026-11-05): bản release thu gọn tài nguyên xóa icon thông báo
 // `ic_stat_vigon` vì nó chỉ được gọi bằng TÊN từ Dart. Plugin thông báo khởi
-// tạo lỗi (bị nuốt) nên nhắc ghi chép không bao giờ chạy trên máy thật.
+// tạo lỗi (bị nuốt) nên nhắc ghi sổ không bao giờ chạy trên máy thật.
 // Test này giữ mọi tên tài nguyên Dart gọi bằng chữ nằm trong `raw/keep.xml`.
 import 'dart:io';
 
