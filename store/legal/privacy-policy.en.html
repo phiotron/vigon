@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Vigon Privacy Policy</title>
+<style>
+:root{--bg:#ffffff;--fg:#1d2330;--muted:#5b6474;--accent:#0f766e;--line:#e3e7ee}
+@media (prefers-color-scheme:dark){:root{--bg:#11151c;--fg:#e8ecf2;--muted:#9aa4b4;--accent:#5eead4;--line:#2a313d}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.6 -apple-system,"Segoe UI",Roboto,Arial,sans-serif}
+main{max-width:720px;margin:0 auto;padding:32px 16px 64px}
+h1{font-size:1.6rem;line-height:1.25;margin:0 0 16px}
+h2{font-size:1.2rem;margin:32px 0 8px;padding-top:16px;border-top:1px solid var(--line)}
+a{color:var(--accent)}
+code{font-family:ui-monospace,Consolas,monospace;font-size:.9em}
+ul,ol{padding-left:1.4em}
+li{margin:4px 0}
+nav{font-size:.9rem;color:var(--muted);margin-bottom:24px}
+footer{margin-top:48px;font-size:.85rem;color:var(--muted)}
+</style>
+</head>
+<body>
+<main>
+<nav><a href="privacy-policy.vi.html">Tiếng Việt</a> · <a href="support.en.html">Support</a> · <a href="terms-of-use.en.html">Terms of Use</a></nav>
+<h1>Vigon Privacy Policy</h1>
+<p><strong>Last updated:</strong> 2026-11-10</p>
+<p>Vigon is a personal income-and-expense tracker for Android and iPhone, published by Phiotron. This policy explains what data the app stores, where it stores it and how you control it.</p>
+<h2>1. We do not collect your data</h2>
+<p>Vigon has no server, no user account, no advertising, no analytics, crash-reporting or tracking service from a third party. The app does not send the data you enter to the developer; the developer does not receive, view or share it.</p>
+<p>The app uses the internet for two things only, both started by you: downloading an exchange-rate table when you change currency (section 4) and reading bank receipt emails from a mailbox you add yourself (section 3). There are no other connections, no tracking code, no advertising ID and no device identifier.</p>
+<h2>2. Your data stays on your phone</h2>
+<p>What you enter — income and expenses, categories, accounts, transfers, notes, monthly and per-category budgets, recurring items, savings goals, debts, the queue of items waiting for a category, payee-based category suggestions and settings — is stored only in the app's private storage on your phone. Other apps cannot read it.</p>
+<ul><li><strong>Android:</strong> the app turns off Android's automatic backup (<code>allowBackup=false</code>), so your data is not uploaded to the cloud by the system.</li><li><strong>iPhone:</strong> the app excludes its data from iCloud backups and from computer backups of your iPhone, so your data is not uploaded to the cloud or included in device backups.</li></ul>
+<p>So on both platforms, do not rely on your phone's backup to keep Vigon data: if you reinstall the app or restore your phone from a backup, the app's data is not restored with it. To move data to another phone, export a <code>.vigon</code> backup file yourself (section 5) and choose "Restore from backup" on the new phone.</p>
+<p>If you turn on the PIN lock, the app stores only a salted hash of your PIN, never the PIN itself. On Android this value lives in secure storage protected by the Android Keystore. On iPhone it lives in the device Keychain and is not synchronised through iCloud Keychain. iOS may keep this Keychain item after you uninstall the app; when you reinstall and the app starts with empty data, it notices and removes the old PIN, so you are not locked out by a PIN from a previous install.</p>
+<p><strong>Home-screen widget (Android and iPhone).</strong> If you add the widget, it always has two buttons, "Expense" and "Income", to open the entry screen quickly. By default the widget shows no amounts. Only if you turn on "Show amounts on widget" and do not use the PIN lock does the widget show the amount spent this month (and the monthly limit if you set a budget). While the PIN lock is on, the widget always hides amounts. This data stays only in the app's private storage on the phone (on iPhone, in the shared container used only by Vigon and its own widget) and on your home screen; it is not sent anywhere and is removed when you turn the switch off or turn the PIN on. While the switch is on, anyone holding your phone can see the amount on the home screen.</p>
+<h2>3. Importing expenses from bank email (optional, off by default)</h2>
+<p>If you add a mailbox in Settings → Email import, the app signs in over IMAP with an encrypted connection (TLS, port 993) to exactly the mailbox you chose, to read bank receipt emails. This version supports only MB Bank and three email providers: Gmail, Yahoo and iCloud.</p>
+<ul><li>The app reads only messages sent from the bank's addresses; other mail is not downloaded.</li><li>The app reads only mail that arrives after you connect the mailbox, not older mail.</li><li>Mail is read in view-only mode (<code>BODY.PEEK</code>): it does not mark messages as read, edit, delete or move them.</li><li>The message body is processed on the phone to extract the date and time, amount, beneficiary, transfer description, the last four digits of the debited account and the reference number. No message content is sent to the developer or to any third party.</li><li>A parsed item <strong>is not an expense yet</strong>: it goes to the Queue for you to pick a category and confirm. Until you confirm, it is not counted in totals, charts or budgets.</li><li>You use an <strong>app password</strong> created by your email provider, not your main password. The mailbox address and the app password are stored in the phone's secure key store (Android Keystore, iPhone Keychain), never in the database, backup file, CSV or logs. The password is used only to sign in to IMAP.</li><li>Up to three mailboxes. Deleting a mailbox in the app deletes its configuration and app password from the key store; "Delete all data" deletes all of this too. You may also revoke the app password in your email account to be certain.</li><li>Android checks mail about once an hour while the app is closed; iPhone checks only when you open or return to the app. Both check as soon as you open the app.</li><li>Your email provider (Google, Yahoo, Apple) sees the IP address and sign-in time as it does for any other mail app, and handles them under its own policy. If it blocks app-password sign-in, this feature stops working and you can delete the mailbox.</li></ul>
+<h2>4. Exchange rates</h2>
+<p>When you choose another currency in Settings, the app downloads a public rate table (based on US dollars, the same for every user) from ExchangeRate-API (open.er-api.com) over an encrypted HTTPS connection and converts amounts on the phone. The request contains no amounts, no current currency and no information you entered. As with any internet connection, the rate provider sees the IP address, time and technical details of the connection, and handles them under its own policy (exchangerate-api.com). The rate table is stored on the phone for use offline; you can also enter rates manually.</p>
+<h2>5. Backup and CSV files you export yourself</h2>
+<p>When you choose "Export backup" or "Export CSV", the app creates a file in its temporary folder and opens the operating system's share sheet so you can choose where to send or keep it, for example the Files app, Google Drive or email. You decide where the file goes. You may set a password for the backup file; it is then encrypted on the phone with AES-256-GCM (the password is not stored anywhere, and if you forget it the file cannot be opened). Without a password the file is not encrypted, so keep it somewhere safe. From then on the file is governed by the service you chose. The operating system cleans the app's temporary folder.</p>
+<p>Backup files do not contain email mailboxes, app passwords or the queue of items waiting for a category.</p>
+<p>You can also turn on "Automatic backup" (off by default). When it is on, you pick a folder and set a backup password. On Android you pick the folder with the system picker and choose the backup time (default 21:00, phone time); at that time the app writes the file even when you are not using it (the system may delay it by a few minutes to save battery). On iPhone you pick a folder in the Files app, for example in iCloud Drive; because iPhone does not let a closed app run, at that time the app shows a notification on your phone, and when you tap it or open Vigon the app writes the file. If the time is missed, the app catches up when you open it again (on Android also when you leave the app). At most once a day and only when data has changed; the app keeps the two most recent automatic files. Automatic files are always encrypted, never written in plain text. The password is stored only in the phone's secure key store, never in the file, logs or database, and is not sent anywhere.</p>
+<p>Folder write access is managed by the operating system and applies only to the folder you chose. If the folder belongs to a storage service such as iCloud Drive, Google Drive or OneDrive, uploading the file to the cloud is done by Apple or that service under its own policy; Vigon does not upload it and the developer does not receive it. If the folder is only on the phone, losing the phone means losing these files. When you turn "Automatic backup" off, the app removes the password from the key store and drops access to the folder, but does not delete files already written; delete them yourself if you wish.</p>
+<h2>6. Permissions on your phone</h2>
+<p>On Android, Vigon has the internet permission to download the rate table (section 4) and read the mailboxes you added (section 3); Android grants it at install time without asking. Beyond that the app has only two permissions, both used solely for the optional "Daily reminder" (off by default) and the background mail check:</p>
+<ul><li>Notifications: the app asks only when you turn on the daily reminder, or (iPhone only) when you turn on or change the automatic backup time, always after an explanation (Android 13 and later; on iPhone it is an iOS dialog). The iPhone backup notification says only "Time to back up Vigon. Tap to back up."; if you decline, the app still backs up when you open it. Reminder notifications are created and kept on the phone, with generic wording, no amounts, and never pass through a server. If you decline, the app still works normally.</li><li>Receive boot completed (Android only): granted at install time without asking. The app uses it only to reset the reminder, automatic-backup and mail-check schedules after you restart your phone (if you turned them on); it gives the app no access to any data.</li></ul>
+<p>The app does not request location, contacts, photos, camera or microphone. Picking a restore file and a backup folder uses the operating system's pickers, which give access only to the file or folder you choose.</p>
+<h2>7. Links to other sites</h2>
+<p>Settings → About can open your browser (to read this policy, the terms of use or the support page) or your email app (to send feedback or report a security issue). The Rates screen and the mailbox setup guide link to ExchangeRate-API and to the app-password pages of Google, Yahoo and Apple. Those apps and sites operate under their own policies.</p>
+<h2>8. Data the app stores may collect</h2>
+<p>When you download the app from Google Play or the App Store, Google or Apple may collect information about the installation and app crashes under their own policies and your device settings (for example, the option to share analytics with developers on iPhone). The developer sees only aggregate, anonymous figures in Play Console and App Store Connect and cannot use them to identify you.</p>
+<h2>9. Your rights</h2>
+<p>Because data stays on your phone, you exercise every right inside the app: view and edit each entry; export all data to a backup or CSV file; delete a mailbox and its app password; delete all data (including the PIN, mailboxes and app passwords) in Settings → "Delete all data"; or uninstall the app. Uninstalling removes data on the phone, except files you exported yourself and automatic backup files in the folder you chose. On iPhone, iOS may keep the PIN Keychain item after you uninstall; the app removes it when reinstalled with new data (section 2).</p>
+<h2>10. Children</h2>
+<p>Vigon is not aimed at children and does not collect data from anyone, including children.</p>
+<h2>11. Security</h2>
+<p>Data is protected by Android's and iOS's app sandboxing, the optional PIN lock and the optional "Hide content when switching apps". The PIN lock prevents others from opening the app on your phone, but it does not encrypt data. When the hide option is on: on Android the app blocks screenshots and hides its preview in the recent-apps list; on iPhone the app covers its content when you leave the app or open the app switcher, but iPhone does not let apps block screenshots. When the option is off, the app's preview in the task switcher may show the figures on screen. Mailbox app passwords and the automatic-backup password live in the operating system's secure key store, not in the database or backup files. If you find a security vulnerability, please email the address in section 13.</p>
+<h2>12. Changes to this policy</h2>
+<p>If Vigon changes how it handles data (for example, adds a feature that sends data over the internet), we will update this policy and its date before releasing the version with the change. This is the first version of the policy.</p>
+<h2>13. Contact</h2>
+<p>Phiotron, developer of Vigon — email: phamphuongphuongnd@gmail.com</p>
+<footer>Vigon</footer>
+</main>
+</body>
+</html>

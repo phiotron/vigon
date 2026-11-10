@@ -19,9 +19,9 @@ Future<void> _enterPin(WidgetTester tester, String pin) async {
 
 /// Mở Cài đặt rồi kéo tới dòng [text] và bấm vào.
 ///
-/// `find.text(text).last` vì nhóm "Giới thiệu" có tiêu đề trùng chữ với dòng mở
-/// màn (2026-11-10): dòng luôn nằm sau tiêu đề nhóm. Kéo thì bám finder chưa
-/// lọc (`.last` ném lỗi khi chưa có mục nào được dựng).
+/// `find.text(text).last` để không bấm vào tiêu đề nhóm trùng chữ với hàng
+/// (ví dụ "Giới thiệu" ở cuối màn); kéo thì bám finder chưa lọc (`.last` ném
+/// lỗi khi chưa có mục nào được dựng).
 Future<void> _openSetting(WidgetTester tester, String text) async {
   await tester.tap(find.byTooltip('Cài đặt'));
   await settle(tester);
@@ -181,36 +181,42 @@ void main() {
     await disposeApp(tester, db);
   });
 
-  testWidgets('Giới thiệu (9.1): chưa có đường dẫn chính sách thì dòng tắt, '
-      'ghi "Đang chuẩn bị trang web"', (tester) async {
-    expect(AppInfo.privacyPolicyUrl, isEmpty, reason: 'test cho lúc chưa có');
-    final db = await pumpApp(tester);
-    await _openSetting(tester, 'Giới thiệu');
+  testWidgets('Giới thiệu (9.1–9.2, AC-41): một thẻ trong Cài đặt có phiên '
+      'bản, chính sách, điều khoản, giấy phép, đánh giá, góp ý', (tester) async {
+    expect(
+      AppInfo.privacyPolicyUrl('vi'),
+      endsWith('/vigon/privacy-policy.vi.html'),
+    );
+    expect(
+      AppInfo.privacyPolicyUrl('en'),
+      endsWith('/vigon/privacy-policy.en.html'),
+    );
+    expect(AppInfo.termsUrl('vi'), endsWith('/vigon/terms-of-use.vi.html'));
+    expect(AppInfo.termsUrl('en'), endsWith('/vigon/terms-of-use.en.html'));
 
-    expect(find.text('Ví Gọn'), findsOneWidget);
-    expect(find.byType(BackButton), findsOneWidget);
-    final policy = find.widgetWithText(ListTile, 'Chính sách quyền riêng tư');
-    expect(tester.widget<ListTile>(policy).enabled, isFalse);
-    expect(tester.widget<ListTile>(policy).onTap, isNull);
-    expect(
-      find.descendant(
-        of: policy,
-        matching: find.text('Đang chuẩn bị trang web'),
-      ),
-      findsOneWidget,
+    final db = await pumpApp(tester);
+    await tester.tap(find.byTooltip('Cài đặt'));
+    await settle(tester);
+    await tester.scrollUntilVisible(find.text('Phiên bản'), 200);
+    await tester.ensureVisible(find.text('Phiên bản'));
+    await settle(tester);
+
+    expect(find.text('1.0.0 (1)'), findsOneWidget);
+    expect(find.text('Đánh giá Ví Gọn'), findsOneWidget);
+    expect(find.text('Điều khoản sử dụng'), findsOneWidget);
+    expect(find.text('Gửi góp ý'), findsOneWidget);
+    final policy = find.widgetWithText(
+      SettingsNavRow,
+      'Chính sách quyền riêng tư',
     );
-    // Chữ dòng tắt là chữ phụ `ink-muted`, vẫn đủ tương phản.
-    final title = tester.widget<Text>(find.text('Chính sách quyền riêng tư'));
-    expect(title.style?.color, tester.element(policy).vg.inkMuted);
-    final mail = find.widgetWithText(ListTile, 'Báo lỗi bảo mật');
-    expect(tester.widget<ListTile>(mail).enabled, isTrue);
-    expect(
-      find.descendant(
-        of: mail,
-        matching: find.text('Email liên hệ: ${AppInfo.contactEmail}'),
-      ),
-      findsOneWidget,
-    );
+    expect(policy, findsOneWidget);
+    expect(tester.widget<SettingsNavRow>(policy).onTap, isNotNull);
+
+    // Mở bản nhúng bằng nút Giấy phép (không qua trình duyệt nên test chạy
+    // được cả khi máy không có ứng dụng ngoài).
+    await tester.tap(find.text('Giấy phép mã nguồn mở'));
+    await settle(tester);
+    expect(find.byType(LicensePage), findsOneWidget);
     await disposeApp(tester, db);
   });
 }

@@ -9,7 +9,6 @@ import 'package:vigon/src/data/period.dart';
 import 'package:vigon/src/data/pin_service.dart';
 import 'package:vigon/src/data/settings_repository.dart';
 import 'package:vigon/src/providers.dart';
-import 'package:vigon/src/ui/settings_rows.dart';
 
 import '../helpers.dart';
 
@@ -24,7 +23,6 @@ const _routes = [
   '/accounts',
   '/transfer',
   '/recurring',
-  '/about',
   // 2.0 (AC-126): hộp thư email (màn giải thích) và thêm hộp thư.
   '/email-import',
   '/email-import/add',
@@ -136,27 +134,30 @@ void main() {
     await disposeApp(tester, db);
   });
 
-  testWidgets('màn Giới thiệu có phiên bản, chính sách, email báo lỗi, giấy '
-      'phép nguồn mở (AC-41)', (tester) async {
+  testWidgets('nhóm Giới thiệu trong Cài đặt có phiên bản, chính sách, điều '
+      'khoản, giấy phép, góp ý, báo lỗi (AC-41)', (tester) async {
     final db = await pumpApp(tester);
     await tester.tap(find.byTooltip('Cài đặt'));
     await settle(tester);
-    // Nhóm "Giới thiệu" có tiêu đề trùng chữ với dòng mở màn (2026-11-10).
-    final aboutRow = find.widgetWithText(SettingsNavRow, 'Giới thiệu');
+    final versionRow = find.text('Phiên bản');
     await tester.dragUntilVisible(
-      aboutRow,
+      versionRow,
       find.byType(ListView).first,
       const Offset(0, -300),
     );
-    await tester.ensureVisible(aboutRow);
+    await tester.ensureVisible(versionRow);
     await settle(tester);
-    await tester.tap(aboutRow);
-    await settle(tester);
-    expect(find.text('Phiên bản 1.0.0 (1)'), findsOneWidget);
+    expect(find.text('1.0.0 (1)'), findsOneWidget);
     expect(find.text('Chính sách quyền riêng tư'), findsOneWidget);
+    expect(find.text('Điều khoản sử dụng'), findsOneWidget);
+    expect(find.text('Gửi góp ý'), findsOneWidget);
     expect(find.text('Báo lỗi bảo mật'), findsOneWidget);
     expect(find.text('Email liên hệ: ${AppInfo.contactEmail}'), findsOneWidget);
-    await tester.tap(find.text('Giấy phép nguồn mở'));
+    expect(
+      find.text('Dữ liệu chỉ lưu trên máy này. Ví Gọn không gửi dữ liệu đi đâu.'),
+      findsOneWidget,
+    );
+    await tester.tap(find.text('Giấy phép mã nguồn mở'));
     await settle(tester);
     expect(find.byType(LicensePage), findsOneWidget);
     await disposeApp(tester, db);

@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Chính sách quyền riêng tư của Ví Gọn</title>
+<style>
+:root{--bg:#ffffff;--fg:#1d2330;--muted:#5b6474;--accent:#0f766e;--line:#e3e7ee}
+@media (prefers-color-scheme:dark){:root{--bg:#11151c;--fg:#e8ecf2;--muted:#9aa4b4;--accent:#5eead4;--line:#2a313d}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.6 -apple-system,"Segoe UI",Roboto,Arial,sans-serif}
+main{max-width:720px;margin:0 auto;padding:32px 16px 64px}
+h1{font-size:1.6rem;line-height:1.25;margin:0 0 16px}
+h2{font-size:1.2rem;margin:32px 0 8px;padding-top:16px;border-top:1px solid var(--line)}
+a{color:var(--accent)}
+code{font-family:ui-monospace,Consolas,monospace;font-size:.9em}
+ul,ol{padding-left:1.4em}
+li{margin:4px 0}
+nav{font-size:.9rem;color:var(--muted);margin-bottom:24px}
+footer{margin-top:48px;font-size:.85rem;color:var(--muted)}
+</style>
+</head>
+<body>
+<main>
+<nav><a href="privacy-policy.en.html">English</a> · <a href="support.vi.html">Hỗ trợ</a> · <a href="terms-of-use.vi.html">Điều khoản sử dụng</a></nav>
+<h1>Chính sách quyền riêng tư của Ví Gọn</h1>
+<p><strong>Cập nhật lần cuối:</strong> 2026-11-10</p>
+<p>Ví Gọn là ứng dụng ghi chép thu chi cá nhân cho Android và iPhone, do Phiotron phát hành. Chính sách này giải thích ứng dụng lưu dữ liệu gì, lưu ở đâu và bạn kiểm soát chúng thế nào.</p>
+<h2>1. Chúng tôi không thu thập dữ liệu của bạn</h2>
+<p>Ví Gọn không có máy chủ, không có tài khoản người dùng, không có quảng cáo, không có công cụ phân tích, theo dõi hay báo lỗi của bên thứ ba. Ứng dụng không gửi dữ liệu bạn nhập cho nhà phát triển; nhà phát triển không nhận, không xem và không chia sẻ dữ liệu đó.</p>
+<p>Ứng dụng chỉ dùng Internet cho hai việc, cả hai đều do bạn chủ động bật hoặc chạm: tải bảng tỷ giá khi bạn đổi tiền tệ (mục 4) và đọc email biên lai ngân hàng từ hộp thư bạn tự thêm (mục 3). Không có kết nối nào khác, không có mã theo dõi, mã quảng cáo hay mã nhận diện thiết bị.</p>
+<h2>2. Dữ liệu nằm trên điện thoại của bạn</h2>
+<p>Những gì bạn nhập — khoản thu, khoản chi, danh mục, tài khoản, chuyển tiền, ghi chú, ngân sách tháng và ngân sách danh mục, khoản định kỳ, mục tiêu tiết kiệm, khoản nợ, hàng đợi khoản chờ chọn danh mục, gợi ý danh mục theo người thụ hưởng và cài đặt — chỉ được lưu trong vùng lưu trữ riêng của ứng dụng trên điện thoại. Ứng dụng khác không đọc được vùng này.</p>
+<ul><li><strong>Android:</strong> ứng dụng tắt tính năng sao lưu tự động của Android (<code>allowBackup=false</code>), nên dữ liệu không tự được đưa lên đám mây.</li><li><strong>iPhone:</strong> ứng dụng loại dữ liệu của mình khỏi bản sao lưu iCloud và bản sao lưu iPhone bằng máy tính, nên dữ liệu không được đưa lên đám mây hay vào bản sao lưu của máy.</li></ul>
+<p>Vì vậy trên cả hai nền tảng, đừng trông vào bản sao lưu của điện thoại để giữ dữ liệu Ví Gọn: khi bạn cài lại ứng dụng hoặc khôi phục điện thoại từ bản sao lưu, dữ liệu của ứng dụng không được khôi phục theo. Muốn mang dữ liệu sang máy khác, hãy tự xuất file sao lưu <code>.vigon</code> (mục 5) rồi chọn "Khôi phục từ bản sao lưu" trên máy mới.</p>
+<p>Nếu bạn bật khóa bằng mã PIN, ứng dụng chỉ lưu một giá trị băm có muối của mã PIN, không lưu mã PIN gốc. Trên Android, giá trị này nằm trong bộ nhớ an toàn được bảo vệ bằng Android Keystore. Trên iPhone, nó nằm trong Keychain của máy và không đồng bộ qua iCloud Keychain. iOS có thể giữ mục Keychain này sau khi bạn gỡ ứng dụng; khi bạn cài lại và ứng dụng bắt đầu với dữ liệu trống, ứng dụng tự nhận ra và xóa mã PIN cũ, nên bạn không bị khóa bằng mã PIN của lần cài trước.</p>
+<p><strong>Widget màn hình chính (Android và iPhone).</strong> Nếu bạn thêm widget, widget luôn có hai nút "Chi" và "Thu" để mở nhanh màn nhập khoản. Mặc định widget không hiện số tiền nào. Chỉ khi bạn tự bật "Hiện số tiền trên widget" và không dùng khóa PIN thì widget mới hiện số đã chi trong tháng (và hạn mức nếu bạn đã đặt ngân sách tháng). Khi khóa PIN đang bật, widget luôn ẩn số tiền. Số liệu này chỉ nằm trong bộ nhớ riêng của ứng dụng trên máy (trên iPhone là vùng lưu trữ dùng chung chỉ giữa Ví Gọn và widget của chính nó) và trên màn hình chờ của bạn; không gửi đi đâu, và bị xóa khi bạn tắt công tắc hoặc bật PIN. Khi công tắc đang bật, ai cầm máy bạn cũng có thể thấy số trên màn hình chờ.</p>
+<h2>3. Nhập khoản chi từ email ngân hàng (tùy chọn, mặc định tắt)</h2>
+<p>Nếu bạn thêm hộp thư trong Cài đặt → Nhập từ email, ứng dụng đăng nhập IMAP qua kết nối mã hóa (TLS, cổng 993) vào đúng hộp thư bạn chọn để đọc email biên lai của ngân hàng. Bản này chỉ hỗ trợ MB Bank và ba nhà cung cấp email: Gmail, Yahoo, iCloud.</p>
+<ul><li>Ứng dụng chỉ đọc thư do địa chỉ ngân hàng gửi tới; thư khác không được tải về.</li><li>Ứng dụng chỉ đọc thư đến sau thời điểm bạn kết nối hộp thư, không đọc thư cũ.</li><li>Ứng dụng đọc thư ở chế độ chỉ xem (<code>BODY.PEEK</code>): không đánh dấu đã đọc, không sửa, không xóa, không chuyển thư.</li><li>Nội dung thư được xử lý trên máy để lấy ngày, số tiền, người thụ hưởng, nội dung chuyển tiền, bốn số cuối tài khoản trích nợ và số tham chiếu. Không có nội dung thư nào được gửi cho nhà phát triển hay bên thứ ba.</li><li>Khoản đọc được <strong>chưa phải khoản chi</strong>: chúng vào Hàng đợi để bạn chọn danh mục rồi xác nhận. Chưa xác nhận thì không vào tổng, biểu đồ hay ngân sách.</li><li>Bạn dùng <strong>mật khẩu ứng dụng</strong> do nhà cung cấp email tạo, không phải mật khẩu chính. Địa chỉ hộp thư và mật khẩu ứng dụng được lưu trong kho khóa an toàn của điện thoại (Android Keystore, iPhone Keychain), không vào cơ sở dữ liệu, file sao lưu, CSV hay nhật ký. Mật khẩu chỉ dùng để đăng nhập IMAP.</li><li>Tối đa ba hộp thư. Xóa hộp thư trong ứng dụng là xóa cấu hình và mật khẩu ứng dụng khỏi kho khóa; "Xóa toàn bộ dữ liệu" cũng xóa toàn bộ phần này. Bạn nên thu hồi mật khẩu ứng dụng trong tài khoản email nếu muốn chắc chắn.</li><li>Android tự kiểm thư khoảng mỗi giờ khi ứng dụng đóng; iPhone chỉ kiểm khi bạn mở hoặc quay lại ứng dụng. Cả hai đều kiểm ngay khi bạn mở ứng dụng.</li><li>Nhà cung cấp email (Google, Yahoo, Apple) thấy địa chỉ IP và thời điểm đăng nhập như mọi lần bạn kiểm thư bằng ứng dụng khác, và xử lý theo chính sách của họ. Nếu họ chặn đăng nhập bằng mật khẩu ứng dụng, tính năng này ngừng hoạt động và bạn có thể xóa hộp thư.</li></ul>
+<h2>4. Tỷ giá</h2>
+<p>Khi bạn chọn tiền tệ khác trong Cài đặt, ứng dụng tải một bảng tỷ giá công khai (bảng gốc đô la Mỹ, giống nhau cho mọi người dùng) từ ExchangeRate-API (open.er-api.com) qua kết nối mã hóa HTTPS để quy đổi số tiền trên máy. Yêu cầu không chứa số tiền, tiền tệ đang dùng hay bất kỳ thông tin nào bạn nhập. Như mọi kết nối Internet, nhà cung cấp tỷ giá thấy địa chỉ IP, thời điểm và thông tin kỹ thuật của kết nối, và xử lý theo chính sách của họ (exchangerate-api.com). Bảng tỷ giá được lưu trên máy để dùng khi không có mạng; bạn cũng có thể tự nhập tỷ giá.</p>
+<h2>5. File sao lưu và CSV do bạn tự xuất</h2>
+<p>Khi bạn chọn "Xuất bản sao lưu" hoặc "Xuất CSV", ứng dụng tạo file trong thư mục tạm của ứng dụng rồi mở bảng chia sẻ của hệ điều hành để bạn chọn nơi gửi hoặc lưu, ví dụ app Tệp (Files), Google Drive hay email. Bạn quyết định file đi đâu. Bạn có thể đặt mật khẩu cho file sao lưu; khi đó file được mã hóa trên máy bằng AES-256-GCM (mật khẩu không được lưu ở đâu cả, quên mật khẩu thì không mở được file). Không đặt mật khẩu thì file không được mã hóa, hãy cất ở nơi an toàn. Từ lúc đó, file chịu chính sách của dịch vụ bạn chọn. Hệ điều hành tự dọn thư mục tạm của ứng dụng.</p>
+<p>File sao lưu không chứa hộp thư email, mật khẩu ứng dụng hay hàng đợi khoản chờ chọn danh mục.</p>
+<p>Bạn có thể bật thêm "Sao lưu tự động" (mặc định tắt). Khi bật, bạn tự chọn một thư mục và đặt mật khẩu sao lưu. Trên Android, bạn chọn thư mục bằng bộ chọn của hệ thống và chọn giờ sao lưu (mặc định 21:00, theo giờ trên máy); đến giờ đó ứng dụng tự ghi file kể cả khi bạn không mở ứng dụng (hệ thống có thể lùi vài phút để tiết kiệm pin). Trên iPhone, bạn chọn thư mục trong app Tệp, ví dụ trong iCloud Drive; vì iPhone không cho ứng dụng đã đóng tự chạy, đến giờ đó ứng dụng hiện một thông báo trên máy, chạm vào hoặc mở Ví Gọn thì ứng dụng ghi file. Nếu lỡ giờ, ứng dụng sao lưu bù khi bạn mở lại (Android: cả khi bạn rời ứng dụng). Mỗi ngày tối đa một lần và chỉ khi dữ liệu có thay đổi; ứng dụng giữ hai file tự động gần nhất. File tự động luôn được mã hóa, không bao giờ ghi bản rõ. Mật khẩu chỉ được lưu trong kho khóa an toàn của điện thoại, không ghi vào file, nhật ký hay cơ sở dữ liệu và không gửi đi đâu.</p>
+<p>Quyền ghi vào thư mục do hệ điều hành quản lý và chỉ áp dụng cho đúng thư mục bạn chọn. Nếu thư mục thuộc một dịch vụ lưu trữ như iCloud Drive, Google Drive hay OneDrive thì việc tải file lên đám mây do Apple hoặc ứng dụng của dịch vụ đó thực hiện theo chính sách của họ; Ví Gọn không tự tải file lên và nhà phát triển không nhận được file. Nếu thư mục chỉ nằm trên điện thoại, mất máy là mất luôn các file này. Khi tắt "Sao lưu tự động", ứng dụng xóa mật khẩu khỏi kho khóa và bỏ quyền truy cập thư mục nhưng không xóa các file đã ghi; bạn tự xóa chúng nếu muốn.</p>
+<h2>6. Quyền trên điện thoại</h2>
+<p>Trên Android, Ví Gọn có quyền Internet để tải bảng tỷ giá (mục 4) và đọc hộp thư bạn đã thêm (mục 3); Android cấp sẵn quyền này khi cài, không hỏi bạn. Ngoài ra ứng dụng chỉ có hai quyền, cả hai chỉ phục vụ "Nhắc ghi sổ hằng ngày" (mặc định tắt) và lịch kiểm thư nền:</p>
+<ul><li>Thông báo: ứng dụng chỉ xin khi bạn bật Nhắc ghi sổ, hoặc (chỉ iPhone) khi bạn bật hay đổi giờ Sao lưu tự động, luôn sau một lời giải thích (Android 13 trở lên; trên iPhone là hộp thoại của iOS). Thông báo giờ sao lưu trên iPhone chỉ có câu chung "Đến giờ sao lưu Ví Gọn. Chạm để sao lưu."; từ chối thì ứng dụng vẫn sao lưu khi bạn mở. Thông báo nhắc được tạo và nằm trên máy, nội dung chung chung, không chứa số liệu và không đi qua máy chủ nào. Từ chối thì ứng dụng vẫn dùng bình thường.</li><li>Nhận tín hiệu khởi động lại máy (chỉ Android): Android cấp sẵn khi cài, không hỏi bạn. Ứng dụng chỉ dùng để đặt lại lịch nhắc, lịch sao lưu tự động và lịch kiểm thư sau khi bạn khởi động lại điện thoại (nếu đã bật); quyền này không cho ứng dụng đọc dữ liệu nào.</li></ul>
+<p>Ứng dụng không xin quyền vị trí, danh bạ, ảnh, camera hay micro. Chọn file khôi phục và chọn thư mục sao lưu dùng bộ chọn của hệ điều hành, chỉ truy cập đúng file hoặc thư mục bạn chọn.</p>
+<h2>7. Liên kết ra ngoài</h2>
+<p>Màn Cài đặt → Giới thiệu có thể mở trình duyệt (xem chính sách này, điều khoản sử dụng, trang hỗ trợ) hoặc ứng dụng email (gửi góp ý, báo lỗi bảo mật). Màn Tỷ giá và hướng dẫn thêm hộp thư có link mở trang của ExchangeRate-API và trang tạo mật khẩu ứng dụng của Google, Yahoo, Apple. Các ứng dụng và trang đó hoạt động theo chính sách riêng của họ.</p>
+<h2>8. Dữ liệu cửa hàng ứng dụng có thể thu thập</h2>
+<p>Khi bạn tải ứng dụng qua Google Play hoặc App Store, Google hoặc Apple có thể thu thập thông tin về việc cài đặt và sự cố ứng dụng theo chính sách của họ và cài đặt trên máy bạn (ví dụ tùy chọn chia sẻ dữ liệu phân tích với nhà phát triển trên iPhone). Nhà phát triển chỉ thấy số liệu tổng hợp, ẩn danh trong Play Console và App Store Connect và không thể dùng chúng để nhận ra bạn.</p>
+<h2>9. Quyền của bạn</h2>
+<p>Vì dữ liệu chỉ nằm trên máy, bạn tự thực hiện mọi quyền ngay trong ứng dụng: xem và sửa từng khoản; xuất toàn bộ dữ liệu ra file sao lưu hoặc CSV; xóa hộp thư và mật khẩu ứng dụng; xóa toàn bộ dữ liệu (kể cả mã PIN, hộp thư và mật khẩu ứng dụng) trong Cài đặt → "Xóa toàn bộ dữ liệu"; hoặc gỡ ứng dụng. Gỡ ứng dụng sẽ xóa dữ liệu trên máy, trừ các file bạn đã tự xuất và các file sao lưu tự động trong thư mục bạn chọn. Trên iPhone, iOS có thể giữ lại mục mã PIN trong Keychain sau khi gỡ ứng dụng; ứng dụng tự xóa mục này khi được cài lại với dữ liệu mới (mục 2).</p>
+<h2>10. Trẻ em</h2>
+<p>Ví Gọn không nhắm tới trẻ em và không thu thập dữ liệu của bất kỳ ai, kể cả trẻ em.</p>
+<h2>11. Bảo mật</h2>
+<p>Dữ liệu được bảo vệ bằng cơ chế cách ly ứng dụng của Android và iOS, khóa PIN tùy chọn và tùy chọn "Che nội dung khi chuyển ứng dụng". Khóa PIN giúp ngăn người khác mở ứng dụng trên máy bạn, nhưng không mã hóa dữ liệu. Khi bật tùy chọn che nội dung: trên Android, ứng dụng chặn chụp màn hình và ẩn ảnh xem trước trong danh sách ứng dụng gần đây; trên iPhone, ứng dụng phủ một lớp che lên nội dung khi bạn rời ứng dụng hoặc mở màn chuyển ứng dụng, nhưng iPhone không cho ứng dụng chặn chụp màn hình. Khi chưa bật tùy chọn này, ảnh xem trước của ứng dụng trong màn đa nhiệm có thể hiện số liệu đang mở. Mật khẩu ứng dụng của hộp thư và mật khẩu sao lưu tự động nằm trong kho khóa an toàn của hệ điều hành, không nằm trong cơ sở dữ liệu hay file sao lưu. Nếu bạn phát hiện lỗ hổng bảo mật, hãy gửi email tới địa chỉ ở mục 13.</p>
+<h2>12. Thay đổi chính sách</h2>
+<p>Nếu Ví Gọn thay đổi cách xử lý dữ liệu (ví dụ thêm tính năng gửi dữ liệu qua Internet), chúng tôi sẽ cập nhật chính sách này và ngày cập nhật trước khi phát hành bản có thay đổi. Đây là bản đầu tiên của chính sách.</p>
+<h2>13. Liên hệ</h2>
+<p>Phiotron, nhà phát triển Ví Gọn — email: phamphuongphuongnd@gmail.com</p>
+<footer>Ví Gọn</footer>
+</main>
+</body>
+</html>

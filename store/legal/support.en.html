@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Vigon Support</title>
+<style>
+:root{--bg:#ffffff;--fg:#1d2330;--muted:#5b6474;--accent:#0f766e;--line:#e3e7ee}
+@media (prefers-color-scheme:dark){:root{--bg:#11151c;--fg:#e8ecf2;--muted:#9aa4b4;--accent:#5eead4;--line:#2a313d}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.6 -apple-system,"Segoe UI",Roboto,Arial,sans-serif}
+main{max-width:720px;margin:0 auto;padding:32px 16px 64px}
+h1{font-size:1.6rem;line-height:1.25;margin:0 0 16px}
+h2{font-size:1.2rem;margin:32px 0 8px;padding-top:16px;border-top:1px solid var(--line)}
+a{color:var(--accent)}
+code{font-family:ui-monospace,Consolas,monospace;font-size:.9em}
+ul,ol{padding-left:1.4em}
+li{margin:4px 0}
+nav{font-size:.9rem;color:var(--muted);margin-bottom:24px}
+footer{margin-top:48px;font-size:.85rem;color:var(--muted)}
+</style>
+</head>
+<body>
+<main>
+<nav><a href="support.vi.html">Tiếng Việt</a> · <a href="privacy-policy.en.html">Privacy Policy</a> · <a href="terms-of-use.en.html">Terms of Use</a></nav>
+<h1>Vigon Support</h1>
+<p><strong>Last updated:</strong> 2026-11-10</p>
+<p>Need help? Email <strong>phamphuongphuongnd@gmail.com</strong>. Please include the app version (Settings → About → Version), your phone model and Android/iOS version, and the steps that led to the problem. We reply within a few working days.</p>
+<p><strong>Do not send mailbox app passwords, your PIN or full account numbers</strong> in a support email.</p>
+<h2>Frequently asked questions</h2>
+<p><strong>Where is my data?</strong> Only on your phone. Vigon has no server, no account and sends no data anywhere. See the Privacy Policy for details.</p>
+<p><strong>I forgot my PIN — can I recover it?</strong> No. The app stores only a hash of the PIN, which nobody can reverse, including us. If you forget it, you must uninstall and reinstall the app — data on the phone is lost. That is why you should export a backup file regularly.</p>
+<p><strong>How do I move to a new phone?</strong> On the old phone: Settings → Data → Export backup, then send or save the <code>.vigon</code> file outside the app (Files, Drive, email…). On the new phone: install Vigon → Settings → Restore from backup → pick that file. Email mailboxes and app passwords do not travel in the backup file; add the mailbox again on the new phone.</p>
+<p><strong>Automatic backup is not running.</strong> Check that the switch is on, a folder is chosen and a time is set. On Android the phone needs battery, and the system may delay the run by a few minutes; turn off battery optimisation for Vigon if your phone often skips it. On iPhone a closed app cannot run on its own: at the set time you get a notification — tap it or open Vigon to back up. If the time is missed, the app catches up when you open it again.</p>
+<p><strong>I changed the backup password — will old files still open?</strong> An old file opens with the password that was set when it was created. Passwords are not stored anywhere; if you forget one, the file cannot be opened.</p>
+<p><strong>What is the CSV export for?</strong> For opening in Excel, Google Sheets or another tool. A CSV file is a snapshot of your figures and <strong>cannot</strong> be restored into the app — use a <code>.vigon</code> backup file to restore.</p>
+<p><strong>Bank email import shows no entries.</strong> This version supports only <strong>MB Bank</strong> and three email providers: Gmail, Yahoo, iCloud. The app reads only mail that arrives <strong>after</strong> you add the mailbox, only <strong>successful</strong> transaction emails, and a parsed item stays in the <strong>Queue</strong> until you pick a category and confirm it. Open the mailbox screen to see sign-in errors or "emails could not be read". If the bank changes its email template, the app may skip that email — record the expense by hand.</p>
+<p><strong>Does Vigon read other mail or mark messages as read?</strong> No. The app downloads only messages from the bank's addresses, reads them in view-only mode, and does not mark them as read, edit, delete or move them.</p>
+<p><strong>I want to report a security issue.</strong> Email the address above with a subject starting with "Security issue". You can also use the "Report a security issue" row in Settings → About. We will respond and will never ask you to send passwords or real data.</p>
+<footer>Vigon</footer>
+</main>
+</body>
+</html>

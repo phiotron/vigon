@@ -56,9 +56,9 @@ Future<AppDatabase> _openSettings(
   // 360 × 10.000 dp: mọi mục Cài đặt nằm trong màn hình (usePhoneScreen tự reset).
   tester.view.physicalSize = const Size(1080, 30000);
   await settle(tester);
-  // Mục cuối danh sách đã dựng → danh sách đã dựng hết. Nhóm "Giới thiệu" và
-  // dòng mở màn cùng chữ (2026-11-10) nên đếm hai.
-  expect(find.text('Giới thiệu'), findsNWidgets(2));
+  // Mục cuối danh sách đã dựng → danh sách đã dựng hết. Nhóm "Giới thiệu" là
+  // một thẻ trong Cài đặt (D-039) nên chỉ có tiêu đề nhóm.
+  expect(find.text('Giới thiệu'), findsOneWidget);
   return db;
 }
 

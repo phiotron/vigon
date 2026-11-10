@@ -156,14 +156,14 @@ void main() {
     final scheme = Theme.of(tester.element(find.text('Danh mục & tài khoản')))
         .colorScheme;
     // Màn dài hơn màn hình: cuộn tới từng tiêu đề rồi mới kiểm. Thứ tự nhóm
-    // chốt 2026-11-10 (Danh mục & tài khoản · Kế hoạch · Tiền tệ & kỳ · Nhập tự
-    // động · Bảo mật · Nhắc ghi sổ · Dữ liệu · Giao diện & ngôn ngữ · Giới
+    // chốt 2026-11-10 (Danh mục & tài khoản · Kế hoạch · Tiền tệ & kỳ · Nhập từ
+    // email · Bảo mật · Nhắc ghi sổ · Dữ liệu · Giao diện & ngôn ngữ · Giới
     // thiệu).
     for (final title in [
       'Danh mục & tài khoản',
       'Kế hoạch',
       'Tiền tệ & kỳ',
-      'Nhập tự động',
+      'Nhập từ email',
       'Bảo mật',
       'Nhắc ghi sổ',
       'Dữ liệu',

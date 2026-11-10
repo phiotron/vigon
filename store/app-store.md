@@ -45,17 +45,19 @@ Code đã có ở commit `8441b6a` — trước khi dán vẫn **đối chiếu 
 | Phân phối | Mọi quốc gia/vùng trừ **Trung Quốc đại lục** (app cần số đăng ký ICP mới được bán ở đó; COMPLIANCE nhóm C chưa mở) và **Nga** (nhóm C). Nhóm D theo COMPLIANCE M-01 khi chốt. **Có Pháp ngay bản 1** (D-020) → trước khi nộp App Review phải đã tải khai báo mã hoá Pháp lên App Store Connect (mục Export compliance; các bước ở `docs/RELEASE.md`). Apple khuyên đặt Availability và điền Description **trước** khi tải tài liệu mã hoá. |
 | Thiết bị | Chỉ iPhone. Không bật "iPhone and iPad Apps on Apple Silicon Macs" và "Apple Vision Pro" (chưa thử). |
 | Copyright | `© 2026 <họ tên người đăng ký Apple Developer>` |
-| Tên người bán (Seller) | Tài khoản **cá nhân** → App Store hiện **họ tên thật** của người đăng ký. Chính sách quyền riêng tư phải ghi đúng tên này (xem `docs/legal/privacy-policy.md`). |
+| Tên người bán (Seller) | Tài khoản **cá nhân** → App Store hiện **họ tên thật** của người đăng ký. Chính sách quyền riêng tư hiện ghi **Phiotron** (tạm, D-039); nếu App Store hiện họ tên thật thì đổi tên trong `store/legal/privacy-policy.{vi,en}.md` rồi đăng lại (URL không đổi). |
 | Trạng thái trader (EU, DSA) | App Store Connect bắt khai trước khi phát hành ở EU. App miễn phí, không kinh doanh → người dùng cân nhắc khai **không phải trader**; nếu khai là trader thì địa chỉ, số điện thoại, email bị hiện công khai trên trang EU. Người dùng tự quyết (việc pháp lý). |
 
 ## URL bắt buộc
 | URL | Bắt buộc? | Nội dung | Trạng thái |
 |---|---|---|---|
-| Privacy Policy URL | Có | Trang chính sách vi/en (`docs/legal/privacy-policy.md`) | CHƯA đăng — người dùng đăng (gợi ý nơi đăng ở file chính sách) |
-| Support URL | Có | Trang "Hỗ trợ / Support": email liên hệ, 4–5 câu hỏi thường gặp (quên PIN, chuyển máy bằng file sao lưu, xuất CSV, dữ liệu ở đâu) | CHƯA có — làm cùng site với chính sách |
+| Privacy Policy URL | Có | Trang chính sách vi/en — nguồn `store/legal/privacy-policy.{vi,en}.md` | Đã đăng 2026-11-10 (D-039): `https://phamphuongphuongnd.github.io/legal/vigon/privacy-policy.en.html` (vi: `.../privacy-policy.vi.html`) |
+| Support URL | Có | Trang "Hỗ trợ / Support" — nguồn `store/legal/support.{vi,en}.md`: email liên hệ, câu hỏi thường gặp | Đã đăng 2026-11-10: `https://phamphuongphuongnd.github.io/legal/vigon/support.en.html` (vi: `.../support.vi.html`) |
 | Marketing URL | Không | Bỏ trống | — |
 
-Cùng đường dẫn chính sách phải điền vào `lib/src/app_info.dart` (`AppInfo.privacyPolicyUrl`) — việc của phiên code, không phải phiên store.
+Điều khoản sử dụng (bắt buộc theo 5.1.1 nếu app bán nội dung/gói; vẫn nên có): `https://phamphuongphuongnd.github.io/legal/vigon/terms-of-use.en.html` (vi: `.../terms-of-use.vi.html`).
+
+Cùng các đường dẫn này app đọc từ `lib/src/app_info.dart` (`AppInfo.privacyPolicyUrl(localeName)` / `termsUrl(localeName)`); `/release` chặn khi URL chính sách hoặc điều khoản trống.
 
 ## English (U.S.) — localization chính
 - **Name** (≤ 30): `Ví Gọn: Expense Tracker` — 23 ký tự
@@ -204,7 +206,7 @@ Location" của D8 lần 1, commit `18075d3`). Cùng lý do với Data safety �
 ### Từng màn trong App Store Connect → App Privacy
 | Câu hỏi | Trả lời | Lý do |
 |---|---|---|
-| Privacy Policy URL | Trang chính sách vi/en (`docs/legal/privacy-policy.md`) | Bắt buộc; CHƯA đăng — người dùng đăng |
+| Privacy Policy URL | `https://phamphuongphuongnd.github.io/legal/vigon/privacy-policy.en.html` | Bắt buộc; đã đăng 2026-11-10 (D-039) |
 | Privacy Choices URL | (để trống) | Không có gì để người dùng chọn |
 | Do you or your third-party partners collect data from this app? | **No, we do not collect data from this app** | Apple: "thu thập" = truyền ra khỏi máy để nhà phát triển hoặc đối tác truy cập lâu hơn thời gian cần để phục vụ yêu cầu tức thời. Dữ liệu chỉ ở trên máy; yêu cầu tỉ giá không chứa dữ liệu người dùng; IP tất yếu đi kèm mọi kết nối Internet, nhà phát triển không nhận; ExchangeRate-API không phải SDK/mã bên thứ ba đặt trong app |
 | **Kết quả trên store** | **Data Not Collected** | Đối chiếu bản xem trước trước khi Publish |

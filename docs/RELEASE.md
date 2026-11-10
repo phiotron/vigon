@@ -135,14 +135,13 @@ tài liệu khoảng **2 ngày làm việc**. Dự trù **≥ 6 tuần** trướ
   Ảnh bìa Play 1024×500: CHƯA có PNG (xuất từ canvas Design, `store/brand/README.md`).
 - Phân loại: Finance (phụ: Productivity trên App Store); Play target audience 13+; App Store age rating dự kiến 4+.
 - Data safety / App Privacy: "không thu thập, không chia sẻ" / "Data Not Collected" (khớp `docs/SECURITY.md`, SBOM, `PrivacyInfo.xcprivacy`).
-- Đường dẫn chính sách quyền riêng tư: **CHƯA có**. Nội dung ở `docs/legal/privacy-policy.md` (vi/en, Android + iOS); người dùng đăng
-  (Google Sites khuyên dùng) rồi điền vào `lib/src/app_info.dart` (`AppInfo.privacyPolicyUrl`), Play Console, App Store Connect.
-- Support URL (App Store bắt buộc): **CHƯA có** — trang "support" cùng site với chính sách.
+- Đường dẫn chính sách quyền riêng tư, điều khoản và hỗ trợ: **đã đăng 2026-11-10** (D-039) ở `https://phamphuongphuongnd.github.io/legal/vigon/{privacy-policy,terms-of-use,support}.{vi,en}.html` (nguồn `store/legal/`). App đọc URL qua `AppInfo.privacyPolicyUrl(localeName)` / `termsUrl(localeName)` trong `lib/src/app_info.dart`; còn điền cùng URL vào Play Console và App Store Connect.
+- Support URL (App Store bắt buộc): **đã có** — `.../legal/vigon/support.en.html` (vi: `.../support.vi.html`).
 - Email liên hệ nhà phát triển: `phamphuongphuongnd@gmail.com` (đã in trong app và chính sách; hiện công khai trên cả hai store).
 
 ## Điều kiện chặn phát hành (còn lại, 2026-11-04; iOS cập nhật 2026-11-05 theo D-020, D-021)
 Chung:
-- [ ] Đường dẫn chính sách quyền riêng tư công khai + Support URL; điền `AppInfo.privacyPolicyUrl` (App Review 2.1/5.1.1 sẽ bấm thử)
+- [ ] Điền URL chính sách + điều khoản + Support vào Play Console và App Store Connect (URL đã đăng 2026-11-10; App Review 2.1/5.1.1 sẽ bấm thử)
 - [ ] Người dùng duyệt tên + mô tả hai store; tra trùng nhãn hiệu logo và tên (WIPO, Cục SHTT)
 - [ ] Ảnh chụp mới hai nền tảng theo `store/screenshots-spec.md` (phiên #3)
 - [ ] Thử TalkBack thật và cỡ chữ lớn nhất (AC-38, AC-39); mở CSV bằng Excel; VoiceOver (khi có máy hoặc trên simulator)

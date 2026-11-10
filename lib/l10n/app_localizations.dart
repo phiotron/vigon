@@ -1382,11 +1382,11 @@ abstract class AppLocalizations {
   /// **'About'**
   String get about;
 
-  /// No description provided for @version.
+  /// No description provided for @versionLabel.
   ///
   /// In en, this message translates to:
-  /// **'Version {version}'**
-  String version(String version);
+  /// **'Version'**
+  String get versionLabel;
 
   /// No description provided for @aboutBody.
   ///
@@ -1400,6 +1400,12 @@ abstract class AppLocalizations {
   /// **'Privacy policy'**
   String get privacyPolicy;
 
+  /// No description provided for @terms.
+  ///
+  /// In en, this message translates to:
+  /// **'Terms of use'**
+  String get terms;
+
   /// No description provided for @reportSecurity.
   ///
   /// In en, this message translates to:
@@ -1409,14 +1415,26 @@ abstract class AppLocalizations {
   /// No description provided for @licenses.
   ///
   /// In en, this message translates to:
-  /// **'Open source licenses'**
+  /// **'Open-source licences'**
   String get licenses;
 
-  /// No description provided for @privacyPolicyPending.
+  /// No description provided for @rateApp.
   ///
   /// In en, this message translates to:
-  /// **'Web page coming soon'**
-  String get privacyPolicyPending;
+  /// **'Rate Vigon'**
+  String get rateApp;
+
+  /// No description provided for @feedback.
+  ///
+  /// In en, this message translates to:
+  /// **'Send feedback'**
+  String get feedback;
+
+  /// No description provided for @feedbackSubject.
+  ///
+  /// In en, this message translates to:
+  /// **'Vigon feedback {version}'**
+  String feedbackSubject(String version);
 
   /// No description provided for @contactEmail.
   ///
@@ -2075,7 +2093,7 @@ abstract class AppLocalizations {
   /// No description provided for @emailImportGroup.
   ///
   /// In en, this message translates to:
-  /// **'Auto import'**
+  /// **'Email import'**
   String get emailImportGroup;
 
   /// No description provided for @emailImport.

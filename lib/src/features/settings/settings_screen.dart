@@ -16,6 +16,7 @@ import '../../ui/tokens.g.dart';
 import '../import_queue/import_queue_providers.dart';
 import '../lock/app_lock.dart';
 import 'appearance_sheet.dart';
+import 'about_section.dart';
 import 'auto_backup_section.dart';
 import 'budget_dialog.dart';
 import 'currency_picker.dart';
@@ -31,7 +32,7 @@ import 'widget_section.dart';
 /// `surface-container-low`, tiêu đề nhóm màu `primary`; mọi nhóm đều có tiêu
 /// đề. Thứ tự (2026-11-10): Danh mục & tài khoản · Kế hoạch (ngân sách, định
 /// kỳ, tiết kiệm, nợ) · Tiền tệ & kỳ (tiền tệ chính, tỷ giá, ngày đầu tuần,
-/// tháng bắt đầu) · Nhập tự động (email ngân hàng, khoản chờ chọn danh mục) ·
+/// tháng bắt đầu) · Nhập từ email (email ngân hàng, khoản chờ chọn danh mục) ·
 /// Bảo mật · Nhắc ghi sổ · Dữ liệu (kết thúc bằng Xóa toàn bộ dữ liệu) ·
 /// Giao diện & ngôn ngữ (một nhóm, hai hàng cùng mở bảng kéo — D-038) ·
 /// Giới thiệu. Mục chỉ có khi nền tảng hỗ trợ (D-022) đọc cờ trong
@@ -174,7 +175,7 @@ class SettingsScreen extends ConsumerWidget {
               ),
             ],
           ),
-          // Nhập tự động: nguồn nhập từ email ngân hàng và các khoản email còn
+          // Nhập từ email: nguồn nhập từ email ngân hàng và các khoản email còn
           // chờ chọn danh mục dùng chung một thẻ.
           SettingsGroupTitle(l.emailImportGroup),
           SettingsCard(
@@ -264,16 +265,7 @@ class SettingsScreen extends ConsumerWidget {
               ),
             ],
           ),
-          SettingsGroupTitle(l.about),
-          SettingsCard(
-            children: [
-              SettingsNavRow(
-                icon: Symbols.info_rounded,
-                title: l.about,
-                onTap: () => context.push('/about'),
-              ),
-            ],
-          ),
+          const AboutSection(),
         ],
       ),
     );

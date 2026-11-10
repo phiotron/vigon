@@ -9,7 +9,7 @@ App Flutter cho Android và iOS (iOS thêm 2026-11-04, D-011; build trên GitHub
 - `/` Màn chính (biểu đồ tròn, icon danh mục, thanh ngân sách, số dư, nút −/+) → `/settings`, `/entries`, `/entry/new?type=&category=`
 - `/entries` danh sách khoản trong kỳ, gom theo danh mục → `/entry/:id` (sửa/xóa), `/transfer/:id`
 - `/settings` → `/categories`, `/accounts` (→ `/transfer`), `/recurring`; hộp thoại: ngân sách, tiền tệ, đặt/tắt PIN; thao tác dữ liệu (sao lưu, khôi phục, CSV, xóa hết)
-- `/about` màn Giới thiệu. Lớp phủ màn khóa (`features/lock`) nằm trên toàn bộ router khi bật PIN
+- `/about` đã bỏ (D-039): nhóm Giới thiệu là thẻ cuối màn Cài đặt. Lớp phủ màn khóa (`features/lock`) nằm trên toàn bộ router khi bật PIN
 - Đường vào ngoài app (bản 1.2): nút Chi/Thu của widget (Android + iOS, kênh `vigon/deeplink`; iOS qua URL scheme `vigon://open/entry/new?...` hoặc App Intent của widget nhỏ) và chạm thông báo nhắc (Android + iOS) chỉ mở được `/entry/new?type=expense|income` (D-015, D-016)
 
 ## Dữ liệu

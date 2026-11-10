@@ -229,12 +229,13 @@ void main() {
   });
 
   group('Android gốc (đọc mã nguồn, không có test Kotlin)', () {
-    final kotlin = File(
+    String read(String path) =>
+        File(path).readAsStringSync().replaceAll('\r\n', '\n');
+    final kotlin = read(
       'android/app/src/main/kotlin/com/phiotron/vigon/BackupSchedule.kt',
-    ).readAsStringSync();
-    final manifest = File('android/app/src/main/AndroidManifest.xml')
-        .readAsStringSync();
-    final mainDart = File('lib/main.dart').readAsStringSync();
+    );
+    final manifest = read('android/app/src/main/AndroidManifest.xml');
+    final mainDart = read('lib/main.dart');
 
     test('báo thức KHÔNG chính xác, không quyền báo thức chính xác', () {
       expect(kotlin, contains('setAndAllowWhileIdle('));

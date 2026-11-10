@@ -720,9 +720,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get about => 'About';
 
   @override
-  String version(String version) {
-    return 'Version $version';
-  }
+  String get versionLabel => 'Version';
 
   @override
   String get aboutBody =>
@@ -732,13 +730,24 @@ class AppLocalizationsEn extends AppLocalizations {
   String get privacyPolicy => 'Privacy policy';
 
   @override
+  String get terms => 'Terms of use';
+
+  @override
   String get reportSecurity => 'Report a security issue';
 
   @override
-  String get licenses => 'Open source licenses';
+  String get licenses => 'Open-source licences';
 
   @override
-  String get privacyPolicyPending => 'Web page coming soon';
+  String get rateApp => 'Rate Vigon';
+
+  @override
+  String get feedback => 'Send feedback';
+
+  @override
+  String feedbackSubject(String version) {
+    return 'Vigon feedback $version';
+  }
 
   @override
   String contactEmail(String email) {
@@ -1150,7 +1159,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get currencyConvertOk => 'OK';
 
   @override
-  String get emailImportGroup => 'Auto import';
+  String get emailImportGroup => 'Email import';
 
   @override
   String get emailImport => 'Import from bank email';

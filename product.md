@@ -264,7 +264,7 @@ always encrypted, keeps 2 files; Android background, iPhone via a notification. 
 | `/import-queue` | Import queue | N‑08 |
 | `/settings/email-import` | Email import intro / mailbox list / add | N‑09 |
 | `/settings` | Settings (now a sub‑page of More) | SCR‑12 (re‑grouped) |
-| `/categories` `/accounts` `/transfer` `/recurring` `/about` | as v2 | SCR‑15…22 |
+| `/categories` `/accounts` `/transfer` `/recurring` | as v2 | SCR‑15…22 |
 | overlay | Lock (+ biometric) | SCR‑23 + N‑12 |
 
 ### 4.3 Navigation map

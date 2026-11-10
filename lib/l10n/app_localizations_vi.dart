@@ -709,9 +709,7 @@ class AppLocalizationsVi extends AppLocalizations {
   String get about => 'Giới thiệu';
 
   @override
-  String version(String version) {
-    return 'Phiên bản $version';
-  }
+  String get versionLabel => 'Phiên bản';
 
   @override
   String get aboutBody =>
@@ -721,13 +719,24 @@ class AppLocalizationsVi extends AppLocalizations {
   String get privacyPolicy => 'Chính sách quyền riêng tư';
 
   @override
+  String get terms => 'Điều khoản sử dụng';
+
+  @override
   String get reportSecurity => 'Báo lỗi bảo mật';
 
   @override
-  String get licenses => 'Giấy phép nguồn mở';
+  String get licenses => 'Giấy phép mã nguồn mở';
 
   @override
-  String get privacyPolicyPending => 'Đang chuẩn bị trang web';
+  String get rateApp => 'Đánh giá Ví Gọn';
+
+  @override
+  String get feedback => 'Gửi góp ý';
+
+  @override
+  String feedbackSubject(String version) {
+    return 'Góp ý Ví Gọn $version';
+  }
 
   @override
   String contactEmail(String email) {
@@ -1140,7 +1149,7 @@ class AppLocalizationsVi extends AppLocalizations {
   String get currencyConvertOk => 'Đã hiểu';
 
   @override
-  String get emailImportGroup => 'Nhập tự động';
+  String get emailImportGroup => 'Nhập từ email';
 
   @override
   String get emailImport => 'Nhập từ email ngân hàng';

@@ -123,7 +123,7 @@ Mỗi khung trong bản vẽ có số bước (ví dụ 3.2) để nhắc trong 
 | 08 · Bảo mật, dữ liệu | `S13_DatPIN` | 8.1 Đặt PIN · 8.2 Nhập lại · 8.3 Không khớp · 8.4 Tắt PIN | Màn toàn khung từ `/settings` |
 | | `S14_SaoLuu` | 8.5 Xuất sao lưu · 8.6 Khôi phục · 8.7 Khôi phục xong · 8.8 File hỏng | Từ `/settings` |
 | | `S15_XoaDuLieu` | 8.9–8.10 Hai hộp thoại · 8.11 Sau khi xóa | Từ `/settings` |
-| 09 · Giới thiệu | `S16_GioiThieu` | 9.1 Giới thiệu · 9.2 Không mở được | `/about` |
+| 09 · Giới thiệu | `S16_GioiThieu` | 9.1 Giới thiệu · 9.2 Không mở được | thẻ cuối Cài đặt (bản vẽ cũ ghi `/about`; D-039 bỏ màn riêng) |
 | 10 · Thành phần | `T1_Nut`, `T2_BanPhim`, `T3_ChipDong` | Nút, bàn phím số, chip, dòng, thanh ngân sách, thông báo | Dùng chung |
 
 ## Tab bar theo vai trò

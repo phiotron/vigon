@@ -8,7 +8,7 @@ Nội dung chữ lấy từ `lib/l10n/app_vi.arb` (tiếng Việt, mặc định
 
 **Sau khi gộp nhánh (2026-11-05, D-019):** giao diện theo bộ thiết kế `design/current/screens/` (PLAN-001: token, chữ Be Vietnam Pro, icon Material Symbols Rounded, thành phần dùng chung); chi tiết bố cục và màu trong file này viết theo code trước khi gộp, CHƯA rà lại theo giao diện mới — khi lệch thì bản vẽ trong `design/current/screens/` và code là đúng. App chạy cả **iOS**: trên iOS các dòng "Che nội dung khi chuyển app", "Hiện số tiền trên widget", "Sao lưu tự động" bị ẩn và không có widget (mục 3.13) hay icon đơn sắc (`lib/src/platform_features.dart`); "Nhắc ghi sổ" có trên iOS (hộp xin quyền thông báo của iOS). Chỗ ghi "của Android" cho bảng chia sẻ và trình chọn file thì trên iOS là thành phần tương ứng của iOS.
 
-**Cài đặt chia lại nhóm (2026-11-10):** màn Cài đặt chia **9 nhóm có tiêu đề** — Danh mục & tài khoản · Kế hoạch · Tiền tệ & kỳ · Nhập tự động · Bảo mật · Nhắc ghi sổ · Dữ liệu · Giao diện & ngôn ngữ · Giới thiệu; trước đây có nhóm không tiêu đề (A18) và "Xóa toàn bộ dữ liệu" đứng riêng, nay là hàng cuối nhóm Dữ liệu. Tính năng nhắc hằng ngày đổi tên **"Nhắc ghi chép" → "Nhắc ghi sổ"** trong mọi chữ hiển thị (kênh thông báo đã đăng ký giữ tên cũ để người dùng không mất cài đặt đã bật), dòng vào hàng đợi đổi thành **"Khoản chờ chọn danh mục"** (màn vẫn mang tiêu đề "Hàng đợi"). Mục 3.4 và 4.9 viết theo bố cục này; màn hình trên giấy tờ/bản vẽ cũ vẫn dùng tên cũ.
+**Cài đặt chia lại nhóm (2026-11-10):** màn Cài đặt chia **9 nhóm có tiêu đề** — Danh mục & tài khoản · Kế hoạch · Tiền tệ & kỳ · Nhập từ email · Bảo mật · Nhắc ghi sổ · Dữ liệu · Giao diện & ngôn ngữ · Giới thiệu; trước đây có nhóm không tiêu đề (A18) và "Xóa toàn bộ dữ liệu" đứng riêng, nay là hàng cuối nhóm Dữ liệu. Tính năng nhắc hằng ngày đổi tên **"Nhắc ghi chép" → "Nhắc ghi sổ"** trong mọi chữ hiển thị (kênh thông báo đã đăng ký giữ tên cũ để người dùng không mất cài đặt đã bật), dòng vào hàng đợi đổi thành **"Khoản chờ chọn danh mục"** (màn vẫn mang tiêu đề "Hàng đợi"). Mục 3.4 và 4.9 viết theo bố cục này; màn hình trên giấy tờ/bản vẽ cũ vẫn dùng tên cũ.
 
 ## Mục lục
 1. Tổng quan kiến trúc giao diện
@@ -45,7 +45,6 @@ Nội dung chữ lấy từ `lib/l10n/app_vi.arb` (tiếng Việt, mặc định
 |-------|----------|---------|
 | `/` | Màn chính (`HomeScreen`) | không |
 | `/settings` | Cài đặt | không |
-| `/about` | Giới thiệu | không |
 | `/recurring` | Khoản định kỳ | không |
 | `/categories` | Danh mục | không |
 | `/accounts` | Tài khoản | không |
@@ -101,10 +100,11 @@ Màn chính "/"
        │     ├─ Sao lưu ngay ─► vòng quay ──► thông báo kết quả
        │     └─ Chọn lại thư mục ► Bộ chọn thư mục ──► "Sao lưu ngay"
        ├─ Xóa toàn bộ dữ liệu ► 2 hộp thoại xác nhận
-       └─ Giới thiệu ─────────► Giới thiệu /about
-             ├─ Chính sách quyền riêng tư ► trình duyệt (đang tắt khi chưa có đường dẫn)
-             ├─ Báo lỗi bảo mật ──► app email có sẵn người nhận và tiêu đề
-             └─ Giấy phép nguồn mở ► trang giấy phép của Flutter
+       └─ Giới thiệu (thẻ cuối màn, không có màn riêng — D-039)
+             ├─ Chính sách quyền riêng tư / Điều khoản sử dụng ► trình duyệt đúng ngôn ngữ app (không mở được: bản nhúng trong app)
+             ├─ Giấy phép mã nguồn mở ► trang giấy phép của Flutter
+             ├─ Đánh giá Ví Gọn (Android) ► Play Store
+             ├─ Gửi góp ý / Báo lỗi bảo mật ► app email có sẵn người nhận và tiêu đề
 
 Từ ngoài app (bản 1.2), đều qua màn khóa PIN nếu đang bật:
  Widget "Chi" ───────────────► Màn chính ► Nhập khoản chi  /entry/new?type=expense
@@ -264,7 +264,7 @@ Danh sách cuộn dọc, chia thành **9 nhóm có tiêu đề** (`SettingsGroup
 | **Tỷ giá** | Dòng có phụ đề tóm tắt trạng thái bảng tỷ giá ("Tự động · hôm qua", "Có sẵn", "Bạn đặt tay") | → `/rates` |
 | **Ngày đầu tuần** | Hai nút chọn một `SettingsSegmentRow`: "Thứ Hai" / "Chủ Nhật" | Chạm nút nào là lưu nút đó, không có hộp thoại (§10.1 #4) |
 | **Tháng bắt đầu từ ngày** | Menu thả ở bên phải | Chọn số từ 1 đến 28 |
-| (nhóm) **Nhập tự động** | Thẻ hai dòng | Chỉ có khi bản build bật nhập từ email |
+| (nhóm) **Nhập từ email** | Thẻ hai dòng | Chỉ có khi bản build bật nhập từ email |
 | **Nhập từ email ngân hàng** ❯ | Dòng có phụ đề số hộp thư ("Chưa thêm hộp thư" hoặc "N hộp thư") | → `/email-import` (F-28, AC-78) |
 | **Khoản chờ chọn danh mục** ❯ | Dòng có phụ đề "Không có khoản nào đang chờ" hoặc "N khoản chờ" | → `/import-queue` (màn vẫn mang tiêu đề "Hàng đợi") |
 | (nhóm) **Bảo mật** | Thẻ công tắc | |
@@ -285,8 +285,15 @@ Danh sách cuộn dọc, chia thành **9 nhóm có tiêu đề** (`SettingsGroup
 | (nhóm) **Giao diện & ngôn ngữ** | Thẻ hai dòng; hai dòng của nhóm cùng mở **một bảng kéo** (D-038) | Đặt gần cuối màn, trước Giới thiệu |
 | **Giao diện** | Dòng có giá trị bên phải ("Theo hệ thống"/"Sáng"/"Tối") | Mở bảng kéo chọn giao diện; chọn là đổi ngay, lưu lại |
 | **Ngôn ngữ** | Dòng có giá trị bên phải ("Tiếng Việt"/"English") | Mở bảng kéo chọn ngôn ngữ; đổi ngay mọi chữ, lưu lại |
-| (nhóm) **Giới thiệu** | Thẻ một dòng; tiêu đề nhóm trùng chữ với dòng (chấp nhận, 2026-11-10) | |
-| **Giới thiệu** ❯ | Dòng mở màn | → `/about` |
+| (nhóm) **Giới thiệu** | Thẻ bảy dòng như A001 (D-039); không còn màn riêng | |
+| **Phiên bản** | Giá trị `1.0.0 (1)` căn phải (`valueInline`), không mũi tên | Chỉ hiển thị |
+| **Chính sách quyền riêng tư** | Dòng có icon mở-trang | Trình duyệt, đúng ngôn ngữ app; không mở được thì màn đọc bản nhúng |
+| **Điều khoản sử dụng** | Dòng có icon mở-trang | Như trên |
+| **Giấy phép mã nguồn mở** | Dòng | Trang giấy phép chuẩn của Flutter |
+| **Đánh giá Ví Gọn** | Dòng có icon mở-trang, **chỉ Android**; iOS ẩn khi chưa có App Store id | `market://` rồi Play HTTPS |
+| **Gửi góp ý** | Dòng có icon mở-trang | `mailto:` tiêu đề có phiên bản |
+| **Báo lỗi bảo mật** | Dòng có phụ đề email liên hệ, icon mở-trang | `mailto:` tiêu đề "Báo lỗi bảo mật Ví Gọn" |
+| ↳ chú thích cuối thẻ | "Dữ liệu chỉ lưu trên máy này…" | |
 
 Đổi **Ngày đầu tuần** hoặc **Tháng bắt đầu từ ngày** khi đang xem kỳ Tuần hoặc Tháng ở màn chính thì kỳ đó được tính lại theo cài đặt mới nhưng vẫn là cùng loại kỳ (không nhảy về "Tháng").
 
@@ -332,17 +339,25 @@ Chỉ dùng được khi có ít nhất 2 tài khoản (nếu không, màn để
 
 ---
 
-### 3.9 Giới thiệu — `/about` (`features/about/about_screen.dart`)
+### 3.9 Giới thiệu — thẻ cuối màn Cài đặt (`features/settings/about_section.dart`)
 
-Nội dung từ trên xuống: tên "Ví Gọn" (cỡ lớn), "Phiên bản 1.0.0 (1)", dòng "Dữ liệu chỉ lưu trên máy này. Ví Gọn không gửi dữ liệu đi đâu.", đường kẻ, rồi 3 dòng:
+Không còn màn riêng hay route `/about` (D-039, 2026-11-10). Một `SettingsGroupTitle` "Giới thiệu" + một `SettingsCard` như A001, từ trên xuống:
 
 | Dòng | Hành vi |
 |------|---------|
-| **Chính sách quyền riêng tư** | Mở trình duyệt tới `AppInfo.privacyPolicyUrl`. Khi đường dẫn còn trống (hiện tại): dòng bị tắt và phụ đề "Đang chuẩn bị trang web" |
-| **Báo lỗi bảo mật** (phụ đề "Email liên hệ: …") | Mở app email: người nhận là email liên hệ, tiêu đề "Báo lỗi bảo mật Ví Gọn" |
-| **Giấy phép nguồn mở** | Mở trang giấy phép chuẩn của Flutter (tên app, phiên bản) |
+| **Phiên bản** (giá trị `1.0.0 (1)` căn phải, không mũi tên) | Chỉ hiển thị |
+| **Chính sách quyền riêng tư** (icon mở-trang) | Mở `AppInfo.privacyPolicyUrl(localeName)` trong trình duyệt — bản `vi` khi app tiếng Việt, `en` khi còn lại. Không mở được (offline/không có trình duyệt): đẩy `LegalScreen` đọc bản nhúng |
+| **Điều khoản sử dụng** (icon mở-trang) | Như trên với `AppInfo.termsUrl(localeName)` |
+| **Giấy phép mã nguồn mở** | Mở trang giấy phép chuẩn của Flutter (tên app, phiên bản); luôn đọc được offline |
+| **Đánh giá Ví Gọn** (icon mở-trang, chỉ Android) | Thử `market://details?id=com.phiotron.vigon` rồi tới Play HTTPS. iOS ẩn hàng này khi `AppInfo.appStoreId == null` (không để nút chết) |
+| **Gửi góp ý** (icon mở-trang) | `mailto:` tới email liên hệ, tiêu đề "Góp ý Ví Gọn {phiên bản}" |
+| **Báo lỗi bảo mật** (phụ đề "Email liên hệ: …", icon mở-trang) | `mailto:` tiêu đề "Báo lỗi bảo mật Ví Gọn" (COMPLIANCE S-05: kênh nêu đích danh trong app) |
 
-Nếu hệ thống không mở được trình duyệt/email: hiện "Không mở được. Bạn có thể tự gửi email tới …". Mở liên kết bằng intent nên app không cần quyền INTERNET.
+Dưới thẻ, chữ phụ: "Dữ liệu chỉ lưu trên máy này. Ví Gọn không gửi dữ liệu đi đâu.".
+
+Không mở được trình duyệt/email: hiện "Không mở được. Bạn có thể tự gửi email tới …". Mở liên kết bằng intent nên app không cần quyền INTERNET.
+
+Nguồn chữ pháp lý: `store/legal/{privacy-policy,terms-of-use,support}.{vi,en}.md`; xuất HTML bằng `tool/md_to_html.py` và bản nhúng bằng `tool/md_to_dart.py`; trang công khai ở `phamphuongphuongnd.github.io/legal/vigon/`.
 
 ---
 

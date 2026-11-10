@@ -29,7 +29,7 @@ String mailErrorText(AppLocalizations l, MailErrorKind kind) => switch (kind) {
   MailErrorKind.server => l.emailErrorServer,
 };
 
-/// Dòng "Nhập từ email ngân hàng" trong nhóm "Nhập tự động" của Cài đặt
+/// Dòng "Nhập từ email ngân hàng" trong nhóm "Nhập từ email" của Cài đặt
 /// (AC-78): mở màn hộp thư, giá trị là số hộp thư. Nhóm và thẻ do màn Cài đặt
 /// dựng, để dòng "Khoản chờ chọn danh mục" nằm chung một thẻ.
 class EmailImportRow extends ConsumerWidget {

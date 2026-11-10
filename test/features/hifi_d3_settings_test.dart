@@ -44,7 +44,7 @@ void main() {
         'Danh mục & tài khoản',
         'Kế hoạch',
         'Tiền tệ & kỳ',
-        'Nhập tự động',
+        'Nhập từ email',
         'Bảo mật',
         'Nhắc ghi sổ',
         'Dữ liệu',
@@ -185,8 +185,8 @@ void main() {
         _tallScreen(tester);
         await settle(tester);
         expect(tester.takeException(), isNull);
-        // Tiêu đề nhóm và dòng mở màn Giới thiệu cùng chữ (2026-11-10).
-        expect(find.text('Giới thiệu'), findsNWidgets(2));
+        // Nhóm Giới thiệu là một thẻ trong Cài đặt (D-039): chỉ còn tiêu đề.
+        expect(find.text('Giới thiệu'), findsOneWidget);
         await disposeApp(tester, db);
       });
     }

@@ -5,7 +5,6 @@ import 'package:go_router/go_router.dart';
 
 import '../l10n/app_localizations.dart';
 import 'data/database.dart';
-import 'features/about/about_screen.dart';
 import 'features/accounts/accounts_screen.dart';
 import 'features/accounts/transfer_screen.dart';
 import 'features/categories/categories_screen.dart';
@@ -50,10 +49,6 @@ GoRouter createRouter() => GoRouter(
         GoRoute(
           path: 'rates',
           builder: (context, state) => const RatesScreen(),
-        ),
-        GoRoute(
-          path: 'about',
-          builder: (context, state) => const AboutScreen(),
         ),
         GoRoute(
           path: 'recurring',
