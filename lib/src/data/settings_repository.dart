@@ -58,6 +58,10 @@ class SettingsRepository {
   /// bộ dữ liệu vẫn giữ (xem `backup.dart`).
   static const pinInstallIdKey = 'pinInstallId';
 
+  /// Có = máy vừa cài mới, chưa qua Màn chào (F-44, D-041). Chỉ ghi khi tạo
+  /// cơ sở dữ liệu lần đầu; theo máy, không đi theo sao lưu.
+  static const onboardingPendingKey = 'onboardingPending';
+
   Stream<String?> _watch(String key) {
     final query = _db.select(_db.settings)..where((s) => s.key.equals(key));
     return query.watchSingleOrNull().map((row) => row?.value);
@@ -84,6 +88,13 @@ class SettingsRepository {
 
   /// Mã ngôn ngữ đã chọn; null là chưa chọn = English (D-036, AC-36).
   Stream<String?> watchLocaleCode() => _watch(localeKey);
+
+  /// Còn phải hiện Màn chào (F-44).
+  Stream<bool> watchOnboardingPending() =>
+      _watch(onboardingPendingKey).map((v) => v == '1');
+
+  /// Xong (hoặc Bỏ qua) Màn chào: không bao giờ hiện lại (D-041).
+  Future<void> finishOnboarding() => _remove(onboardingPendingKey);
 
   Future<void> setLocaleCode(String? code) =>
       code == null ? _remove(localeKey) : _write(localeKey, code);

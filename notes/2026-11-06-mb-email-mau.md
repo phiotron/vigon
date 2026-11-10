@@ -41,6 +41,9 @@
    khoản của tôi".
 
 ## Còn thiếu
-- Địa chỉ người gửi **đầy đủ** (người dùng chạm "đến tôi ▾" trong Gmail rồi nhắn lại). Không thay bằng suy đoán trong code (AC-81 lọc đúng nguyên địa chỉ).
+- ~~Địa chỉ người gửi đầy đủ~~ → **đã xác nhận 2026-11-10: `mbebanking@mbbank.com.vn`** (thư thật tải qua IMAP).
+- **2026-11-10:** đã có thư gốc (6 thư thật, cùng một định dạng HTML Outlook, không có text/plain). Lỗi "không đọc được" do
+  `htmlToText` coi xuống dòng trong mã nguồn là xuống dòng thật → nhãn "Ngày,⏎giờ giao dịch" bị cắt đôi. Đã sửa; mẫu đã che ở
+  `test/import/samples/mb/real_outlook_2026-11-09.html`.
 - Nếu có: một email **thất bại** hoặc **đang xử lý**; một email loại khác (chuyển trong MB, QR, thanh toán hoá đơn) để
   biết nhãn có khác không.

@@ -638,6 +638,216 @@ abstract class AppLocalizations {
   /// **'Yearly'**
   String get repeatYearly;
 
+  /// No description provided for @repeatPickDays.
+  ///
+  /// In en, this message translates to:
+  /// **'Pick days…'**
+  String get repeatPickDays;
+
+  /// No description provided for @repeatPickDaysTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Repeat on'**
+  String get repeatPickDaysTitle;
+
+  /// No description provided for @weekdayMon.
+  ///
+  /// In en, this message translates to:
+  /// **'Mon'**
+  String get weekdayMon;
+
+  /// No description provided for @weekdayTue.
+  ///
+  /// In en, this message translates to:
+  /// **'Tue'**
+  String get weekdayTue;
+
+  /// No description provided for @weekdayWed.
+  ///
+  /// In en, this message translates to:
+  /// **'Wed'**
+  String get weekdayWed;
+
+  /// No description provided for @weekdayThu.
+  ///
+  /// In en, this message translates to:
+  /// **'Thu'**
+  String get weekdayThu;
+
+  /// No description provided for @weekdayFri.
+  ///
+  /// In en, this message translates to:
+  /// **'Fri'**
+  String get weekdayFri;
+
+  /// No description provided for @weekdaySat.
+  ///
+  /// In en, this message translates to:
+  /// **'Sat'**
+  String get weekdaySat;
+
+  /// No description provided for @weekdaySun.
+  ///
+  /// In en, this message translates to:
+  /// **'Sun'**
+  String get weekdaySun;
+
+  /// No description provided for @repeatAllDaysHint.
+  ///
+  /// In en, this message translates to:
+  /// **'All 7 days = Daily'**
+  String get repeatAllDaysHint;
+
+  /// No description provided for @repeatFirstOn.
+  ///
+  /// In en, this message translates to:
+  /// **'First record: {date}'**
+  String repeatFirstOn(String date);
+
+  /// No description provided for @repeatCreatedFirstOn.
+  ///
+  /// In en, this message translates to:
+  /// **'Repeating record created · first on {date}'**
+  String repeatCreatedFirstOn(String date);
+
+  /// No description provided for @onboardingStep.
+  ///
+  /// In en, this message translates to:
+  /// **'Step {step} of {total}'**
+  String onboardingStep(int step, int total);
+
+  /// No description provided for @onboardingSkip.
+  ///
+  /// In en, this message translates to:
+  /// **'Skip'**
+  String get onboardingSkip;
+
+  /// No description provided for @onboardingContinue.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue'**
+  String get onboardingContinue;
+
+  /// No description provided for @onboardingLanguageTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose your language'**
+  String get onboardingLanguageTitle;
+
+  /// No description provided for @onboardingLanguageHint.
+  ///
+  /// In en, this message translates to:
+  /// **'You can change it later in Settings.'**
+  String get onboardingLanguageHint;
+
+  /// No description provided for @onboardingWelcomeTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Welcome to Vigon'**
+  String get onboardingWelcomeTitle;
+
+  /// No description provided for @onboardingBenefitFast.
+  ///
+  /// In en, this message translates to:
+  /// **'Record in 3 taps'**
+  String get onboardingBenefitFast;
+
+  /// No description provided for @onboardingBenefitFastSub.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap a category, type the amount, done.'**
+  String get onboardingBenefitFastSub;
+
+  /// No description provided for @onboardingBenefitClear.
+  ///
+  /// In en, this message translates to:
+  /// **'See where your money goes'**
+  String get onboardingBenefitClear;
+
+  /// No description provided for @onboardingBenefitClearSub.
+  ///
+  /// In en, this message translates to:
+  /// **'Charts by category, budgets, many currencies.'**
+  String get onboardingBenefitClearSub;
+
+  /// No description provided for @onboardingBenefitPrivate.
+  ///
+  /// In en, this message translates to:
+  /// **'Private by design'**
+  String get onboardingBenefitPrivate;
+
+  /// No description provided for @onboardingBenefitPrivateSub.
+  ///
+  /// In en, this message translates to:
+  /// **'Works offline. No account, no ads, no tracking.'**
+  String get onboardingBenefitPrivateSub;
+
+  /// No description provided for @onboardingStart.
+  ///
+  /// In en, this message translates to:
+  /// **'Get started'**
+  String get onboardingStart;
+
+  /// No description provided for @onboardingCurrencyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Your main currency'**
+  String get onboardingCurrencyTitle;
+
+  /// No description provided for @onboardingCurrencyHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Totals, charts and budgets use this currency. Your Cash account starts in it; you can add accounts in other currencies later.'**
+  String get onboardingCurrencyHint;
+
+  /// No description provided for @onboardingOtherCurrency.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose another currency…'**
+  String get onboardingOtherCurrency;
+
+  /// No description provided for @onboardingReminderTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'A daily reminder to record'**
+  String get onboardingReminderTitle;
+
+  /// No description provided for @onboardingReminderHint.
+  ///
+  /// In en, this message translates to:
+  /// **'One quiet notification a day at the time you choose. It never shows any amounts.'**
+  String get onboardingReminderHint;
+
+  /// No description provided for @onboardingReminderOn.
+  ///
+  /// In en, this message translates to:
+  /// **'Turn on reminder'**
+  String get onboardingReminderOn;
+
+  /// No description provided for @onboardingLater.
+  ///
+  /// In en, this message translates to:
+  /// **'Not now'**
+  String get onboardingLater;
+
+  /// No description provided for @onboardingPinTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Lock Vigon with a PIN?'**
+  String get onboardingPinTitle;
+
+  /// No description provided for @onboardingPinHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Ask for a 4-digit PIN when opening the app. It keeps curious eyes out; it does not encrypt your data.'**
+  String get onboardingPinHint;
+
+  /// No description provided for @onboardingPinSet.
+  ///
+  /// In en, this message translates to:
+  /// **'Set a PIN'**
+  String get onboardingPinSet;
+
   /// No description provided for @stopRepeat.
   ///
   /// In en, this message translates to:

@@ -9,6 +9,7 @@ import '../../data/calculator.dart';
 import '../../data/database.dart';
 import '../../data/dates.dart';
 import '../../data/money.dart';
+import '../../data/repeat.dart';
 import '../../l10n_names.dart';
 import '../../providers.dart';
 import '../../ui/amount_display.dart';
@@ -21,6 +22,7 @@ import '../../ui/theme.dart';
 import '../import_queue/import_queue_actions.dart';
 import '../import_queue/import_queue_providers.dart';
 import '../import_queue/queue_match.dart';
+import '../recurring/repeat_picker.dart';
 import '../../ui/tokens.g.dart';
 import 'entry_time.dart';
 import 'keypad.dart';
@@ -67,7 +69,7 @@ class _EntryEditorScreenState extends ConsumerState<EntryEditorScreen> {
   String? _error;
   bool _loading = false;
   bool _saving = false;
-  RecurrenceFrequency? _repeat;
+  Repeat? _repeat;
   RecurringRule? _rule;
 
   @override
@@ -194,6 +196,7 @@ class _EntryEditorScreenState extends ConsumerState<EntryEditorScreen> {
     }
     _saving = true;
     int? savedId;
+    String? createdFirstOn;
     try {
       final repo = ref.read(entryRepositoryProvider);
       final accountId = _accountId ?? await _defaultAccountId();
@@ -256,8 +259,19 @@ class _EntryEditorScreenState extends ConsumerState<EntryEditorScreen> {
         } else {
           // Ngày bắt đầu ở quá khứ thì tạo luôn các lần đã tới hạn (AC-24).
           final recurring = ref.read(recurringRepositoryProvider);
-          await recurring.addWithRepeat(entry, repeat);
+          await recurring.addWithRepeat(
+            entry,
+            repeat.frequency,
+            weekdays: repeat.weekdays,
+          );
           await recurring.generateDue(ref.read(clockProvider)());
+          // "Chọn thứ" mà ngày khoản không thuộc thứ đã chọn: khoản hôm nay
+          // không được ghi (D-040) → báo ngày của khoản đầu (F-45).
+          final firstOn = repeat.firstOn(_date);
+          if (firstOn != _date && mounted) {
+            createdFirstOn = AppLocalizations.of(context)
+                .repeatCreatedFirstOn(weekdayDate(context, firstOn));
+          }
         }
       } else {
         await repo.update(
@@ -290,6 +304,7 @@ class _EntryEditorScreenState extends ConsumerState<EntryEditorScreen> {
         : await matchQueueFor(ref, context, savedId);
     if (mounted) context.pop();
     matched?.showUndo();
+    if (createdFirstOn != null) showMessage(createdFirstOn);
   }
 
   Future<int> _defaultAccountId() async {
@@ -320,22 +335,15 @@ class _EntryEditorScreenState extends ConsumerState<EntryEditorScreen> {
     return showCategorySheet(context, type: type, selectedId: _categoryId);
   }
 
-  /// Bảng "Lặp lại" (3.5), chỉ có khi ghi khoản mới.
+  /// Bảng "Lặp lại" (3.5 + "Chọn thứ…" F-45), chỉ có khi ghi khoản mới.
   Future<void> _pickRepeat() async {
-    final l = AppLocalizations.of(context);
-    final picked = await showChoiceSheet<RecurrenceFrequency?>(
+    final picked = await showRepeatSheet(
       context,
-      title: l.repeat,
       selected: _repeat,
-      options: [
-        for (final f in <RecurrenceFrequency?>[
-          null,
-          ...RecurrenceFrequency.values,
-        ])
-          ChoiceOption(f, repeatLabel(l, f)),
-      ],
+      date: _date,
+      weekStart: ref.read(weekStartProvider).value ?? DateTime.monday,
     );
-    if (picked != null) setState(() => _repeat = picked.$1);
+    if (picked != null && mounted) setState(() => _repeat = picked.$1);
   }
 
   /// Dừng chuỗi định kỳ của khoản này; khoản đã tạo giữ nguyên (AC-25).
@@ -393,6 +401,7 @@ class _EntryEditorScreenState extends ConsumerState<EntryEditorScreen> {
     final l = AppLocalizations.of(context);
     final accounts = ref.watch(accountsProvider).value ?? const <Account>[];
     final scheme = Theme.of(context).colorScheme;
+    final weekStart = ref.watch(weekStartProvider).value ?? DateTime.monday;
     final isIncome = _type == EntryType.income;
     final color = isIncome ? incomeColor(context) : expenseColor(context);
     final category = _categoryId == null
@@ -528,7 +537,13 @@ class _EntryEditorScreenState extends ConsumerState<EntryEditorScreen> {
                                       Symbols.repeat_rounded,
                                       size: 18,
                                     ),
-                                    label: Text(repeatLabel(l, _repeat)),
+                                    label: Text(
+                                      repeatText(
+                                        l,
+                                        _repeat,
+                                        weekStart: weekStart,
+                                      ),
+                                    ),
                                     onPressed: _pickRepeat,
                                   )
                                 else if (_rule != null && _rule!.active)
@@ -538,7 +553,11 @@ class _EntryEditorScreenState extends ConsumerState<EntryEditorScreen> {
                                       size: 18,
                                     ),
                                     label: Text(
-                                      repeatLabel(l, _rule!.frequency),
+                                      repeatText(
+                                        l,
+                                        Repeat.of(_rule!),
+                                        weekStart: weekStart,
+                                      ),
                                     ),
                                     deleteIcon: Icon(
                                       Symbols.stop_circle_rounded,
@@ -561,6 +580,26 @@ class _EntryEditorScreenState extends ConsumerState<EntryEditorScreen> {
                               ],
                             ),
                           ),
+                          // "Chọn thứ" (F-45): ngày của khoản đầu tiên — có
+                          // thể không phải hôm nay (D-040).
+                          if (_repeat?.isPickDays == true)
+                            Padding(
+                              key: const Key('repeat-first-on'),
+                              padding: const EdgeInsets.fromLTRB(
+                                VgSpace.s4,
+                                0,
+                                VgSpace.s4,
+                                VgSpace.s2,
+                              ),
+                              child: Text(
+                                l.repeatFirstOn(
+                                  weekdayDate(context, _repeat!.firstOn(_date)),
+                                ),
+                                style: VgType.bodySm.copyWith(
+                                  color: scheme.onSurfaceVariant,
+                                ),
+                              ),
+                            ),
                           // Ô ghi chú `.vg-field` v2 viền outline, cao 56
                           // (lề trong 16 của theme), bộ đếm label-sm "0/200"
                           // bên phải (AC-04).
@@ -614,11 +653,3 @@ class _EntryEditorScreenState extends ConsumerState<EntryEditorScreen> {
     );
   }
 }
-
-String repeatLabel(AppLocalizations l, RecurrenceFrequency? f) => switch (f) {
-  null => l.repeatNone,
-  RecurrenceFrequency.daily => l.repeatDaily,
-  RecurrenceFrequency.weekly => l.repeatWeekly,
-  RecurrenceFrequency.monthly => l.repeatMonthly,
-  RecurrenceFrequency.yearly => l.repeatYearly,
-};

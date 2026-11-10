@@ -6,6 +6,7 @@ import '../../../l10n/app_localizations.dart';
 import '../../data/database.dart';
 import '../../data/money.dart';
 import '../../data/recurring_repository.dart';
+import '../../data/repeat.dart';
 import '../../l10n_names.dart';
 import '../../ui/category_avatar.dart';
 import '../../ui/category_grid.dart';
@@ -16,8 +17,8 @@ import '../../ui/settings_rows.dart' show PillTone, StatusPill;
 import '../../ui/tokens.g.dart';
 import '../accounts/accounts_screen.dart' show accountIcon;
 import '../categories/sheet_footer.dart';
-import '../entry/entry_editor_screen.dart' show repeatLabel;
 import '../settings/budget_dialog.dart' show currencySymbol;
+import 'repeat_picker.dart';
 
 /// Kết quả bảng sửa chuỗi định kỳ (AC-25, AC-50).
 class RuleEdit {
@@ -26,6 +27,7 @@ class RuleEdit {
     required this.currency,
     required this.note,
     required this.frequency,
+    this.weekdays,
     required this.categoryId,
     required this.accountId,
   });
@@ -35,6 +37,9 @@ class RuleEdit {
   final String currency;
   final String? note;
   final RecurrenceFrequency frequency;
+
+  /// Thứ đã chọn ("Chọn thứ", F-45); null = không.
+  final int? weekdays;
 
   /// Null với chuỗi chuyển tiền (không có danh mục).
   final int? categoryId;
@@ -48,12 +53,17 @@ Future<RuleEdit?> showRuleSheet(
   required RecurringRule rule,
   required List<Category> categories,
   required List<Account> accounts,
+  int weekStart = DateTime.monday,
 }) => showModalBottomSheet<RuleEdit>(
   context: context,
   isScrollControlled: true,
   useSafeArea: true,
-  builder: (context) =>
-      RuleSheet(rule: rule, categories: categories, accounts: accounts),
+  builder: (context) => RuleSheet(
+    rule: rule,
+    categories: categories,
+    accounts: accounts,
+    weekStart: weekStart,
+  ),
 );
 
 /// Bảng sửa chuỗi định kỳ (SCR-21): thanh ✕ + tiêu đề; đầu chuỗi chỉ đọc
@@ -66,9 +76,13 @@ class RuleSheet extends StatefulWidget {
     required this.rule,
     required this.categories,
     required this.accounts,
+    this.weekStart = DateTime.monday,
   });
 
   final RecurringRule rule;
+
+  /// Ngày đầu tuần (thứ tự chip "Chọn thứ").
+  final int weekStart;
 
   /// Danh mục cùng loại thu/chi với chuỗi; rỗng với chuỗi chuyển tiền.
   final List<Category> categories;
@@ -91,7 +105,7 @@ class _RuleSheetState extends State<RuleSheet> {
     ),
   );
   late final _note = TextEditingController(text: widget.rule.note ?? '');
-  late RecurrenceFrequency _frequency = widget.rule.frequency;
+  late Repeat _repeat = Repeat.of(widget.rule);
   late int? _categoryId = widget.rule.categoryId;
   late int _accountId = widget.rule.accountId;
   String? _error;
@@ -120,11 +134,23 @@ class _RuleSheetState extends State<RuleSheet> {
         amount: v,
         currency: widget.rule.currency,
         note: n.isEmpty ? null : n,
-        frequency: _frequency,
+        frequency: _repeat.frequency,
+        weekdays: _repeat.weekdays,
         categoryId: _categoryId,
         accountId: _accountId,
       ),
     );
+  }
+
+  Future<void> _pickDays() async {
+    final mask = await showWeekdaySheet(
+      context,
+      initialMask:
+          _repeat.weekdays ??
+          weekdayBit(RecurringRepository.nextDate(widget.rule).weekday),
+      weekStart: widget.weekStart,
+    );
+    if (mask != null && mounted) setState(() => _repeat = Repeat.days(mask));
   }
 
   Category? _category(int? id) {
@@ -178,7 +204,7 @@ class _RuleSheetState extends State<RuleSheet> {
     }
     final nextDue = shortDate(context, RecurringRepository.nextDate(rule));
     final status = rule.active
-        ? '${repeatLabel(l, rule.frequency)} · $nextDue'
+        ? '${repeatText(l, Repeat.of(rule), weekStart: widget.weekStart)} · $nextDue'
         : l.repeatStopped;
     final note = rule.note?.trim() ?? '';
     final seriesName = note.isNotEmpty
@@ -335,16 +361,29 @@ class _RuleSheetState extends State<RuleSheet> {
                           for (final f in RecurrenceFrequency.values)
                             _FrequencyChip(
                               key: ValueKey('rule-frequency-${f.name}'),
-                              label: repeatLabel(l, f),
-                              selected: f == _frequency,
-                              onTap: () => setState(() => _frequency = f),
+                              label: repeatText(l, Repeat(f)),
+                              selected: _repeat == Repeat(f),
+                              onTap: () => setState(() => _repeat = Repeat(f)),
                             ),
+                          // "Chọn thứ…" (F-45): chip hiện các thứ đã chọn.
+                          _FrequencyChip(
+                            key: const ValueKey('rule-frequency-days'),
+                            label: _repeat.isPickDays
+                                ? repeatText(
+                                    l,
+                                    _repeat,
+                                    weekStart: widget.weekStart,
+                                  )
+                                : l.repeatPickDays,
+                            selected: _repeat.isPickDays,
+                            onTap: _pickDays,
+                          ),
                         ],
                       ),
                     ),
                     // A12: đổi tần suất thì chuỗi bắt đầu lại từ ngày tới hạn
                     // kế tiếp theo lịch cũ (AC-50).
-                    if (_frequency != rule.frequency)
+                    if (_repeat != Repeat.of(rule))
                       VgHint(
                         l.recurringRestartHint(nextDue),
                         icon: Symbols.restart_alt_rounded,

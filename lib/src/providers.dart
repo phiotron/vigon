@@ -41,6 +41,11 @@ final themeModeProvider = StreamProvider<ThemeMode>(
   (ref) => ref.watch(settingsRepositoryProvider).watchThemeMode(),
 );
 
+/// Còn phải hiện Màn chào (F-44): chỉ máy vừa cài mới.
+final onboardingPendingProvider = StreamProvider<bool>(
+  (ref) => ref.watch(settingsRepositoryProvider).watchOnboardingPending(),
+);
+
 final localeCodeProvider = StreamProvider<String?>(
   (ref) => ref.watch(settingsRepositoryProvider).watchLocaleCode(),
 );

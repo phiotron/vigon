@@ -56,6 +56,8 @@ void main() {
     final settings = SettingsRepository(db);
     await settings.ensureCurrency(defaultCode: 'VND');
     await settings.setBudget(9000000);
+    // Máy xuất file đã qua Màn chào (F-44); cờ cài mới không theo file.
+    await settings.finishOnboarding();
   }
 
   Future<Map<String, List<Object?>>> snapshot(AppDatabase d) async => {

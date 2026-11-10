@@ -293,6 +293,122 @@ class AppLocalizationsVi extends AppLocalizations {
   String get repeatYearly => 'Hằng năm';
 
   @override
+  String get repeatPickDays => 'Chọn thứ…';
+
+  @override
+  String get repeatPickDaysTitle => 'Lặp vào các thứ';
+
+  @override
+  String get weekdayMon => 'T2';
+
+  @override
+  String get weekdayTue => 'T3';
+
+  @override
+  String get weekdayWed => 'T4';
+
+  @override
+  String get weekdayThu => 'T5';
+
+  @override
+  String get weekdayFri => 'T6';
+
+  @override
+  String get weekdaySat => 'T7';
+
+  @override
+  String get weekdaySun => 'CN';
+
+  @override
+  String get repeatAllDaysHint => 'Chọn đủ 7 thứ = Hằng ngày';
+
+  @override
+  String repeatFirstOn(String date) {
+    return 'Khoản đầu: $date';
+  }
+
+  @override
+  String repeatCreatedFirstOn(String date) {
+    return 'Đã tạo khoản định kỳ · khoản đầu $date';
+  }
+
+  @override
+  String onboardingStep(int step, int total) {
+    return 'Bước $step/$total';
+  }
+
+  @override
+  String get onboardingSkip => 'Bỏ qua';
+
+  @override
+  String get onboardingContinue => 'Tiếp tục';
+
+  @override
+  String get onboardingLanguageTitle => 'Chọn ngôn ngữ';
+
+  @override
+  String get onboardingLanguageHint => 'Đổi lại được trong Cài đặt.';
+
+  @override
+  String get onboardingWelcomeTitle => 'Chào mừng đến Ví Gọn';
+
+  @override
+  String get onboardingBenefitFast => 'Ghi một khoản trong 3 chạm';
+
+  @override
+  String get onboardingBenefitFastSub => 'Chạm danh mục, gõ số tiền, xong.';
+
+  @override
+  String get onboardingBenefitClear => 'Biết tiền đi đâu';
+
+  @override
+  String get onboardingBenefitClearSub =>
+      'Biểu đồ theo danh mục, ngân sách, nhiều loại tiền.';
+
+  @override
+  String get onboardingBenefitPrivate => 'Riêng tư';
+
+  @override
+  String get onboardingBenefitPrivateSub =>
+      'Dùng offline. Không tài khoản, không quảng cáo, không theo dõi.';
+
+  @override
+  String get onboardingStart => 'Bắt đầu';
+
+  @override
+  String get onboardingCurrencyTitle => 'Tiền tệ chính';
+
+  @override
+  String get onboardingCurrencyHint =>
+      'Tổng, biểu đồ và ngân sách tính theo tiền tệ này. Tài khoản Tiền mặt cũng dùng tiền tệ này; sau này vẫn thêm được tài khoản tiền tệ khác.';
+
+  @override
+  String get onboardingOtherCurrency => 'Chọn tiền tệ khác…';
+
+  @override
+  String get onboardingReminderTitle => 'Nhắc ghi sổ mỗi ngày';
+
+  @override
+  String get onboardingReminderHint =>
+      'Mỗi ngày một thông báo vào giờ bạn chọn. Không bao giờ hiện số tiền.';
+
+  @override
+  String get onboardingReminderOn => 'Bật nhắc';
+
+  @override
+  String get onboardingLater => 'Để sau';
+
+  @override
+  String get onboardingPinTitle => 'Khoá Ví Gọn bằng mã PIN?';
+
+  @override
+  String get onboardingPinHint =>
+      'Hỏi mã PIN 4 số khi mở app. Chặn người tò mò; không mã hoá dữ liệu.';
+
+  @override
+  String get onboardingPinSet => 'Đặt mã PIN';
+
+  @override
   String get stopRepeat => 'Dừng lặp lại';
 
   @override

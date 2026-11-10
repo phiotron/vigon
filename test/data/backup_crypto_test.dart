@@ -8,6 +8,7 @@ import 'package:vigon/src/data/account_repository.dart';
 import 'package:vigon/src/data/backup.dart';
 import 'package:vigon/src/data/backup_crypto.dart';
 import 'package:vigon/src/data/database.dart';
+import 'package:vigon/src/data/settings_repository.dart';
 
 void main() {
   late AppDatabase db;
@@ -18,6 +19,8 @@ void main() {
   tearDown(() => db.close());
 
   Future<String> sampleJson() async {
+    // Máy xuất file đã qua Màn chào (F-44); cờ cài mới không theo file.
+    await SettingsRepository(db).finishOnboarding();
     await AccountRepository(db).add(name: 'Thẻ', initialBalance: 1000);
     await db
         .into(db.entries)

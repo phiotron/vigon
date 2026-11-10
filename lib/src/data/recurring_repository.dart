@@ -2,16 +2,13 @@ import 'package:drift/drift.dart';
 
 import 'database.dart';
 import 'dates.dart';
+import 'repeat.dart';
 
-/// Lần lặp thứ [n] (0 là ngày bắt đầu). Tính từ ngày bắt đầu chứ không từ lần
-/// trước, nên khoản ngày 31 vẫn về ngày 31 sau tháng 2 (AC-23).
+/// Lần lặp thứ [n] (0 là ngày bắt đầu) của tần suất đơn giản (không "Chọn
+/// thứ"). Tính từ ngày bắt đầu chứ không từ lần trước, nên khoản ngày 31 vẫn
+/// về ngày 31 sau tháng 2 (AC-23).
 DateTime occurrence(DateTime start, RecurrenceFrequency f, int n) =>
-    switch (f) {
-      RecurrenceFrequency.daily => addDays(start, n),
-      RecurrenceFrequency.weekly => addDays(start, 7 * n),
-      RecurrenceFrequency.monthly => addMonths(start, n, day: start.day),
-      RecurrenceFrequency.yearly => addMonths(start, 12 * n, day: start.day),
-    };
+    Repeat(f).occurrences(start).elementAt(n);
 
 /// Khoản định kỳ: tạo chuỗi, tự sinh khoản tới hạn, dừng, sửa (F-08).
 class RecurringRepository {
@@ -34,10 +31,18 @@ class RecurringRepository {
   )..where((r) => r.id.equals(id))).getSingleOrNull();
 
   /// Ghi khoản đầu tiên và tạo chuỗi lặp bắt đầu từ ngày của khoản đó (AC-23).
+  ///
+  /// "Chọn thứ" ([weekdays], F-45): ngày của khoản không thuộc thứ đã chọn thì
+  /// KHÔNG ghi khoản đó (D-040) — chỉ tạo chuỗi bắt đầu từ ngày đó; khoản đầu
+  /// là thứ đã chọn gần nhất, do [generateDue] sinh khi tới hạn.
   Future<int> addWithRepeat(
     EntriesCompanion first,
-    RecurrenceFrequency frequency,
-  ) => _db.transaction(() async {
+    RecurrenceFrequency frequency, {
+    int? weekdays,
+  }) => _db.transaction(() async {
+    final repeat = Repeat.from(frequency, weekdays);
+    final startDate = first.date.value;
+    final saveFirst = repeat.includes(parseDateKey(startDate));
     final ruleId = await _db
         .into(_db.recurringRules)
         .insert(
@@ -49,9 +54,14 @@ class RecurringRepository {
             accountId: first.accountId.value,
             toAccountId: first.toAccountId,
             note: first.note,
-            frequency: frequency,
-            startDate: first.date.value,
-            lastGeneratedDate: Value(first.date.value),
+            frequency: repeat.frequency,
+            weekdays: Value(repeat.weekdays),
+            startDate: startDate,
+            lastGeneratedDate: Value(
+              saveFirst
+                  ? startDate
+                  : dateKey(addDays(parseDateKey(startDate), -1)),
+            ),
             currency: first.currency,
             originalAmount: first.originalAmount,
             toAmount: first.toAmount,
@@ -59,9 +69,11 @@ class RecurringRepository {
             toCurrency: first.toCurrency,
           ),
         );
-    await _db
-        .into(_db.entries)
-        .insert(first.copyWith(recurringRuleId: Value(ruleId)));
+    if (saveFirst) {
+      await _db
+          .into(_db.entries)
+          .insert(first.copyWith(recurringRuleId: Value(ruleId)));
+    }
     return ruleId;
   });
 
@@ -77,8 +89,10 @@ class RecurringRepository {
       final start = parseDateKey(rule.startDate);
       final last = rule.lastGeneratedDate;
       String? newLast;
-      for (var n = 0, made = 0; made < _maxPerRun; n++) {
-        final key = dateKey(occurrence(start, rule.frequency, n));
+      var made = 0;
+      for (final day in Repeat.of(rule).occurrences(start)) {
+        if (made >= _maxPerRun) break;
+        final key = dateKey(day);
         if (key.compareTo(todayKey) > 0) break;
         if (last != null && key.compareTo(last) <= 0) continue;
         await _db
@@ -117,12 +131,10 @@ class RecurringRepository {
 
   /// Ngày tới hạn kế tiếp của chuỗi, sau `lastGeneratedDate`.
   static DateTime nextDate(RecurringRule rule) {
-    final start = parseDateKey(rule.startDate);
     final last = rule.lastGeneratedDate;
-    for (var n = 0; ; n++) {
-      final d = occurrence(start, rule.frequency, n);
-      if (last == null || dateKey(d).compareTo(last) > 0) return d;
-    }
+    return Repeat.of(rule)
+        .occurrences(parseDateKey(rule.startDate))
+        .firstWhere((d) => last == null || dateKey(d).compareTo(last) > 0);
   }
 
   /// Dừng chuỗi; các khoản đã tạo giữ nguyên (AC-25).
@@ -150,8 +162,10 @@ class RecurringRepository {
 
   /// Sửa chuỗi cho các lần sau; khoản đã tạo không đổi (AC-25, AC-50).
   ///
-  /// [frequency], [categoryId], [accountId] null nghĩa là giữ nguyên. Đổi tần
-  /// suất thì chuỗi bắt đầu lại từ ngày tới hạn kế tiếp theo lịch CŨ: `startDate`
+  /// [frequency], [categoryId], [accountId] null nghĩa là giữ nguyên. Có
+  /// [frequency] thì [weekdays] đi kèm là thứ đã chọn ("Chọn thứ", F-45; null
+  /// = không). Đổi tần suất hoặc thứ thì chuỗi bắt đầu lại từ ngày tới hạn kế
+  /// tiếp theo lịch CŨ: `startDate`
   /// là ngày đó và `lastGeneratedDate` là ngày liền trước, nên lần sinh đầu theo
   /// tần suất mới chính là ngày đó, không sinh bù và không trùng khoản đã có.
   /// Không đổi tần suất thì giữ nguyên cả hai ngày.
@@ -160,6 +174,7 @@ class RecurringRepository {
     required int amount,
     String? note,
     RecurrenceFrequency? frequency,
+    int? weekdays,
     int? categoryId,
     int? accountId,
     int? originalAmount,
@@ -169,7 +184,8 @@ class RecurringRepository {
     if (rule == null) return;
     String? startDate;
     String? lastGenerated;
-    if (frequency != null && frequency != rule.frequency) {
+    final repeat = frequency == null ? null : Repeat.from(frequency, weekdays);
+    if (repeat != null && repeat != Repeat.of(rule)) {
       final next = nextDate(rule);
       startDate = dateKey(next);
       lastGenerated = dateKey(addDays(next, -1));
@@ -181,7 +197,12 @@ class RecurringRepository {
             ? const Value.absent()
             : const Value(null),
         note: Value(note),
-        frequency: frequency == null ? const Value.absent() : Value(frequency),
+        frequency: repeat == null
+            ? const Value.absent()
+            : Value(repeat.frequency),
+        weekdays: repeat == null
+            ? const Value.absent()
+            : Value(repeat.weekdays),
         categoryId: categoryId == null
             ? const Value.absent()
             : Value(categoryId),

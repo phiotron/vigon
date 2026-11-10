@@ -67,7 +67,9 @@
 | **Budget alert** (2.0) | Thông báo ngân sách | Thông báo cục bộ (công tắc, mặc định tắt) khi đã chi tháng hiện tại vượt qua mốc ngưỡng hoặc 100%; mỗi mốc mỗi ngân sách một lần mỗi tháng; **chỉ có phần trăm, không bao giờ có số tiền**. Khác Reminder. | "nhắc nhở", "push" |
 | **Remaining budget** (2.0) | Ngân sách còn lại | Hạn mức Budget của tháng − đã chi (mọi tài khoản); âm thì hiện "Vượt X". Ô trên màn Overview. | "số dư ngân sách" |
 | **Recurring series** ⚠ | Khoản định kỳ (chuỗi định kỳ) — EN UI: *Repeating records*; code: `RecurringRule` | Quy tắc lặp của một khoản mẫu: loại, số tiền, danh mục, tài khoản, ghi chú, Frequency, ngày bắt đầu, chạy/dừng. Chỉ tạo từ màn Nhập khoản mới (chip Lặp lại). Sửa được số tiền, ghi chú, tần suất, danh mục, tài khoản (F-16). | "subscription", "nhắc nhở" |
-| **Frequency** | Chu kỳ lặp (Lặp lại) | `daily` Hằng ngày · `weekly` Hằng tuần · `monthly` Hằng tháng · `yearly` Hằng năm. Đổi tần suất thì chuỗi bắt đầu lại từ ngày tới hạn kế tiếp theo lịch cũ, không sinh bù. | "period" (đã dùng cho Kỳ) |
+| **Frequency** | Chu kỳ lặp (Lặp lại) | Hằng ngày · Hằng tuần · **Repeat days** (Chọn thứ) · Hằng tháng · Hằng năm. Đổi tần suất (hoặc thứ đã chọn) thì chuỗi bắt đầu lại từ ngày tới hạn kế tiếp theo lịch cũ, không sinh bù. | "period" (đã dùng cho Kỳ) |
+| **Repeat days** (F-45) | Chọn thứ (lặp theo thứ) | Recurring series chỉ sinh khoản vào các **thứ trong tuần** người dùng chọn (như báo thức), vd T2 + T3. Chọn đủ 7 thứ chính là Hằng ngày. Ngày của khoản đang ghi không thuộc thứ đã chọn thì khoản đó **không** được ghi; **First occurrence** là thứ đã chọn gần nhất (D-040). | "lặp tùy chỉnh", "lịch tuần", "weekly" trơn (Hằng tuần = cùng một thứ mỗi tuần) |
+| **First occurrence** (F-45) | Khoản đầu | Ngày tới hạn đầu tiên của một Recurring series; với Repeat days có thể khác ngày đang nhập. | "ngày bắt đầu" (ngày bắt đầu là mốc tính lịch, có thể không có khoản) |
 | **Generated entry** | Khoản sinh tự động | Entry do Recurring series tạo khi mở app hoặc quay lại từ nền, bù mọi lần tới hạn tới hết hôm nay, không trùng; sau đó là Entry bình thường. | |
 | **Stop / Resume series** | Dừng / Chạy lại | Dừng: không sinh thêm ("Đã dừng"). Chạy lại: tiếp từ **hôm nay**, không sinh bù. | "xóa chuỗi" |
 | **Undo** | Hoàn tác | Thanh "Đã xóa · Hoàn tác" 5 giây sau khi xóa một Entry/Transfer. | "khôi phục" (dành cho Restore) |
@@ -80,7 +82,7 @@
 | **Mailbox** | Hộp thư | Hộp thư Gmail/Yahoo/iCloud người dùng thêm để app đọc email biên lai qua IMAP, chỉ xem, không đánh dấu đã đọc. Cấu hình theo máy, không theo file sao lưu. | "tài khoản email" (dễ nhầm Account) |
 | **App password** | Mật khẩu ứng dụng | Mật khẩu riêng nhà cung cấp email cấp cho một app (không phải mật khẩu đăng nhập chính); chỉ lưu trong Keystore/Keychain. Khác Backup password và PIN. | "mật khẩu email", "mật khẩu Gmail" |
 | **Supported bank** | Ngân hàng hỗ trợ | Ngân hàng đã có email mẫu thật và test đạt; bản đầu chỉ **MB Bank**. Ngân hàng khác không hiện trong app. | "mọi ngân hàng" |
-| **Bank receipt email** | Email biên lai | Email MB báo một lần chuyển tiền **đi**: ngày giờ, loại giao dịch, số tham chiếu, tài khoản trích nợ, người thụ hưởng, số tiền, nội dung chuyển tiền, cách thức lệnh, ngày nhập lệnh, thời gian, tình trạng. Không có số dư, không có tiền vào. Chỉ email tình trạng thành công tạo khoản chi. | "giao dịch", "sao kê", "tin nhắn" |
+| **Bank receipt email** | Email biên lai | Email MB (gửi từ `mbebanking@mbbank.com.vn`, chỉ có bản HTML) báo một lần chuyển tiền **đi**: ngày giờ, loại giao dịch, số tham chiếu, tài khoản trích nợ, người thụ hưởng, số tiền, nội dung chuyển tiền, cách thức lệnh, ngày nhập lệnh, thời gian, tình trạng. Không có số dư, không có tiền vào. Chỉ email tình trạng thành công tạo khoản chi. | "giao dịch", "sao kê", "tin nhắn" |
 | **Reference number** | Số tham chiếu | Mã của MB trên email biên lai; một số tham chiếu chỉ được nhập **một lần** (kể cả khi đã bỏ qua hay xoá khoản). | "mã giao dịch" (tránh chữ "giao dịch"), "ID" |
 | **Debit account** | Tài khoản trích nợ | Tài khoản MB bị trừ tiền ghi trên email; app chỉ giữ 4 số cuối và dùng nó để chọn Account liên kết. | "số tài khoản" (không lưu số đầy đủ) |
 | **Payee** | Người thụ hưởng | Người/đơn vị nhận tiền ghi trên email; cùng nội dung chuyển tiền tạo thành ghi chú của khoản ("<người thụ hưởng> · <nội dung>"). | "nơi bán", "merchant" |
@@ -124,7 +126,7 @@
 | **Backup folder** 🤖 | Thư mục (sao lưu) | Thư mục người dùng chọn bằng bộ chọn thư mục của Android (Drive, Dropbox, thẻ nhớ, bộ nhớ máy). Việc tải lên đám mây do app sở hữu thư mục làm. "Chọn lại thư mục" khi quyền bị thu hồi hoặc thư mục mất. | "tài khoản Google Drive" |
 | **Auto backup status** 🤖 | Trạng thái sao lưu | "Chưa sao lưu lần nào" / "Lần cuối: …" / "Lần thử …: <lỗi>". | |
 | **CSV export** | Xuất CSV | File bảng tính (ngày, loại, số tiền, tiền tệ, danh mục, tài khoản, đến tài khoản, ghi chú), tiêu đề và tên loại theo ngôn ngữ app (vi: `;` và dấu `,` thập phân; en: `,` và `.`), UTF-8 có BOM. Chỉ xuất. | "báo cáo" |
-| **Device-only setting** | Cài đặt theo máy | Cài đặt không đi theo file sao lưu: công tắc Widget amounts, công tắc Reminder (về TẮT sau khôi phục), cấu hình Auto backup. Giờ nhắc thì có đi theo file. 2.0 thêm: Mailbox + App password, thư đã đọc; Import queue cũng không theo file (số tham chiếu đã gặp thì có). | |
+| **Device-only setting** | Cài đặt theo máy | Cài đặt không đi theo file sao lưu: công tắc Widget amounts, công tắc Reminder (về TẮT sau khôi phục), cấu hình Auto backup. Giờ nhắc thì có đi theo file. Dấu "còn phải hiện Onboarding" cũng theo máy. 2.0 thêm: Mailbox + App password, thư đã đọc; Import queue cũng không theo file (số tham chiếu đã gặp thì có). | |
 | **Delete all data** | Xóa toàn bộ dữ liệu | Xóa mọi khoản, danh mục, tài khoản, cài đặt, tắt PIN và Auto backup (file đã ghi giữ nguyên); tạo lại mặc định như mới cài. Hai hộp xác nhận. 2.0: xoá thêm mục tiêu, nợ, gợi ý, hàng đợi, số tham chiếu đã gặp, hộp thư + mật khẩu ứng dụng; tắt sinh trắc. | "reset", "đăng xuất" |
 
 ## Bảo mật, quyền riêng tư, ngoài app
@@ -143,6 +145,8 @@
 | **Widget amounts** 🤖 | Hiện số tiền trên widget | Công tắc (mặc định tắt): khi bật VÀ PIN tắt, widget hiện "Tháng này đã chi X (/ hạn mức)"; PIN bật → "Đã khóa bằng PIN"; qua tháng mà app chưa mở → "Mở app để cập nhật". | |
 | **Deep link** | Mở thẳng màn nhập khoản | Đường vào từ Widget hoặc Reminder; app chỉ nhận đúng `/entry/new?type=expense|income`, luôn qua Lock screen. | "liên kết" chung chung |
 | **Monochrome icon** 🤖 | Biểu tượng đơn sắc | Lớp `monochrome` của icon thích ứng để Android 13+ tô màu theo hình nền; cùng logo "hai thẻ xếp chồng" (F-23, D-009). | |
+| **Onboarding** (F-44) | Màn chào | Chuỗi 5 bước chỉ hiện ở **lần mở đầu sau khi cài mới**: Ngôn ngữ → Chào mừng → Tiền tệ chính → Nhắc ghi sổ → Khoá PIN. Không hiện lại sau khi nâng cấp, Delete all data hay Restore (D-041). | "hướng dẫn", "tour", "đăng ký" (app không có tài khoản) |
+| **Skip onboarding** | Bỏ qua | Thoát Onboarding ở bước 2–5 để vào app ngay: lựa chọn đã chạm được giữ, phần còn lại là mặc định (English, USD, Reminder tắt, không PIN lock). | "để sau" (là nút của riêng bước Nhắc/PIN, chỉ bỏ bước đó) |
 | **Theme** | Giao diện | Theo hệ thống · Sáng · Tối. | "chủ đề" trong chữ |
 | **Language** | Ngôn ngữ | English (mặc định) · Tiếng Việt. Chữ trên nút Widget theo ngôn ngữ **máy**, còn lại theo ngôn ngữ app. | |
 

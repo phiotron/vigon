@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -16,6 +17,7 @@ import 'features/import_queue/import_queue_screen.dart';
 import 'features/import_queue/payee_suggestions_screen.dart';
 import 'features/lock/app_lock.dart';
 import 'features/lock/lock_screen.dart';
+import 'features/onboarding/onboarding_screen.dart';
 import 'features/recurring/recurring_screen.dart';
 import 'features/reminder/reminder_providers.dart';
 import 'features/savings/savings_screen.dart';
@@ -36,8 +38,27 @@ String? _idOrHome(BuildContext context, GoRouterState state) =>
     int.tryParse(state.pathParameters['id'] ?? '') == null ? '/' : null;
 
 /// Mỗi lần gọi tạo router mới; test dùng để mỗi test bắt đầu ở màn chính.
-GoRouter createRouter() => GoRouter(
+///
+/// [onboarding] (F-44): khi giá trị là `true` mọi đường dẫn — kể cả deep link
+/// của Widget/Nhắc — đưa về `/onboarding`; `false` thì `/onboarding` về màn
+/// chính; `null` (chưa đọc xong cài đặt) giữ nguyên. Không truyền thì không
+/// có Màn chào (test cũ).
+GoRouter createRouter({ValueListenable<bool?>? onboarding}) => GoRouter(
+  refreshListenable: onboarding,
+  redirect: onboarding == null
+      ? null
+      : (context, state) {
+          final pending = onboarding.value;
+          final at = state.matchedLocation == '/onboarding';
+          if (pending == true && !at) return '/onboarding';
+          if (pending == false && at) return '/';
+          return null;
+        },
   routes: [
+    GoRoute(
+      path: '/onboarding',
+      builder: (context, state) => const OnboardingScreen(),
+    ),
     GoRoute(
       path: '/',
       builder: (context, state) => const HomeScreen(),
@@ -142,16 +163,21 @@ GoRouter createRouter() => GoRouter(
   ],
 );
 
-final _router = createRouter();
+final _onboardingGate = ValueNotifier<bool?>(null);
+final _router = createRouter(onboarding: _onboardingGate);
 
 final _lightTheme = buildTheme(Brightness.light);
 final _darkTheme = buildTheme(Brightness.dark);
 
 class VigonApp extends ConsumerWidget {
-  const VigonApp({super.key, this.router});
+  const VigonApp({super.key, this.router, this.onboardingGate});
 
   /// Test truyền router từ [createRouter].
   final GoRouter? router;
+
+  /// Cổng Màn chào mà [router] đọc; test có Màn chào truyền cùng giá trị với
+  /// `createRouter(onboarding: …)`.
+  final ValueNotifier<bool?>? onboardingGate;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -163,6 +189,14 @@ class VigonApp extends ConsumerWidget {
     final localeCode = ref.watch(localeCodeProvider).value;
     final lock = ref.watch(lockProvider);
     final appRouter = router ?? _router;
+    final gate = router == null ? _onboardingGate : onboardingGate;
+    // Cổng theo cờ cài mới; đổi sau khung hình (router làm mới không được chen
+    // vào lúc build).
+    final pending = ref.watch(onboardingPendingProvider);
+    if (gate != null && pending.hasValue && gate.value != pending.value) {
+      final value = pending.value;
+      WidgetsBinding.instance.addPostFrameCallback((_) => gate.value = value);
+    }
     return MaterialApp.router(
       // Màn khóa phủ lên toàn app; phần bên dưới ẩn khỏi trình đọc màn hình (AC-32).
       builder: (context, child) => DeepLinkBinder(
@@ -170,12 +204,18 @@ class VigonApp extends ConsumerWidget {
         child: ReminderTapBinder(
           router: appRouter,
           child: AppLifecycleWatcher(
-            child: Stack(
-              children: [
-                Offstage(offstage: lock != AppLockState.unlocked, child: child),
-                if (lock != AppLockState.unlocked)
-                  LockScreen(checking: lock == AppLockState.checking),
-              ],
+            child: _OnboardingCurtain(
+              gate: gate,
+              child: Stack(
+                children: [
+                  Offstage(
+                    offstage: lock != AppLockState.unlocked,
+                    child: child,
+                  ),
+                  if (lock != AppLockState.unlocked)
+                    LockScreen(checking: lock == AppLockState.checking),
+                ],
+              ),
             ),
           ),
         ),
@@ -195,6 +235,37 @@ class VigonApp extends ConsumerWidget {
         GlobalWidgetsLocalizations.delegate,
         GlobalCupertinoLocalizations.delegate,
       ],
+    );
+  }
+}
+
+/// Chưa biết máy có vừa cài mới không (cổng Màn chào còn `null`) thì che app
+/// bằng nền trơn, để màn chính không chớp lên trước Màn chào (F-44).
+class _OnboardingCurtain extends StatelessWidget {
+  const _OnboardingCurtain({required this.gate, required this.child});
+
+  final ValueListenable<bool?>? gate;
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    final g = gate;
+    if (g == null) return child;
+    return ValueListenableBuilder<bool?>(
+      valueListenable: g,
+      child: child,
+      builder: (context, value, child) => value != null
+          ? child!
+          : Stack(
+              children: [
+                Offstage(child: child),
+                Positioned.fill(
+                  child: ColoredBox(
+                    color: Theme.of(context).colorScheme.surface,
+                  ),
+                ),
+              ],
+            ),
     );
   }
 }

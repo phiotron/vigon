@@ -90,6 +90,10 @@ class DiscardingMailHandler implements ReceiptMailHandler {
 /// `<br>`, `</p>`, `</div>`, `</tr>`, `</li>` thành xuống dòng và `</td>`,
 /// `</th>` thành tab; giải mã thực thể thường gặp; gộp khoảng trắng mỗi dòng.
 /// Không tải ảnh hay link nào.
+///
+/// Xuống dòng trong MÃ NGUỒN HTML chỉ là khoảng trắng (như trình duyệt): thư
+/// MB thật (soạn bằng Outlook/Word) ngắt dòng giữa nhãn, vd `Ng&#224;y,⏎
+/// gi&#7901; giao d&#7883;ch` — phải gộp trước khi đổi thẻ thành xuống dòng.
 String htmlToText(String html) {
   var s = html.replaceAll(
     RegExp(
@@ -100,6 +104,7 @@ String htmlToText(String html) {
     ' ',
   );
   s = s.replaceAll(RegExp(r'<!--.*?-->', dotAll: true), ' ');
+  s = s.replaceAll(RegExp(r'[ \t\r\n\f\v]+'), ' ');
   s = s.replaceAll(RegExp(r'<\s*br\s*/?\s*>', caseSensitive: false), '\n');
   s = s.replaceAll(
     RegExp(r'</\s*(p|div|tr|li|h[1-6]|table)\s*>', caseSensitive: false),
@@ -139,6 +144,8 @@ String _decodeEntities(String s) =>
         'gt' => '>',
         'quot' => '"',
         'apos' => "'",
+        'ndash' => '–',
+        'mdash' => '—',
         _ => m[0]!,
       };
     });

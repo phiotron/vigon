@@ -15,7 +15,7 @@ part 'database.g.dart';
 /// người thụ hưởng, hàng đợi nhập, số tham chiếu đã gặp.
 /// 5: đa tiền tệ (D-037) — tiền tệ của tài khoản, số tiền gốc + tiền tệ của
 /// khoản/định kỳ/nợ/mục tiêu/ngân sách, số nhận của chuyển tiền khác tiền tệ.
-const currentSchemaVersion = 5;
+const currentSchemaVersion = 6;
 
 /// Loại khoản ghi. Chuyển tiền không tính là thu hay chi (AC-19).
 enum EntryType { expense, income, transfer }
@@ -139,6 +139,10 @@ class RecurringRules extends Table {
   IntColumn get toAccountId => integer().nullable().references(Accounts, #id)();
   TextColumn get note => text().withLength(max: 200).nullable()();
   IntColumn get frequency => intEnum<RecurrenceFrequency>()();
+
+  /// "Pick days" (F-45): weekdays the series falls on, Mon = bit 0 … Sun =
+  /// bit 6; only with weekly. Null = the weekday of [startDate]. Schema 6.
+  IntColumn get weekdays => integer().nullable()();
 
   /// Ngày `YYYY-MM-DD` (D-005).
   TextColumn get startDate => text().withLength(min: 10, max: 10)();
@@ -434,6 +438,11 @@ class AppDatabase extends _$AppDatabase {
     onCreate: (m) async {
       await m.createAll();
       await seedDefaults(this);
+      // Cài mới → hiện Màn chào (F-44). Chỉ ở đây: nâng cấp từ bản cũ, Xóa
+      // toàn bộ dữ liệu hay Khôi phục không hiện lại (D-041).
+      await customStatement(
+        "INSERT INTO settings (key, value) VALUES ('onboardingPending', '1')",
+      );
     },
     onUpgrade: (m, from, to) async {
       // 1 -> 2: hạn mức theo danh mục (AC-54); dữ liệu cũ giữ nguyên, hạn mức null.
@@ -447,7 +456,7 @@ class AppDatabase extends _$AppDatabase {
         await m.alterTable(
           TableMigration(
             recurringRules,
-            // Phải liệt kê MỌI cột thêm sau schema 3 (schema 4 và 5): drift
+            // Phải liệt kê MỌI cột thêm sau schema 3 (schema 4, 5, 6): drift
             // dựng bảng theo định nghĩa hiện tại, cột không có trong danh sách
             // này sẽ bị SELECT từ bảng cũ và lỗi "no such column".
             newColumns: [
@@ -457,6 +466,7 @@ class AppDatabase extends _$AppDatabase {
               recurringRules.toOriginalAmount,
               recurringRules.toCurrency,
               recurringRules.toAmount,
+              recurringRules.weekdays,
             ],
           ),
         );
@@ -578,6 +588,11 @@ class AppDatabase extends _$AppDatabase {
         if (broken.isNotEmpty) {
           throw StateError('foreign_key_check after v5 migration: $broken');
         }
+      }
+      // 5 -> 6: lặp theo thứ (F-45). Từ schema 3 trở xuống bảng đã được dựng
+      // lại ở bước 3 theo định nghĩa hiện tại (đã có cột).
+      if (from < 6 && from >= 3) {
+        await m.addColumn(recurringRules, recurringRules.weekdays);
       }
     },
     beforeOpen: (details) async {

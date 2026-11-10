@@ -301,6 +301,123 @@ class AppLocalizationsEn extends AppLocalizations {
   String get repeatYearly => 'Yearly';
 
   @override
+  String get repeatPickDays => 'Pick days…';
+
+  @override
+  String get repeatPickDaysTitle => 'Repeat on';
+
+  @override
+  String get weekdayMon => 'Mon';
+
+  @override
+  String get weekdayTue => 'Tue';
+
+  @override
+  String get weekdayWed => 'Wed';
+
+  @override
+  String get weekdayThu => 'Thu';
+
+  @override
+  String get weekdayFri => 'Fri';
+
+  @override
+  String get weekdaySat => 'Sat';
+
+  @override
+  String get weekdaySun => 'Sun';
+
+  @override
+  String get repeatAllDaysHint => 'All 7 days = Daily';
+
+  @override
+  String repeatFirstOn(String date) {
+    return 'First record: $date';
+  }
+
+  @override
+  String repeatCreatedFirstOn(String date) {
+    return 'Repeating record created · first on $date';
+  }
+
+  @override
+  String onboardingStep(int step, int total) {
+    return 'Step $step of $total';
+  }
+
+  @override
+  String get onboardingSkip => 'Skip';
+
+  @override
+  String get onboardingContinue => 'Continue';
+
+  @override
+  String get onboardingLanguageTitle => 'Choose your language';
+
+  @override
+  String get onboardingLanguageHint => 'You can change it later in Settings.';
+
+  @override
+  String get onboardingWelcomeTitle => 'Welcome to Vigon';
+
+  @override
+  String get onboardingBenefitFast => 'Record in 3 taps';
+
+  @override
+  String get onboardingBenefitFastSub =>
+      'Tap a category, type the amount, done.';
+
+  @override
+  String get onboardingBenefitClear => 'See where your money goes';
+
+  @override
+  String get onboardingBenefitClearSub =>
+      'Charts by category, budgets, many currencies.';
+
+  @override
+  String get onboardingBenefitPrivate => 'Private by design';
+
+  @override
+  String get onboardingBenefitPrivateSub =>
+      'Works offline. No account, no ads, no tracking.';
+
+  @override
+  String get onboardingStart => 'Get started';
+
+  @override
+  String get onboardingCurrencyTitle => 'Your main currency';
+
+  @override
+  String get onboardingCurrencyHint =>
+      'Totals, charts and budgets use this currency. Your Cash account starts in it; you can add accounts in other currencies later.';
+
+  @override
+  String get onboardingOtherCurrency => 'Choose another currency…';
+
+  @override
+  String get onboardingReminderTitle => 'A daily reminder to record';
+
+  @override
+  String get onboardingReminderHint =>
+      'One quiet notification a day at the time you choose. It never shows any amounts.';
+
+  @override
+  String get onboardingReminderOn => 'Turn on reminder';
+
+  @override
+  String get onboardingLater => 'Not now';
+
+  @override
+  String get onboardingPinTitle => 'Lock Vigon with a PIN?';
+
+  @override
+  String get onboardingPinHint =>
+      'Ask for a 4-digit PIN when opening the app. It keeps curious eyes out; it does not encrypt your data.';
+
+  @override
+  String get onboardingPinSet => 'Set a PIN';
+
+  @override
   String get stopRepeat => 'Stop repeating';
 
   @override

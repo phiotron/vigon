@@ -1556,6 +1556,17 @@ class $RecurringRulesTable extends RecurringRules
       ).withConverter<RecurrenceFrequency>(
         $RecurringRulesTable.$converterfrequency,
       );
+  static const VerificationMeta _weekdaysMeta = const VerificationMeta(
+    'weekdays',
+  );
+  @override
+  late final GeneratedColumn<int> weekdays = GeneratedColumn<int>(
+    'weekdays',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
   static const VerificationMeta _startDateMeta = const VerificationMeta(
     'startDate',
   );
@@ -1675,6 +1686,7 @@ class $RecurringRulesTable extends RecurringRules
     toAccountId,
     note,
     frequency,
+    weekdays,
     startDate,
     lastGeneratedDate,
     active,
@@ -1743,6 +1755,12 @@ class $RecurringRulesTable extends RecurringRules
       context.handle(
         _noteMeta,
         note.isAcceptableOrUnknown(data['note']!, _noteMeta),
+      );
+    }
+    if (data.containsKey('weekdays')) {
+      context.handle(
+        _weekdaysMeta,
+        weekdays.isAcceptableOrUnknown(data['weekdays']!, _weekdaysMeta),
       );
     }
     if (data.containsKey('start_date')) {
@@ -1853,6 +1871,10 @@ class $RecurringRulesTable extends RecurringRules
           data['${effectivePrefix}frequency'],
         )!,
       ),
+      weekdays: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}weekdays'],
+      ),
       startDate: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}start_date'],
@@ -1915,6 +1937,10 @@ class RecurringRule extends DataClass implements Insertable<RecurringRule> {
   final String? note;
   final RecurrenceFrequency frequency;
 
+  /// "Pick days" (F-45): weekdays the series falls on, Mon = bit 0 … Sun =
+  /// bit 6; only with weekly. Null = the weekday of [startDate]. Schema 6.
+  final int? weekdays;
+
   /// Ngày `YYYY-MM-DD` (D-005).
   final String startDate;
   final String? lastGeneratedDate;
@@ -1940,6 +1966,7 @@ class RecurringRule extends DataClass implements Insertable<RecurringRule> {
     this.toAccountId,
     this.note,
     required this.frequency,
+    this.weekdays,
     required this.startDate,
     this.lastGeneratedDate,
     required this.active,
@@ -1976,6 +2003,9 @@ class RecurringRule extends DataClass implements Insertable<RecurringRule> {
       map['frequency'] = Variable<int>(
         $RecurringRulesTable.$converterfrequency.toSql(frequency),
       );
+    }
+    if (!nullToAbsent || weekdays != null) {
+      map['weekdays'] = Variable<int>(weekdays);
     }
     map['start_date'] = Variable<String>(startDate);
     if (!nullToAbsent || lastGeneratedDate != null) {
@@ -2015,6 +2045,9 @@ class RecurringRule extends DataClass implements Insertable<RecurringRule> {
           : Value(toAccountId),
       note: note == null && nullToAbsent ? const Value.absent() : Value(note),
       frequency: Value(frequency),
+      weekdays: weekdays == null && nullToAbsent
+          ? const Value.absent()
+          : Value(weekdays),
       startDate: Value(startDate),
       lastGeneratedDate: lastGeneratedDate == null && nullToAbsent
           ? const Value.absent()
@@ -2055,6 +2088,7 @@ class RecurringRule extends DataClass implements Insertable<RecurringRule> {
       frequency: $RecurringRulesTable.$converterfrequency.fromJson(
         serializer.fromJson<int>(json['frequency']),
       ),
+      weekdays: serializer.fromJson<int?>(json['weekdays']),
       startDate: serializer.fromJson<String>(json['startDate']),
       lastGeneratedDate: serializer.fromJson<String?>(
         json['lastGeneratedDate'],
@@ -2084,6 +2118,7 @@ class RecurringRule extends DataClass implements Insertable<RecurringRule> {
       'frequency': serializer.toJson<int>(
         $RecurringRulesTable.$converterfrequency.toJson(frequency),
       ),
+      'weekdays': serializer.toJson<int?>(weekdays),
       'startDate': serializer.toJson<String>(startDate),
       'lastGeneratedDate': serializer.toJson<String?>(lastGeneratedDate),
       'active': serializer.toJson<bool>(active),
@@ -2105,6 +2140,7 @@ class RecurringRule extends DataClass implements Insertable<RecurringRule> {
     Value<int?> toAccountId = const Value.absent(),
     Value<String?> note = const Value.absent(),
     RecurrenceFrequency? frequency,
+    Value<int?> weekdays = const Value.absent(),
     String? startDate,
     Value<String?> lastGeneratedDate = const Value.absent(),
     bool? active,
@@ -2123,6 +2159,7 @@ class RecurringRule extends DataClass implements Insertable<RecurringRule> {
     toAccountId: toAccountId.present ? toAccountId.value : this.toAccountId,
     note: note.present ? note.value : this.note,
     frequency: frequency ?? this.frequency,
+    weekdays: weekdays.present ? weekdays.value : this.weekdays,
     startDate: startDate ?? this.startDate,
     lastGeneratedDate: lastGeneratedDate.present
         ? lastGeneratedDate.value
@@ -2155,6 +2192,7 @@ class RecurringRule extends DataClass implements Insertable<RecurringRule> {
           : this.toAccountId,
       note: data.note.present ? data.note.value : this.note,
       frequency: data.frequency.present ? data.frequency.value : this.frequency,
+      weekdays: data.weekdays.present ? data.weekdays.value : this.weekdays,
       startDate: data.startDate.present ? data.startDate.value : this.startDate,
       lastGeneratedDate: data.lastGeneratedDate.present
           ? data.lastGeneratedDate.value
@@ -2186,6 +2224,7 @@ class RecurringRule extends DataClass implements Insertable<RecurringRule> {
           ..write('toAccountId: $toAccountId, ')
           ..write('note: $note, ')
           ..write('frequency: $frequency, ')
+          ..write('weekdays: $weekdays, ')
           ..write('startDate: $startDate, ')
           ..write('lastGeneratedDate: $lastGeneratedDate, ')
           ..write('active: $active, ')
@@ -2209,6 +2248,7 @@ class RecurringRule extends DataClass implements Insertable<RecurringRule> {
     toAccountId,
     note,
     frequency,
+    weekdays,
     startDate,
     lastGeneratedDate,
     active,
@@ -2231,6 +2271,7 @@ class RecurringRule extends DataClass implements Insertable<RecurringRule> {
           other.toAccountId == this.toAccountId &&
           other.note == this.note &&
           other.frequency == this.frequency &&
+          other.weekdays == this.weekdays &&
           other.startDate == this.startDate &&
           other.lastGeneratedDate == this.lastGeneratedDate &&
           other.active == this.active &&
@@ -2251,6 +2292,7 @@ class RecurringRulesCompanion extends UpdateCompanion<RecurringRule> {
   final Value<int?> toAccountId;
   final Value<String?> note;
   final Value<RecurrenceFrequency> frequency;
+  final Value<int?> weekdays;
   final Value<String> startDate;
   final Value<String?> lastGeneratedDate;
   final Value<bool> active;
@@ -2269,6 +2311,7 @@ class RecurringRulesCompanion extends UpdateCompanion<RecurringRule> {
     this.toAccountId = const Value.absent(),
     this.note = const Value.absent(),
     this.frequency = const Value.absent(),
+    this.weekdays = const Value.absent(),
     this.startDate = const Value.absent(),
     this.lastGeneratedDate = const Value.absent(),
     this.active = const Value.absent(),
@@ -2288,6 +2331,7 @@ class RecurringRulesCompanion extends UpdateCompanion<RecurringRule> {
     this.toAccountId = const Value.absent(),
     this.note = const Value.absent(),
     required RecurrenceFrequency frequency,
+    this.weekdays = const Value.absent(),
     required String startDate,
     this.lastGeneratedDate = const Value.absent(),
     this.active = const Value.absent(),
@@ -2311,6 +2355,7 @@ class RecurringRulesCompanion extends UpdateCompanion<RecurringRule> {
     Expression<int>? toAccountId,
     Expression<String>? note,
     Expression<int>? frequency,
+    Expression<int>? weekdays,
     Expression<String>? startDate,
     Expression<String>? lastGeneratedDate,
     Expression<bool>? active,
@@ -2330,6 +2375,7 @@ class RecurringRulesCompanion extends UpdateCompanion<RecurringRule> {
       if (toAccountId != null) 'to_account_id': toAccountId,
       if (note != null) 'note': note,
       if (frequency != null) 'frequency': frequency,
+      if (weekdays != null) 'weekdays': weekdays,
       if (startDate != null) 'start_date': startDate,
       if (lastGeneratedDate != null) 'last_generated_date': lastGeneratedDate,
       if (active != null) 'active': active,
@@ -2351,6 +2397,7 @@ class RecurringRulesCompanion extends UpdateCompanion<RecurringRule> {
     Value<int?>? toAccountId,
     Value<String?>? note,
     Value<RecurrenceFrequency>? frequency,
+    Value<int?>? weekdays,
     Value<String>? startDate,
     Value<String?>? lastGeneratedDate,
     Value<bool>? active,
@@ -2370,6 +2417,7 @@ class RecurringRulesCompanion extends UpdateCompanion<RecurringRule> {
       toAccountId: toAccountId ?? this.toAccountId,
       note: note ?? this.note,
       frequency: frequency ?? this.frequency,
+      weekdays: weekdays ?? this.weekdays,
       startDate: startDate ?? this.startDate,
       lastGeneratedDate: lastGeneratedDate ?? this.lastGeneratedDate,
       active: active ?? this.active,
@@ -2415,6 +2463,9 @@ class RecurringRulesCompanion extends UpdateCompanion<RecurringRule> {
         $RecurringRulesTable.$converterfrequency.toSql(frequency.value),
       );
     }
+    if (weekdays.present) {
+      map['weekdays'] = Variable<int>(weekdays.value);
+    }
     if (startDate.present) {
       map['start_date'] = Variable<String>(startDate.value);
     }
@@ -2454,6 +2505,7 @@ class RecurringRulesCompanion extends UpdateCompanion<RecurringRule> {
           ..write('toAccountId: $toAccountId, ')
           ..write('note: $note, ')
           ..write('frequency: $frequency, ')
+          ..write('weekdays: $weekdays, ')
           ..write('startDate: $startDate, ')
           ..write('lastGeneratedDate: $lastGeneratedDate, ')
           ..write('active: $active, ')
@@ -8826,6 +8878,7 @@ typedef $$RecurringRulesTableCreateCompanionBuilder =
       Value<int?> toAccountId,
       Value<String?> note,
       required RecurrenceFrequency frequency,
+      Value<int?> weekdays,
       required String startDate,
       Value<String?> lastGeneratedDate,
       Value<bool> active,
@@ -8846,6 +8899,7 @@ typedef $$RecurringRulesTableUpdateCompanionBuilder =
       Value<int?> toAccountId,
       Value<String?> note,
       Value<RecurrenceFrequency> frequency,
+      Value<int?> weekdays,
       Value<String> startDate,
       Value<String?> lastGeneratedDate,
       Value<bool> active,
@@ -8974,6 +9028,11 @@ class $$RecurringRulesTableFilterComposer
   get frequency => $composableBuilder(
     column: $table.frequency,
     builder: (column) => ColumnWithTypeConverterFilters(column),
+  );
+
+  ColumnFilters<int> get weekdays => $composableBuilder(
+    column: $table.weekdays,
+    builder: (column) => ColumnFilters(column),
   );
 
   ColumnFilters<String> get startDate => $composableBuilder(
@@ -9150,6 +9209,11 @@ class $$RecurringRulesTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<int> get weekdays => $composableBuilder(
+    column: $table.weekdays,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<String> get startDate => $composableBuilder(
     column: $table.startDate,
     builder: (column) => ColumnOrderings(column),
@@ -9288,6 +9352,9 @@ class $$RecurringRulesTableAnnotationComposer
 
   GeneratedColumnWithTypeConverter<RecurrenceFrequency, int> get frequency =>
       $composableBuilder(column: $table.frequency, builder: (column) => column);
+
+  GeneratedColumn<int> get weekdays =>
+      $composableBuilder(column: $table.weekdays, builder: (column) => column);
 
   GeneratedColumn<String> get startDate =>
       $composableBuilder(column: $table.startDate, builder: (column) => column);
@@ -9460,6 +9527,7 @@ class $$RecurringRulesTableTableManager
                 Value<int?> toAccountId = const Value.absent(),
                 Value<String?> note = const Value.absent(),
                 Value<RecurrenceFrequency> frequency = const Value.absent(),
+                Value<int?> weekdays = const Value.absent(),
                 Value<String> startDate = const Value.absent(),
                 Value<String?> lastGeneratedDate = const Value.absent(),
                 Value<bool> active = const Value.absent(),
@@ -9478,6 +9546,7 @@ class $$RecurringRulesTableTableManager
                 toAccountId: toAccountId,
                 note: note,
                 frequency: frequency,
+                weekdays: weekdays,
                 startDate: startDate,
                 lastGeneratedDate: lastGeneratedDate,
                 active: active,
@@ -9498,6 +9567,7 @@ class $$RecurringRulesTableTableManager
                 Value<int?> toAccountId = const Value.absent(),
                 Value<String?> note = const Value.absent(),
                 required RecurrenceFrequency frequency,
+                Value<int?> weekdays = const Value.absent(),
                 required String startDate,
                 Value<String?> lastGeneratedDate = const Value.absent(),
                 Value<bool> active = const Value.absent(),
@@ -9516,6 +9586,7 @@ class $$RecurringRulesTableTableManager
                 toAccountId: toAccountId,
                 note: note,
                 frequency: frequency,
+                weekdays: weekdays,
                 startDate: startDate,
                 lastGeneratedDate: lastGeneratedDate,
                 active: active,

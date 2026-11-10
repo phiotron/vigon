@@ -12,7 +12,8 @@ import '../../ui/format.dart';
 import '../../ui/messenger.dart';
 import '../../ui/money_lines.dart';
 import '../../ui/tokens.g.dart';
-import '../entry/entry_editor_screen.dart' show repeatLabel;
+import '../../data/repeat.dart';
+import 'repeat_picker.dart';
 import 'rule_sheet.dart';
 
 /// Danh sách chuỗi định kỳ: dừng, chạy lại, sửa số tiền (AC-25).
@@ -32,6 +33,7 @@ class RecurringScreen extends ConsumerWidget {
     };
     final repo = ref.read(recurringRepositoryProvider);
     final scheme = Theme.of(context).colorScheme;
+    final weekStart = ref.watch(weekStartProvider).value ?? DateTime.monday;
     return Scaffold(
       appBar: AppBar(title: Text(l.recurring)),
       body: rules.isEmpty
@@ -52,6 +54,7 @@ class RecurringScreen extends ConsumerWidget {
                 for (final r in rules)
                   _RuleTile(
                     rule: r,
+                    weekStart: weekStart,
                     category: categories[r.categoryId],
                     amount: MoneyLines(
                       amount: r.originalAmount ?? r.amount,
@@ -86,6 +89,7 @@ class RecurringScreen extends ConsumerWidget {
       rule: rule,
       categories: categories ?? const <Category>[],
       accounts: ref.read(accountsProvider).value ?? const <Account>[],
+      weekStart: ref.read(weekStartProvider).value ?? DateTime.monday,
     );
     if (saved == null) return;
     // Số nhập là số gốc theo tiền tệ của chuỗi; cột `amount` là số dẫn xuất
@@ -110,6 +114,7 @@ class RecurringScreen extends ConsumerWidget {
           currency: saved.currency,
           note: saved.note,
           frequency: saved.frequency,
+          weekdays: saved.weekdays,
           categoryId: saved.categoryId,
           accountId: saved.accountId,
         );
@@ -121,6 +126,7 @@ class RecurringScreen extends ConsumerWidget {
 class _RuleTile extends StatelessWidget {
   const _RuleTile({
     required this.rule,
+    required this.weekStart,
     required this.category,
     required this.amount,
     required this.onToggle,
@@ -128,6 +134,7 @@ class _RuleTile extends StatelessWidget {
   });
 
   final RecurringRule rule;
+  final int weekStart;
   final Category? category;
   final Widget amount;
   final ValueChanged<bool> onToggle;
@@ -136,6 +143,7 @@ class _RuleTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context);
+    final repeat = repeatText(l, Repeat.of(rule), weekStart: weekStart);
     // Tên chuỗi = ghi chú nếu có, không thì tên danh mục — giống đầu bảng
     // sửa (SCR-21) và danh sách nền trong frame 21 ("Rent · ₫3,500,000").
     final note = rule.note?.trim() ?? '';
@@ -157,9 +165,9 @@ class _RuleTile extends StatelessWidget {
         children: [
           Text(
             rule.active
-                ? '${repeatLabel(l, rule.frequency)} · '
+                ? '$repeat · '
                       '${shortDate(context, RecurringRepository.nextDate(rule))}'
-                : '${repeatLabel(l, rule.frequency)} · ${l.repeatStopped}',
+                : '$repeat · ${l.repeatStopped}',
           ),
           // Số gốc theo tiền tệ của chuỗi, dưới là "≈ Tiền tệ chính" (D-037).
           amount,

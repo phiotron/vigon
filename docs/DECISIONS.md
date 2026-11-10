@@ -4,6 +4,18 @@ Mỗi quyết định một mục, mới nhất ở trên cùng.
 
 > D-030..D-035: người dùng chốt ngày 2026-11-06 — trước hết khi duyệt kế hoạch `notes/2026-11-06-ke-hoach-mo-rong.md` (sau 5 vòng hỏi đáp ở phiên điều phối), rồi **thu hẹp** cùng ngày sau khi đọc bản nháp đầu của SPEC 3d (trả lời Q-01..Q-09). Các mục dưới đây là bản sau khi thu hẹp; chỗ khác kế hoạch thì theo đây. Đặc tả tương ứng là SPEC mục 3d (F-27..F-42) — **chưa duyệt**; chưa có dòng "Đã duyệt 2.0" thì chưa viết code.
 
+## D-041 · Màn chào 5 bước chỉ khi cài mới; Tiền mặt theo tiền tệ đã chọn · 2026-11-10
+- Bối cảnh: Người dùng muốn lúc mới cài Ví Gọn giống A001: chọn ngôn ngữ, tiền tệ, thông báo…; bỏ qua thì mọi thứ về mặc định (English, USD theo D-036).
+- Quyết định: 5 bước Ngôn ngữ → Chào mừng → Tiền tệ chính → Nhắc ghi sổ → Khoá PIN (SPEC F-44). Cờ `onboardingPending` **chỉ** ghi trong `onCreate` của cơ sở dữ liệu → người nâng cấp từ bản cũ, Xóa toàn bộ dữ liệu, Khôi phục đều không thấy lại. Mỗi lựa chọn lưu ngay khi chạm; "Bỏ qua" xoá cờ và vào app. Chọn tiền tệ thì tài khoản Tiền mặt (chưa có khoản nào) lấy luôn tiền tệ đó. Cổng là `redirect` của go_router đọc `ValueNotifier` đồng bộ từ provider sau khung hình; chưa biết cờ thì che app bằng nền trơn.
+- Lý do / phương án đã loại: Hiện Màn chào cả sau Xóa toàn bộ dữ liệu (loại: người dùng chọn chỉ cài mới). Lớp phủ trong `MaterialApp.builder` như Màn khóa (loại: không có Navigator cho bảng chọn tiền tệ/màn PIN và Back của hệ thống không lùi bước được). Giữ Tiền mặt USD (loại: khoản đầu tiên sẽ có dòng `≈` thừa).
+- Hệ quả cần nhớ: Test cũ dùng `createRouter()` **không** có cổng nên không thấy Màn chào dù DB mới có cờ; test Màn chào truyền `createRouter(onboarding: gate)` + `VigonApp(onboardingGate: gate)`. Cờ nằm trong `deviceOnlySettingKeys`. Thử trên máy thật cần cài mới (xoá dữ liệu) — chưa làm trên máy người dùng vì dữ liệu mẫu chụp store.
+
+## D-040 · "Chọn thứ": không ghi khoản hôm nay nếu ngày không thuộc thứ đã chọn · 2026-11-10
+- Bối cảnh: Người dùng muốn khoản định kỳ lặp theo thứ như báo thức (vd T2 + T3 hằng tuần; chọn đủ 7 = hằng ngày). Câu hỏi: ghi một khoản mới vào thứ Tư mà chọn T2, T3 thì khoản thứ Tư có lưu không?
+- Quyết định: **Không lưu** khoản của ngày đó; chuỗi bắt đầu từ ngày đó và khoản đầu là thứ đã chọn gần nhất (người dùng chọn 2026-11-10). Để không bất ngờ: màn nhập hiện "Khoản đầu: …" ngay khi chọn thứ và có thanh báo sau Lưu. Lưu bằng `frequency = weekly` + cột `weekdays` (bitmask); đủ 7 thứ lưu `daily`. Lịch dùng chung `Repeat.occurrences` cho sinh khoản, ngày tới hạn và sửa chuỗi.
+- Lý do / phương án đã loại: Vẫn lưu khoản hôm nay (khuyên ban đầu, người dùng không chọn — họ muốn ngày khác thứ đã chọn "không có khoản đó"). Thêm giá trị enum `RecurrenceFrequency.weekdays` (loại: drift lưu enum theo chỉ số, mọi `switch` phải sửa; cột riêng nullable thì chuỗi cũ không đổi).
+- Hệ quả cần nhớ: `addWithRepeat` có thể **không** chèn khoản nào; bên gọi phải `generateDue` ngay (màn nhập đã làm) để ngày quá khứ được sinh bù. `occurrence(start, f, n)` chỉ còn cho tần suất đơn giản.
+
 ## D-039 · Cài đặt: nhóm Giới thiệu nội tuyến kiểu A001, trang pháp lý công khai, đổi tên nhóm "Nhập từ email" · 2026-11-10
 - Bối cảnh: Người dùng yêu cầu màn Giới thiệu của A002 giống **A001-subnest**: không còn màn riêng, chỉ một **thẻ nội tuyến** cuối Cài đặt gồm phiên bản, chính sách quyền riêng tư, điều khoản sử dụng, giấy phép mã nguồn mở, đánh giá app, gửi góp ý và báo lỗi bảo mật; đồng thời đổi tên nhóm "Nhập tự động" thành **"Nhập từ email"**. Trang pháp lý phải công khai (Google Play và App Store đều bắt buộc URL chính sách), mở đúng ngôn ngữ app, vẫn đọc được khi offline.
 - Quyết định:

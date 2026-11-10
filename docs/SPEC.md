@@ -325,6 +325,24 @@ Mục này thay cách hiểu "một tiền tệ toàn app" ở F-07 (AC-21, AC-7
 - Hai hàm trung tâm: `promoteLegacyAmounts(oldPrimary)` (chuyển dữ liệu cũ sang số gốc) và `recomputeDerivedAmounts(...)` (tính lại số dẫn xuất khi đổi Tiền tệ chính hoặc tỷ giá).
 - `features/settings/currency_conversion.dart` (D-025) không còn dùng cho đổi Tiền tệ chính; chỉ còn `formatRate` cho màn Tỷ giá. Thêm cặp tiền tệ mới phải cập nhật bảng dự phòng.
 
+## 3f. Màn chào, lặp theo thứ, sửa đọc email MB (người dùng chốt 2026-11-10)
+
+### F-44 · Màn chào lần đầu cài (D-041)
+- AC-136: Chỉ máy **cài mới** (cơ sở dữ liệu vừa tạo) thấy Màn chào; nâng cấp từ bản cũ, "Xóa toàn bộ dữ liệu" và Khôi phục **không** hiện lại. Chưa đọc xong cờ thì chưa vẽ màn chính (không chớp). Deep link Widget/Nhắc khi cờ còn bật cũng đưa về Màn chào. [T]
+- AC-137: 5 bước, có "Bước n/5": **Ngôn ngữ** (English chọn sẵn / Tiếng Việt, đổi ngay) → **Chào mừng** (3 lợi ích, "Bắt đầu") → **Tiền tệ chính** (USD chọn sẵn, USD/VND + "Chọn tiền tệ khác…"; tài khoản Tiền mặt lấy luôn tiền tệ này) → **Nhắc ghi sổ** (giờ mặc định 20:00 chạm để đổi; "Bật nhắc" xin quyền hệ điều hành ngay; "Để sau" không xin) → **Khoá PIN** ("Đặt mã PIN" mở màn đặt mã có sẵn; "Để sau") → màn chính. [T]
+- AC-138: "Bỏ qua" ở bước 2–5 vào app ngay; lựa chọn đã chạm được giữ, phần chưa chọn là mặc định: English, USD, Nhắc **tắt** (không xin quyền), không PIN. Back của hệ thống lùi một bước (bước 1 thì thoát app). Từ chối quyền thông báo: nhắc vẫn tắt, có thanh báo mở cài đặt hệ thống, sang bước PIN. Hủy màn đặt PIN thì ở lại bước 5. [T]
+- AC-139: Mọi chữ có trong `.arb` vi + en; cờ màn chào là cài đặt theo máy (không vào file sao lưu). [T]
+
+### F-45 · Lặp theo thứ trong tuần — "Chọn thứ…" (D-040)
+- AC-140: Bảng Lặp lại: Không lặp · Hằng ngày · Hằng tuần · **Chọn thứ…** · Hằng tháng · Hằng năm. "Chọn thứ…" mở 7 chip (thứ tự theo Ngày đầu tuần), mặc định sáng thứ của ngày khoản; nút "Xong" tắt khi chưa chọn thứ nào; chọn **đủ 7 thứ = Hằng ngày** (lưu là `daily`). Chip Lặp lại hiện "T2, T3" / "Mon, Tue". [T]
+- AC-141: Chuỗi "Chọn thứ" chỉ sinh khoản vào các thứ đã chọn, từ ngày bắt đầu; ngày bắt đầu ở quá khứ thì sinh bù đúng các thứ đó tới hôm nay. [T]
+- AC-142: Ngày của khoản đang nhập **không thuộc** thứ đã chọn → **không ghi khoản đó**; chuỗi bắt đầu từ ngày đó, khoản đầu là thứ đã chọn gần nhất. Màn nhập hiện dòng "Khoản đầu: T6 6/11"; sau Lưu có thanh báo "Đã tạo khoản định kỳ · khoản đầu T6 6/11". Ngày khoản thuộc thứ đã chọn thì ghi như cũ. [T]
+- AC-143: Bảng sửa chuỗi có chip "Chọn thứ…": đổi sang/giữa các thứ tính như đổi tần suất (AC-50) — bắt đầu lại từ ngày tới hạn kế tiếp theo lịch cũ, khoản đã sinh giữ nguyên, không sinh bù; giữ nguyên thứ thì không bắt đầu lại. [T]
+- AC-144: Schema **v6** thêm cột `recurring_rules.weekdays` (bitmask T2 = bit 0 … CN = bit 6, null = cùng thứ ngày bắt đầu); migration 5→6 giữ chuỗi cũ; file sao lưu chứa cột, file cũ thiếu trường thì null. [T]
+
+### Sửa F-29 · Đọc email MB thật (2026-11-10)
+- AC-145: Thư MB thật chỉ có `text/html` soạn bằng Outlook/Word, nhãn bị ngắt dòng trong mã nguồn (`Ng&#224;y,⏎ gi&#7901; giao d&#7883;ch`). `htmlToText` coi mọi khoảng trắng/xuống dòng **trong mã nguồn** là một dấu cách (như trình duyệt), chỉ thẻ khối (`<br>`, `</p>`, `</div>`, `</tr>`…) mới xuống dòng. Mẫu thật đã che: `test/import/samples/mb/real_outlook_2026-11-09.html`. Thư cũ đã bị đếm "không đọc được" **không** đọc lại; chỉ thư mới. Địa chỉ gửi xác nhận `mbebanking@mbbank.com.vn`. [T]
+
 ## 4. Ngoài phạm vi (cố ý KHÔNG làm)
 Đã đưa vào phạm vi (giữ dòng gạch để biết lịch sử):
 - ~~Bản iOS~~: vào phạm vi ngày 2026-11-04 theo PLAN-001 (người dùng duyệt), xem mục 5 "iOS" và D-011; chỉ icon đơn sắc (F-23) là riêng Android (D-022).

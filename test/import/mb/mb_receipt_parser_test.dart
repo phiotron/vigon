@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
+import 'package:vigon/src/import/mail/bank_senders.dart';
 import 'package:vigon/src/import/mail/raw_mail.dart';
 import 'package:vigon/src/import/mb/mb_receipt_parser.dart';
 
@@ -96,6 +97,50 @@ void main() {
     test('nhãn và giá trị cách bằng tab (bảng đã bỏ thẻ)', () {
       final text = _sample('success_text.txt').replaceAll(': ', '\t');
       _expectSample(_ok(parseMbReceipt(text)));
+    });
+  });
+
+  group('thư MB thật (Outlook/Word HTML, đã che) — 2026-11-10', () {
+    // Thư thật chỉ có text/html; nhãn bị ngắt dòng trong mã nguồn
+    // ("Ng&#224;y,⏎  gi&#7901; giao d&#7883;ch"), mỗi ô bọc <p>. Trước khi
+    // sửa htmlToText, mọi thư thật đều "không đọc được".
+    final html = _sample('real_outlook_2026-11-09.html');
+
+    void expectReal(MbReceipt r) {
+      expect(r.dateKey, '2026-11-09');
+      expect(r.time, '11:23');
+      expect(r.reference, '26110900000000001');
+      expect(r.debitLast4, '2004');
+      expect(r.currency, 'VND');
+      expect(r.amount, 87000);
+      expect(r.payee, 'NGUYEN VAN A');
+      expect(r.transferContent, 'NGUYEN VAN A chuyen tien');
+      expect(r.transactionType, 'Chuyển tiền nhanh ngoài MB');
+    }
+
+    test('đọc được qua RawMail.bodyText (chỉ có html)', () {
+      final mail = RawMail(
+        mailboxId: 'm0',
+        uid: 1,
+        from: 'mbebanking@mbbank.com.vn',
+        bank: mbBank,
+        subject: 'Thong bao giao dich thanh cong',
+        date: DateTime(2026, 11, 9, 11, 50),
+        html: html,
+      );
+      expectReal(_ok(parseMbReceipt(mail.bodyText)));
+    });
+
+    test('htmlToText: xuống dòng trong mã nguồn chỉ là khoảng trắng', () {
+      final text = htmlToText(html);
+      expect(text, contains('Ngày, giờ giao dịch'));
+      expect(text, contains('Số tham chiếu'));
+      expect(text, contains('Giao dịch thành công'));
+      expect(text, isNot(contains('&ndash;')));
+    });
+
+    test('htmlToText giữ <br> và </p> là xuống dòng', () {
+      expect(htmlToText('<p>a\n b</p><p>c<br>d</p>'), 'a b\nc\nd');
     });
   });
 
