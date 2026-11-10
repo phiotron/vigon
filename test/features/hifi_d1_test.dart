@@ -79,8 +79,10 @@ void main() {
     tester,
   ) async {
     final db = await pumpApp(tester);
-    expect(find.text('Tháng 11 năm 2026'), findsNWidgets(2));
-    expect(findSemanticsLabel('Số dư: 0 ₫, Tháng 11 năm 2026'), findsOneWidget);
+    // Đầu kỳ + dòng dưới "Số dư" (mockup v4: "… · theo VND").
+    expect(find.text('Tháng 11 năm 2026'), findsOneWidget);
+    expect(find.text('Tháng 11 năm 2026 · theo VND'), findsOneWidget);
+    expect(findSemanticsLabel('Số dư: 0 ₫, Tháng 11 năm 2026 · theo VND'), findsOneWidget);
     await disposeApp(tester, db);
   });
 
@@ -88,7 +90,7 @@ void main() {
     tester,
   ) async {
     final db = await pumpApp(tester);
-    expect(find.text('Bấm − để ghi khoản chi đầu tiên'), findsOneWidget);
+    expect(find.text('Bắt đầu với khoản chi đầu tiên'), findsOneWidget);
     await disposeApp(tester, db);
   });
 
@@ -116,25 +118,27 @@ void main() {
     await disposeApp(tester, db);
   });
 
-  testWidgets('chip tài khoản đang lọc ở màn chính; ✕ bỏ lọc (§10.1 #1)', (
-    tester,
-  ) async {
+  testWidgets('chip tài khoản đang lọc trên thanh tiêu đề; chọn "Tất cả tài '
+      'khoản" bỏ lọc (mockup v4 SCR-01 filtered)', (tester) async {
     final db = memoryDatabase();
     final card = await tester.runAsync(
       () => AccountRepository(db).add(name: 'Thẻ'),
     );
     await pumpApp(tester, db: db);
-    expect(find.text('Tài khoản: Thẻ'), findsNothing);
+    expect(find.byTooltip('Tài khoản: Thẻ'), findsNothing);
     final container = ProviderScope.containerOf(
       tester.element(find.byType(Scaffold).first),
     );
     container.read(accountFilterProvider.notifier).select(card);
     await settle(tester);
-    expect(find.text('Tài khoản: Thẻ'), findsOneWidget);
-    await tester.tap(find.byTooltip('Tất cả tài khoản'));
+    expect(find.byTooltip('Tài khoản: Thẻ'), findsOneWidget);
+    expect(find.text('Thẻ'), findsOneWidget);
+    await tester.tap(find.byTooltip('Tài khoản: Thẻ'));
+    await settle(tester);
+    await tester.tap(find.text('Tất cả tài khoản'));
     await settle(tester);
     expect(container.read(accountFilterProvider), isNull);
-    expect(find.text('Tài khoản: Thẻ'), findsNothing);
+    expect(find.byTooltip('Tài khoản: Thẻ'), findsNothing);
     await disposeApp(tester, db);
   });
 

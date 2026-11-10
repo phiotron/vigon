@@ -10,11 +10,11 @@ ThemeMode _themeMode(WidgetTester tester) =>
 void main() {
   testWidgets('chữ giao diện theo ngôn ngữ đã chọn (AC-36)', (tester) async {
     final db = await pumpApp(tester);
-    expect(find.text('Bấm − để ghi khoản chi đầu tiên'), findsOneWidget);
+    expect(find.text('Bắt đầu với khoản chi đầu tiên'), findsOneWidget);
 
     await tester.runAsync(() => SettingsRepository(db).setLocaleCode('en'));
     await settle(tester);
-    expect(find.text('Tap − to record your first expense'), findsOneWidget);
+    expect(find.text('Start with your first expense'), findsOneWidget);
     await disposeApp(tester, db);
   });
 

@@ -103,7 +103,7 @@ void main() {
       await settle(tester);
       await tester.tap(find.text('phở'));
       await settle(tester);
-      expect(find.text('Chưa đặt giờ'), findsOneWidget);
+      expect(find.text('Chưa đặt giờ · Đặt giờ'), findsOneWidget);
       await tester.tap(find.text('Lưu'));
       await settle(tester);
       final e = await tester.runAsync(() => EntryRepository(db).find(id));

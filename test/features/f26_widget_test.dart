@@ -25,7 +25,11 @@ class FakeBridge implements HomeWidgetBridge {
   final validUntils = <DateTime?>[];
 
   @override
-  Future<void> show(String line, {DateTime? validUntil}) async {
+  Future<void> show(
+    String line, {
+    DateTime? validUntil,
+    WidgetHero? hero,
+  }) async {
     calls.add('show:${plain(line)}');
     validUntils.add(validUntil);
   }
@@ -416,7 +420,7 @@ void main() {
       await tester.tap(find.byTooltip('Quay lại'));
       await settle(tester);
       expect(find.text('Khoản chi mới'), findsNothing);
-      expect(find.text('Bấm − để ghi khoản chi đầu tiên'), findsOneWidget);
+      expect(find.text('Bắt đầu với khoản chi đầu tiên'), findsOneWidget);
       await disposeApp(tester, db);
     });
 
@@ -430,7 +434,7 @@ void main() {
     testWidgets('route lạ bị bỏ, vẫn ở trang chủ', (tester) async {
       mockDeepLink(tester, ['/settings']);
       final db = await pumpApp(tester);
-      expect(find.text('Bấm − để ghi khoản chi đầu tiên'), findsOneWidget);
+      expect(find.text('Bắt đầu với khoản chi đầu tiên'), findsOneWidget);
       await disposeApp(tester, db);
     });
 
@@ -510,17 +514,19 @@ void main() {
     });
 
     test(
-      'bố cục: hai nút có mô tả đọc màn hình, dòng trạng thái ẩn mặc định',
+      'bố cục: hai nút có mô tả đọc màn hình, phần số tiền ẩn mặc định',
       () {
         final layout = File('android/app/src/main/res/layout/vigon_widget.xml')
             .readAsStringSync();
         expect(layout, contains('@string/widget_expense_desc'));
         expect(layout, contains('@string/widget_income_desc'));
-        expect(layout, contains('android:minHeight="48dp"'));
-        final status = RegExp(
-          r'<TextView\s+android:id="@\+id/widget_status"[^>]*>',
+        // Nút 2×2 cao ≥ 60 (mockup v4 EXT-01), vùng chạm ≥ 48.
+        expect(layout, contains('android:minHeight="60dp"'));
+        // Số tiền chỉ hiện khi Dart cho phép (AC-64): mặc định ẩn.
+        final amount = RegExp(
+          r'<TextView\s+android:id="@\+id/widget_amount"[^>]*>',
         ).firstMatch(layout)!.group(0)!;
-        expect(status, contains('android:visibility="gone"'));
+        expect(amount, contains('android:visibility="gone"'));
         String res(String dir) =>
             File('android/app/src/main/res/$dir/widget_strings.xml')
                 .readAsStringSync();

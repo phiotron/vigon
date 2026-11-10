@@ -15,7 +15,12 @@ import '../../ui/choice_sheet.dart';
 import '../../ui/confirm_dialog.dart';
 import '../../ui/format.dart';
 import '../../ui/hint.dart';
+import '../../import/mail/mail_providers.dart';
+import '../../import/mail/mailbox_service.dart' show MailCheckTrigger;
 import '../../ui/messenger.dart';
+import '../../ui/money_lines.dart';
+import '../../ui/status.dart';
+import '../settings/settings_lead.dart' show useIosCopy;
 import '../../ui/tokens.g.dart';
 import '../entry/entry_time.dart';
 import 'import_queue_providers.dart';
@@ -45,32 +50,70 @@ class ImportQueueScreen extends ConsumerWidget {
           ),
         ],
       ),
-      body: empty
-          ? Center(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: VgSpace.s8),
-                child: Text(
-                  l.queueEmpty,
-                  textAlign: TextAlign.center,
-                  style: VgType.bodyMd.copyWith(color: scheme.onSurfaceVariant),
+      // Kéo xuống để kiểm email ngay (mockup v4 SCR-43 empty), như màn Nhập
+      // từ email.
+      body: RefreshIndicator(
+        onRefresh: () async {
+          await ref
+              .read(mailboxServiceProvider)
+              .checkAll(MailCheckTrigger.manual);
+        },
+        child: empty
+            ? ListView(
+                physics: const AlwaysScrollableScrollPhysics(),
+                padding: const EdgeInsets.fromLTRB(
+                  VgSpace.s8,
+                  VgSpace.s8 * 3,
+                  VgSpace.s8,
+                  VgSpace.s8,
                 ),
+                children: [
+                  Text(
+                    l.queueEmpty,
+                    textAlign: TextAlign.center,
+                    style: VgType.bodyMd.copyWith(color: scheme.onSurface),
+                  ),
+                  const SizedBox(height: VgSpace.s3),
+                  Text(
+                    useIosCopy ? l.emailScheduleIos : l.emailScheduleAndroid,
+                    textAlign: TextAlign.center,
+                    style: VgType.bodySm.copyWith(
+                      color: scheme.onSurfaceVariant,
+                    ),
+                  ),
+                ],
+              )
+            : ListView.builder(
+                physics: const AlwaysScrollableScrollPhysics(),
+                padding: const EdgeInsets.fromLTRB(
+                  VgSpace.s4,
+                  VgSpace.s2,
+                  VgSpace.s4,
+                  VgSpace.s6,
+                ),
+                itemCount: 1 + notices.length + items.length,
+                itemBuilder: (context, i) {
+                  // Ghi chú "Chưa được tính" đầu danh sách (mockup v4).
+                  if (i == 0) {
+                    return InfoBanner(
+                      icon: Symbols.info_rounded,
+                      text: l.queueNotCountedNote,
+                      margin: const EdgeInsets.only(bottom: VgSpace.s3),
+                    );
+                  }
+                  final k = i - 1;
+                  return Padding(
+                    padding: const EdgeInsets.only(bottom: VgSpace.s3),
+                    child: k < notices.length
+                        ? _NoticeCard(
+                            accountId: notices[k],
+                            allNotices: notices,
+                          )
+                        : _ItemCard(item: items[k - notices.length]),
+                  );
+                },
               ),
-            )
-          : ListView.builder(
-              padding: const EdgeInsets.fromLTRB(
-                VgSpace.s4,
-                VgSpace.s2,
-                VgSpace.s4,
-                VgSpace.s6,
-              ),
-              itemCount: notices.length + items.length,
-              itemBuilder: (context, i) => Padding(
-                padding: const EdgeInsets.only(bottom: VgSpace.s3),
-                child: i < notices.length
-                    ? _NoticeCard(accountId: notices[i], allNotices: notices)
-                    : _ItemCard(item: items[i - notices.length]),
-              ),
-            ),
+      ),
     );
   }
 }
@@ -253,13 +296,29 @@ class _ItemCard extends ConsumerWidget {
                   ),
                 ),
                 const SizedBox(width: VgSpace.s3),
-                Text(
-                  amount,
-                  style: VgType.titleSm.copyWith(
-                    color: expenseColor(context),
-                    fontFeatures: const [FontFeature.tabularFigures()],
+                // Tiền tệ chính trước, số của email dưới (D-042; người dùng
+                // chọn thay cho mockup C08). Lệch tiền tệ với tài khoản: chỉ số
+                // của email, số tiền nhập ở bước sau.
+                if (mismatch)
+                  Text(
+                    amount,
+                    style: VgType.titleSm.copyWith(
+                      color: expenseColor(context),
+                      fontFeatures: const [FontFeature.tabularFigures()],
+                    ),
+                  )
+                else
+                  MoneyLines(
+                    amount: item.amount,
+                    currency: item.currency,
+                    style: VgType.titleSm.copyWith(
+                      color: expenseColor(context),
+                      fontFeatures: const [FontFeature.tabularFigures()],
+                    ),
+                    secondaryStyle: VgType.bodySm,
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    textAlign: TextAlign.end,
                   ),
-                ),
               ],
             ),
             if (item.transferContent != null &&
@@ -281,7 +340,7 @@ class _ItemCard extends ConsumerWidget {
             if (mismatch)
               VgHint(
                 l.queueCurrencyNote(item.currency, accountCurrency),
-                icon: Symbols.warning_rounded,
+                icon: Symbols.currency_exchange_rounded,
                 padding: const EdgeInsets.only(top: VgSpace.s2),
               ),
             const SizedBox(height: VgSpace.s3),

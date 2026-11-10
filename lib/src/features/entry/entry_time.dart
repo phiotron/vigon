@@ -49,9 +49,19 @@ class TimeChip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context);
-    final label = time == null ? l.timeNotSet : formatTimeKey(context, time!);
+    final label = time == null
+        ? '${l.timeNotSet} · ${l.setTime}'
+        : formatTimeKey(context, time!);
+    // Chưa có giờ: chip viền nét đứt + icon more_time (mockup v4 SCR-06
+    // no-time) thay cho một ô trống.
     return ActionChip(
-      avatar: const Icon(Symbols.schedule_rounded, size: 18),
+      avatar: Icon(
+        time == null ? Symbols.more_time_rounded : Symbols.schedule_rounded,
+        size: 18,
+      ),
+      side: time == null
+          ? BorderSide(color: Theme.of(context).colorScheme.outline)
+          : null,
       label: Text(label),
       tooltip: l.entryTime,
       onPressed: () async {

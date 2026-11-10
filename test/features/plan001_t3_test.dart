@@ -63,7 +63,12 @@ void main() {
         period,
         Period.custom(DateTime(2026, 11, 5), DateTime(2026, 11, 9)),
       );
-      expect(findPlainText('5 thg 11 – 9 thg 11, 2026'), findsNWidgets(2));
+      // Đầu kỳ + dòng dưới Số dư (mockup v4: '… · theo VND').
+      expect(findPlainText('5 thg 11 – 9 thg 11, 2026'), findsOneWidget);
+      expect(
+        findPlainText('5 thg 11 – 9 thg 11, 2026 · theo VND'),
+        findsOneWidget,
+      );
       await disposeApp(tester, db);
     });
 
@@ -93,8 +98,9 @@ void main() {
       await settle(tester);
       expect(find.byType(RangeCalendarSheet), findsNothing);
       expect(_container(tester).read(periodProvider), before);
-      // Đầu kỳ + dòng tên kỳ dưới "Số dư" (v2).
-      expect(find.text('Tháng 11 năm 2026'), findsNWidgets(2));
+      // Đầu kỳ + dòng tên kỳ dưới "Số dư" (mockup v4: '… · theo VND').
+      expect(find.text('Tháng 11 năm 2026'), findsOneWidget);
+      expect(find.text('Tháng 11 năm 2026 · theo VND'), findsOneWidget);
       await disposeApp(tester, db);
     });
 

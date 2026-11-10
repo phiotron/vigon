@@ -13,6 +13,7 @@ import '../../ui/category_avatar.dart';
 import '../../ui/format.dart';
 import '../../ui/messenger.dart';
 import '../../ui/money_lines.dart';
+import '../../ui/status.dart';
 import '../../ui/theme.dart';
 import '../../ui/tokens.g.dart';
 import '../entry/entry_time.dart';
@@ -69,7 +70,20 @@ class _EntriesScreenState extends ConsumerState<EntriesScreen> {
     final items = <Widget Function()>[
       () => _AmountTile(
         minHeight: VgSize.tapMain,
-        title: Text(l.balance, style: theme.textTheme.titleLarge),
+        title: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(l.balance, style: theme.textTheme.titleLarge),
+            // "theo USD" (mockup v4 SCR-10, D-042).
+            Text(
+              l.mainFirstNote(currency),
+              style: VgType.bodySm.copyWith(
+                color: theme.colorScheme.onSurfaceVariant,
+              ),
+            ),
+          ],
+        ),
         amount: Text(
           money(context, currency, summary.balance),
           style: VgType.amountMd.copyWith(color: theme.colorScheme.onSurface),
@@ -369,6 +383,10 @@ class _EntryTile extends ConsumerWidget {
     final l = AppLocalizations.of(context);
     final entry = row.entry;
     final isTransfer = entry.type == EntryType.transfer;
+    // ✉ cho khoản lưu từ email MB hoặc khoản ghi tay đã ghép với email
+    // (mockup v4 SCR-10).
+    final fromEmail =
+        entry.source == EntrySource.emailMb || entry.referenceNumber != null;
     final large = isLargeText(context);
     // Khoản của hôm nay ghi "Hôm nay" như frame SCR-10/11 (A05, A06).
     final day = parseDateKey(entry.date);
@@ -414,7 +432,21 @@ class _EntryTile extends ConsumerWidget {
         leading: leading == null
             ? null
             : SizedBox(width: 40, child: Center(child: leading)),
-        title: Text(title, maxLines: 2, overflow: TextOverflow.ellipsis),
+        title: fromEmail
+            ? Text.rich(
+                TextSpan(
+                  children: [
+                    TextSpan(text: title),
+                    WidgetSpan(
+                      alignment: PlaceholderAlignment.middle,
+                      child: MailMarker(semanticLabel: l.mbLinked),
+                    ),
+                  ],
+                ),
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+              )
+            : Text(title, maxLines: 2, overflow: TextOverflow.ellipsis),
         subtitle: large
             ? Column(
                 crossAxisAlignment: CrossAxisAlignment.start,

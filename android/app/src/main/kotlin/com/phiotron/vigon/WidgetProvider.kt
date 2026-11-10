@@ -16,9 +16,10 @@ import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.plugin.common.MethodChannel
 
 /**
- * Widget màn hình chính "Ví Gọn" (AC-63, AC-64): hai nút Chi và Thu, và nếu Dart
- * cho phép thì một dòng trạng thái đã định dạng sẵn. Dữ liệu nằm trong file
- * SharedPreferences riêng của app (MODE_PRIVATE), chỉ có dòng chữ đó.
+ * Widget màn hình chính "Ví Gọn" (AC-63, AC-64; vẽ lại theo mockup v4 EXT-01): hai nút Chi và
+ * Thu, và nếu Dart cho phép thì số đã chi tháng này (số lớn + thanh hạn mức + dòng phụ) đã định
+ * dạng sẵn. Dữ liệu nằm trong file SharedPreferences riêng của app (MODE_PRIVATE), chỉ có các
+ * chuỗi đó.
  *
  * Dòng số tiền đi kèm hạn dùng (`validUntil`, hết kỳ tháng). Quá hạn mà app chưa đẩy số
  * mới (app không chạy qua ngày đầu tháng) thì dòng bị XÓA khỏi bộ nhớ và widget hiện
@@ -57,8 +58,17 @@ class VigonWidgetProvider : AppWidgetProvider() {
         private const val KEY_LINE = "line"
         private const val KEY_VALID_UNTIL = "valid_until"
         private const val KEY_STALE = "stale"
+        private const val KEY_LABEL = "label"
+        private const val KEY_AMOUNT = "amount"
+        private const val KEY_CAPTION = "caption"
+        private const val KEY_PERCENT = "percent"
+        private const val KEY_WARN = "warn"
+        private val HERO_KEYS = listOf(KEY_LABEL, KEY_AMOUNT, KEY_CAPTION, KEY_PERCENT, KEY_WARN)
         private const val ACTION_EXPIRE = "com.phiotron.vigon.WIDGET_EXPIRE"
         const val CHANNEL = "vigon/widget"
+
+        /** Số bị che khi khóa PIN (EXT-01 locked). */
+        private const val MASK = "\u2022\u2022\u2022\u2022\u2022\u2022"
 
         /** Bề rộng (dp) từ đó dùng bố cục 4×2: hai nút cạnh nhau, chữ một dòng (EXT-01). */
         private const val WIDE_MIN_DP = 250
@@ -84,8 +94,21 @@ class VigonWidgetProvider : AppWidgetProvider() {
             return views(context, layout, state)
         }
 
-        /** Nội dung hàng trên: [line] null = mặc định (logo + "Ví Gọn"). */
-        private data class State(val line: String?, val locked: Boolean, val stale: Boolean)
+        /**
+         * Trạng thái vẽ: [line] null = mặc định (logo + "Ví Gọn" + lời giới thiệu). Có số: [label] +
+         * [amount] (+ [percent]/[caption]/[warn] khi có hạn mức). [locked]: "Đã khóa bằng PIN" + số
+         * che. [stale]: hết kỳ, "Mở app để cập nhật".
+         */
+        private data class State(
+            val line: String?,
+            val locked: Boolean,
+            val stale: Boolean,
+            val label: String? = null,
+            val amount: String? = null,
+            val caption: String? = null,
+            val percent: Int = -1,
+            val warn: Boolean = false,
+        )
 
         /**
          * Đọc bộ nhớ widget, bỏ số đã hết kỳ. Dòng số tiền luôn có hạn dùng; dòng không có hạn
@@ -97,11 +120,12 @@ class VigonWidgetProvider : AppWidgetProvider() {
             val validUntil = prefs.getLong(KEY_VALID_UNTIL, 0L)
             if (!line.isNullOrEmpty() && validUntil > 0L && System.currentTimeMillis() >= validUntil) {
                 // Hết kỳ: xóa số cũ khỏi bộ nhớ, nhớ rằng đang chờ app cập nhật.
-                prefs.edit()
+                val edit = prefs.edit()
                     .remove(KEY_LINE)
                     .remove(KEY_VALID_UNTIL)
                     .putBoolean(KEY_STALE, true)
-                    .commit()
+                HERO_KEYS.forEach { edit.remove(it) }
+                edit.commit()
                 line = null
             }
             if (!line.isNullOrEmpty() && validUntil > 0L) {
@@ -111,7 +135,16 @@ class VigonWidgetProvider : AppWidgetProvider() {
             }
 
             return when {
-                !line.isNullOrEmpty() -> State(line, locked = validUntil <= 0L, stale = false)
+                !line.isNullOrEmpty() -> State(
+                    line,
+                    locked = validUntil <= 0L,
+                    stale = false,
+                    label = prefs.getString(KEY_LABEL, null),
+                    amount = prefs.getString(KEY_AMOUNT, null),
+                    caption = prefs.getString(KEY_CAPTION, null),
+                    percent = prefs.getInt(KEY_PERCENT, -1),
+                    warn = prefs.getBoolean(KEY_WARN, false),
+                )
                 prefs.getBoolean(KEY_STALE, false) ->
                     State(context.getString(R.string.widget_stale), locked = false, stale = true)
                 else -> State(null, locked = false, stale = false)
@@ -120,26 +153,77 @@ class VigonWidgetProvider : AppWidgetProvider() {
 
         private fun views(context: Context, layout: Int, state: State): RemoteViews {
             val views = RemoteViews(context.packageName, layout)
-            if (state.line == null) {
-                views.setImageViewResource(R.id.widget_icon, R.drawable.ic_widget_logo)
-                views.setViewVisibility(R.id.widget_icon, View.VISIBLE)
-                views.setViewVisibility(R.id.widget_brand, View.VISIBLE)
-                views.setViewVisibility(R.id.widget_status, View.GONE)
-            } else {
-                val icon = when {
-                    state.locked -> R.drawable.ic_widget_lock
-                    state.stale -> R.drawable.ic_widget_update
-                    else -> 0
+            // Mặc định mọi phần số đều ẩn; từng trạng thái bật phần của mình.
+            views.setViewVisibility(R.id.widget_amount, View.GONE)
+            views.setViewVisibility(R.id.widget_bar, View.GONE)
+            views.setViewVisibility(R.id.widget_bar_warn, View.GONE)
+            views.setViewVisibility(R.id.widget_caption_row, View.GONE)
+            views.setViewVisibility(R.id.widget_msg_row, View.GONE)
+            views.setViewVisibility(R.id.widget_msg_icon, View.GONE)
+            views.setViewVisibility(R.id.widget_icon, View.VISIBLE)
+            views.setImageViewResource(R.id.widget_icon, R.drawable.ic_widget_logo)
+            views.setTextViewText(R.id.widget_brand, context.getString(R.string.widget_label))
+            when {
+                state.locked -> {
+                    // PIN bật: khóa + "Đã khóa bằng PIN", số che và thanh rỗng để bố cục không nhảy
+                    // khi tắt PIN (EXT-01 locked).
+                    views.setImageViewResource(R.id.widget_icon, R.drawable.ic_widget_lock)
+                    views.setTextViewText(R.id.widget_brand, state.line)
+                    views.setTextViewText(R.id.widget_amount, MASK)
+                    views.setTextColor(R.id.widget_amount, context.getColor(R.color.widget_ink_45))
+                    views.setViewVisibility(R.id.widget_amount, View.VISIBLE)
+                    views.setProgressBar(R.id.widget_bar, 100, 0, false)
+                    views.setViewVisibility(R.id.widget_bar, View.VISIBLE)
                 }
-                if (icon != 0) {
-                    views.setImageViewResource(R.id.widget_icon, icon)
-                    views.setViewVisibility(R.id.widget_icon, View.VISIBLE)
-                } else {
+                state.stale -> {
+                    views.setTextViewText(R.id.widget_msg, state.line)
+                    views.setViewVisibility(R.id.widget_msg_icon, View.VISIBLE)
+                    views.setViewVisibility(R.id.widget_msg_row, View.VISIBLE)
+                }
+                state.line != null && state.amount != null -> {
+                    // Có số: "Tháng này đã chi" + số lớn (+ thanh và dòng phụ khi có hạn mức).
                     views.setViewVisibility(R.id.widget_icon, View.GONE)
+                    views.setTextViewText(R.id.widget_brand, state.label ?: "")
+                    views.setTextViewText(R.id.widget_amount, state.amount)
+                    views.setTextColor(R.id.widget_amount, context.getColor(R.color.widget_ink))
+                    views.setViewVisibility(R.id.widget_amount, View.VISIBLE)
+                    // TalkBack đọc cả câu (AC-64).
+                    views.setContentDescription(R.id.widget_amount, state.line)
+                    if (state.percent >= 0) {
+                        val bar = if (state.warn) R.id.widget_bar_warn else R.id.widget_bar
+                        views.setProgressBar(bar, 100, state.percent.coerceIn(0, 100), false)
+                        views.setViewVisibility(bar, View.VISIBLE)
+                    }
+                    if (!state.caption.isNullOrEmpty()) {
+                        views.setViewVisibility(R.id.widget_caption_row, View.VISIBLE)
+                        views.setViewVisibility(
+                            R.id.widget_caption_icon,
+                            if (state.warn) View.VISIBLE else View.GONE,
+                        )
+                        views.setViewVisibility(
+                            R.id.widget_caption,
+                            if (state.warn) View.GONE else View.VISIBLE,
+                        )
+                        views.setViewVisibility(
+                            R.id.widget_caption_warn,
+                            if (state.warn) View.VISIBLE else View.GONE,
+                        )
+                        views.setTextViewText(
+                            if (state.warn) R.id.widget_caption_warn else R.id.widget_caption,
+                            state.caption,
+                        )
+                    }
                 }
-                views.setViewVisibility(R.id.widget_brand, View.GONE)
-                views.setTextViewText(R.id.widget_status, state.line)
-                views.setViewVisibility(R.id.widget_status, View.VISIBLE)
+                state.line != null -> {
+                    // Dữ liệu cũ (chỉ có câu, từ bản trước khi vẽ lại): hiện câu dưới tiêu đề.
+                    views.setTextViewText(R.id.widget_msg, state.line)
+                    views.setViewVisibility(R.id.widget_msg_row, View.VISIBLE)
+                }
+                else -> {
+                    // Mặc định: logo + "Ví Gọn" + lời giới thiệu; không có gì về tiền.
+                    views.setTextViewText(R.id.widget_msg, context.getString(R.string.widget_description))
+                    views.setViewVisibility(R.id.widget_msg_row, View.VISIBLE)
+                }
             }
             views.setOnClickPendingIntent(
                 R.id.widget_expense,
@@ -211,21 +295,36 @@ class VigonWidgetProvider : AppWidgetProvider() {
                             if (line.isNullOrEmpty()) {
                                 result.error("bad_args", "show cần {line, validUntil?}", null)
                             } else {
-                                prefs.edit()
+                                val edit = prefs.edit()
                                     .putString(KEY_LINE, line)
                                     .putLong(KEY_VALID_UNTIL, validUntil)
                                     .putBoolean(KEY_STALE, false)
-                                    .commit()
+                                HERO_KEYS.forEach { edit.remove(it) }
+                                // Phần số lớn (mockup v4): chỉ có khi Dart được phép hiện số.
+                                call.argument<String>("amount")?.let { amount ->
+                                    edit.putString(KEY_AMOUNT, amount)
+                                    edit.putString(KEY_LABEL, call.argument<String>("label"))
+                                    call.argument<String>("caption")?.let {
+                                        edit.putString(KEY_CAPTION, it)
+                                    }
+                                    edit.putInt(
+                                        KEY_PERCENT,
+                                        call.argument<Number>("percent")?.toInt() ?: -1,
+                                    )
+                                    edit.putBoolean(KEY_WARN, call.argument<Boolean>("warn") ?: false)
+                                }
+                                edit.commit()
                                 refreshAll(app)
                                 result.success(null)
                             }
                         }
                         "clear" -> {
-                            prefs.edit()
+                            val edit = prefs.edit()
                                 .remove(KEY_LINE)
                                 .remove(KEY_VALID_UNTIL)
                                 .remove(KEY_STALE)
-                                .commit()
+                            HERO_KEYS.forEach { edit.remove(it) }
+                            edit.commit()
                             refreshAll(app)
                             result.success(null)
                         }

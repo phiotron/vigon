@@ -1,6 +1,7 @@
 import 'package:flutter/widgets.dart';
 
 import '../../../l10n/app_localizations.dart';
+import 'home_widget_bridge.dart';
 
 /// Dòng trạng thái hiện trên widget màn hình chính (AC-64).
 /// [line] null nghĩa là không hiện dòng nào: widget chỉ có hai nút.
@@ -9,7 +10,7 @@ import '../../../l10n/app_localizations.dart';
 /// (0 giờ ngày đầu kỳ sau, giờ máy). Phía Android tự bỏ dòng số khi quá hạn này
 /// để không bao giờ hiện số của kỳ cũ như của kỳ hiện tại.
 class WidgetContent {
-  const WidgetContent(this.line, {this.validUntil});
+  const WidgetContent(this.line, {this.validUntil, this.hero});
 
   /// Không có dòng nào, và bộ nhớ của widget phải được xóa sạch.
   static const hidden = WidgetContent(null);
@@ -17,14 +18,18 @@ class WidgetContent {
   final String? line;
   final DateTime? validUntil;
 
+  /// Số lớn của widget vẽ lại (chỉ khi được hiện số tiền).
+  final WidgetHero? hero;
+
   @override
   bool operator ==(Object other) =>
       other is WidgetContent &&
       other.line == line &&
-      other.validUntil == validUntil;
+      other.validUntil == validUntil &&
+      other.hero == hero;
 
   @override
-  int get hashCode => Object.hash(line, validUntil);
+  int get hashCode => Object.hash(line, validUntil, hero);
 
   @override
   String toString() => 'WidgetContent($line, validUntil: $validUntil)';
@@ -46,6 +51,8 @@ WidgetContent widgetContent({
   required bool pinEnabled,
   required String Function() spentFormatted,
   String Function()? budgetFormatted,
+  int? percent,
+  String Function()? overFormatted,
   DateTime? validUntil,
   required String language,
 }) {
@@ -54,10 +61,29 @@ WidgetContent widgetContent({
   if (pinEnabled) return WidgetContent(l.widgetLockedByPin);
   final spent = spentFormatted();
   final budget = budgetFormatted?.call();
+  // Mockup v4 EXT-01: "Tháng này đã chi" + số lớn; có hạn mức thì thanh +
+  // "trên Y · N%", ≥ 80 % thì "Sắp vượt · N%", vượt thì "Vượt X".
+  String? caption;
+  final warn = budget != null && percent != null && percent >= 80;
+  if (budget != null && percent != null) {
+    final over = percent > 100 ? overFormatted?.call() : null;
+    caption = over != null
+        ? l.budgetOver(over)
+        : warn
+        ? '${l.almostOver} · $percent%'
+        : l.widgetOfBudget(budget, '$percent%');
+  }
   return WidgetContent(
     budget == null
         ? l.widgetSpentThisMonth(spent)
         : l.widgetSpentOfBudget(spent, budget),
     validUntil: validUntil,
+    hero: WidgetHero(
+      label: l.widgetSpentLabel,
+      amount: spent,
+      caption: caption,
+      percent: budget == null ? null : percent,
+      warn: warn,
+    ),
   );
 }

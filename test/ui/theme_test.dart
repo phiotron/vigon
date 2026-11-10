@@ -48,11 +48,16 @@ void main() {
         'brand-paper': p.brandPaper,
         'brand-dot': p.brandDot,
         'widget-surface': p.widgetSurface,
-        'widget-surface-end': p.widgetSurfaceEnd,
         'widget-ink': p.widgetInk,
-        'widget-gold': p.widgetGold,
-        'widget-outline': p.widgetOutline,
-        'widget-action': p.widgetAction,
+        // v3 (mockup v4, 2026-11-10): cảnh báo, thông tin, số đếm.
+        'warning': p.warning,
+        'on-warning': p.onWarning,
+        'warning-container': p.warningContainer,
+        'on-warning-container': p.onWarningContainer,
+        'info-container': p.infoContainer,
+        'on-info-container': p.onInfoContainer,
+        'badge': p.badge,
+        'on-badge': p.onBadge,
         'widget-expense': p.widgetExpense,
         'widget-income': p.widgetIncome,
         'on-widget-action': p.onWidgetAction,
@@ -65,7 +70,7 @@ void main() {
       final name = 'cat-${(i + 1).toString().padLeft(2, '0')}';
       expect(vgCategoryColors[i], _hex(colorTokens[name]!['light']!));
     }
-    expect(VgRadius.widget, 20);
+    expect(VgRadius.widget, 24);
     expect(VgSize.rowTwoLine, 72);
   });
 
@@ -193,12 +198,16 @@ void main() {
         'primary/surface-container-low': (p.primary, p.surfaceContainerLow),
         'error/surface-container-low': (p.error, p.surfaceContainerLow),
         'on-error-container': (p.onErrorContainer, p.errorContainer),
-        // v3 widget B: chữ trên hai đầu dải nền và trên khối nút.
+        // Widget vẽ lại (mockup v4 EXT-01): chữ ngà và tiêu đề mint trên nền
+        // ngọc, chữ brand-deep trên nút giấy.
         'widget-ink/widget-surface': (p.widgetInk, p.widgetSurface),
-        'widget-ink/widget-surface-end': (p.widgetInk, p.widgetSurfaceEnd),
-        'widget-ink/widget-action': (p.widgetInk, p.widgetAction),
-        'widget-gold/widget-surface': (p.widgetGold, p.widgetSurface),
-        'widget-gold/widget-surface-end': (p.widgetGold, p.widgetSurfaceEnd),
+        'brand-mint/widget-surface': (p.brandMint, p.widgetSurface),
+        'brand-deep/brand-paper': (p.brandDeep, p.brandPaper),
+        // v3: chữ cảnh báo / thông tin / số đếm.
+        'warning/surface': (p.warning, p.surface),
+        'on-warning-container': (p.onWarningContainer, p.warningContainer),
+        'on-info-container': (p.onInfoContainer, p.infoContainer),
+        'on-badge/badge': (p.onBadge, p.badge),
         'on-widget-action/widget-expense': (p.onWidgetAction, p.widgetExpense),
         'on-widget-action/widget-income': (p.onWidgetAction, p.widgetIncome),
       };

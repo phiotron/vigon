@@ -21,13 +21,13 @@ void main() {
       await tester.runAsync(() => PinService(secrets).setPin('2468'));
       final db = await pumpApp(tester, secrets: secrets);
       expect(find.text('Nhập mã PIN'), findsOneWidget);
-      expect(find.text('Bấm − để ghi khoản chi đầu tiên'), findsNothing);
+      expect(find.text('Bắt đầu với khoản chi đầu tiên'), findsNothing);
 
       await enterPin(tester, '1111');
       expect(find.text('Sai mã PIN'), findsOneWidget);
       await enterPin(tester, '2468');
       expect(find.text('Nhập mã PIN'), findsNothing);
-      expect(find.text('Bấm − để ghi khoản chi đầu tiên'), findsOneWidget);
+      expect(find.text('Bắt đầu với khoản chi đầu tiên'), findsOneWidget);
       await disposeApp(tester, db);
     },
   );

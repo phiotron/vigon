@@ -74,7 +74,7 @@ void main() {
       accountId: card!,
     );
     expect(
-      findSemanticsLabel('Số dư: -130.000 ₫, Tháng 11 năm 2026'),
+      findSemanticsLabel('Số dư: -130.000 ₫, Tháng 11 năm 2026 · theo VND'),
       findsOneWidget,
     );
     await tester.tap(find.byTooltip('Tài khoản'));
@@ -82,7 +82,7 @@ void main() {
     await tester.tap(find.text('Thẻ').last);
     await settle(tester);
     expect(
-      findSemanticsLabel('Số dư: -30.000 ₫, Tháng 11 năm 2026'),
+      findSemanticsLabel('Số dư: -30.000 ₫, Tháng 11 năm 2026 · theo VND'),
       findsOneWidget,
     );
     // Nút lọc đọc tên tài khoản đang lọc.
@@ -91,7 +91,7 @@ void main() {
     await tester.tap(find.text('Tất cả tài khoản'));
     await settle(tester);
     expect(
-      findSemanticsLabel('Số dư: -130.000 ₫, Tháng 11 năm 2026'),
+      findSemanticsLabel('Số dư: -130.000 ₫, Tháng 11 năm 2026 · theo VND'),
       findsOneWidget,
     );
     await disposeApp(tester, db);
@@ -190,7 +190,9 @@ void main() {
 
   testWidgets('chọn kỳ Tuần và Năm từ bảng chọn kỳ (AC-10)', (tester) async {
     final db = await pumpApp(tester);
-    expect(find.text('Tháng 11 năm 2026'), findsNWidgets(2));
+    // Đầu kỳ + dòng dưới "Số dư" (mockup v4: "… · theo VND").
+    expect(find.text('Tháng 11 năm 2026'), findsOneWidget);
+    expect(find.text('Tháng 11 năm 2026 · theo VND'), findsOneWidget);
     await tester.tap(find.text('Tháng 11 năm 2026').first);
     await settle(tester);
     await tester.tap(find.text('Tuần'));
@@ -204,7 +206,8 @@ void main() {
     await settle(tester);
     await tester.tap(find.text('Năm'));
     await settle(tester);
-    expect(find.text('2026'), findsNWidgets(2));
+    expect(find.text('2026'), findsOneWidget);
+    expect(find.text('2026 · theo VND'), findsOneWidget);
     await disposeApp(tester, db);
   });
 

@@ -1,14 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Nền widget B: dải chuyển màu rất nhẹ từ góc trên trái (widget_surface) xuống góc dưới phải
-     (widget_surface_end), viền vàng mảnh. Góc theo hệ thống ở Android 12+ (values-v31). -->
+<!-- Nền widget vẽ lại (EXT-01 v4): widget-surface đặc, góc 24 (Android 12+: góc hệ thống, values-v31). -->
 <shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="rectangle">
-    <gradient
-        android:angle="315"
-        android:endColor="@color/widget_surface_end"
-        android:startColor="@color/widget_surface"
-        android:type="linear" />
-    <stroke
-        android:width="@dimen/vigon_widget_outline"
-        android:color="@color/widget_outline" />
+    <solid android:color="@color/widget_surface" />
     <corners android:radius="@dimen/vigon_widget_radius" />
 </shape>

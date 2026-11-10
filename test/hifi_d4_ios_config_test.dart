@@ -125,15 +125,9 @@ void main() {
       expect(runnerPrivacy, contains('<string>CA92.1</string>'));
     });
 
-    test('màu widget-* trùng Android (sáng = values, tối = values-night)', () {
-      final xml = _read('android/app/src/main/res/values/widget_colors.xml');
-      final night = _read(
-        'android/app/src/main/res/values-night/widget_colors.xml',
-      );
-      String hex(String name, [String? from]) =>
-          RegExp('<color name="$name">#([0-9A-F]{6})</color>')
-              .firstMatch(from ?? xml)!
-              .group(1)!;
+    test('màu widget iOS giữ kiểu B (ngà / ngọc lục bảo & vàng)', () {
+      // Mockup v4 (2026-11-10) chỉ vẽ lại widget Android (EXT-01, C10); widget
+      // iOS chưa có bản vẽ mới nên giữ bảng màu widget B (2026-11-06).
       String swift(String name) {
         final m = RegExp(
           'static let $name = Color\\(red: 0x(..) / 255, green: 0x(..) / 255, blue: 0x(..) / 255\\)',
@@ -141,31 +135,28 @@ void main() {
         return '${m.group(1)}${m.group(2)}${m.group(3)}';
       }
 
-      expect(swift('surface'), hex('widget_surface'));
-      expect(swift('ink'), hex('widget_ink'));
-      expect(swift('expense'), hex('widget_expense'));
-      expect(swift('income'), hex('widget_income'));
-      for (final (s, a) in [
-        ('surfaceEnd', 'widget_surface_end'),
-        ('gold', 'widget_gold'),
-        ('outline', 'widget_outline'),
-        ('action', 'widget_action'),
-      ]) {
-        expect(swift(s), hex(a), reason: s);
-      }
-      for (final (s, a) in [
-        ('surface', 'widget_surface'),
-        ('surfaceEnd', 'widget_surface_end'),
-        ('ink', 'widget_ink'),
-        ('gold', 'widget_gold'),
-        ('outline', 'widget_outline'),
-        ('action', 'widget_action'),
-      ]) {
-        expect(swift('${s}Dark'), hex(a, night), reason: '${s}Dark');
-      }
-      // Huy hiệu Chi/Thu giống nhau ở hai chủ đề.
-      expect(hex('widget_expense', night), hex('widget_expense'));
-      expect(hex('widget_income', night), hex('widget_income'));
+      const light = {
+        'surface': 'FBF8F1',
+        'surfaceEnd': 'F3ECDD',
+        'ink': '0E3B32',
+        'gold': '6E5C34',
+        'outline': 'D9C48F',
+        'action': 'EFE5CF',
+        'expense': 'C0463A',
+        'income': '1F7A5C',
+      };
+      const dark = {
+        'surface': '0A2F27',
+        'surfaceEnd': '062019',
+        'ink': 'F4EBD3',
+        'gold': 'D6B66E',
+        'outline': '7D6B3F',
+        'action': '1B3E36',
+      };
+      light.forEach((name, hex) => expect(swift(name), hex, reason: name));
+      dark.forEach(
+        (name, hex) => expect(swift('${name}Dark'), hex, reason: '${name}Dark'),
+      );
     });
 
     test('chữ widget EN + VI chép đúng từ .arb', () {

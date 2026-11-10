@@ -131,7 +131,7 @@ void main() {
       tester.element(find.byType(Scaffold).first),
     );
     // Màn chính và Các khoản không có gì.
-    expect(findSemanticsLabel('Số dư: 0 ₫, Tháng 11 năm 2026'), findsOneWidget);
+    expect(findSemanticsLabel('Số dư: 0 ₫, Tháng 11 năm 2026 · theo VND'), findsOneWidget);
     await goTo(tester, '/entries');
     expect(find.text('Kỳ này chưa có khoản nào'), findsOneWidget);
     // Tổng của kỳ, số chi cho ngân sách, số dư tài khoản đều không đổi.
@@ -189,7 +189,7 @@ void main() {
     // Từ lúc này khoản tính vào mọi tổng.
     await goTo(tester, '/');
     expect(
-      findSemanticsLabel('Số dư: -50.000 ₫, Tháng 11 năm 2026'),
+      findSemanticsLabel('Số dư: -50.000 ₫, Tháng 11 năm 2026 · theo VND'),
       findsOneWidget,
     );
     await disposeApp(tester, db);

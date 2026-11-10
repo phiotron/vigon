@@ -35,9 +35,9 @@ void main() {
       final xml = File('android/app/src/main/res/layout/$name.xml')
           .readAsStringSync();
       expect(xml, contains('android:id="@+id/widget_header"'), reason: name);
-      // Hàng đầu chứa icon, tên và dòng trạng thái.
+      // Hàng đầu chứa icon và tiêu đề (mockup v4).
       final header = xml.indexOf('widget_header');
-      for (final id in ['widget_icon', 'widget_brand', 'widget_status']) {
+      for (final id in ['widget_icon', 'widget_brand']) {
         expect(xml.indexOf(id), greaterThan(header), reason: '$name: $id');
       }
     }

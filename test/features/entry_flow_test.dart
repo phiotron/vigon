@@ -30,7 +30,7 @@ void main() {
 
       expect(find.text('Khoản chi mới'), findsNothing);
       expect(
-        findSemanticsLabel('Số dư: -155 ₫, Tháng 11 năm 2026'),
+        findSemanticsLabel('Số dư: -155 ₫, Tháng 11 năm 2026 · theo VND'),
         findsOneWidget,
       );
       final rows = await tester.runAsync(() => db.select(db.entries).get());
@@ -74,7 +74,7 @@ void main() {
     tester,
   ) async {
     final db = await pumpApp(tester);
-    expect(find.text('Bấm − để ghi khoản chi đầu tiên'), findsOneWidget);
+    expect(find.text('Bắt đầu với khoản chi đầu tiên'), findsOneWidget);
     await insertEntry(
       tester,
       db,
@@ -82,7 +82,7 @@ void main() {
       amount: 50000,
       categoryId: 1,
     );
-    expect(find.text('Bấm − để ghi khoản chi đầu tiên'), findsNothing);
+    expect(find.text('Bắt đầu với khoản chi đầu tiên'), findsNothing);
     await disposeApp(tester, db);
   });
 

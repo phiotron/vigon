@@ -14,6 +14,7 @@ import '../../providers.dart';
 import '../../ui/format.dart';
 import '../../ui/messenger.dart';
 import '../../ui/settings_rows.dart';
+import '../../ui/theme.dart';
 import '../../ui/tokens.g.dart';
 import 'currency_conversion.dart' show formatRate;
 import 'rates_format.dart';
@@ -117,6 +118,20 @@ class _RatesScreenState extends ConsumerState<RatesScreen> {
         child: ListView(
           padding: const EdgeInsets.only(bottom: VgSpace.s6),
           children: [
+            // Ngoại tuyến: dải hổ phách ở đầu màn (mockup v4 SCR-50 offline).
+            if (_offline)
+              Padding(
+                padding: const EdgeInsets.fromLTRB(
+                  VgSpace.s4,
+                  VgSpace.s2,
+                  VgSpace.s4,
+                  0,
+                ),
+                child: _OfflineBanner(
+                  title: l.ratesOfflineTitle,
+                  body: l.ratesOfflineBody,
+                ),
+              ),
             Padding(
               padding: const EdgeInsets.fromLTRB(
                 VgSpace.s4 + VgSpace.s1,
@@ -168,19 +183,6 @@ class _RatesScreenState extends ConsumerState<RatesScreen> {
                       },
                     ),
                 ],
-              ),
-            if (_offline)
-              Padding(
-                padding: const EdgeInsets.fromLTRB(
-                  VgSpace.s4,
-                  VgSpace.s4,
-                  VgSpace.s4,
-                  0,
-                ),
-                child: _OfflineBanner(
-                  title: l.ratesOfflineTitle,
-                  body: l.ratesOfflineBody,
-                ),
               ),
             const SizedBox(height: VgSpace.s4),
             Padding(
@@ -345,11 +347,11 @@ class _OfflineBanner extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final scheme = Theme.of(context).colorScheme;
+    final vg = context.vg;
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: VgSpace.s4, vertical: 14),
       decoration: BoxDecoration(
-        color: scheme.surfaceContainerLow,
+        color: vg.warningContainer,
         borderRadius: BorderRadius.circular(VgRadius.lg),
       ),
       child: Row(
@@ -360,7 +362,7 @@ class _OfflineBanner extends StatelessWidget {
             child: Icon(
               Symbols.cloud_off_rounded,
               size: 20,
-              color: scheme.onSurfaceVariant,
+              color: vg.onWarningContainer,
             ),
           ),
           const SizedBox(width: VgSpace.s3),
@@ -371,12 +373,15 @@ class _OfflineBanner extends StatelessWidget {
               children: [
                 Text(
                   title,
-                  style: VgType.bodyMd.copyWith(fontWeight: FontWeight.w600),
+                  style: VgType.bodyMd.copyWith(
+                    fontWeight: FontWeight.w600,
+                    color: vg.onWarningContainer,
+                  ),
                 ),
                 const SizedBox(height: 2),
                 Text(
                   body,
-                  style: VgType.bodySm.copyWith(color: scheme.onSurfaceVariant),
+                  style: VgType.bodySm.copyWith(color: vg.onWarningContainer),
                 ),
               ],
             ),

@@ -165,7 +165,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         _Benefit(
-          icon: Symbols.touch_app_rounded,
+          icon: Symbols.bolt_rounded,
           title: l.onboardingBenefitFast,
           body: l.onboardingBenefitFastSub,
         ),
@@ -175,7 +175,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
           body: l.onboardingBenefitClearSub,
         ),
         _Benefit(
-          icon: Symbols.shield_lock_rounded,
+          icon: Symbols.lock_rounded,
           title: l.onboardingBenefitPrivate,
           body: l.onboardingBenefitPrivateSub,
         ),
@@ -397,6 +397,29 @@ class _StepScaffold extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
+                // Chấm tiến độ: bước hiện tại là viên 20 × 8 màu chính
+                // (mockup v4 SCR-49).
+                ExcludeSemantics(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      for (var i = 1; i <= OnboardingScreen.steps; i++)
+                        AnimatedContainer(
+                          duration: const Duration(milliseconds: 200),
+                          width: i == step ? 20 : 8,
+                          height: 8,
+                          margin: const EdgeInsets.symmetric(horizontal: 3),
+                          decoration: BoxDecoration(
+                            color: i == step
+                                ? scheme.primary
+                                : scheme.outlineVariant,
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                        ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: VgSpace.s3),
                 FilledButton(
                   key: const Key('onboarding-primary'),
                   onPressed: primary.onPressed,

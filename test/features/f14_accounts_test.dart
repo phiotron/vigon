@@ -87,7 +87,7 @@ void main() {
     containerOf(tester).read(accountFilterProvider.notifier).select(card);
     await settle(tester);
     expect(
-      findSemanticsLabel('Số dư: -20.000 ₫, Tháng 11 năm 2026'),
+      findSemanticsLabel('Số dư: -20.000 ₫, Tháng 11 năm 2026 · theo VND'),
       findsOneWidget,
     );
     await tester.runAsync(() => AccountRepository(db).archive(card));
@@ -95,7 +95,7 @@ void main() {
     // Bộ lọc tự bỏ, khoản của tài khoản ẩn vẫn nằm trong tổng.
     expect(containerOf(tester).read(accountFilterProvider), isNull);
     expect(
-      findSemanticsLabel('Số dư: -20.000 ₫, Tháng 11 năm 2026'),
+      findSemanticsLabel('Số dư: -20.000 ₫, Tháng 11 năm 2026 · theo VND'),
       findsOneWidget,
     );
     // Chỉ còn một tài khoản hiện: không có menu lọc.

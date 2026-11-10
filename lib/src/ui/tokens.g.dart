@@ -29,6 +29,29 @@ class VgPalette {
     required this.onError,
     required this.errorContainer,
     required this.onErrorContainer,
+    required this.warning,
+    required this.onWarning,
+    required this.warningContainer,
+    required this.onWarningContainer,
+    required this.infoContainer,
+    required this.onInfoContainer,
+    required this.tabbarSurface,
+    required this.tabbarIndicator,
+    required this.tabbarActive,
+    required this.tabbarInactive,
+    required this.badge,
+    required this.onBadge,
+    required this.chartIncome,
+    required this.chartExpense,
+    required this.chartLine,
+    required this.chartGrid,
+    required this.chartAxis,
+    required this.chartHighlight,
+    required this.calSelected,
+    required this.onCalSelected,
+    required this.calToday,
+    required this.calMuted,
+    required this.calIncomeDot,
     required this.swipeDelete,
     required this.inverseSurface,
     required this.inverseInk,
@@ -40,11 +63,7 @@ class VgPalette {
     required this.brandPaper,
     required this.brandDot,
     required this.widgetSurface,
-    required this.widgetSurfaceEnd,
     required this.widgetInk,
-    required this.widgetGold,
-    required this.widgetOutline,
-    required this.widgetAction,
     required this.widgetExpense,
     required this.widgetIncome,
     required this.onWidgetAction,
@@ -75,6 +94,29 @@ class VgPalette {
   final Color onError;
   final Color errorContainer;
   final Color onErrorContainer;
+  final Color warning;
+  final Color onWarning;
+  final Color warningContainer;
+  final Color onWarningContainer;
+  final Color infoContainer;
+  final Color onInfoContainer;
+  final Color tabbarSurface;
+  final Color tabbarIndicator;
+  final Color tabbarActive;
+  final Color tabbarInactive;
+  final Color badge;
+  final Color onBadge;
+  final Color chartIncome;
+  final Color chartExpense;
+  final Color chartLine;
+  final Color chartGrid;
+  final Color chartAxis;
+  final Color chartHighlight;
+  final Color calSelected;
+  final Color onCalSelected;
+  final Color calToday;
+  final Color calMuted;
+  final Color calIncomeDot;
   final Color swipeDelete;
   final Color inverseSurface;
   final Color inverseInk;
@@ -86,11 +128,7 @@ class VgPalette {
   final Color brandPaper;
   final Color brandDot;
   final Color widgetSurface;
-  final Color widgetSurfaceEnd;
   final Color widgetInk;
-  final Color widgetGold;
-  final Color widgetOutline;
-  final Color widgetAction;
   final Color widgetExpense;
   final Color widgetIncome;
   final Color onWidgetAction;
@@ -142,6 +180,33 @@ class VgPalette {
     onError: Color.lerp(a.onError, b.onError, t)!,
     errorContainer: Color.lerp(a.errorContainer, b.errorContainer, t)!,
     onErrorContainer: Color.lerp(a.onErrorContainer, b.onErrorContainer, t)!,
+    warning: Color.lerp(a.warning, b.warning, t)!,
+    onWarning: Color.lerp(a.onWarning, b.onWarning, t)!,
+    warningContainer: Color.lerp(a.warningContainer, b.warningContainer, t)!,
+    onWarningContainer: Color.lerp(
+      a.onWarningContainer,
+      b.onWarningContainer,
+      t,
+    )!,
+    infoContainer: Color.lerp(a.infoContainer, b.infoContainer, t)!,
+    onInfoContainer: Color.lerp(a.onInfoContainer, b.onInfoContainer, t)!,
+    tabbarSurface: Color.lerp(a.tabbarSurface, b.tabbarSurface, t)!,
+    tabbarIndicator: Color.lerp(a.tabbarIndicator, b.tabbarIndicator, t)!,
+    tabbarActive: Color.lerp(a.tabbarActive, b.tabbarActive, t)!,
+    tabbarInactive: Color.lerp(a.tabbarInactive, b.tabbarInactive, t)!,
+    badge: Color.lerp(a.badge, b.badge, t)!,
+    onBadge: Color.lerp(a.onBadge, b.onBadge, t)!,
+    chartIncome: Color.lerp(a.chartIncome, b.chartIncome, t)!,
+    chartExpense: Color.lerp(a.chartExpense, b.chartExpense, t)!,
+    chartLine: Color.lerp(a.chartLine, b.chartLine, t)!,
+    chartGrid: Color.lerp(a.chartGrid, b.chartGrid, t)!,
+    chartAxis: Color.lerp(a.chartAxis, b.chartAxis, t)!,
+    chartHighlight: Color.lerp(a.chartHighlight, b.chartHighlight, t)!,
+    calSelected: Color.lerp(a.calSelected, b.calSelected, t)!,
+    onCalSelected: Color.lerp(a.onCalSelected, b.onCalSelected, t)!,
+    calToday: Color.lerp(a.calToday, b.calToday, t)!,
+    calMuted: Color.lerp(a.calMuted, b.calMuted, t)!,
+    calIncomeDot: Color.lerp(a.calIncomeDot, b.calIncomeDot, t)!,
     swipeDelete: Color.lerp(a.swipeDelete, b.swipeDelete, t)!,
     inverseSurface: Color.lerp(a.inverseSurface, b.inverseSurface, t)!,
     inverseInk: Color.lerp(a.inverseInk, b.inverseInk, t)!,
@@ -153,11 +218,7 @@ class VgPalette {
     brandPaper: Color.lerp(a.brandPaper, b.brandPaper, t)!,
     brandDot: Color.lerp(a.brandDot, b.brandDot, t)!,
     widgetSurface: Color.lerp(a.widgetSurface, b.widgetSurface, t)!,
-    widgetSurfaceEnd: Color.lerp(a.widgetSurfaceEnd, b.widgetSurfaceEnd, t)!,
     widgetInk: Color.lerp(a.widgetInk, b.widgetInk, t)!,
-    widgetGold: Color.lerp(a.widgetGold, b.widgetGold, t)!,
-    widgetOutline: Color.lerp(a.widgetOutline, b.widgetOutline, t)!,
-    widgetAction: Color.lerp(a.widgetAction, b.widgetAction, t)!,
     widgetExpense: Color.lerp(a.widgetExpense, b.widgetExpense, t)!,
     widgetIncome: Color.lerp(a.widgetIncome, b.widgetIncome, t)!,
     onWidgetAction: Color.lerp(a.onWidgetAction, b.onWidgetAction, t)!,
@@ -190,6 +251,29 @@ const vgLight = VgPalette(
   onError: Color(0xFFFFFFFF),
   errorContainer: Color(0xFFFFDAD6),
   onErrorContainer: Color(0xFF410002),
+  warning: Color(0xFF8A4F00),
+  onWarning: Color(0xFFFFFFFF),
+  warningContainer: Color(0xFFFFDCBE),
+  onWarningContainer: Color(0xFF2E1500),
+  infoContainer: Color(0xFFDDE6F1),
+  onInfoContainer: Color(0xFF0F1D2B),
+  tabbarSurface: Color(0xFFECF2EF),
+  tabbarIndicator: Color(0xFFCCE8DF),
+  tabbarActive: Color(0xFF062019),
+  tabbarInactive: Color(0xFF3F4946),
+  badge: Color(0xFFBA1A1A),
+  onBadge: Color(0xFFFFFFFF),
+  chartIncome: Color(0xFF2E7D32),
+  chartExpense: Color(0xFFC62828),
+  chartLine: Color(0xFF2E7D6B),
+  chartGrid: Color(0xFFD3DCD8),
+  chartAxis: Color(0xFF3F4946),
+  chartHighlight: Color(0xFFCCE8DF),
+  calSelected: Color(0xFF2E7D6B),
+  onCalSelected: Color(0xFFFFFFFF),
+  calToday: Color(0xFF2E7D6B),
+  calMuted: Color(0xFF6F7975),
+  calIncomeDot: Color(0xFF2E7D32),
   swipeDelete: Color(0xFFFFDAD6),
   inverseSurface: Color(0xFF2C3230),
   inverseInk: Color(0xFFEDF2EF),
@@ -200,14 +284,10 @@ const vgLight = VgPalette(
   brandMint: Color(0xFF8CD5BF),
   brandPaper: Color(0xFFF7FAF8),
   brandDot: Color(0xFFE65100),
-  widgetSurface: Color(0xFFFBF8F1),
-  widgetSurfaceEnd: Color(0xFFF3ECDD),
-  widgetInk: Color(0xFF0E3B32),
-  widgetGold: Color(0xFF6E5C34),
-  widgetOutline: Color(0xFFD9C48F),
-  widgetAction: Color(0xFFEFE5CF),
-  widgetExpense: Color(0xFFC0463A),
-  widgetIncome: Color(0xFF1F7A5C),
+  widgetSurface: Color(0xFF0E5244),
+  widgetInk: Color(0xFFF7FAF8),
+  widgetExpense: Color(0xFFC62828),
+  widgetIncome: Color(0xFF2E7D32),
   onWidgetAction: Color(0xFFFFFFFF),
   onCat: Color(0xFFFFFFFF),
   shadowSheet: [
@@ -241,6 +321,29 @@ const vgDark = VgPalette(
   onError: Color(0xFF690005),
   errorContainer: Color(0xFF93000A),
   onErrorContainer: Color(0xFFFFDAD6),
+  warning: Color(0xFFFFB869),
+  onWarning: Color(0xFF4A2800),
+  warningContainer: Color(0xFF693C00),
+  onWarningContainer: Color(0xFFFFDCBE),
+  infoContainer: Color(0xFF25313D),
+  onInfoContainer: Color(0xFFD7E3F0),
+  tabbarSurface: Color(0xFF1B211F),
+  tabbarIndicator: Color(0xFF334B44),
+  tabbarActive: Color(0xFFCCE8DF),
+  tabbarInactive: Color(0xFFBEC9C4),
+  badge: Color(0xFFFFB4AB),
+  onBadge: Color(0xFF690005),
+  chartIncome: Color(0xFF81C784),
+  chartExpense: Color(0xFFEF9A9A),
+  chartLine: Color(0xFF8CD5BF),
+  chartGrid: Color(0xFF2C3431),
+  chartAxis: Color(0xFFBEC9C4),
+  chartHighlight: Color(0xFF334B44),
+  calSelected: Color(0xFF8CD5BF),
+  onCalSelected: Color(0xFF00382D),
+  calToday: Color(0xFF8CD5BF),
+  calMuted: Color(0xFF89938F),
+  calIncomeDot: Color(0xFF81C784),
   swipeDelete: Color(0xFF5C1714),
   inverseSurface: Color(0xFFDEE4E1),
   inverseInk: Color(0xFF2C3230),
@@ -251,14 +354,10 @@ const vgDark = VgPalette(
   brandMint: Color(0xFF8CD5BF),
   brandPaper: Color(0xFFF7FAF8),
   brandDot: Color(0xFFE65100),
-  widgetSurface: Color(0xFF0A2F27),
-  widgetSurfaceEnd: Color(0xFF062019),
-  widgetInk: Color(0xFFF4EBD3),
-  widgetGold: Color(0xFFD6B66E),
-  widgetOutline: Color(0xFF7D6B3F),
-  widgetAction: Color(0xFF1B3E36),
-  widgetExpense: Color(0xFFC0463A),
-  widgetIncome: Color(0xFF1F7A5C),
+  widgetSurface: Color(0xFF0E5244),
+  widgetInk: Color(0xFFF7FAF8),
+  widgetExpense: Color(0xFFC62828),
+  widgetIncome: Color(0xFF2E7D32),
   onWidgetAction: Color(0xFFFFFFFF),
   onCat: Color(0xFFFFFFFF),
   shadowSheet: [
@@ -305,7 +404,8 @@ abstract final class VgRadius {
   static const double md = 12;
   static const double lg = 16;
   static const double xl = 28;
-  static const double widget = 20;
+  static const double widget = 24;
+  static const double bar = 3;
   static const double full = 999;
 }
 
@@ -316,6 +416,11 @@ abstract final class VgSize {
   static const double tapMain = 64;
   static const double appbar = 56;
   static const double rowTwoLine = 72;
+  static const double tabbarHeight = 80;
+  static const double tabbarIndicatorW = 56;
+  static const double tabbarIndicatorH = 28;
+  static const double calCellH = 52;
+  static const double chartBarW = 8;
 }
 
 /// Họ chữ của app, khai trong pubspec.yaml (file font ở assets/fonts/).

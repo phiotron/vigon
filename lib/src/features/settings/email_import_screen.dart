@@ -15,6 +15,8 @@ import '../../ui/messenger.dart';
 import '../../ui/settings_rows.dart';
 import '../../ui/tokens.g.dart';
 import 'settings_lead.dart';
+import '../../ui/status.dart';
+import '../../ui/theme.dart';
 
 /// Đường dẫn của màn hộp thư và màn thêm hộp thư.
 const emailImportRoute = '/email-import';
@@ -285,7 +287,16 @@ class _MailboxCard extends ConsumerWidget {
                 ],
               ),
               const SizedBox(height: VgSpace.s3),
-              SettingsStatusLine(status: status, text: text),
+              // Chip trạng thái (mockup v4 SCR-44 connected).
+              StatusChip(
+                label: text,
+                icon: status == SettingsStatus.ok
+                    ? Symbols.check_circle_rounded
+                    : Symbols.error_rounded,
+                tone: status == SettingsStatus.ok
+                    ? StatusTone.ok
+                    : StatusTone.err,
+              ),
               if (box.needsPassword) ...[
                 const SizedBox(height: VgSpace.s2),
                 Text(
@@ -295,9 +306,27 @@ class _MailboxCard extends ConsumerWidget {
               ],
               if (box.unreadable > 0) ...[
                 const SizedBox(height: VgSpace.s2),
-                SettingsStatusLine(
-                  status: SettingsStatus.idle,
-                  text: l.emailUnreadable(box.unreadable),
+                // Cảnh báo màu `warning` có icon (mockup v4).
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    ExcludeSemantics(
+                      child: Icon(
+                        Symbols.warning_rounded,
+                        size: 18,
+                        color: context.vg.warning,
+                      ),
+                    ),
+                    const SizedBox(width: VgSpace.s2),
+                    Expanded(
+                      child: Text(
+                        l.emailUnreadable(box.unreadable),
+                        style: VgType.bodySm.copyWith(
+                          color: context.vg.warning,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ],
               ButtonPair(

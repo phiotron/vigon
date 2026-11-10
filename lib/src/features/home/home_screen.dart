@@ -20,6 +20,8 @@ import '../../ui/messenger.dart';
 import '../../ui/spending_ring.dart';
 import '../../ui/theme.dart';
 import '../../ui/tokens.g.dart';
+import '../../ui/status.dart';
+import '../import_queue/import_queue_providers.dart';
 import '../settings/budget_dialog.dart';
 import 'home_extras.dart';
 import 'period_picker.dart';
@@ -33,6 +35,7 @@ class HomeScreen extends ConsumerWidget {
     final l = AppLocalizations.of(context);
     final accounts = ref.watch(accountsProvider).value ?? const <Account>[];
     final accountFilter = ref.watch(accountFilterProvider);
+    final queueCount = ref.watch(importQueueCountProvider).value ?? 0;
 
     return Scaffold(
       appBar: AppBar(
@@ -42,9 +45,20 @@ class HomeScreen extends ConsumerWidget {
           padding: const EdgeInsets.only(left: VgSpace.s3),
           child: Text(l.appTitle),
         ),
+        // Mockup v4 SCR-01: lọc tài khoản · hộp thư (khi có khoản chờ) · Cài
+        // đặt.
         actions: [
           if (accounts.length > 1)
             _AccountFilterMenu(accounts: accounts, selected: accountFilter),
+          if (queueCount > 0)
+            BadgedIconButton(
+              icon: Symbols.inbox_rounded,
+              count: queueCount,
+              tooltip: '${l.importQueue}: $queueCount',
+              onPressed: () => context.push('/import-queue'),
+            ),
+          // Mockup v4 không vẽ nút này (chỉ thanh Số dư mở danh sách); giữ
+          // lối tắt của app hiện tại.
           IconButton(
             icon: const Icon(Symbols.receipt_long_rounded),
             tooltip: l.entries,
@@ -61,7 +75,12 @@ class HomeScreen extends ConsumerWidget {
         child: Column(
           children: [
             const _PeriodHeader(),
-            if (accountFilter != null) const ActiveAccountChip(),
+            if (queueCount > 0)
+              InfoBanner(
+                icon: Symbols.mark_email_unread_rounded,
+                text: l.importQueueCount(queueCount),
+                onTap: () => context.push('/import-queue'),
+              ),
             Expanded(
               child: GestureDetector(
                 behavior: HitTestBehavior.opaque,
@@ -197,8 +216,13 @@ class _AccountFilterMenu extends ConsumerWidget {
     final current = selected == null
         ? null
         : accounts.where((a) => a.id == selected).firstOrNull;
+    final scheme = Theme.of(context).colorScheme;
     return PopupMenuButton<int>(
-      icon: const Icon(Symbols.account_balance_wallet_rounded),
+      // Đang lọc: chip "Tên tài khoản ▾" nền primary-container (mockup v4
+      // `.vg-filterchip`, §10.1 #4) thay cho icon ví không nhãn.
+      icon: current == null
+          ? const Icon(Symbols.account_balance_wallet_rounded)
+          : null,
       tooltip: current == null
           ? l.account
           : '${l.account}: ${accountLabel(l, current)}',
@@ -230,6 +254,49 @@ class _AccountFilterMenu extends ConsumerWidget {
             on: current?.id == a.id,
           ),
       ],
+      child: current == null
+          ? null
+          : ConstrainedBox(
+              constraints: const BoxConstraints(
+                minHeight: VgSize.tapMin,
+                maxWidth: 150,
+              ),
+              child: Center(
+                child: Container(
+                  height: 32,
+                  padding: const EdgeInsetsDirectional.only(start: 10, end: 6),
+                  decoration: BoxDecoration(
+                    color: scheme.primaryContainer,
+                    borderRadius: BorderRadius.circular(VgRadius.sm),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(
+                        Symbols.account_balance_wallet_rounded,
+                        size: 18,
+                        color: scheme.onPrimaryContainer,
+                      ),
+                      const SizedBox(width: VgSpace.s1),
+                      Flexible(
+                        child: Text(
+                          accountLabel(l, current),
+                          overflow: TextOverflow.ellipsis,
+                          style: VgType.labelMd.copyWith(
+                            color: scheme.onPrimaryContainer,
+                          ),
+                        ),
+                      ),
+                      Icon(
+                        Symbols.arrow_drop_down_rounded,
+                        size: 18,
+                        color: scheme.onPrimaryContainer,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
     );
   }
 
@@ -422,7 +489,11 @@ class _BalanceBar extends ConsumerWidget {
         amount: money(context, currency, summary.balance),
         // Tên kỳ dưới "Số dư": đây là số dư của kỳ, không phải số dư tài
         // khoản (§10.1 #2).
-        periodTitle: periodTitle(context, ref.watch(periodProvider)),
+        // + "theo USD" (mockup v4 `mainFirstNote`): mọi tổng theo Tiền tệ
+        // chính (D-042).
+        periodTitle:
+            '${periodTitle(context, ref.watch(periodProvider))} · '
+            '${AppLocalizations.of(context).mainFirstNote(currency)}',
         onTap: () => context.push('/entries'),
       ),
     );
@@ -474,17 +545,20 @@ class _EmptyHint extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context);
+    // Mockup v4 SCR-01 empty: tiêu đề + một dòng hướng dẫn giữa vòng.
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
         Text(
-          l.emptyPeriod,
+          l.homeEmptyTitle,
           textAlign: TextAlign.center,
-          style: VgType.bodyMd.copyWith(color: color),
+          style: VgType.titleSm.copyWith(color: context.vg.ink),
         ),
         const SizedBox(height: VgSpace.s1),
-        ExcludeSemantics(
-          child: Icon(Symbols.south_rounded, size: 20, color: color),
+        Text(
+          l.homeEmptyBody,
+          textAlign: TextAlign.center,
+          style: VgType.bodySm.copyWith(color: color),
         ),
       ],
     );

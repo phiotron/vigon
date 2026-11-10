@@ -7,6 +7,7 @@ import 'package:material_symbols_icons/symbols.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../data/calculator.dart';
 import '../../data/database.dart';
+import '../../data/money_sum.dart';
 import '../../data/dates.dart';
 import '../../data/money.dart';
 import '../../l10n_names.dart';
@@ -269,6 +270,13 @@ class _TransferScreenState extends ConsumerState<TransferScreen> {
     final cross = fromCurrency != toCurrency;
     final value = evaluateToMinorUnits(_expression, decimalDigits: digits);
     final service = ref.watch(currencyServiceProvider).value;
+    final estimate = !cross || service == null || (value ?? 0) <= 0
+        ? null
+        : (MoneyBag()..add(fromCurrency, value!)).convertTo(
+            service,
+            toCurrency,
+            skipMissing: false,
+          );
     final converted = fromCurrency == primary
         ? null
         : service?.toPrimary(value ?? 0, fromCurrency);
@@ -432,8 +440,13 @@ class _TransferScreenState extends ConsumerState<TransferScreen> {
                                     setState(() => _receivedError = null);
                                   }
                                 },
+                                // "Bên nhận được" + số ước tính theo tỷ giá
+                                // đã lưu (mockup v4 SCR-19).
                                 decoration: InputDecoration(
-                                  labelText: l.transferReceivedAmount,
+                                  labelText: l.youReceive,
+                                  helperText: estimate == null
+                                      ? null
+                                      : '≈ ${money(context, toCurrency, estimate)}',
                                   suffixText: toCurrency,
                                   errorText: _receivedError,
                                   errorMaxLines: 3,

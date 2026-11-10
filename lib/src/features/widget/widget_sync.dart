@@ -87,6 +87,10 @@ final widgetSyncProvider = Provider<void>((ref) {
       pinEnabled: false,
       spentFormatted: () => fmt(spent.requireValue),
       budgetFormatted: b == null ? null : () => fmt(b),
+      percent: b == null || b <= 0
+          ? null
+          : (spent.requireValue * 100 / b).round(),
+      overFormatted: b == null ? null : () => fmt(spent.requireValue - b),
       validUntil: addDays(month.end, 1),
       language: language,
     ),
@@ -106,6 +110,6 @@ void _push(HomeWidgetBridge bridge, WidgetContent content) {
   unawaited(
     line == null
         ? bridge.clear()
-        : bridge.show(line, validUntil: content.validUntil),
+        : bridge.show(line, validUntil: content.validUntil, hero: content.hero),
   );
 }

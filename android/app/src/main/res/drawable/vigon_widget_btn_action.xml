@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Nền chung của hai nút Chi/Thu (widget B); màu phân biệt nằm ở huy hiệu tròn − / +. -->
+<!-- Nút Chi/Thu: nền giấy brand-paper, chữ brand-deep (8,9:1); màu thu/chi chỉ ở đĩa nhỏ − / +. -->
 <shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="rectangle">
-    <solid android:color="@color/widget_action" />
+    <solid android:color="@color/widget_paper" />
     <corners android:radius="@dimen/vigon_widget_button_radius" />
 </shape>
