@@ -25,6 +25,17 @@
 - 🟡 **Changed** — drawn before, but behaviour/layout changed since (see notes).
 - 🤖 Android only · 🍏 iOS note in §9.
 
+### Feature status at a glance (2026‑11‑10)
+| Area | Built in the app | Still to build (draw first‑time) |
+|---|---|---|
+| Logging | Home ring, − / +, keypad, time, **currency chip (NEW)**, repeat incl. Choose days, widget, daily reminder | — |
+| Records | List, search, edit, delete + undo | **Advanced filter** (S‑J5) |
+| Money structure | Accounts (multi‑currency), categories + limits, transfers (two currencies), rates screen + override | — |
+| Plans | Monthly budget, **savings wallets + history + add/withdraw + Done (NEW)**, debts + payments, **deadline reminders (NEW)** | **Budget warnings 80 % + notifications** (S‑J6) |
+| Insights | Home ring by period | **Overview** (S‑J1), **Statistics** (S‑J2), **Calendar** (S‑J3), **5‑tab shell + More** (S‑J0, S‑J4) |
+| Email import | Mailboxes, MB Bank receipts → queue, suggestions, matching | — |
+| Data & security | Backup/restore (encrypted), auto backup, CSV, PIN, hide in switcher, delete all, onboarding, About + legal | **Excel / PDF export** (S‑J7), **Fingerprint / Face ID** (S‑J8) |
+
 ---
 
 ## Contents
@@ -32,7 +43,7 @@
 2. Design constraints
 3. Business rules (complete)
 4. Information architecture and navigation
-5. Screens (A Home & logging · B Records · C Money structure · D Plans: budget, savings, debts · E Currency · F Email import · G Settings & data · H Security · I First run · J Insights to build)
+5. Screens (A Home & logging · B Records · C Money structure · D Plans: budget, savings, debts · E Currency · F Email import · G Settings & data · H Security · I First run · **J Features still to build: tab shell, Overview, Statistics, Calendar, More, Filter, Budget warnings, Excel/PDF, Biometrics**)
 6. Surfaces outside the app
 7. Key flows
 8. Sample data
@@ -485,39 +496,97 @@ Five steps with "Step n of 5", Skip on steps 2–5, system Back steps back:
 5. **Lock Vigon with a PIN?** — **Set a PIN** / Not now.
 **States:** each step light/dark, VI, 200 %, permission denied bar.
 
-### J — Insights and extras to build (🆕, from SPEC 3d — draw them; all amounts main‑currency, exact sums)
+### J — Features still to build (🆕 not coded yet — **draw these in full**; SPEC 3d F‑35..F‑41)
 
-#### S‑J1 · Overview `/overview` 🆕 (F‑35)
-Own month ‹ › · **Total balance** (all accounts incl. hidden, main currency) · tiles **Income − expenses** and **Budget left** (Over
-by X / Set a budget / Almost over) · **6‑month income vs expense bars** · **vs last month** (Spending up 25 % … arrow + words; "—"
-when last month is 0) · optional strips: top savings goal, debts owed/you owe. States: empty month, no budget, almost over, over,
-negative total, queue items not counted note, 200 %.
+> These are the remaining 2.0 features. Nothing exists in code yet, so the mockup **is** the design. Every amount follows
+> §2.5 (main currency big, original small when it differs; exact sums). Every chart needs a one‑sentence summary + a hidden
+> table for screen readers. Deliver light + dark, Android + iPhone, EN + VI, 200 % text for each.
 
-#### S‑J2 · Statistics `/stats` 🆕 (F‑36)
-Period header + View by + account filter · income/expense bars by sub‑period (Week → days, Month → days, Year → months, All →
-years; custom ≤ 31 d days, ≤ 366 d months, else years) · **Top 5 spending categories** (amount, % bar) · **Biggest spending day** ·
-**Balance history** line. Empty period = one empty state, never empty charts. Must feel instant with 10 000 records.
+#### S‑J0 · App shell — 5‑tab bottom bar 🆕 (§4.2)
+**Purpose:** reach Home / Overview / Stats / Calendar / More in one tap without hurting the ≤ 3‑tap logging.
+**Components:** bottom navigation, 5 destinations (icon + label), selected pill `secondary-container`, 80 dp incl. safe area;
+badge on **More** when queue items wait ("3", "99+"). Bar only on the 5 root screens.
+**States:** each tab selected · badge 0/1/12/99+ · 200 % text (icons + selected label only) · VI labels · Home with the bar and the
+− / + buttons still dominant.
+**Copy NEW:** Home | Trang chính · Overview | Tổng quan · Stats | Thống kê · Calendar | Lịch · More | Thêm.
 
-#### S‑J3 · Calendar `/calendar` 🆕 (F‑38)
-Month grid (week‑start aware), each day shows compact spend (`50K` / `1,2tr`) and a dot for income; tap → day panel with totals and
-the day's records (edit, swipe delete + Undo). A11y "November 6, spent $250.00, income recorded".
+#### S‑J1 · Overview `/overview` 🆕 (F‑35, AC‑107/108)
+**Purpose:** "How am I doing this month?" at a glance.
+**Components (top → bottom):**
+1. App bar "Overview | Tổng quan"; own month header ‹ **November 2026** › (swipe too), default = current month by month‑start
+   day, **independent** of Home's period. Note "All accounts | Mọi tài khoản".
+2. **Total balance | Tổng số dư** hero: sum of every account incl. hidden, main currency, exact.
+3. Two tiles: **Income − expenses | Thu − chi tháng** (signed, + / − and colour) and **Budget left | Ngân sách còn lại**
+   (amount; *Almost over* warning state "Used 82 %"; *Over* error "Over by $140.00"; no budget → tonal **Set a budget | Đặt
+   ngân sách** button opening the budget dialog).
+4. **Income vs expenses — last 6 months** paired bar chart ending at the chosen month; selected month highlighted; tap a bar →
+   callout with exact values; compact axis labels (`2K`, `1,5tr`).
+5. **vs last month | So với tháng trước:** two rows — Spending ▲ **up 25 %** / ▼ down, Income ▲/▼ — arrow **and** words + %;
+   last month 0 → "—"; one‑sentence summary "You spent 25 % more than in October."
+6. Optional strips (propose): top savings goal progress → Savings; debts "Owed to you $80 · You owe $30" → Debts.
+**States:** normal · empty month (friendly, link to Home) · no budget · almost over · over · negative total · huge numbers ·
+queue waiting note "3 records waiting aren't counted yet" · mixed currencies · 200 % (tiles stack) · VI.
+**Sample:** Nov income $2,500.00, expenses $1,840.00 → +$660.00; budget $2,000 → Used 92 %; Oct expenses $1,470 → up 25 %.
 
-#### S‑J4 · More hub `/more` 🆕 — rows with small status: Records · Savings "2 in progress" · Debts "$80 owed to you" · Queue "3
-waiting" · Categories · Accounts · Repeating · Settings.
+#### S‑J2 · Statistics `/stats` 🆕 (F‑36, AC‑109/110)
+**Purpose:** analyse any period in depth.
+**Components:** period header + "View by" sheet (reuse S‑A2) + account filter chip, then:
+1. **Income / expense bars by sub‑period:** Day → one pair; Week → 7 days; Month → each day; Year → 12 months; All time →
+   years; Custom ≤ 31 days → days, ≤ 366 → months, longer → years. Tap → callout.
+2. **Top 5 spending categories | 5 danh mục chi nhiều nhất:** category avatar, name, amount (main‑first), % of period spend
+   with a thin bar; tap → Records filtered to that category.
+3. **Biggest spending day | Ngày chi nhiều nhất:** date + amount (ties → earlier day; hidden for the Day period); tap → Calendar.
+4. **Balance history | Lịch sử tổng số dư:** line of total balance at the end of each sub‑period (can go negative).
+5. The ring / % by category stays on Home — propose whether Stats also gets a "By category" segment.
+**States:** empty period (one empty illustration, **no empty charts**) · single data point · negative balance line · long VI
+category names · 10 000 records (must feel instant) · 200 % · dark.
+**Sample:** November by day; top 5 Home $540 (29.3 %), Food $495, Shopping $215, Bills $170, Transport $130; biggest day Nov 14
+$310.00.
 
-#### S‑J5 · Records filter 🆕 (F‑39) — Filter button beside search → sheet: amount range From/To (error if From > To), categories
-multi‑select (expense + income), date range; Clear / Apply; removable chips; header "12 records · spent $420.00 · income $0.00".
+#### S‑J3 · Calendar `/calendar` 🆕 (F‑38, AC‑114)
+**Purpose:** see spending day by day.
+**Components:** month header ‹ › (swipe) + account filter · 7‑column grid by week start; each cell: day number, **compact day
+spend** (`50K`, `1.2M` / `50k`, `1,2tr`) and a **dot** when income was recorded; today outlined; selected filled; future muted ·
+**day panel** below: date, day totals (spent · income), the day's records (same rows as Records: tap = edit, swipe = delete +
+Undo).
+**States:** empty month · busy 6‑row month · day with 15 records (panel scrolls) · huge amounts truncated gracefully · 200 %
+(cells show amounts only on the selected day) · VI · dark. Queue items never shown.
+**A11y:** "November 6, spent $250.00, income recorded".
 
-#### S‑J6 · Budget warnings 🆕 (F‑37) — Almost over state on Home bar, Overview tile, category rows; Settings "Warn me at 80 %"
-(50–95, step 5, live example) + **Budget notifications** switch (default off). Notification **percentages only**: "Monthly budget
-November: 80% used" · "Food: 100% of the November limit used".
+#### S‑J4 · More hub `/more` 🆕
+List/cards with icons and a small status on the right: **Records** · **Savings** "2 in progress" · **Debts** "$80 owed to you" ·
+**Queue** "3 waiting" (badge) · **Categories** · **Accounts** · **Repeating records** · **Settings**. Calm, scannable, 200 %‑safe.
 
-#### S‑J7 · Export Excel & PDF 🆕 (F‑40) — Data group: Export CSV · Excel · PDF; range sheet (current period / custom / all time),
-what's included, progress, share sheet; empty range message; **A4 PDF preview** (title "Income & expense report — November 2026",
-totals, category table with %, records table; Be Vietnam Pro).
+#### S‑J5 · Records advanced filter 🆕 (F‑39, AC‑115)
+**Entry:** **Filter | Lọc** button next to search in Records.
+**Sheet:** Amount range From / To (either may be empty; error under the field when From > To; amounts in main currency) ·
+**Categories** multi‑select grid (expense group + income group) · **Date range** (reuse the range calendar; replaces the viewed
+period for this list) · **Clear | Xoá lọc** / **Apply | Áp dụng**.
+**Result:** removable chips under the search bar ("$5–$20", "Food", "Transport", "Nov 1–15") + "Clear filters"; header "9 records ·
+spent $87.50 · income $0.00"; flat list newest first; transfers excluded when a category is chosen. AND with search + account filter.
+**States:** no results · many chips wrap to 2 lines · VI · 200 %.
 
-#### S‑J8 · Biometric unlock 🆕 (F‑41) — Security switch "Unlock with fingerprint" / "Face ID / Touch ID" (only when PIN on; disabled
-with reason when not enrolled); Lock states: prompt auto‑shown, fallback PIN with biometric retry button, cancelled, OS‑locked.
+#### S‑J6 · Budget warnings 🆕 (F‑37, AC‑111..113)
+- **Three states everywhere a budget shows** (Home budget bar, Overview "Budget left" tile, category limit bars in Records):
+  normal · **Almost over | Sắp vượt** (warning tokens, icon + "Used 82 % | Đã dùng 82%") · **Over by X | Vượt X** (error).
+- **Settings → Plan:** **Warn me at | Cảnh báo khi đạt** 50–95 % step 5 (default 80) with a live example ("$4,000 of $5,000") ·
+  **Budget notifications | Thông báo ngân sách** switch (default off) → explain sheet → OS permission.
+- **Notification:** percentages **only, never amounts**: "Monthly budget November: 80% used" · "Food: 100% of the November limit
+  used" (VI: "Ngân sách tháng 11: đã dùng 80%" · "Ăn uống: đã dùng 100% hạn mức tháng 11"). Tap → Overview. Lock‑screen frames.
+
+#### S‑J7 · Export Excel & PDF 🆕 (F‑40, AC‑116..118)
+- Settings → Data: **Export CSV · Export Excel | Xuất Excel · Export PDF | Xuất PDF**.
+- Tapping Excel/PDF opens a **range sheet**: Current period · Custom range (calendar) · All time; a line on what's included (Excel:
+  sheets *Records*, *By category*, *Debts*; PDF: A4 report) → **Export** → progress (big ranges) → system share sheet.
+  States: preparing · done · error · "No records in this range".
+- **A4 PDF preview** (light): "Income & expense report — November 2026", totals row (income, expenses, difference), category table
+  with % bars, records table (date time, category, note, amount); Be Vietnam Pro embedded; footer with page numbers.
+
+#### S‑J8 · Fingerprint / Face ID unlock 🆕 (F‑41, AC‑119/120)
+- Settings → Security: switch **Unlock with fingerprint | Mở khoá bằng vân tay** (Android) / **Face ID** or **Touch ID** (iPhone),
+  default off; hidden while PIN is off; disabled with a one‑line reason when nothing is enrolled; turning on asks once.
+- **Lock screen states:** system prompt auto‑shown (placeholder) · cancelled/failed → PIN pad with a **biometric retry button** ·
+  OS temporarily locked → PIN only with a note. PIN always works; "Forgot PIN" unchanged.
 
 ---
 
