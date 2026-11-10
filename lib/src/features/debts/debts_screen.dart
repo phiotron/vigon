@@ -12,7 +12,9 @@ import '../../providers.dart';
 import '../../ui/format.dart';
 import '../../ui/hint.dart';
 import '../../ui/money_lines.dart';
+import '../../ui/status.dart';
 import '../../ui/tokens.g.dart';
+import '../reminder/deadline_reminders.dart';
 import 'debt_detail.dart';
 import 'debt_editor.dart';
 import 'debts_providers.dart';
@@ -235,80 +237,119 @@ class _DebtTile extends ConsumerWidget {
     final originalAmount = view.total;
     final ownRemaining = view.remaining();
     final ownPaid = view.paid();
-    final lines = <Widget>[
+    // Mockup v4 SCR-42: thanh đã trả / tổng, "Đã trả X / Y", chip hạn (Quá hạn
+    // hổ phách, luôn icon + chữ — AC-105) và ngày nhắc trước hạn (D-044).
+    final remindOn = ref.watch(deadlineReminderEnabledProvider).value ?? false;
+    final remindDays = ref.watch(deadlineReminderDaysProvider).value;
+    final due = d.dueDate == null ? null : parseDateKey(d.dueDate!);
+    final remindAt = !settled && !overdue && remindOn && remindDays != null && due != null
+        ? due.subtract(Duration(days: remindDays))
+        : null;
+    final fraction = originalAmount <= 0
+        ? 0.0
+        : (ownPaid / originalAmount).clamp(0.0, 1.0);
+    final chips = <Widget>[
       if (settled)
-        Row(
-          children: [
-            Icon(Symbols.check_circle_rounded, size: 16, color: scheme.primary),
-            const SizedBox(width: VgSpace.s1),
-            Expanded(
-              child: Text(
-                l.debtDone,
-                style: VgType.bodySm.copyWith(color: scheme.primary),
-              ),
-            ),
-          ],
+        StatusChip(
+          label: l.debtDone,
+          icon: Symbols.check_circle_rounded,
+          tone: StatusTone.ok,
         )
       else if (overdue)
-        // Quá hạn bằng chữ + icon, không chỉ màu (AC-105).
+        StatusChip(
+          label: l.debtOverdue,
+          icon: Symbols.schedule_rounded,
+          tone: StatusTone.warn,
+        )
+      else if (due != null)
+        StatusChip(
+          label: l.debtDueOn(shortDate(context, due)),
+          icon: Symbols.event_rounded,
+        ),
+      if (remindAt != null && !remindAt.isBefore(today))
         Row(
+          mainAxisSize: MainAxisSize.min,
           children: [
             Icon(
-              Symbols.warning_rounded,
+              Symbols.notifications_rounded,
               size: 16,
-              fill: 1,
-              color: scheme.error,
+              color: scheme.onSurfaceVariant,
             ),
-            const SizedBox(width: VgSpace.s1),
-            Expanded(
-              child: Text(
-                '${l.debtOverdue} · ${l.debtDueOn(shortDate(context, parseDateKey(d.dueDate!)))}',
-                style: VgType.bodySm.copyWith(
-                  color: scheme.error,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
+            const SizedBox(width: 2),
+            Text(
+              l.remindNext(shortDate(context, remindAt)),
+              style: VgType.bodySm.copyWith(color: scheme.onSurfaceVariant),
             ),
           ],
-        )
-      else if (d.dueDate != null)
-        Text(
-          l.debtDueOn(shortDate(context, parseDateKey(d.dueDate!))),
-          style: VgType.bodySm.copyWith(color: scheme.onSurfaceVariant),
-        ),
-      if (view.payments.isNotEmpty)
-        Text(
-          l.debtPaidOf(
-            money(context, d.currency, ownPaid),
-            money(context, d.currency, originalAmount),
-          ),
-          style: VgType.bodySm.copyWith(color: scheme.onSurfaceVariant),
         ),
     ];
-    final amount = MoneyLines(
-      amount: settled ? originalAmount : ownRemaining,
-      currency: d.currency,
-      style: VgType.bodyMd.copyWith(
-        color: scheme.onSurface,
-        fontWeight: FontWeight.w600,
-        fontFeatures: const [FontFeature.tabularFigures()],
+    final lines = <Widget>[
+      const SizedBox(height: VgSpace.s1),
+      ClipRRect(
+        borderRadius: BorderRadius.circular(VgRadius.full),
+        child: LinearProgressIndicator(
+          value: fraction,
+          minHeight: 4,
+          backgroundColor: scheme.surfaceContainerHigh,
+          color: scheme.primary,
+        ),
       ),
-      secondaryStyle: VgType.bodySm,
+      const SizedBox(height: VgSpace.s1),
+      Text(
+        l.debtPaidOf(
+          money(context, d.currency, ownPaid),
+          money(context, d.currency, originalAmount),
+        ),
+        style: VgType.bodySm.copyWith(color: scheme.onSurfaceVariant),
+      ),
+      if (chips.isNotEmpty) ...[
+        const SizedBox(height: VgSpace.s1),
+        Wrap(
+          spacing: VgSpace.s2,
+          runSpacing: VgSpace.s1,
+          crossAxisAlignment: WrapCrossAlignment.center,
+          children: chips,
+        ),
+      ],
+    ];
+    final amount = Column(
+      mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.end,
-      textAlign: TextAlign.end,
+      children: [
+        MoneyLines(
+          amount: settled ? originalAmount : ownRemaining,
+          currency: d.currency,
+          style: VgType.bodyMd.copyWith(
+            color: scheme.onSurface,
+            fontWeight: FontWeight.w600,
+            fontFeatures: const [FontFeature.tabularFigures()],
+          ),
+          secondaryStyle: VgType.bodySm,
+          crossAxisAlignment: CrossAxisAlignment.end,
+          textAlign: TextAlign.end,
+        ),
+        if (!settled)
+          Text(
+            l.debtRemainingLabel,
+            style: VgType.bodySm.copyWith(color: scheme.onSurfaceVariant),
+          ),
+      ],
     );
     final large = isLargeText(context);
     return ListTile(
       minTileHeight: VgSize.rowTwoLine,
       contentPadding: const EdgeInsets.symmetric(horizontal: VgSpace.s4),
-      leading: SizedBox(
-        width: 40,
-        child: Center(
-          child: Icon(
-            d.direction == DebtDirection.lent
-                ? Symbols.arrow_outward_rounded
-                : Symbols.arrow_downward_rounded,
-            color: scheme.onSurfaceVariant,
+      // Ô chữ cái đầu tên người (mockup v4 `.av`); nhóm đã nói chiều nợ.
+      leading: ExcludeSemantics(
+        child: CircleAvatar(
+          radius: 20,
+          backgroundColor: scheme.secondaryContainer,
+          foregroundColor: scheme.onSecondaryContainer,
+          child: Text(
+            d.person.trim().isEmpty
+                ? '?'
+                : d.person.trim().characters.first.toUpperCase(),
+            style: VgType.titleSm,
           ),
         ),
       ),

@@ -260,6 +260,13 @@ void main() {
     await goTo(tester, '/debts');
     expect(find.textContaining('Quá hạn'), findsOneWidget);
     expect(find.textContaining('Hạn '), findsWidgets);
+    // Dòng nợ cao hơn (thanh đã trả + chip, mockup v4) đẩy nhóm Đã xong xuống.
+    await tester.scrollUntilVisible(
+      find.text('Đã xong (1)'),
+      200,
+      scrollable: find.byType(Scrollable).first,
+    );
+    await settle(tester);
     await tester.tap(find.text('Đã xong (1)'));
     await settle(tester);
     expect(find.textContaining('Quá hạn'), findsOneWidget);

@@ -702,5 +702,16 @@
   "widgetSpentLabel": "Spent this month",
   "widgetOfBudget": "of {budget} · {percent}",
   "@widgetOfBudget": {"placeholders": {"budget": {"type": "String"}, "percent": {"type": "String"}}},
-  "almostOver": "Almost over"
+  "almostOver": "Almost over",
+
+  "walletBalanceNote": "Money in this wallet counts in your total balance, not in income or expenses.",
+  "remindDays": "{n, plural, =1{1 day before} other{{n} days before}}",
+  "@remindDays": {"placeholders": {"n": {"type": "int"}}},
+  "remindNext": "Reminder {date}",
+  "@remindNext": {"placeholders": {"date": {"type": "String"}}},
+
+  "goalsN": "{n, plural, =1{1 goal} other{{n} goals}}",
+  "@goalsN": {"placeholders": {"n": {"type": "int"}}},
+  "owedToYouShort": "{amount} owed to you",
+  "@owedToYouShort": {"placeholders": {"amount": {"type": "String"}}}
 }

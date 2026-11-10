@@ -9,6 +9,7 @@ import '../../ui/dialog.dart';
 import '../../ui/messenger.dart';
 import '../../ui/settings_rows.dart';
 import '../reminder/reminder_providers.dart';
+import 'deadline_reminder_row.dart';
 
 /// Nhóm "Nhắc ghi sổ" trong Cài đặt (AC-61, SCR-30): tiêu đề nhóm, thẻ gồm
 /// công tắc và giờ nhắc. Giờ nhắc sửa được cả khi công tắc tắt (chỉ lưu giờ).
@@ -39,6 +40,9 @@ class ReminderSection extends ConsumerWidget {
               value: time?.format(context),
               onTap: time == null ? null : () => _pickTime(context, ref, time),
             ),
+            // Nhắc trước hạn nợ / tiết kiệm (D-044) nằm cùng nhóm nhắc
+            // (mockup v4 SCR-12).
+            const DeadlineReminderRow(),
           ],
         ),
       ],

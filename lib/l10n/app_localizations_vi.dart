@@ -2096,4 +2096,28 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get almostOver => 'Sắp vượt';
+
+  @override
+  String get walletBalanceNote =>
+      'Tiền trong ví này tính vào tổng số dư, không tính là thu hay chi.';
+
+  @override
+  String remindDays(int n) {
+    return 'Trước $n ngày';
+  }
+
+  @override
+  String remindNext(String date) {
+    return 'Nhắc ngày $date';
+  }
+
+  @override
+  String goalsN(int n) {
+    return '$n mục tiêu';
+  }
+
+  @override
+  String owedToYouShort(String amount) {
+    return 'Người khác nợ bạn $amount';
+  }
 }

@@ -3589,6 +3589,36 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Almost over'**
   String get almostOver;
+
+  /// No description provided for @walletBalanceNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Money in this wallet counts in your total balance, not in income or expenses.'**
+  String get walletBalanceNote;
+
+  /// No description provided for @remindDays.
+  ///
+  /// In en, this message translates to:
+  /// **'{n, plural, =1{1 day before} other{{n} days before}}'**
+  String remindDays(int n);
+
+  /// No description provided for @remindNext.
+  ///
+  /// In en, this message translates to:
+  /// **'Reminder {date}'**
+  String remindNext(String date);
+
+  /// No description provided for @goalsN.
+  ///
+  /// In en, this message translates to:
+  /// **'{n, plural, =1{1 goal} other{{n} goals}}'**
+  String goalsN(int n);
+
+  /// No description provided for @owedToYouShort.
+  ///
+  /// In en, this message translates to:
+  /// **'{amount} owed to you'**
+  String owedToYouShort(String amount);
 }
 
 class _AppLocalizationsDelegate

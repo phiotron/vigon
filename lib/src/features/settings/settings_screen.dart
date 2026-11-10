@@ -12,7 +12,14 @@ import '../../ui/choice_segments.dart';
 import '../../ui/format.dart';
 import '../../ui/messenger.dart';
 import '../../ui/settings_rows.dart';
+import '../../ui/theme.dart';
 import '../../ui/tokens.g.dart';
+import '../../data/database.dart';
+import '../../data/debt_repository.dart';
+import '../../data/money.dart';
+import '../../data/money_sum.dart';
+import '../debts/debts_providers.dart';
+import '../savings/savings_providers.dart';
 import '../import_queue/import_queue_providers.dart';
 import '../lock/app_lock.dart';
 import 'appearance_sheet.dart';
@@ -21,7 +28,6 @@ import 'auto_backup_section.dart';
 import 'budget_dialog.dart';
 import 'currency_picker.dart';
 import 'data_actions.dart';
-import 'deadline_reminder_row.dart';
 import 'email_import_screen.dart';
 import 'rates_format.dart';
 import 'reminder_section.dart';
@@ -55,6 +61,34 @@ class SettingsScreen extends ConsumerWidget {
     final scheme = Theme.of(context).colorScheme;
     final queueCount = ref.watch(importQueueCountProvider).value ?? 0;
     final now = ref.watch(clockProvider)();
+    // Dòng phụ của hàng điều hướng (mockup v4 SCR-12): số tài khoản + tổng,
+    // số mục tiêu đang góp, số người khác còn nợ bạn. Cộng theo tiền tệ gốc
+    // rồi quy đổi một lần (AC-148).
+    final service = ref.watch(currencyServiceProvider).value;
+    final accounts = ref.watch(accountsProvider).value;
+    final bags = ref.watch(accountBalanceBagsProvider).value;
+    String? accountsValue;
+    if (service != null && accounts != null && bags != null) {
+      final total = MoneyBag();
+      for (final a in accounts) {
+        final bag = bags[a.id];
+        if (bag != null) total.addBag(bag);
+      }
+      accountsValue =
+          '${accounts.length} · ${l.totalInMain(currency)} '
+          '${money(context, currency, total.convertTo(service, currency) ?? 0)}';
+    }
+    final goals = ref.watch(savingsGoalsProvider).value ?? const [];
+    final openGoals = goals.where((g) => g.completedAt == null).length;
+    final debts = ref.watch(debtsProvider).value ?? const <DebtView>[];
+    final digits = currencyDecimalDigits(currency);
+    final owed = MoneyBag();
+    for (final v in debts) {
+      if (v.debt.direction == DebtDirection.lent && !v.isSettled(digits)) {
+        owed.add(v.debt.currency, v.remaining());
+      }
+    }
+    final owedTotal = service == null ? null : owed.convertTo(service, currency);
 
     const cardGap = SizedBox(height: SettingsCard.gap);
 
@@ -107,6 +141,7 @@ class SettingsScreen extends ConsumerWidget {
               SettingsNavRow(
                 icon: Symbols.account_balance_wallet_rounded,
                 title: l.accounts,
+                value: accountsValue,
                 onTap: () => context.push('/accounts'),
               ),
             ],
@@ -130,14 +165,17 @@ class SettingsScreen extends ConsumerWidget {
               SettingsNavRow(
                 icon: Symbols.savings_rounded,
                 title: l.savings,
+                value: openGoals == 0 ? null : l.goalsN(openGoals),
                 onTap: () => context.push('/savings'),
               ),
               SettingsNavRow(
                 icon: Symbols.handshake_rounded,
                 title: l.debts,
+                value: owedTotal == null || owedTotal <= 0
+                    ? null
+                    : l.owedToYouShort(money(context, currency, owedTotal)),
                 onTap: () => context.push('/debts'),
               ),
-              const DeadlineReminderRow(),
             ],
           ),
           SettingsGroupTitle(l.currencyPeriodSection),
@@ -189,6 +227,25 @@ class SettingsScreen extends ConsumerWidget {
                 value: queueCount == 0
                     ? l.importQueueNone
                     : l.importQueueRowCount(queueCount),
+                // Số đếm đỏ trước mũi tên (mockup v4 `.bdg2`).
+                trailing: queueCount == 0
+                    ? null
+                    : Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Badge(
+                            label: Text('$queueCount'),
+                            backgroundColor: context.vg.badge,
+                            textColor: context.vg.onBadge,
+                            largeSize: 22,
+                          ),
+                          const SizedBox(width: VgSpace.s1),
+                          Icon(
+                            Symbols.chevron_right_rounded,
+                            color: scheme.onSurfaceVariant,
+                          ),
+                        ],
+                      ),
                 onTap: () => context.push('/import-queue'),
               ),
             ],

@@ -685,5 +685,12 @@
 
   "widgetSpentLabel": "Tháng này đã chi",
   "widgetOfBudget": "trên {budget} · {percent}",
-  "almostOver": "Sắp vượt"
+  "almostOver": "Sắp vượt",
+
+  "walletBalanceNote": "Tiền trong ví này tính vào tổng số dư, không tính là thu hay chi.",
+  "remindDays": "Trước {n} ngày",
+  "remindNext": "Nhắc ngày {date}",
+
+  "goalsN": "{n} mục tiêu",
+  "owedToYouShort": "Người khác nợ bạn {amount}"
 }

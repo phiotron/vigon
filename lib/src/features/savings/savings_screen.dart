@@ -6,11 +6,13 @@ import '../../../l10n/app_localizations.dart';
 import '../../data/database.dart';
 import '../../data/dates.dart';
 import '../../data/money_sum.dart';
-import '../../l10n_names.dart';
 import '../../providers.dart';
 import '../../ui/format.dart';
 import '../../ui/money_lines.dart';
+import '../../ui/status.dart';
+import '../../ui/theme.dart';
 import '../../ui/tokens.g.dart';
+import '../reminder/deadline_reminders.dart';
 import 'goal_detail.dart';
 import 'goal_editor.dart';
 import 'goal_money_sheet.dart';
@@ -136,6 +138,7 @@ class _SavingsScreenState extends ConsumerState<SavingsScreen> {
       }
     }
     final children = <Widget>[
+      _SavingsHero(goals: goals),
       if (open.isNotEmpty) _SectionTitle(l.savingsInProgress),
       for (final g in open)
         Padding(
@@ -303,32 +306,38 @@ class GoalCard extends ConsumerWidget {
     final target = moneyLinesText(context, ref, progress.target, goal.currency);
     final completed = goal.completedAt != null;
 
-    // Trạng thái bằng chữ + icon, không chỉ màu.
-    final (IconData icon, String text, Color color) = completed
+    // Chip trạng thái bên phải (mockup v4 SCR-41): còn N ngày (trung tính) ·
+    // Đã xong ✓ (xanh) · quá hạn (hổ phách). Luôn icon + chữ.
+    final (IconData icon, String text, StatusTone tone) = completed
         ? (
             Symbols.check_circle_rounded,
             l.savingsDoneOn(
               shortDate(context, parseDateKey(goal.completedAt!)),
             ),
-            scheme.primary,
+            StatusTone.ok,
           )
         : progress.overdue
         ? (
-            Symbols.warning_rounded,
+            Symbols.schedule_rounded,
             l.savingsOverdue(-progress.daysToDue!),
-            scheme.error,
+            StatusTone.warn,
           )
         : progress.daysToDue != null
         ? (
-            Symbols.schedule_rounded,
+            Symbols.event_rounded,
             l.savingsDaysLeft(progress.daysToDue!),
-            scheme.onSurfaceVariant,
+            StatusTone.neutral,
           )
-        : (
-            Symbols.savings_rounded,
-            '${progress.percent}%',
-            scheme.onSurfaceVariant,
-          );
+        : (Symbols.savings_rounded, '', StatusTone.neutral);
+    // Nhắc trước hạn chung (D-044): hiện "Trước N ngày" khi bật và mục còn hạn.
+    final remindOn = ref.watch(deadlineReminderEnabledProvider).value ?? false;
+    final remindDays = ref.watch(deadlineReminderDaysProvider).value;
+    final showRemind =
+        !completed &&
+        remindOn &&
+        remindDays != null &&
+        progress.daysToDue != null &&
+        !progress.overdue;
 
     return Material(
       color: scheme.surfaceContainerLow,
@@ -341,48 +350,38 @@ class GoalCard extends ConsumerWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Text(
-                goal.name,
-                style: VgType.titleMd.copyWith(color: scheme.onSurface),
-              ),
-              if (wallet != null)
-                Padding(
-                  padding: const EdgeInsets.only(top: VgSpace.s1),
-                  child: Row(
-                    children: [
-                      Icon(
-                        Symbols.account_balance_wallet_rounded,
-                        size: 16,
-                        color: scheme.onSurfaceVariant,
-                      ),
-                      const SizedBox(width: VgSpace.s1),
-                      Expanded(
-                        child: Text(
-                          accountLabel(l, wallet),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _LeadIcon(icon: Symbols.savings_rounded),
+                  const SizedBox(width: VgSpace.s3),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          goal.name,
+                          style: VgType.titleSm.copyWith(
+                            color: scheme.onSurface,
+                          ),
+                        ),
+                        Text(
+                          wallet == null
+                              ? l.savingsWallet
+                              : '${l.savingsWallet} · ${wallet.currency}',
                           style: VgType.bodySm.copyWith(
                             color: scheme.onSurfaceVariant,
                           ),
                         ),
-                      ),
-                    ],
-                  ),
-                ),
-              const SizedBox(height: VgSpace.s2),
-              Row(
-                children: [
-                  Icon(icon, size: 18, color: color, fill: 1),
-                  const SizedBox(width: VgSpace.s1),
-                  Expanded(
-                    child: Text(
-                      text,
-                      style: VgType.bodyMd.copyWith(
-                        color: color,
-                        fontWeight: completed || progress.overdue
-                            ? FontWeight.w600
-                            : null,
-                      ),
+                      ],
                     ),
                   ),
+                  if (text.isNotEmpty) ...[
+                    const SizedBox(width: VgSpace.s2),
+                    Flexible(
+                      child: StatusChip(label: text, icon: icon, tone: tone),
+                    ),
+                  ],
                 ],
               ),
               const SizedBox(height: VgSpace.s3),
@@ -396,16 +395,33 @@ class GoalCard extends ConsumerWidget {
                     ClipRRect(
                       borderRadius: BorderRadius.circular(VgRadius.full),
                       child: LinearProgressIndicator(
-                        value: completed ? 1 : progress.fraction,
+                        // Thanh theo số dư ví thật, kể cả khi đã rút sau Đã
+                        // xong — chip "Đã xong" giữ trạng thái (D-043).
+                        value: progress.fraction,
                         minHeight: 8,
                         backgroundColor: scheme.surfaceContainerHigh,
                         color: scheme.primary,
                       ),
                     ),
                     const SizedBox(height: VgSpace.s2),
-                    Text(
-                      l.savingsProgress(have.main, target.main),
-                      style: VgType.bodyMd.copyWith(color: scheme.onSurface),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Text(
+                            l.savingsProgress(have.main, target.main),
+                            style: VgType.bodySm.copyWith(
+                              color: scheme.onSurface,
+                            ),
+                          ),
+                        ),
+                        Text(
+                          '${progress.percent}%',
+                          style: VgType.bodySm.copyWith(
+                            color: scheme.onSurface,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ],
                     ),
                     if (have.secondary != null && !have.missingRate)
                       Text(
@@ -415,18 +431,38 @@ class GoalCard extends ConsumerWidget {
                         ),
                       ),
                     if (!completed && !progress.reached)
-                      Text(
-                        l.savingsMissing(
-                          moneyOneLine(
-                            context,
-                            ref,
-                            progress.missing,
-                            goal.currency,
+                      Row(
+                        children: [
+                          Expanded(
+                            child: Text(
+                              l.savingsMissing(
+                                moneyOneLine(
+                                  context,
+                                  ref,
+                                  progress.missing,
+                                  goal.currency,
+                                ),
+                              ),
+                              style: VgType.bodySm.copyWith(
+                                color: scheme.onSurface,
+                              ),
+                            ),
                           ),
-                        ),
-                        style: VgType.bodySm.copyWith(
-                          color: scheme.onSurfaceVariant,
-                        ),
+                          if (showRemind) ...[
+                            Icon(
+                              Symbols.notifications_rounded,
+                              size: 16,
+                              color: scheme.onSurfaceVariant,
+                            ),
+                            const SizedBox(width: 2),
+                            Text(
+                              l.remindDays(remindDays),
+                              style: VgType.bodySm.copyWith(
+                                color: scheme.onSurfaceVariant,
+                              ),
+                            ),
+                          ],
+                        ],
                       ),
                   ],
                 ),
@@ -434,7 +470,7 @@ class GoalCard extends ConsumerWidget {
               if (!completed) ...[
                 const SizedBox(height: VgSpace.s3),
                 Align(
-                  alignment: AlignmentDirectional.centerEnd,
+                  alignment: AlignmentDirectional.centerStart,
                   child: FilledButton.tonalIcon(
                     icon: const Icon(Symbols.add_rounded),
                     label: Text(l.savingsContribute),
@@ -444,6 +480,84 @@ class GoalCard extends ConsumerWidget {
               ],
             ],
           ),
+        ),
+      ),
+    );
+  }
+}
+
+/// Icon đầu thẻ (`.lead`): tròn 40, nền secondary-container.
+class _LeadIcon extends StatelessWidget {
+  const _LeadIcon({required this.icon});
+
+  final IconData icon;
+
+  @override
+  Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+    return Container(
+      width: 40,
+      height: 40,
+      decoration: BoxDecoration(
+        color: scheme.secondaryContainer,
+        shape: BoxShape.circle,
+      ),
+      child: Icon(icon, size: 22, color: scheme.onSecondaryContainer),
+    );
+  }
+}
+
+/// Thẻ "Ví tiết kiệm · Tổng theo USD" đầu màn (mockup v4 SCR-41 `.ov-hero`):
+/// cộng số dư mọi ví mục tiêu theo tiền tệ gốc rồi quy đổi MỘT lần (AC-148).
+class _SavingsHero extends ConsumerWidget {
+  const _SavingsHero({required this.goals});
+
+  final List<SavingsGoal> goals;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l = AppLocalizations.of(context);
+    final service = ref.watch(currencyServiceProvider).value;
+    final bags = ref.watch(accountBalanceBagsProvider).value;
+    if (service == null || bags == null || goals.isEmpty) {
+      return const SizedBox.shrink();
+    }
+    final total = MoneyBag();
+    for (final id in {for (final g in goals) g.accountId}) {
+      final bag = bags[id];
+      if (bag != null) total.addBag(bag);
+    }
+    final primary = service.primary;
+    final muted = Theme.of(context).colorScheme.onSurfaceVariant;
+    return Padding(
+      padding: const EdgeInsets.only(bottom: VgSpace.s3),
+      child: Container(
+        padding: const EdgeInsets.all(VgSpace.s4),
+        decoration: BoxDecoration(
+          color: context.vg.surfaceContainerLow,
+          borderRadius: BorderRadius.circular(VgRadius.lg),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              '${l.savingsWallet} · ${l.totalInMain(primary)}',
+              style: VgType.bodySm.copyWith(color: muted),
+            ),
+            const SizedBox(height: VgSpace.s1),
+            FittedBox(
+              fit: BoxFit.scaleDown,
+              alignment: AlignmentDirectional.centerStart,
+              child: Text(
+                money(context, primary, total.convertTo(service, primary) ?? 0),
+                style: VgType.amountXl.copyWith(
+                  color: Theme.of(context).colorScheme.onSurface,
+                ),
+              ),
+            ),
+            const SizedBox(height: VgSpace.s1),
+            Text(l.walletBalanceNote, style: VgType.bodySm.copyWith(color: muted)),
+          ],
         ),
       ),
     );

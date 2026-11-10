@@ -2119,4 +2119,40 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get almostOver => 'Almost over';
+
+  @override
+  String get walletBalanceNote =>
+      'Money in this wallet counts in your total balance, not in income or expenses.';
+
+  @override
+  String remindDays(int n) {
+    String _temp0 = intl.Intl.pluralLogic(
+      n,
+      locale: localeName,
+      other: '$n days before',
+      one: '1 day before',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String remindNext(String date) {
+    return 'Reminder $date';
+  }
+
+  @override
+  String goalsN(int n) {
+    String _temp0 = intl.Intl.pluralLogic(
+      n,
+      locale: localeName,
+      other: '$n goals',
+      one: '1 goal',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String owedToYouShort(String amount) {
+    return '$amount owed to you';
+  }
 }
