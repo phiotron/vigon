@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:crypto/crypto.dart';
 
+import 'balance_guard.dart' show negativeNoticeKey;
 import 'database.dart';
 import 'import_repositories.dart' show entrySourceForBank;
 import 'seed.dart';
@@ -36,6 +37,8 @@ const deviceOnlySettingKeys = {
   SettingsRepository.onboardingPendingKey,
   SettingsRepository.deadlineReminderOffKey,
   SettingsRepository.deadlinePermissionAskedKey,
+  negativeCheckPendingKey,
+  negativeNoticeKey,
 };
 
 /// Mã cài đặt đi kèm PIN (iOS-02) gắn với máy, không phải dữ liệu: không xuất,
@@ -77,6 +80,10 @@ Future<String> exportBackup(AppDatabase db, {required DateTime now}) async {
     'seenReferences': [
       for (final r in await db.select(db.seenReferences).get()) r.toJson(),
     ],
+    // Schema 8 (AC-176): mốc đổi lãi suất của khoản nợ.
+    'debtRateChanges': [
+      for (final r in await db.select(db.debtRateChanges).get()) r.toJson(),
+    ],
   };
   return const JsonEncoder.withIndent(' ').convert({
     'format': backupFormat,
@@ -102,6 +109,8 @@ typedef _Parsed = ({
   List<DebtPayment> debtPayments,
   List<PayeeSuggestion> suggestions,
   List<SeenReference> seenReferences,
+  List<DebtRateChange> rateChanges,
+  int fileSchema,
 });
 
 /// Đọc và kiểm hết file (định dạng, phiên bản, mã băm, từng dòng) mà KHÔNG đụng
@@ -159,7 +168,13 @@ _Parsed _parseBackup(String content) {
     }
   }
 
-  final accounts = rows('accounts', Account.fromJson);
+  // File schema ≤ 7: tài khoản chưa có công tắc cho phép âm — tính như nâng
+  // cấp sau khi khôi phục (AC-163); lần trả chưa có phần lãi.
+  final accounts = rows(
+    'accounts',
+    Account.fromJson,
+    defaults: {'allowNegative': false},
+  );
   final categories = rows('categories', Category.fromJson);
   final rules = rows('recurringRules', RecurringRule.fromJson);
   // File schema 1–3: khoản là ghi tay, không giờ, không số tham chiếu (AC-77).
@@ -170,7 +185,17 @@ _Parsed _parseBackup(String content) {
   );
   final goals = rows('savingsGoals', SavingsGoal.fromJson, since: 4);
   final debts = rows('debts', Debt.fromJson, since: 4);
-  final debtPayments = rows('debtPayments', DebtPayment.fromJson, since: 4);
+  final debtPayments = rows(
+    'debtPayments',
+    DebtPayment.fromJson,
+    since: 4,
+    defaults: {'interest': 0},
+  );
+  final rateChanges = rows(
+    'debtRateChanges',
+    DebtRateChange.fromJson,
+    since: 8,
+  );
   final suggestions = rows(
     'payeeSuggestions',
     PayeeSuggestion.fromJson,
@@ -201,6 +226,8 @@ _Parsed _parseBackup(String content) {
     debtPayments: debtPayments,
     suggestions: suggestions,
     seenReferences: seenReferences,
+    rateChanges: rateChanges,
+    fileSchema: fileSchema,
   );
 }
 
@@ -216,7 +243,6 @@ Future<void> importBackup(AppDatabase db, String content) async {
         b.insertAll(db.accounts, parsed.accounts);
         b.insertAll(db.categories, parsed.categories);
         b.insertAll(db.recurringRules, parsed.rules);
-        b.insertAll(db.entries, parsed.entries);
         b.insertAll(db.settings, [
           for (final s in parsed.settings)
             if (s.key != _installIdKey) s,
@@ -224,9 +250,25 @@ Future<void> importBackup(AppDatabase db, String content) async {
         b.insertAll(db.savingsGoals, parsed.goals);
         b.insertAll(db.debts, parsed.debts);
         b.insertAll(db.debtPayments, parsed.debtPayments);
+        // Sau khoản nợ + lần trả: khoản trỏ tới chúng (schema 8, khoá ngoại).
+        b.insertAll(db.entries, parsed.entries);
         b.insertAll(db.payeeSuggestions, parsed.suggestions);
         b.insertAll(db.seenReferences, parsed.seenReferences);
+        b.insertAll(db.debtRateChanges, parsed.rateChanges);
       });
+      if (parsed.fileSchema < 8) {
+        // Như nâng cấp lên schema 8: thêm danh mục lãi, bật cho phép âm cho
+        // tài khoản đang âm ở lần mở kế tiếp (AC-163, AC-173).
+        await addInterestCategories(db);
+        await db
+            .into(db.settings)
+            .insertOnConflictUpdate(
+              SettingsCompanion.insert(
+                key: negativeCheckPendingKey,
+                value: '1',
+              ),
+            );
+      }
       await _reconcileQueue(db);
     });
   } on BackupFormatException {
@@ -269,6 +311,7 @@ Future<void> _clearAll(AppDatabase db) async {
   // Bảng con trước bảng cha (khoá ngoại). Hàng đợi KHÔNG xoá ở đây (AC-99).
   await db.delete(db.seenReferences).go();
   await db.delete(db.payeeSuggestions).go();
+  await db.delete(db.debtRateChanges).go();
   await db.delete(db.debtPayments).go();
   await db.delete(db.debts).go();
   await db.delete(db.savingsGoals).go();
@@ -325,6 +368,7 @@ class CsvFormat {
     required this.expense,
     required this.income,
     required this.transfer,
+    this.debt = 'debt',
     this.timeHeader = 'time',
     this.sourceHeader = 'source',
     this.manualSource = 'manual',
@@ -339,6 +383,7 @@ class CsvFormat {
     required String expense,
     required String income,
     required String transfer,
+    String debt = 'debt',
     String timeHeader = 'time',
     String sourceHeader = 'source',
     String manualSource = 'manual',
@@ -350,6 +395,7 @@ class CsvFormat {
     expense: expense,
     income: income,
     transfer: transfer,
+    debt: debt,
     timeHeader: timeHeader,
     sourceHeader: sourceHeader,
     manualSource: manualSource,
@@ -383,6 +429,9 @@ class CsvFormat {
   final String income;
   final String transfer;
 
+  /// Chữ của loại Debt movement (D-049): "Khoản nợ" / "Debt".
+  final String debt;
+
   /// Hai cột thêm ở CUỐI (AC-124) để giữ thứ tự tám cột cũ: Giờ và Nguồn.
   final String timeHeader;
   final String sourceHeader;
@@ -400,6 +449,7 @@ class CsvFormat {
     EntryType.expense => expense,
     EntryType.income => income,
     EntryType.transfer => transfer,
+    EntryType.debt => debt,
   };
 }
 
@@ -451,7 +501,11 @@ String exportCsv({
         cell(format.typeName(e.type)),
         amount(e.amount),
         currency,
-        cell(e.type == EntryType.transfer ? '' : categoryName(e.categoryId)),
+        cell(
+          e.type == EntryType.transfer || e.type == EntryType.debt
+              ? ''
+              : categoryName(e.categoryId),
+        ),
         cell(accountName(e.accountId)),
         cell(e.toAccountId == null ? '' : accountName(e.toAccountId!)),
         cell(e.note ?? ''),

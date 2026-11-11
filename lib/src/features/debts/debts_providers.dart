@@ -4,7 +4,8 @@ import '../../data/debt_repository.dart';
 import '../../providers.dart';
 
 final debtRepositoryProvider = Provider<DebtRepository>(
-  (ref) => DebtRepository(ref.watch(databaseProvider)),
+  (ref) =>
+      DebtRepository(ref.watch(databaseProvider), ref.watch(clockProvider)),
 );
 
 /// Mọi khoản nợ (mới nhất trước) kèm các lần trả — F-34.

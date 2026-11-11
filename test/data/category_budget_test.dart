@@ -133,6 +133,9 @@ void main() {
       expect(cats.map((c) => (c.id, c.nameKey, c.name, c.budget)), [
         (1, 'food', null, null),
         (2, null, 'Cà phê', null),
+        // Schema 8 thêm hai danh mục lãi (AC-173).
+        (3, 'loanInterest', null, null),
+        (4, 'interestIncome', null, null),
       ]);
       final entry = await old.select(old.entries).getSingle();
       expect((entry.amount, entry.note, entry.categoryId), (155000, 'phở', 1));

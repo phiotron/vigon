@@ -41,6 +41,7 @@ const _cash = Account(
   initialBalance: 0,
   sortOrder: 0,
   archived: false,
+  allowNegative: false,
   currency: 'VND',
 );
 const _card = Account(
@@ -49,6 +50,7 @@ const _card = Account(
   initialBalance: 0,
   sortOrder: 1,
   archived: false,
+  allowNegative: false,
   currency: 'VND',
 );
 

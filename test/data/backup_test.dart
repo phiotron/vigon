@@ -462,6 +462,6 @@ void main() {
     final accounts = await db.select(db.accounts).get();
     expect(accounts.single.nameKey, 'cash');
     expect(accounts.single.id, 1);
-    expect(await db.select(db.categories).get(), hasLength(13));
+    expect(await db.select(db.categories).get(), hasLength(15));
   });
 }

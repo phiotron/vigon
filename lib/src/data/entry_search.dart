@@ -66,7 +66,7 @@ int searchTotal(List<EntryView> rows, {CurrencyService? service}) {
       case EntryType.expense:
         hasExpense = true;
         expense.add(currency, amount);
-      case EntryType.transfer:
+      case EntryType.transfer || EntryType.debt:
         break;
     }
   }

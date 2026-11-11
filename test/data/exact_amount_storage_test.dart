@@ -118,11 +118,12 @@ void main() {
       final cats = await old.select(old.categories).get();
       expect(
         [for (final c in cats) (c.budget, c.budgetMicro)],
-        [(2000000, null), (null, null)],
+        // + 2 danh mục lãi thêm ở schema 8 (AC-173).
+        [(2000000, null), (null, null), (null, null), (null, null)],
       );
       expect(await SettingsRepository(old).readBudget(), 9000000);
       // Không chạy lại onCreate.
-      expect(cats, hasLength(2));
+      expect(cats, hasLength(4));
       expect(await old.customSelect('PRAGMA foreign_key_check').get(), isEmpty);
       final fk = await old.customSelect('PRAGMA foreign_keys').getSingle();
       expect(fk.read<int>('foreign_keys'), 1);

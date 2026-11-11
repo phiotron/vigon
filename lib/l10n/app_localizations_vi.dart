@@ -2143,4 +2143,256 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get exactAlarmOpen => 'Mở cài đặt';
+
+  @override
+  String ledgerOnlyLeft(String account, String amount) {
+    return '$account chỉ còn $amount';
+  }
+
+  @override
+  String get ledgerDeleteBlockedTitle => 'Không xoá được';
+
+  @override
+  String ledgerDeleteBlocked(String account, String amount) {
+    return 'Không xoá được: $account sẽ âm $amount';
+  }
+
+  @override
+  String get ledgerOk => 'Đã hiểu';
+
+  @override
+  String get ledgerAllowNegative => 'Cho phép số dư âm';
+
+  @override
+  String get ledgerAllowNegativeSub => 'Dùng cho thẻ tín dụng, thấu chi';
+
+  @override
+  String get ledgerInitialNegativeOff =>
+      'Bật \"Cho phép số dư âm\" để nhập số dư âm';
+
+  @override
+  String get ledgerNegativeBadge => 'Âm';
+
+  @override
+  String get ledgerUpgradeTitle => 'Đã cho phép số dư âm';
+
+  @override
+  String ledgerUpgradeBody(String accounts) {
+    return 'Đã cho phép số dư âm cho: $accounts. Các tài khoản này đang âm nên vẫn ghi được như trước. Tài khoản khác từ nay chỉ chi được khi còn tiền (có thu mới có chi). Tắt công tắc trong Sửa tài khoản nếu không cần.';
+  }
+
+  @override
+  String ledgerSkipped(int count, String accounts) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Bỏ qua $count khoản định kỳ vì $accounts thiếu tiền',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get ledgerDismiss => 'Đóng';
+
+  @override
+  String ledgerIntoWallet(String amount) {
+    return 'Vào ví: $amount';
+  }
+
+  @override
+  String ledgerOutOfWallet(String amount) {
+    return 'Rút khỏi ví: $amount';
+  }
+
+  @override
+  String ledgerFrom(String account, String amount) {
+    return 'Trừ từ $account: $amount';
+  }
+
+  @override
+  String ledgerInto(String account, String amount) {
+    return 'Vào $account: $amount';
+  }
+
+  @override
+  String ledgerDebtSide(String amount) {
+    return 'Khoản nợ: $amount';
+  }
+
+  @override
+  String get topUpTitle => 'Bù tiền';
+
+  @override
+  String topUpShort(String account, String amount) {
+    return '$account thiếu $amount';
+  }
+
+  @override
+  String get topUpBody =>
+      'Tiền đã ra khỏi ngân hàng nhưng trong sổ tài khoản này không đủ. Bù bằng một cách dưới đây; bù đủ thì mục tự được lưu.';
+
+  @override
+  String topUpIncome(String account) {
+    return 'Ghi khoản thu vào $account';
+  }
+
+  @override
+  String topUpTransfer(String account) {
+    return 'Chuyển tiền vào $account';
+  }
+
+  @override
+  String get topUpEditInitial => 'Sửa số dư ban đầu';
+
+  @override
+  String topUpStillShort(String account, String amount) {
+    return '$account vẫn thiếu $amount · mục vẫn chờ';
+  }
+
+  @override
+  String get topUpSaved => 'Đã bù đủ · đã lưu mục';
+
+  @override
+  String get debtMovementsSection => 'Khoản nợ';
+
+  @override
+  String debtMovementLend(String person) {
+    return 'Cho vay · $person';
+  }
+
+  @override
+  String debtMovementBorrow(String person) {
+    return 'Đi vay · $person';
+  }
+
+  @override
+  String debtMovementCollect(String person) {
+    return 'Thu nợ · $person';
+  }
+
+  @override
+  String debtMovementRepay(String person) {
+    return 'Trả nợ · $person';
+  }
+
+  @override
+  String get debtMovementOrphan => 'Khoản nợ đã xoá';
+
+  @override
+  String get debtNoAccount => 'Không qua tài khoản';
+
+  @override
+  String get debtNoAccountHelper =>
+      'Chỉ ghi nhớ, không đổi số dư tài khoản nào';
+
+  @override
+  String get debtInterestRate => 'Lãi suất (tuỳ chọn)';
+
+  @override
+  String get debtPerMonth => '%/tháng';
+
+  @override
+  String get debtPerYear => '%/năm';
+
+  @override
+  String get debtRateInvalid => 'Lãi suất từ 0,01 đến 100, tối đa 2 chữ số lẻ';
+
+  @override
+  String get debtInterestStart => 'Ngày bắt đầu tính lãi';
+
+  @override
+  String debtInterestStartOn(String date) {
+    return 'Tính lãi từ $date';
+  }
+
+  @override
+  String debtInterestPreview(String amount) {
+    return 'Lãi 30 ngày đầu khoảng $amount';
+  }
+
+  @override
+  String debtPrincipalInterest(String principal, String interest) {
+    return 'Gốc $principal · Lãi tới hôm nay $interest';
+  }
+
+  @override
+  String get debtChangeRate => 'Đổi lãi suất';
+
+  @override
+  String debtRateFrom(String date) {
+    return 'Áp dụng từ $date';
+  }
+
+  @override
+  String get debtRateSteps => 'Các mốc lãi suất';
+
+  @override
+  String get debtRateBeforeStart =>
+      'Ngày áp dụng phải từ ngày bắt đầu tính lãi';
+
+  @override
+  String get debtNewRate => 'Lãi suất mới';
+
+  @override
+  String get debtPaymentInterest => 'Lãi';
+
+  @override
+  String get debtPaymentPrincipal => 'Gốc';
+
+  @override
+  String get debtInterestOnly => 'Chỉ trả lãi';
+
+  @override
+  String get debtPayAll => 'Trả hết';
+
+  @override
+  String debtInterestOver(String amount) {
+    return 'Lãi tới ngày trả chỉ $amount';
+  }
+
+  @override
+  String debtPrincipalOver(String amount) {
+    return 'Gốc còn lại chỉ $amount';
+  }
+
+  @override
+  String debtPaymentSplit(String interest, String principal) {
+    return 'Lãi $interest · Gốc $principal';
+  }
+
+  @override
+  String debtDeleteTitlePerson(String person) {
+    return 'Xoá khoản nợ với $person?';
+  }
+
+  @override
+  String get debtDeleteKeepsEntries =>
+      'Các khoản trong sổ vẫn giữ. Lần trả và lịch lãi suất bị xoá; số dư tài khoản không đổi.';
+
+  @override
+  String get debtCurrencyLockedMovement =>
+      'Không đổi được tiền tệ khi khoản nợ đã đi qua tài khoản.';
+
+  @override
+  String debtDeadlineLentEstimate(String person, String amount, String when) {
+    return 'Khoản nợ với $person: phải thu khoảng $amount, $when';
+  }
+
+  @override
+  String debtDeadlineBorrowedEstimate(
+    String person,
+    String amount,
+    String when,
+  ) {
+    return 'Bạn nợ $person: phải trả khoảng $amount, $when';
+  }
+
+  @override
+  String get categoryLoanInterest => 'Lãi vay';
+
+  @override
+  String get categoryInterestIncome => 'Tiền lãi';
+
+  @override
+  String get csvTypeDebt => 'Khoản nợ';
 }

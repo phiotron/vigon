@@ -12,6 +12,7 @@ import '../../ui/format.dart';
 import '../../ui/messenger.dart';
 import '../../ui/money_lines.dart';
 import '../../ui/tokens.g.dart';
+import '../debts/debt_movement.dart';
 import 'goal_editor.dart';
 import 'goal_money_sheet.dart';
 import 'savings_providers.dart';
@@ -69,6 +70,7 @@ class _GoalDetail extends ConsumerWidget {
         const <Entry>[];
     final have = moneyLinesText(context, ref, progress.balance, goal.currency);
     final target = moneyLinesText(context, ref, progress.target, goal.currency);
+    final persons = ref.watch(debtPersonsProvider);
     final categories = {
       for (final type in CategoryType.values)
         for (final c in ref.watch(categoriesProvider(type)).value ?? const [])
@@ -117,6 +119,11 @@ class _GoalDetail extends ConsumerWidget {
           amount = entryOriginal(e);
           currency = e.currency;
           icon = Symbols.payments_rounded;
+        case EntryType.debt:
+          label = debtMovementLabel(l, e, persons);
+          amount = isDebtInflow(e) ? entryOriginal(e) : -entryOriginal(e);
+          currency = e.currency;
+          icon = debtMovementIcon;
       }
       return ListTile(
         contentPadding: EdgeInsets.zero,
