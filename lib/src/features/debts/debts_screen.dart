@@ -241,10 +241,16 @@ class _DebtTile extends ConsumerWidget {
     // hổ phách, luôn icon + chữ — AC-105) và ngày nhắc trước hạn (D-044).
     final remindOn = ref.watch(deadlineReminderEnabledProvider).value ?? false;
     final remindDays = ref.watch(deadlineReminderDaysProvider).value;
+    final remindTime = ref.watch(deadlineReminderTimeProvider).value;
     final due = d.dueDate == null ? null : parseDateKey(d.dueDate!);
     // Mốc nhắc kế tiếp (D-044: N ngày trước + đúng ngày hạn).
     final remindAt = !settled && !overdue && remindOn && remindDays != null
-        ? nextDeadlineReminder(due, remindDays, today)
+        ? nextDeadlineReminder(
+            due,
+            remindDays,
+            ref.watch(clockProvider)(),
+            remindTime ?? const TimeOfDay(hour: 9, minute: 0),
+          )
         : null;
     final fraction = originalAmount <= 0
         ? 0.0
@@ -367,12 +373,19 @@ class _DebtTile extends ConsumerWidget {
   }
 }
 
-/// Mốc nhắc trước hạn kế tiếp kể từ [today] (D-044: báo [days] ngày trước và
-/// đúng ngày hạn); null khi không có hạn hoặc cả hai mốc đã qua.
-DateTime? nextDeadlineReminder(DateTime? due, int days, DateTime today) {
+/// Mốc nhắc trước hạn kế tiếp (D-044: báo [days] ngày trước và đúng ngày
+/// hạn, lúc [time]). Mốc mà giờ nhắc đã qua so với [now] thì đã nổ — bỏ, như
+/// `planDeadlineNotifications`; null khi không có hạn hoặc cả hai mốc đã qua.
+DateTime? nextDeadlineReminder(
+  DateTime? due,
+  int days,
+  DateTime now,
+  TimeOfDay time,
+) {
   if (due == null) return null;
-  for (final d in [due.subtract(Duration(days: days)), due]) {
-    if (!d.isBefore(today)) return d;
+  for (final day in [due.subtract(Duration(days: days)), due]) {
+    final at = DateTime(day.year, day.month, day.day, time.hour, time.minute);
+    if (at.isAfter(now)) return day;
   }
   return null;
 }

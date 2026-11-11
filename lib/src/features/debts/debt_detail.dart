@@ -74,7 +74,9 @@ class _DebtDetail extends ConsumerWidget {
         ? nextDeadlineReminder(
             d.dueDate == null ? null : parseDateKey(d.dueDate!),
             remindDays,
-            today,
+            ref.watch(clockProvider)(),
+            ref.watch(deadlineReminderTimeProvider).value ??
+                const TimeOfDay(hour: 9, minute: 0),
           )
         : null;
 
