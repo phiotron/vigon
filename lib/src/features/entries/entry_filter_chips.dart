@@ -83,10 +83,7 @@ class EntryFilterChips extends ConsumerWidget {
               () => notifier.remove(dates: true),
               key: const ValueKey('chip-dates'),
             ),
-          TextButton(
-            onPressed: notifier.clear,
-            child: Text(l.filterClearAll),
-          ),
+          TextButton(onPressed: notifier.clear, child: Text(l.filterClearAll)),
         ],
       ),
     );

@@ -217,10 +217,7 @@ class _EntryFilterSheetState extends ConsumerState<EntryFilterSheet> {
     }
 
     final dateText = _from != null && _to != null
-        ? periodTitle(
-            context,
-            Period.custom(_from!, _to!),
-          )
+        ? periodTitle(context, Period.custom(_from!, _to!))
         : l.filterAnyDate;
 
     return Padding(

@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_symbols_icons/symbols.dart';
+import 'package:vigon/src/data/account_repository.dart';
 import 'package:vigon/src/data/database.dart';
 import 'package:vigon/src/data/settings_repository.dart';
 import 'package:vigon/src/features/entries/entry_filter_sheet.dart';
 import 'package:vigon/src/features/home/range_calendar.dart';
+import 'package:vigon/src/providers.dart';
 
 import '../helpers.dart';
 
@@ -128,8 +131,10 @@ void main() {
     expect(find.text('Lương'), findsWidgets);
     expect(find.text('Áo'), findsOneWidget);
     expect(find.text('Chuyển ví'), findsNothing);
-    expect(findPlainText('2 khoản · chi 90.000 ₫ · thu 9.000.000 ₫'),
-        findsOneWidget);
+    expect(
+      findPlainText('2 khoản · chi 90.000 ₫ · thu 9.000.000 ₫'),
+      findsOneWidget,
+    );
     await disposeApp(tester, db);
   });
 
@@ -175,7 +180,9 @@ void main() {
     await tester.pump();
     await tester.tap(find.descendant(of: calendar, matching: find.text('2')));
     await tester.pump();
-    await tester.tap(find.descendant(of: calendar, matching: find.text('Áp dụng')));
+    await tester.tap(
+      find.descendant(of: calendar, matching: find.text('Áp dụng')),
+    );
     await settle(tester);
     expect(calendar, findsNothing);
     await tester.tap(find.widgetWithText(FilledButton, 'Áp dụng'));
@@ -186,8 +193,10 @@ void main() {
       expect(find.text(shown), findsOneWidget, reason: shown);
     }
     expect(find.text('Cơm cũ'), findsNothing);
-    expect(findPlainText('5 khoản · chi 390.000 ₫ · thu 9.000.000 ₫'),
-        findsOneWidget);
+    expect(
+      findPlainText('5 khoản · chi 390.000 ₫ · thu 9.000.000 ₫'),
+      findsOneWidget,
+    );
 
     // Kết hợp VÀ với tìm kiếm F-15.
     await tester.tap(find.byTooltip('Tìm'));
@@ -197,6 +206,57 @@ void main() {
     expect(find.text('Grab'), findsOneWidget);
     expect(find.text('Phở'), findsNothing);
     expect(findPlainText('1 khoản · chi 120.000 ₫ · thu 0 ₫'), findsOneWidget);
+    await disposeApp(tester, db);
+  });
+
+  testWidgets('lọc kết hợp VÀ với tìm kiếm và lọc tài khoản (AC-115)', (
+    tester,
+  ) async {
+    final db = await pumpApp(tester);
+    await _seedEntries(tester, db);
+    final card = await tester.runAsync(
+      () => AccountRepository(db).add(name: 'Thẻ', currency: 'VND'),
+    );
+    // Cùng danh mục, cùng khoảng tiền nhưng ở tài khoản "Thẻ".
+    await insertEntry(
+      tester,
+      db,
+      type: EntryType.expense,
+      amount: 80000,
+      categoryId: 1,
+      accountId: card!,
+      date: '2026-11-02',
+      note: 'Phở thẻ',
+    );
+    await _openFilter(tester);
+    await _enter(tester, 'filter-min', '50000');
+    await tester.tap(find.widgetWithText(FilterChip, 'Ăn uống'));
+    await tester.pump();
+    await tester.tap(find.text('Áp dụng'));
+    await settle(tester);
+    expect(find.text('Phở'), findsOneWidget);
+    expect(find.text('Phở thẻ'), findsOneWidget);
+    expect(findPlainText('2 khoản · chi 230.000 ₫ · thu 0 ₫'), findsOneWidget);
+
+    // Lọc tài khoản "Thẻ": chỉ còn khoản của thẻ.
+    final container = ProviderScope.containerOf(
+      tester.element(find.byType(Scaffold).first),
+    );
+    container.read(accountFilterProvider.notifier).select(card);
+    await settle(tester);
+    expect(find.text('Phở'), findsNothing);
+    expect(find.text('Phở thẻ'), findsOneWidget);
+    expect(findPlainText('1 khoản · chi 80.000 ₫ · thu 0 ₫'), findsOneWidget);
+
+    // Về mọi tài khoản + tìm "phở": cả hai; tìm "thẻ": một.
+    container.read(accountFilterProvider.notifier).select(null);
+    await settle(tester);
+    await tester.tap(find.byTooltip('Tìm'));
+    await settle(tester);
+    await tester.enterText(find.byType(TextField), 'thẻ');
+    await settle(tester);
+    expect(find.text('Phở'), findsNothing);
+    expect(findPlainText('1 khoản · chi 80.000 ₫ · thu 0 ₫'), findsOneWidget);
     await disposeApp(tester, db);
   });
 
@@ -235,9 +295,7 @@ void main() {
         addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
         final handle = tester.ensureSemantics();
         final db = memoryDatabase();
-        await tester.runAsync(
-          () => SettingsRepository(db).setThemeMode(theme),
-        );
+        await tester.runAsync(() => SettingsRepository(db).setThemeMode(theme));
         await pumpApp(tester, db: db);
         await _seedEntries(tester, db);
         await _openFilter(tester);

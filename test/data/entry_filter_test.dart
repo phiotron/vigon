@@ -1,6 +1,8 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:vigon/src/data/database.dart';
 import 'package:vigon/src/data/entry_filter.dart';
+import 'package:vigon/src/data/exchange_rate.dart';
+import 'package:vigon/src/data/rate_repository.dart';
 import 'package:vigon/src/data/summary.dart';
 
 Category _cat(int id, String name, CategoryType type) => Category(
@@ -33,6 +35,7 @@ EntryView _row(
     recurringRuleId: null,
     source: EntrySource.manual,
     createdAt: DateTime(2026),
+    currency: 'VND',
   ),
   category,
 );
@@ -76,16 +79,14 @@ void main() {
   });
 
   test('bỏ trống một đầu của khoảng số tiền', () {
-    expect(
-      ids(const EntryFilter(minAmount: 200000)),
-      [2, 4],
-      reason: 'chỉ "Từ": số tiền ≥ 200.000',
-    );
-    expect(
-      ids(const EntryFilter(maxAmount: 50000)),
-      [1, 3],
-      reason: 'chỉ "Đến": số tiền ≤ 50.000',
-    );
+    expect(ids(const EntryFilter(minAmount: 200000)), [
+      2,
+      4,
+    ], reason: 'chỉ "Từ": số tiền ≥ 200.000');
+    expect(ids(const EntryFilter(maxAmount: 50000)), [
+      1,
+      3,
+    ], reason: 'chỉ "Đến": số tiền ≤ 50.000');
   });
 
   test('từ = đến chỉ lấy đúng số đó; từ > đến báo không hợp lệ và rỗng', () {
@@ -118,7 +119,10 @@ void main() {
   });
 
   test('khoảng ngày tính cả hai đầu', () {
-    final f = EntryFilter(from: DateTime(2026, 11, 5), to: DateTime(2026, 11, 5));
+    final f = EntryFilter(
+      from: DateTime(2026, 11, 5),
+      to: DateTime(2026, 11, 5),
+    );
     expect(ids(f), [3, 4, 5]);
   });
 
@@ -135,14 +139,17 @@ void main() {
     expect(filter.without(category: 1).categoryIds, {2});
     expect(filter.without(category: 1).hasAmount, isTrue);
     expect(filter.without(dates: true).hasDates, isFalse);
-    expect(
-      filter.without(amount: true, category: 1, dates: true).categoryIds,
-      {2},
-    );
+    expect(filter.without(amount: true, category: 1, dates: true).categoryIds, {
+      2,
+    });
     expect(filter.without(category: 1).without(category: 2).isActive, isTrue);
     expect(
-      filter.without(amount: true).without(category: 1).without(category: 2)
-          .without(dates: true).isActive,
+      filter
+          .without(amount: true)
+          .without(category: 1)
+          .without(category: 2)
+          .without(dates: true)
+          .isActive,
       isFalse,
     );
   });
@@ -157,6 +164,89 @@ void main() {
     );
     final empty = FilterTotals.of(const []);
     expect((empty.count, empty.expense, empty.income), (0, 0, 0));
+  });
+
+  test('dòng tổng cộng gốc theo tiền tệ rồi quy một lần (D-042, AC-148)', () {
+    const table = RateTable(
+      base: 'USD',
+      date: '2026-11-10',
+      rates: {'VND': 25974},
+    );
+    const usd = CurrencyService(table, 'USD');
+    Entry e(int id, EntryType type, int original, String currency) => Entry(
+      id: id,
+      type: type,
+      amount: usd.toPrimary(original, currency)!,
+      categoryId: food.id,
+      accountId: 1,
+      date: '2026-11-01',
+      createdAt: DateTime(2026),
+      currency: currency,
+      originalAmount: original,
+      source: EntrySource.manual,
+    );
+    final list = [
+      // 3 × 10 000 ₫: cộng từng dòng đã làm tròn = 3 × 39 = 117 cent; cộng
+      // gốc rồi đổi một lần = 30 000 / 25 974 → 116 cent.
+      for (var i = 0; i < 3; i++)
+        EntryView(e(i + 1, EntryType.expense, 10000, 'VND'), food),
+      EntryView(e(4, EntryType.expense, 250, 'USD'), food),
+      EntryView(e(5, EntryType.income, 1000, 'USD'), salary),
+    ];
+    final totals = FilterTotals.of(list, service: usd);
+    expect(totals.count, 5);
+    expect(totals.expense, 116 + 250);
+    expect(totals.income, 1000);
+    // Thiếu tỷ giá: khoản không vào tổng (AC-134) nhưng vẫn được đếm.
+    final withMissing = [
+      ...list,
+      EntryView(
+        Entry(
+          id: 6,
+          type: EntryType.expense,
+          amount: 999,
+          categoryId: food.id,
+          accountId: 1,
+          date: '2026-11-01',
+          createdAt: DateTime(2026),
+          currency: 'XYZ',
+          originalAmount: 999,
+          source: EntrySource.manual,
+        ),
+        food,
+      ),
+    ];
+    final t2 = FilterTotals.of(withMissing, service: usd);
+    expect((t2.count, t2.expense), (6, 116 + 250));
+  });
+
+  test('khoảng số tiền so với số theo Tiền tệ chính (D-042)', () {
+    // Khoản 100 000 ₫ ≈ $3.85 khi Tiền tệ chính USD: lọc $3–$4 thì có.
+    final row = EntryView(
+      Entry(
+        id: 1,
+        type: EntryType.expense,
+        amount: 385,
+        categoryId: food.id,
+        accountId: 1,
+        date: '2026-11-01',
+        createdAt: DateTime(2026),
+        currency: 'VND',
+        originalAmount: 100000,
+        source: EntrySource.manual,
+      ),
+      food,
+    );
+    expect(
+      applyEntryFilter([
+        row,
+      ], const EntryFilter(minAmount: 300, maxAmount: 400)),
+      hasLength(1),
+    );
+    expect(
+      applyEntryFilter([row], const EntryFilter(minAmount: 50000)),
+      isEmpty,
+    );
   });
 
   test('mới nhất trước: ngày, rồi giờ muộn trước, không giờ sau cùng', () {

@@ -287,7 +287,10 @@ class EntrySearchResults extends ConsumerWidget {
       } else {
         if (filter.isActive) {
           // "N khoản · chi X · thu Y" (AC-115), cả khi ô tìm trống.
-          final totals = FilterTotals.of(matches);
+          final totals = FilterTotals.of(
+            matches,
+            service: ref.watch(currencyServiceProvider).value,
+          );
           children.add(
             Semantics(
               liveRegion: true,

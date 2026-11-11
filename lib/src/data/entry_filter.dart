@@ -1,5 +1,7 @@
 import 'dates.dart';
 import 'database.dart';
+import 'money_sum.dart';
+import 'rate_repository.dart';
 import 'summary.dart';
 
 /// Bộ lọc nâng cao của màn "Các khoản" (F-39, AC-115): khoảng số tiền, nhiều
@@ -16,7 +18,9 @@ class EntryFilter {
 
   static const none = EntryFilter();
 
-  /// Số tiền từ / đến, đơn vị nhỏ nhất, tính cả hai đầu; null là bỏ trống đầu đó.
+  /// Số tiền từ / đến theo **Tiền tệ chính** (D-042: số to trên dòng khoản),
+  /// đơn vị nhỏ nhất, tính cả hai đầu; null là bỏ trống đầu đó. So với số dẫn
+  /// xuất `Entry.amount` (đã quy về Tiền tệ chính).
   final int? minAmount;
   final int? maxAmount;
 
@@ -99,6 +103,10 @@ List<EntryView> applyEntryFilter(List<EntryView> rows, EntryFilter filter) {
 
 /// Dòng tổng của kết quả lọc: số khoản, tổng chi, tổng thu (AC-115). Chuyển
 /// tiền được đếm vào số khoản nhưng không vào chi hay thu (AC-19).
+///
+/// Có [service]: cộng số gốc theo từng tiền tệ rồi quy về Tiền tệ chính MỘT
+/// lần (D-042, AC-148); khoản thiếu tỷ giá không vào tổng (AC-134). Không có
+/// (chưa nạp tỷ giá): cộng số dẫn xuất.
 class FilterTotals {
   const FilterTotals(this.count, this.expense, this.income);
 
@@ -106,20 +114,27 @@ class FilterTotals {
   final int expense;
   final int income;
 
-  factory FilterTotals.of(Iterable<EntryView> rows) {
-    var count = 0, expense = 0, income = 0;
+  factory FilterTotals.of(
+    Iterable<EntryView> rows, {
+    CurrencyService? service,
+  }) {
+    var count = 0;
+    final expense = MoneyBag(), income = MoneyBag();
     for (final r in rows) {
       count++;
-      switch (r.entry.type) {
-        case EntryType.expense:
-          expense += r.entry.amount;
-        case EntryType.income:
-          income += r.entry.amount;
-        case EntryType.transfer:
-          break;
+      final e = r.entry;
+      if (e.type == EntryType.transfer) continue;
+      if (service != null && !service.has(e.currency, service.primary)) {
+        continue;
       }
+      final amount = service == null ? e.amount : entryOriginal(e);
+      final currency = service == null ? '' : e.currency;
+      (e.type == EntryType.expense ? expense : income).add(currency, amount);
     }
-    return FilterTotals(count, expense, income);
+    int total(MoneyBag bag) => service == null
+        ? bag.parts.values.fold(0, (a, b) => a + b)
+        : bag.convertTo(service, service.primary) ?? 0;
+    return FilterTotals(count, total(expense), total(income));
   }
 }
 
