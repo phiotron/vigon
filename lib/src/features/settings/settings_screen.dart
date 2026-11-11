@@ -19,6 +19,7 @@ import '../../data/debt_repository.dart';
 import '../../data/money.dart';
 import '../../data/money_sum.dart';
 import '../debts/debts_providers.dart';
+import '../export/export_actions.dart';
 import '../savings/savings_providers.dart';
 import '../import_queue/import_queue_providers.dart';
 import '../budget_alert/budget_alert_rows.dart';
@@ -119,6 +120,21 @@ class SettingsScreen extends ConsumerWidget {
       value: l.localeName == 'vi' ? l.csvFormatVi : l.csvFormatEn,
       chevron: false,
       onTap: () => exportCsvFile(context, ref),
+    );
+    // Xuất Excel / PDF (F-40, AC-116): chọn phạm vi rồi mở bảng chia sẻ.
+    final xlsxRow = SettingsNavRow(
+      icon: Symbols.grid_on_rounded,
+      title: l.exportExcel,
+      value: l.exportExcelNote,
+      chevron: false,
+      onTap: () => exportReportFile(context, ref, ExportFormat.xlsx),
+    );
+    final pdfRow = SettingsNavRow(
+      icon: Symbols.picture_as_pdf_rounded,
+      title: l.exportPdf,
+      value: l.exportPdfNote,
+      chevron: false,
+      onTap: () => exportReportFile(context, ref, ExportFormat.pdf),
     );
     final deleteRow = SettingsNavRow(
       icon: Symbols.delete_forever_rounded,
@@ -303,11 +319,22 @@ class SettingsScreen extends ConsumerWidget {
             ),
           ),
           if (supportsAutoBackup) ...[
-            SettingsCard(children: [backupRow, restoreRow, csvRow]),
+            SettingsCard(
+              children: [backupRow, restoreRow, csvRow, xlsxRow, pdfRow],
+            ),
             cardGap,
             AutoBackupSection(extraRows: [deleteRow]),
           ] else
-            SettingsCard(children: [backupRow, restoreRow, csvRow, deleteRow]),
+            SettingsCard(
+              children: [
+                backupRow,
+                restoreRow,
+                csvRow,
+                xlsxRow,
+                pdfRow,
+                deleteRow,
+              ],
+            ),
           SettingsGroupTitle(l.appearanceLanguage),
           SettingsCard(
             children: [

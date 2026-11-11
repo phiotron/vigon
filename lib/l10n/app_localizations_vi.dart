@@ -269,6 +269,62 @@ class AppLocalizationsVi extends AppLocalizations {
   }
 
   @override
+  String get filter => 'Lọc';
+
+  @override
+  String get filterAmountRange => 'Khoảng số tiền';
+
+  @override
+  String get filterFrom => 'Từ';
+
+  @override
+  String get filterTo => 'Đến';
+
+  @override
+  String get filterAmountInvalid => 'Nhập số tiền hợp lệ';
+
+  @override
+  String get filterAmountRangeError => '“Từ” không được lớn hơn “Đến”';
+
+  @override
+  String get filterCategories => 'Danh mục';
+
+  @override
+  String get filterDateRange => 'Khoảng ngày';
+
+  @override
+  String get filterAnyDate => 'Mọi ngày';
+
+  @override
+  String get filterRemoveDates => 'Bỏ khoảng ngày';
+
+  @override
+  String get filterClear => 'Xóa';
+
+  @override
+  String get filterClearAll => 'Xóa lọc';
+
+  @override
+  String filterRemove(String name) {
+    return 'Bỏ lọc $name';
+  }
+
+  @override
+  String filterChipFrom(String amount) {
+    return 'Từ $amount';
+  }
+
+  @override
+  String filterChipUpTo(String amount) {
+    return 'Tới $amount';
+  }
+
+  @override
+  String filterSummary(int count, String spent, String income) {
+    return '$count khoản · chi $spent · thu $income';
+  }
+
+  @override
   String get keypadBackspace => 'Xóa lùi';
 
   @override
@@ -611,6 +667,126 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get exportCsv => 'Xuất CSV';
+
+  @override
+  String get exportExcel => 'Xuất Excel';
+
+  @override
+  String get exportPdf => 'Xuất PDF';
+
+  @override
+  String get exportExcelNote => 'Khoản, theo danh mục, khoản nợ (.xlsx)';
+
+  @override
+  String get exportPdfNote => 'Báo cáo thu chi khổ A4';
+
+  @override
+  String get exportRangeTitle => 'Phạm vi xuất';
+
+  @override
+  String get exportRangeCurrent => 'Kỳ đang xem';
+
+  @override
+  String get exportIncludesExcel =>
+      'Tệp Excel ba trang tính: Khoản, Theo danh mục và Khoản nợ.';
+
+  @override
+  String get exportIncludesPdf =>
+      'Báo cáo A4 có tổng thu, tổng chi, bảng theo danh mục và danh sách khoản.';
+
+  @override
+  String get exportAction => 'Xuất';
+
+  @override
+  String get exportPreparing => 'Đang chuẩn bị tệp…';
+
+  @override
+  String get exportEmpty => 'Không có khoản nào trong phạm vi này';
+
+  @override
+  String get exportFailed => 'Không tạo được file';
+
+  @override
+  String get xlsxSheetRecords => 'Khoản';
+
+  @override
+  String get xlsxSheetByCategory => 'Theo danh mục';
+
+  @override
+  String get xlsxSheetDebts => 'Khoản nợ';
+
+  @override
+  String get xlsxColDate => 'Ngày';
+
+  @override
+  String get xlsxColType => 'Loại';
+
+  @override
+  String get xlsxColAmount => 'Số tiền';
+
+  @override
+  String get xlsxColCurrency => 'Tiền tệ';
+
+  @override
+  String get xlsxColCategory => 'Danh mục';
+
+  @override
+  String get xlsxColAccount => 'Tài khoản';
+
+  @override
+  String get xlsxColToAccount => 'Đến tài khoản';
+
+  @override
+  String get xlsxColNote => 'Ghi chú';
+
+  @override
+  String get xlsxTypeExpense => 'Chi';
+
+  @override
+  String get xlsxTypeIncome => 'Thu';
+
+  @override
+  String get xlsxColTotal => 'Tổng';
+
+  @override
+  String get xlsxColShare => 'Tỉ lệ';
+
+  @override
+  String get xlsxColPerson => 'Người';
+
+  @override
+  String get xlsxColDirection => 'Chiều';
+
+  @override
+  String get xlsxColPaid => 'Đã trả';
+
+  @override
+  String get xlsxColRemaining => 'Còn lại';
+
+  @override
+  String get xlsxColDue => 'Hạn';
+
+  @override
+  String get xlsxColStatus => 'Trạng thái';
+
+  @override
+  String get xlsxStatusOpen => 'Đang nợ';
+
+  @override
+  String pdfTitle(String period) {
+    return 'Báo cáo thu chi — $period';
+  }
+
+  @override
+  String get pdfDifference => 'Chênh lệch';
+
+  @override
+  String get pdfNoRecords => 'Không có khoản';
+
+  @override
+  String pdfPage(int page, int pages) {
+    return 'Trang $page/$pages';
+  }
 
   @override
   String get backupNote =>
@@ -2221,4 +2397,133 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get biometricCancel => 'Dùng mã PIN';
+
+  @override
+  String get exportScopeTitle => 'Xuất khoảng nào';
+
+  @override
+  String get exportScopeCurrent => 'Kỳ đang xem';
+
+  @override
+  String get exportScopeCustom => 'Khoảng tùy chọn…';
+
+  @override
+  String get exportWorking => 'Đang tạo file…';
+
+  @override
+  String get exportSheetEntries => 'Khoản';
+
+  @override
+  String get exportSheetCategories => 'Theo danh mục';
+
+  @override
+  String get exportSheetDebts => 'Khoản nợ';
+
+  @override
+  String get exportColDate => 'Ngày';
+
+  @override
+  String get exportColTime => 'Giờ';
+
+  @override
+  String get exportColType => 'Loại';
+
+  @override
+  String get exportColAmount => 'Số tiền';
+
+  @override
+  String get exportColCurrency => 'Tiền tệ';
+
+  @override
+  String exportColAmountIn(String currency) {
+    return 'Số tiền ($currency)';
+  }
+
+  @override
+  String get exportColCategory => 'Danh mục';
+
+  @override
+  String get exportColAccount => 'Tài khoản';
+
+  @override
+  String get exportColToAccount => 'Đến tài khoản';
+
+  @override
+  String get exportColReceived => 'Số nhận';
+
+  @override
+  String get exportColReceivedCurrency => 'Tiền tệ nhận';
+
+  @override
+  String get exportColNote => 'Ghi chú';
+
+  @override
+  String get exportColSource => 'Nguồn';
+
+  @override
+  String exportColTotalIn(String currency) {
+    return 'Tổng ($currency)';
+  }
+
+  @override
+  String get exportColShare => 'Tỷ lệ';
+
+  @override
+  String get exportColPerson => 'Người';
+
+  @override
+  String get exportColDirection => 'Chiều';
+
+  @override
+  String get exportColPaid => 'Đã trả';
+
+  @override
+  String get exportColRemaining => 'Còn lại';
+
+  @override
+  String exportColRemainingIn(String currency) {
+    return 'Còn lại ($currency)';
+  }
+
+  @override
+  String get exportColDue => 'Hạn';
+
+  @override
+  String get exportColStatus => 'Trạng thái';
+
+  @override
+  String get exportDebtOpen => 'Chưa xong';
+
+  @override
+  String exportReportTitle(String period) {
+    return 'Báo cáo thu chi $period';
+  }
+
+  @override
+  String get exportTotalIncome => 'Tổng thu';
+
+  @override
+  String get exportTotalExpense => 'Tổng chi';
+
+  @override
+  String get exportDifference => 'Chênh lệch';
+
+  @override
+  String exportAmountsIn(String currency) {
+    return 'Số tiền theo $currency';
+  }
+
+  @override
+  String get exportEntriesHeading => 'Danh sách khoản';
+
+  @override
+  String get exportNoEntries => 'Không có khoản nào trong khoảng này';
+
+  @override
+  String get exportMissingRate => 'Thiếu tỷ giá';
+
+  @override
+  String exportPage(int page, int total) {
+    return 'Trang $page/$total';
+  }
 }

@@ -58,6 +58,9 @@ dependencies:
   local_auth: ^3.0.2
   local_auth_android: ^2.3.0
   local_auth_darwin: ^2.0.5
+  # F-40 Xuất Excel/PDF: thuần Dart, không gọi mạng (archive MIT để dựng .xlsx, pdf Apache-2.0).
+  archive: ^4.6.0
+  pdf: ^3.13.1
 
 dev_dependencies:
   flutter_test:
@@ -73,6 +76,8 @@ dev_dependencies:
   flutter_lints: ^6.0.0
   drift_dev: ^2.35.2
   build_runner: ^2.17.1
+  # Test F-40 đọc lại file .xlsx vừa xuất.
+  xml: ^7.0.1
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
