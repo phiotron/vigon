@@ -21,7 +21,7 @@ import '../categories/sheet_footer.dart';
 import '../settings/budget_dialog.dart' show currencySymbol;
 import 'debt_editor.dart';
 import 'debts_providers.dart';
-import 'debts_screen.dart' show isDebtOverdue;
+import 'debts_screen.dart' show isDebtOverdue, nextDeadlineReminder;
 
 /// Chi tiết một khoản nợ (AC-105): thông tin, các lần trả (xoá được), "Thêm
 /// lần trả", sửa, xoá. Tự đóng khi khoản nợ không còn.
@@ -70,12 +70,13 @@ class _DebtDetail extends ConsumerWidget {
     final overdue = isDebtOverdue(view, today, digits);
     final remindOn = ref.watch(deadlineReminderEnabledProvider).value ?? false;
     final remindDays = ref.watch(deadlineReminderDaysProvider).value;
-    final remindDay = !settled && !overdue && remindOn && remindDays != null &&
-            d.dueDate != null
-        ? parseDateKey(d.dueDate!).subtract(Duration(days: remindDays))
+    final remindAt = !settled && !overdue && remindOn && remindDays != null
+        ? nextDeadlineReminder(
+            d.dueDate == null ? null : parseDateKey(d.dueDate!),
+            remindDays,
+            today,
+          )
         : null;
-    final remindAt =
-        remindDay != null && !remindDay.isBefore(today) ? remindDay : null;
 
     Widget line(
       String label,

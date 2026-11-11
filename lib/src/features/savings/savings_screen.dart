@@ -455,10 +455,12 @@ class GoalCard extends ConsumerWidget {
                               color: scheme.onSurfaceVariant,
                             ),
                             const SizedBox(width: 2),
-                            Text(
-                              l.remindDays(remindDays),
-                              style: VgType.bodySm.copyWith(
-                                color: scheme.onSurfaceVariant,
+                            Flexible(
+                              child: Text(
+                                l.remindDays(remindDays),
+                                style: VgType.bodySm.copyWith(
+                                  color: scheme.onSurfaceVariant,
+                                ),
                               ),
                             ),
                           ],

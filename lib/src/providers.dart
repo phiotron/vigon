@@ -76,9 +76,13 @@ final rateTableProvider = StreamProvider<RateTable>(
 
 /// Tiền tệ đang có số liệu (D-037), tính lại mỗi lần màn cần: Cài đặt dùng để
 /// tóm tắt tỷ giá, màn Tỷ giá dùng để chỉ hiện cặp đang dùng.
-final usedCurrenciesProvider = FutureProvider.autoDispose<Set<String>>(
-  (ref) => ref.watch(rateRepositoryProvider).usedCurrencies(),
-);
+final usedCurrenciesProvider = FutureProvider.autoDispose<Set<String>>((ref) {
+  // Tính lại khi tài khoản / khoản đổi: màn Cài đặt nằm dưới giữ provider này
+  // sống, nên thêm tài khoản USD rồi mở Tỷ giá vẫn phải thấy cặp mới.
+  ref.watch(allAccountsProvider);
+  ref.watch(accountBalanceBagsProvider);
+  return ref.watch(rateRepositoryProvider).usedCurrencies();
+});
 
 /// Quy đổi theo Tiền tệ chính hiện tại; test có thể ghi đè. Theo dõi
 /// [currencyProvider] để đổi Tiền tệ chính là dùng ngay, không giữ bảng cũ.

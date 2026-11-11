@@ -242,8 +242,9 @@ class _DebtTile extends ConsumerWidget {
     final remindOn = ref.watch(deadlineReminderEnabledProvider).value ?? false;
     final remindDays = ref.watch(deadlineReminderDaysProvider).value;
     final due = d.dueDate == null ? null : parseDateKey(d.dueDate!);
-    final remindAt = !settled && !overdue && remindOn && remindDays != null && due != null
-        ? due.subtract(Duration(days: remindDays))
+    // Mốc nhắc kế tiếp (D-044: N ngày trước + đúng ngày hạn).
+    final remindAt = !settled && !overdue && remindOn && remindDays != null
+        ? nextDeadlineReminder(due, remindDays, today)
         : null;
     final fraction = originalAmount <= 0
         ? 0.0
@@ -266,21 +267,23 @@ class _DebtTile extends ConsumerWidget {
           label: l.debtDueOn(shortDate(context, due)),
           icon: Symbols.event_rounded,
         ),
-      if (remindAt != null && !remindAt.isBefore(today))
-        Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(
-              Symbols.notifications_rounded,
-              size: 16,
-              color: scheme.onSurfaceVariant,
-            ),
-            const SizedBox(width: 2),
-            Text(
-              l.remindNext(shortDate(context, remindAt)),
-              style: VgType.bodySm.copyWith(color: scheme.onSurfaceVariant),
-            ),
-          ],
+      if (remindAt != null)
+        // Text.rich để tự xuống dòng khi hẹp / chữ lớn (không tràn).
+        Text.rich(
+          TextSpan(
+            children: [
+              WidgetSpan(
+                alignment: PlaceholderAlignment.middle,
+                child: Icon(
+                  Symbols.notifications_rounded,
+                  size: 16,
+                  color: scheme.onSurfaceVariant,
+                ),
+              ),
+              TextSpan(text: ' ${l.remindNext(shortDate(context, remindAt))}'),
+            ],
+          ),
+          style: VgType.bodySm.copyWith(color: scheme.onSurfaceVariant),
         ),
     ];
     final lines = <Widget>[
@@ -362,4 +365,14 @@ class _DebtTile extends ConsumerWidget {
       onTap: () => showDebtDetail(context, d.id),
     );
   }
+}
+
+/// Mốc nhắc trước hạn kế tiếp kể từ [today] (D-044: báo [days] ngày trước và
+/// đúng ngày hạn); null khi không có hạn hoặc cả hai mốc đã qua.
+DateTime? nextDeadlineReminder(DateTime? due, int days, DateTime today) {
+  if (due == null) return null;
+  for (final d in [due.subtract(Duration(days: days)), due]) {
+    if (!d.isBefore(today)) return d;
+  }
+  return null;
 }

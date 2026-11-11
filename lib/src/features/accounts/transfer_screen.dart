@@ -20,6 +20,7 @@ import '../entry/entry_time.dart';
 import '../entry/keypad.dart';
 import '../import_queue/queue_match.dart';
 import '../settings/currency_conversion.dart' show formatRate;
+import '../settings/rates_format.dart' show ratePairFor;
 
 /// Chuyển tiền giữa hai tài khoản (AC-19); sửa hoặc xóa lần chuyển có sẵn.
 class TransferScreen extends ConsumerStatefulWidget {
@@ -286,9 +287,9 @@ class _TransferScreenState extends ConsumerState<TransferScreen> {
     final cross = fromCurrency != toCurrency;
     final value = evaluateToMinorUnits(_expression, decimalDigits: digits);
     final service = ref.watch(currencyServiceProvider).value;
-    final estimate = !cross || service == null || (value ?? 0) <= 0
+    final estimate = !cross || service == null || (value ?? 0) < 0
         ? null
-        : (MoneyBag()..add(fromCurrency, value!)).convertTo(
+        : (MoneyBag()..add(fromCurrency, value ?? 0)).convertTo(
             service,
             toCurrency,
             skipMissing: false,
@@ -297,10 +298,14 @@ class _TransferScreenState extends ConsumerState<TransferScreen> {
         ? null
         : service?.toPrimary(value ?? 0, fromCurrency);
     final table = ref.watch(rateTableProvider).value;
-    final pairRate = table?.rate(fromCurrency, toCurrency)?.toDouble();
-    final rateLine = !cross || pairRate == null
+    // Chiều dễ đọc: "1 USD = 25.974 VND" (đồng mạnh hơn đứng trước).
+    final pair = table == null || !cross
         ? null
-        : l.rateLine(fromCurrency, formatRate(pairRate, l.localeName), toCurrency);
+        : ratePairFor(table, fromCurrency, toCurrency);
+    final pairRate = pair == null ? null : table!.rate(pair.$1, pair.$2)?.toDouble();
+    final rateLine = pair == null || pairRate == null
+        ? null
+        : l.rateLine(pair.$1, formatRate(pairRate, l.localeName), pair.$2);
     final secondary = fromCurrency == primary
         ? null
         : converted == null
