@@ -2051,11 +2051,11 @@ class AppLocalizationsVi extends AppLocalizations {
   }
 
   @override
-  String get homeEmptyTitle => 'Bắt đầu với khoản chi đầu tiên';
+  String get homeEmptyTitle => 'Ghi khoản chi đầu tiên';
 
   @override
   String get homeEmptyBody =>
-      'Chạm một danh mục trên vòng, hoặc chạm −. Chỉ mất ba lần chạm.';
+      'Chạm danh mục hoặc −';
 
   @override
   String fromEmailRef(String ref) {

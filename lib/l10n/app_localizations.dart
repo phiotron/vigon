@@ -3515,13 +3515,13 @@ abstract class AppLocalizations {
   /// No description provided for @homeEmptyTitle.
   ///
   /// In en, this message translates to:
-  /// **'Start with your first expense'**
+  /// **'Log your first expense'**
   String get homeEmptyTitle;
 
   /// No description provided for @homeEmptyBody.
   ///
   /// In en, this message translates to:
-  /// **'Tap a category on the ring, or tap −. It takes three taps.'**
+  /// **'Tap a category or −'**
   String get homeEmptyBody;
 
   /// No description provided for @fromEmailRef.

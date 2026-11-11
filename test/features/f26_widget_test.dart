@@ -420,7 +420,7 @@ void main() {
       await tester.tap(find.byTooltip('Quay lại'));
       await settle(tester);
       expect(find.text('Khoản chi mới'), findsNothing);
-      expect(find.text('Bắt đầu với khoản chi đầu tiên'), findsOneWidget);
+      expect(find.text('Ghi khoản chi đầu tiên'), findsOneWidget);
       await disposeApp(tester, db);
     });
 
@@ -434,7 +434,7 @@ void main() {
     testWidgets('route lạ bị bỏ, vẫn ở trang chủ', (tester) async {
       mockDeepLink(tester, ['/settings']);
       final db = await pumpApp(tester);
-      expect(find.text('Bắt đầu với khoản chi đầu tiên'), findsOneWidget);
+      expect(find.text('Ghi khoản chi đầu tiên'), findsOneWidget);
       await disposeApp(tester, db);
     });
 

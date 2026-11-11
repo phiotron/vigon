@@ -670,8 +670,8 @@
   "debtPayRest": "Trả hết",
 
   "mainFirstNote": "theo {currency}",
-  "homeEmptyTitle": "Bắt đầu với khoản chi đầu tiên",
-  "homeEmptyBody": "Chạm một danh mục trên vòng, hoặc chạm −. Chỉ mất ba lần chạm.",
+  "homeEmptyTitle": "Ghi khoản chi đầu tiên",
+  "homeEmptyBody": "Chạm danh mục hoặc −",
 
   "fromEmailRef": "Từ email MB · mã tham chiếu đuôi {ref}",
   "setTime": "Đặt giờ",

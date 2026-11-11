@@ -684,8 +684,8 @@
 
   "mainFirstNote": "in {currency}",
   "@mainFirstNote": {"placeholders": {"currency": {"type": "String"}}},
-  "homeEmptyTitle": "Start with your first expense",
-  "homeEmptyBody": "Tap a category on the ring, or tap −. It takes three taps.",
+  "homeEmptyTitle": "Log your first expense",
+  "homeEmptyBody": "Tap a category or −",
 
   "fromEmailRef": "From MB email · reference ending {ref}",
   "@fromEmailRef": {"placeholders": {"ref": {"type": "String"}}},

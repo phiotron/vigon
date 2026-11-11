@@ -74,7 +74,7 @@ void main() {
     tester,
   ) async {
     final db = await pumpApp(tester);
-    expect(find.text('Bắt đầu với khoản chi đầu tiên'), findsOneWidget);
+    expect(find.text('Ghi khoản chi đầu tiên'), findsOneWidget);
     await insertEntry(
       tester,
       db,
@@ -82,7 +82,7 @@ void main() {
       amount: 50000,
       categoryId: 1,
     );
-    expect(find.text('Bắt đầu với khoản chi đầu tiên'), findsNothing);
+    expect(find.text('Ghi khoản chi đầu tiên'), findsNothing);
     await disposeApp(tester, db);
   });
 

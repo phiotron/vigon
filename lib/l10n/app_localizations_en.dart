@@ -2074,11 +2074,11 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get homeEmptyTitle => 'Start with your first expense';
+  String get homeEmptyTitle => 'Log your first expense';
 
   @override
   String get homeEmptyBody =>
-      'Tap a category on the ring, or tap −. It takes three taps.';
+      'Tap a category or −';
 
   @override
   String fromEmailRef(String ref) {
