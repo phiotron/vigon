@@ -14,7 +14,9 @@ import '../../ui/choice_sheet.dart';
 import '../../ui/format.dart';
 import '../../ui/messenger.dart';
 import '../../ui/money_lines.dart';
+import '../../ui/status.dart';
 import '../../ui/tokens.g.dart';
+import '../reminder/deadline_reminders.dart';
 import '../categories/sheet_footer.dart';
 import '../settings/budget_dialog.dart' show currencySymbol;
 import 'debt_editor.dart';
@@ -66,6 +68,14 @@ class _DebtDetail extends ConsumerWidget {
 
     final settled = view.isSettled(digits);
     final overdue = isDebtOverdue(view, today, digits);
+    final remindOn = ref.watch(deadlineReminderEnabledProvider).value ?? false;
+    final remindDays = ref.watch(deadlineReminderDaysProvider).value;
+    final remindDay = !settled && !overdue && remindOn && remindDays != null &&
+            d.dueDate != null
+        ? parseDateKey(d.dueDate!).subtract(Duration(days: remindDays))
+        : null;
+    final remindAt =
+        remindDay != null && !remindDay.isBefore(today) ? remindDay : null;
 
     Widget line(
       String label,
@@ -139,49 +149,114 @@ class _DebtDetail extends ConsumerWidget {
                       ),
                     ),
                   ),
-                  line(
-                    l.debtDirection,
-                    d.direction == DebtDirection.lent
-                        ? l.debtLent
-                        : l.debtBorrowed,
-                  ),
-                  line(
-                    l.debtAmount,
-                    lines(view.total).main,
-                    secondary: lines(view.total).secondary,
-                  ),
-                  line(l.debtDate, shortDate(context, parseDateKey(d.date))),
-                  if (d.dueDate != null)
-                    line(
-                      overdue ? l.debtOverdue : l.debtDue,
-                      shortDate(context, parseDateKey(d.dueDate!)),
-                      color: overdue ? scheme.error : null,
-                      bold: overdue,
+                  // Mockup v4 SCR-42 detail: chip chiều nợ, số còn lại là số
+                  // lớn, thanh đã trả, chip hạn + ngày nhắc trước hạn (D-044).
+                  Align(
+                    alignment: AlignmentDirectional.centerStart,
+                    child: StatusChip(
+                      label: d.direction == DebtDirection.lent
+                          ? l.debtLent
+                          : l.debtBorrowed,
+                      icon: d.direction == DebtDirection.lent
+                          ? Symbols.call_made_rounded
+                          : Symbols.call_received_rounded,
                     ),
-                  if (d.note != null) line(l.noteHint, d.note!),
+                  ),
+                  const SizedBox(height: VgSpace.s3),
+                  Text(
+                    settled ? l.debtAmount : l.debtRemainingLabel,
+                    style: VgType.bodySm.copyWith(
+                      color: scheme.onSurfaceVariant,
+                    ),
+                  ),
+                  Builder(
+                    builder: (context) {
+                      final big = lines(
+                        settled ? view.total : view.remaining(),
+                      );
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          FittedBox(
+                            fit: BoxFit.scaleDown,
+                            alignment: AlignmentDirectional.centerStart,
+                            child: Text(
+                              big.main,
+                              style: VgType.amountXl.copyWith(
+                                color: scheme.onSurface,
+                              ),
+                            ),
+                          ),
+                          if (big.secondary != null)
+                            Text(
+                              big.secondary!,
+                              style: VgType.bodySm.copyWith(
+                                color: scheme.onSurfaceVariant,
+                              ),
+                            ),
+                        ],
+                      );
+                    },
+                  ),
+                  const SizedBox(height: VgSpace.s2),
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(VgRadius.full),
+                    child: LinearProgressIndicator(
+                      value: view.total <= 0
+                          ? 0
+                          : (view.paid() / view.total).clamp(0.0, 1.0),
+                      minHeight: 8,
+                      backgroundColor: scheme.surfaceContainerHigh,
+                      color: scheme.primary,
+                    ),
+                  ),
+                  const SizedBox(height: VgSpace.s1),
+                  Text(
+                    l.debtPaidOf(
+                      money(context, d.currency, view.paid()),
+                      money(context, d.currency, view.total),
+                    ),
+                    style: VgType.bodySm.copyWith(
+                      color: scheme.onSurfaceVariant,
+                    ),
+                  ),
+                  const SizedBox(height: VgSpace.s2),
+                  Wrap(
+                    spacing: VgSpace.s2,
+                    runSpacing: VgSpace.s1,
+                    children: [
+                      if (settled)
+                        StatusChip(
+                          label: l.debtDone,
+                          icon: Symbols.check_circle_rounded,
+                          tone: StatusTone.ok,
+                        )
+                      else if (overdue)
+                        StatusChip(
+                          label:
+                              '${l.debtOverdue} · '
+                              '${shortDate(context, parseDateKey(d.dueDate!))}',
+                          icon: Symbols.schedule_rounded,
+                          tone: StatusTone.warn,
+                        )
+                      else if (d.dueDate != null)
+                        StatusChip(
+                          label: l.debtDueOn(
+                            shortDate(context, parseDateKey(d.dueDate!)),
+                          ),
+                          icon: Symbols.event_rounded,
+                        ),
+                      if (remindAt != null)
+                        StatusChip(
+                          label: l.remindNext(shortDate(context, remindAt)),
+                          icon: Symbols.notifications_rounded,
+                          tone: StatusTone.info,
+                        ),
+                    ],
+                  ),
                   const Divider(height: VgSpace.s6),
-                  if (settled)
-                    Row(
-                      children: [
-                        Icon(
-                          Symbols.check_circle_rounded,
-                          color: scheme.primary,
-                          fill: 1,
-                        ),
-                        const SizedBox(width: VgSpace.s2),
-                        Text(
-                          l.debtDone,
-                          style: VgType.titleSm.copyWith(color: scheme.primary),
-                        ),
-                      ],
-                    )
-                  else
-                    line(
-                      l.debtRemainingLabel,
-                      lines(view.remaining()).main,
-                      secondary: lines(view.remaining()).secondary,
-                      bold: true,
-                    ),
+                  line(l.debtDate, shortDate(context, parseDateKey(d.date))),
+                  if (d.note != null) line(l.noteHint, d.note!),
                   const SizedBox(height: VgSpace.s2),
                   Semantics(
                     header: true,

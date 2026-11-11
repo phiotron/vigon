@@ -2120,4 +2120,9 @@ class AppLocalizationsVi extends AppLocalizations {
   String owedToYouShort(String amount) {
     return 'Người khác nợ bạn $amount';
   }
+
+  @override
+  String rateLine(String from, String rate, String to) {
+    return '1 $from = $rate $to · tự động';
+  }
 }

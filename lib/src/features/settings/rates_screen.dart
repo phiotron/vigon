@@ -14,6 +14,7 @@ import '../../providers.dart';
 import '../../ui/format.dart';
 import '../../ui/messenger.dart';
 import '../../ui/settings_rows.dart';
+import '../../ui/status.dart';
 import '../../ui/theme.dart';
 import '../../ui/tokens.g.dart';
 import 'currency_conversion.dart' show formatRate;
@@ -110,6 +111,8 @@ class _RatesScreenState extends ConsumerState<RatesScreen> {
     final used = ref.watch(usedCurrenciesProvider).value ?? <String>{primary};
     final now = ref.watch(clockProvider)();
     final pairs = used.where((c) => c != primary).toList()..sort();
+    final accountsForRates =
+        ref.watch(accountsProvider).value ?? const <Account>[];
 
     return Scaffold(
       appBar: AppBar(title: Text(l.exchangeRates)),
@@ -178,6 +181,25 @@ class _RatesScreenState extends ConsumerState<RatesScreen> {
                             offline: _offline,
                             now: now,
                           ),
+                          // Chip nguồn (mockup v4 SCR-50): Bạn đặt (trung tính) ·
+                          // Ngoại tuyến (hổ phách) · Tự động (xanh).
+                          tone: rateIsOverridden(table, from, primary)
+                              ? StatusTone.neutral
+                              : _offline
+                              ? StatusTone.warn
+                              : table.isFallback
+                              ? StatusTone.neutral
+                              : StatusTone.ok,
+                          icon: rateIsOverridden(table, from, primary)
+                              ? Symbols.edit_rounded
+                              : _offline
+                              ? Symbols.cloud_off_rounded
+                              : Symbols.sync_rounded,
+                          // Tài khoản cần tỷ giá này (mockup v4).
+                          note: [
+                            for (final a in accountsForRates)
+                              if (a.currency == from) accountLabel(l, a),
+                          ].join(', '),
                           onTap: () => _override(from, primary),
                         );
                       },
@@ -255,12 +277,19 @@ class _PairRow extends StatelessWidget {
     required this.rate,
     required this.subtitle,
     required this.onTap,
+    this.tone = StatusTone.neutral,
+    this.icon = Symbols.sync_rounded,
+    this.note = '',
   });
+
+  final String note;
 
   final String from;
   final String to;
   final ExchangeRate? rate;
   final String subtitle;
+  final StatusTone tone;
+  final IconData icon;
   final VoidCallback onTap;
 
   @override
@@ -313,13 +342,18 @@ class _PairRow extends StatelessWidget {
                           ],
                         ),
                       ),
-                      const SizedBox(height: 2),
-                      Text(
-                        subtitle,
-                        style: VgType.bodySm.copyWith(
-                          color: scheme.onSurfaceVariant,
+                      const SizedBox(height: VgSpace.s1),
+                      StatusChip(label: subtitle, icon: icon, tone: tone),
+                      if (note.isNotEmpty)
+                        Padding(
+                          padding: const EdgeInsets.only(top: 2),
+                          child: Text(
+                            note,
+                            style: VgType.bodySm.copyWith(
+                              color: scheme.onSurfaceVariant,
+                            ),
+                          ),
                         ),
-                      ),
                     ],
                   ),
                 ),

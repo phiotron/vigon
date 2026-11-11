@@ -2155,4 +2155,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String owedToYouShort(String amount) {
     return '$amount owed to you';
   }
+
+  @override
+  String rateLine(String from, String rate, String to) {
+    return '1 $from = $rate $to · auto';
+  }
 }

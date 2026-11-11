@@ -344,6 +344,80 @@ class _GoalMoneySheetState extends ConsumerState<_GoalMoneySheet> {
               ),
             ),
           ),
+          // Thẻ xem trước tiến độ sau lần góp / rút này (mockup v4 SCR-41
+          // add-money): thanh và "Đã có X / Y" tính theo số vừa gõ.
+          Padding(
+            padding: pad(VgSpace.s3),
+            child: Builder(
+              builder: (context) {
+                final delta = (typed ?? 0).clamp(0, limit);
+                final after = widget.withdraw
+                    ? progress.balance - delta
+                    : progress.balance + delta;
+                final fraction = progress.target <= 0
+                    ? 0.0
+                    : (after / progress.target).clamp(0.0, 1.0);
+                final percent = progress.target <= 0
+                    ? 0
+                    : (after * 100 / progress.target).floor().clamp(0, 999);
+                return Container(
+                  padding: const EdgeInsets.all(VgSpace.s3),
+                  decoration: BoxDecoration(
+                    color: scheme.surfaceContainerLow,
+                    borderRadius: BorderRadius.circular(VgRadius.md),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      Row(
+                        children: [
+                          Icon(
+                            Symbols.savings_rounded,
+                            size: 20,
+                            color: scheme.primary,
+                          ),
+                          const SizedBox(width: VgSpace.s2),
+                          Expanded(
+                            child: Text(
+                              '${l.savingsWallet} · ${goal.currency}',
+                              style: VgType.bodySm.copyWith(
+                                color: scheme.onSurfaceVariant,
+                              ),
+                            ),
+                          ),
+                          Text(
+                            '$percent%',
+                            style: VgType.bodySm.copyWith(
+                              color: scheme.onSurface,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: VgSpace.s2),
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(VgRadius.full),
+                        child: LinearProgressIndicator(
+                          value: fraction,
+                          minHeight: 6,
+                          backgroundColor: scheme.surfaceContainerHigh,
+                          color: scheme.primary,
+                        ),
+                      ),
+                      const SizedBox(height: VgSpace.s1),
+                      Text(
+                        l.savingsProgress(
+                          money(context, goal.currency, after),
+                          money(context, goal.currency, progress.target),
+                        ),
+                        style: VgType.bodySm.copyWith(color: scheme.onSurface),
+                      ),
+                    ],
+                  ),
+                );
+              },
+            ),
+          ),
           const SizedBox(height: VgSpace.s3),
           SheetFooter(
             border: false,

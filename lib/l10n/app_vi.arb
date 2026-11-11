@@ -692,5 +692,7 @@
   "remindNext": "Nhắc ngày {date}",
 
   "goalsN": "{n} mục tiêu",
-  "owedToYouShort": "Người khác nợ bạn {amount}"
+  "owedToYouShort": "Người khác nợ bạn {amount}",
+
+  "rateLine": "1 {from} = {rate} {to} · tự động"
 }

@@ -19,6 +19,7 @@ import '../../ui/tokens.g.dart';
 import '../entry/entry_time.dart';
 import '../entry/keypad.dart';
 import '../import_queue/queue_match.dart';
+import '../settings/currency_conversion.dart' show formatRate;
 
 /// Chuyển tiền giữa hai tài khoản (AC-19); sửa hoặc xóa lần chuyển có sẵn.
 class TransferScreen extends ConsumerStatefulWidget {
@@ -42,6 +43,10 @@ class _TransferScreenState extends ConsumerState<TransferScreen> {
   /// Số nhận khi chuyển khác tiền tệ (D-037); cùng tiền tệ thì bằng số gửi.
   String _toExpression = '';
   String? _receivedError;
+
+  /// Người dùng chạm thẻ "Bên nhận được" để tự gõ số nhận (mockup v4 SCR-19);
+  /// chưa chạm thì số nhận = số gửi quy đổi theo tỷ giá đã lưu.
+  bool _editReceived = false;
 
   /// Tiền tệ của số gửi/số nhận; mặc định theo tài khoản, giữ nguyên khi sửa.
   String? _currency;
@@ -78,6 +83,8 @@ class _TransferScreenState extends ConsumerState<TransferScreen> {
         currencyDecimalDigits(toCurrency),
       );
       _toAmount.text = _toExpression;
+      // Lần chuyển khác tiền tệ đã lưu: giữ số nhận đã lưu, hiện ô sửa.
+      _editReceived = toCurrency != currency;
       _date = parseDateKey(e.date);
       _time = e.time;
       _note.text = e.note ?? '';
@@ -145,13 +152,22 @@ class _TransferScreenState extends ConsumerState<TransferScreen> {
       return;
     }
     final sameCurrency = fromCurrency == toCurrency;
+    final typedReceived = _toExpression.trim();
     final receivedOriginal = sameCurrency
         ? sentOriginal
+        : typedReceived.isEmpty
+        // Chưa gõ số nhận: quy đổi số gửi theo tỷ giá đã lưu (mockup v4).
+        ? (MoneyBag()..add(fromCurrency, sentOriginal)).convertTo(
+            await ref.read(currencyServiceProvider.future),
+            toCurrency,
+            skipMissing: false,
+          )
         : parseAmountField(
             context,
-            _toExpression.trim(),
+            typedReceived,
             currencyDecimalDigits(toCurrency),
           );
+    if (!mounted) return;
     if (!sameCurrency && (receivedOriginal == null || receivedOriginal <= 0)) {
       setState(
         () => _receivedError = _toExpression.trim().isEmpty
@@ -280,6 +296,11 @@ class _TransferScreenState extends ConsumerState<TransferScreen> {
     final converted = fromCurrency == primary
         ? null
         : service?.toPrimary(value ?? 0, fromCurrency);
+    final table = ref.watch(rateTableProvider).value;
+    final pairRate = table?.rate(fromCurrency, toCurrency)?.toDouble();
+    final rateLine = !cross || pairRate == null
+        ? null
+        : l.rateLine(fromCurrency, formatRate(pairRate, l.localeName), toCurrency);
     final secondary = fromCurrency == primary
         ? null
         : converted == null
@@ -417,7 +438,34 @@ class _TransferScreenState extends ConsumerState<TransferScreen> {
                             color: scheme.onSurface,
                             error: error,
                           ),
-                          if (cross)
+                          if (cross && !_editReceived)
+                            Padding(
+                              padding: const EdgeInsets.fromLTRB(
+                                VgSpace.s4,
+                                0,
+                                VgSpace.s4,
+                                VgSpace.s2,
+                              ),
+                              child: _ReceiveCard(
+                                amount: estimate == null
+                                    ? '–'
+                                    : money(context, toCurrency, estimate),
+                                rateLine: rateLine,
+                                error: _receivedError,
+                                onTap: () => setState(() {
+                                  _editReceived = true;
+                                  if (estimate != null &&
+                                      _toExpression.trim().isEmpty) {
+                                    _toExpression = minorUnitsToInput(
+                                      estimate,
+                                      currencyDecimalDigits(toCurrency),
+                                    );
+                                    _toAmount.text = _toExpression;
+                                  }
+                                }),
+                              ),
+                            ),
+                          if (cross && _editReceived)
                             Padding(
                               padding: const EdgeInsets.fromLTRB(
                                 VgSpace.s4,
@@ -537,6 +585,81 @@ class _TransferScreenState extends ConsumerState<TransferScreen> {
                 ],
               ),
             ),
+    );
+  }
+}
+
+/// Thẻ "Bên nhận được" (mockup v4 SCR-19): số nhận ước tính theo tỷ giá đã
+/// lưu + dòng tỷ giá; chạm để tự gõ số nhận.
+class _ReceiveCard extends StatelessWidget {
+  const _ReceiveCard({
+    required this.amount,
+    required this.rateLine,
+    required this.onTap,
+    this.error,
+  });
+
+  final String amount;
+  final String? rateLine;
+  final String? error;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
+    final scheme = Theme.of(context).colorScheme;
+    return Semantics(
+      button: true,
+      label: [l.youReceive, amount, ?rateLine].join(', '),
+      excludeSemantics: true,
+      child: Material(
+        color: scheme.surfaceContainerLow,
+        borderRadius: BorderRadius.circular(VgRadius.md),
+        child: InkWell(
+          borderRadius: BorderRadius.circular(VgRadius.md),
+          onTap: onTap,
+          child: Padding(
+            padding: const EdgeInsets.all(VgSpace.s3),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        l.youReceive,
+                        style: VgType.bodyMd.copyWith(color: scheme.onSurface),
+                      ),
+                    ),
+                    Text(
+                      amount,
+                      style: VgType.amountMd.copyWith(color: scheme.onSurface),
+                    ),
+                    const SizedBox(width: VgSpace.s1),
+                    Icon(
+                      Symbols.edit_rounded,
+                      size: 18,
+                      color: scheme.onSurfaceVariant,
+                    ),
+                  ],
+                ),
+                if (rateLine != null)
+                  Text(
+                    rateLine!,
+                    style: VgType.bodySm.copyWith(
+                      color: scheme.onSurfaceVariant,
+                    ),
+                  ),
+                if (error != null)
+                  Text(
+                    error!,
+                    style: VgType.bodySm.copyWith(color: scheme.error),
+                  ),
+              ],
+            ),
+          ),
+        ),
+      ),
     );
   }
 }

@@ -3619,6 +3619,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'{amount} owed to you'**
   String owedToYouShort(String amount);
+
+  /// No description provided for @rateLine.
+  ///
+  /// In en, this message translates to:
+  /// **'1 {from} = {rate} {to} · auto'**
+  String rateLine(String from, String rate, String to);
 }
 
 class _AppLocalizationsDelegate

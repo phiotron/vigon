@@ -713,5 +713,8 @@
   "goalsN": "{n, plural, =1{1 goal} other{{n} goals}}",
   "@goalsN": {"placeholders": {"n": {"type": "int"}}},
   "owedToYouShort": "{amount} owed to you",
-  "@owedToYouShort": {"placeholders": {"amount": {"type": "String"}}}
+  "@owedToYouShort": {"placeholders": {"amount": {"type": "String"}}},
+
+  "rateLine": "1 {from} = {rate} {to} · auto",
+  "@rateLine": {"placeholders": {"from": {"type": "String"}, "rate": {"type": "String"}, "to": {"type": "String"}}}
 }
