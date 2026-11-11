@@ -131,7 +131,10 @@ void main() {
       tester.element(find.byType(Scaffold).first),
     );
     // Màn chính và Các khoản không có gì.
-    expect(findSemanticsLabel('Số dư: 0 ₫, Tháng 11 năm 2026 · theo VND'), findsOneWidget);
+    expect(
+      findSemanticsLabel('Số dư: 0 ₫, Tháng 11 năm 2026 · theo VND'),
+      findsOneWidget,
+    );
     await goTo(tester, '/entries');
     expect(find.text('Kỳ này chưa có khoản nào'), findsOneWidget);
     // Tổng của kỳ, số chi cho ngân sách, số dư tài khoản đều không đổi.
@@ -388,10 +391,9 @@ void main() {
       () => SettingsRepository(db).setPrimaryCurrency('USD'),
     );
     final usd = await tester.runAsync(
-      () =>
-          AccountRepository(db)
-              // Có tiền để khoản chi lưu được (có thu mới có chi, D-046).
-              .add(name: 'Ví USD', initialBalance: 10000, currency: 'USD'),
+      () => AccountRepository(db)
+          // Có tiền để khoản chi lưu được (có thu mới có chi, D-046).
+          .add(name: 'Ví USD', initialBalance: 10000, currency: 'USD'),
     );
     await settle(tester);
     await _item(tester, db, accountId: usd, currency: 'VND', amount: 50000);

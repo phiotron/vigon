@@ -1,3 +1,4 @@
+import 'package:drift/drift.dart' show Value;
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -202,4 +203,80 @@ void main() {
     expect(after.start.weekday, DateTime.sunday);
     await disposeApp(tester, db);
   });
+
+  // D-046..D-049: các màn/hộp mới của đợt 5 (nợ qua tài khoản có lãi, Bù
+  // tiền, thanh bỏ qua định kỳ, hộp nâng cấp, công tắc cho phép âm).
+  for (final scale in [1.0, 2.0]) {
+    testWidgets('hộp/màn mới của đợt 5 đạt accessibility · cỡ chữ '
+        '${(scale * 100).round()}%', (tester) async {
+      tester.platformDispatcher.textScaleFactorTestValue = scale;
+      addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
+      final handle = tester.ensureSemantics();
+      final db = await pumpApp(tester, allowNegative: false);
+      final problems = <String>[];
+      // Đóng bảng/hộp trên cùng.
+      void closeTop() =>
+          Navigator.of(tester.element(find.byType(BottomSheet).last)).pop();
+
+      Future<void> check(String where) async {
+        await settle(tester);
+        problems.addAll(await _audit(tester, where));
+        expect(tester.takeException(), isNull, reason: where);
+      }
+
+      // Khoản nợ có lãi + một khoản Debt movement.
+      await tester.runAsync(() async {
+        final debt = await db
+            .into(db.debts)
+            .insert(
+              DebtsCompanion.insert(
+                person: 'An',
+                direction: DebtDirection.lent,
+                amount: 5000000,
+                date: '2026-11-01',
+                currency: const Value('VND'),
+                originalAmount: const Value(5000000),
+                accountId: const Value(1),
+                interestRate: const Value(1200),
+                interestPeriod: const Value(InterestPeriod.year),
+              ),
+            );
+        await db
+            .into(db.entries)
+            .insert(
+              EntriesCompanion.insert(
+                type: EntryType.debt,
+                amount: 5000000,
+                accountId: 1,
+                date: '2026-11-01',
+                currency: const Value('VND'),
+                originalAmount: const Value(5000000),
+                debtKind: const Value(DebtMovementKind.lend),
+                debtId: Value(debt),
+              ),
+            );
+      });
+      await settle(tester);
+      await goTo(tester, '/entries');
+      await check('Các khoản · Debt movement');
+      await goTo(tester, '/debts');
+      await tester.tap(find.text('Thêm khoản nợ'));
+      await check('Thêm khoản nợ');
+      closeTop();
+      await settle(tester);
+      await tester.tap(find.text('An'));
+      await check('Chi tiết khoản nợ có lãi');
+      await tester.ensureVisible(find.byKey(const Key('debt-change-rate')));
+      await tester.pump();
+      await tester.tap(find.byKey(const Key('debt-change-rate')));
+      await check('Đổi lãi suất');
+      await tester.tap(find.text('Hủy'));
+      await settle(tester);
+      await tester.tap(find.widgetWithText(FilledButton, 'Thêm lần trả'));
+      await check('Lần trả có lãi');
+      expect(problems, isEmpty, reason: problems.join('\n'));
+      handle.dispose();
+      await disposeApp(tester, db);
+    });
+  }
 }

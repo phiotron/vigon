@@ -117,28 +117,26 @@ class RecurringRepository {
         if (key.compareTo(todayKey) > 0) break;
         if (last != null && key.compareTo(last) <= 0) continue;
         final entry = EntriesCompanion.insert(
-                type: rule.type,
-                amount: rule.amount,
-                // Số chính xác đi theo chuỗi (D-029): quy đổi lại vẫn đúng.
-                amountMicro: Value(rule.amountMicro),
-                categoryId: Value(rule.categoryId),
-                accountId: rule.accountId,
-                toAccountId: Value(rule.toAccountId),
-                date: key,
-                note: Value(rule.note),
-                recurringRuleId: Value(rule.id),
-                currency: Value(rule.currency),
-                originalAmount: Value(rule.originalAmount ?? rule.amount),
-                toAmount: Value(rule.toAmount),
-                toOriginalAmount: Value(rule.toOriginalAmount),
-                toCurrency: Value(rule.toCurrency),
-              );
+          type: rule.type,
+          amount: rule.amount,
+          // Số chính xác đi theo chuỗi (D-029): quy đổi lại vẫn đúng.
+          amountMicro: Value(rule.amountMicro),
+          categoryId: Value(rule.categoryId),
+          accountId: rule.accountId,
+          toAccountId: Value(rule.toAccountId),
+          date: key,
+          note: Value(rule.note),
+          recurringRuleId: Value(rule.id),
+          currency: Value(rule.currency),
+          originalAmount: Value(rule.originalAmount ?? rule.amount),
+          toAmount: Value(rule.toAmount),
+          toOriginalAmount: Value(rule.toOriginalAmount),
+          toCurrency: Value(rule.toCurrency),
+        );
         newLast = key;
         final short = await guard?.checkAdd(entry);
         if (short != null) {
-          skipped?.add(
-            SkippedOccurrence(rule.id, key, short.account.id),
-          );
+          skipped?.add(SkippedOccurrence(rule.id, key, short.account.id));
           continue;
         }
         await _db.into(_db.entries).insert(entry);

@@ -211,10 +211,7 @@ class _TransferScreenState extends ConsumerState<TransferScreen> {
       (accountId: from, currency: fromCurrency, minor: -sentOriginal),
       (accountId: to, currency: toCurrency, minor: receivedOriginal),
     ];
-    final short = await guard.check(
-      add: effects,
-      remove: [?original],
-    );
+    final short = await guard.check(add: effects, remove: [?original]);
     if (short != null) {
       if (mounted) {
         setState(() => _error = shortfallMessage(context, ref, short));
@@ -322,7 +319,9 @@ class _TransferScreenState extends ConsumerState<TransferScreen> {
     final pair = table == null || !cross
         ? null
         : ratePairFor(table, fromCurrency, toCurrency);
-    final pairRate = pair == null ? null : table!.rate(pair.$1, pair.$2)?.toDouble();
+    final pairRate = pair == null
+        ? null
+        : table!.rate(pair.$1, pair.$2)?.toDouble();
     final rateLine = pair == null || pairRate == null
         ? null
         : l.rateLine(pair.$1, formatRate(pairRate, l.localeName), pair.$2);

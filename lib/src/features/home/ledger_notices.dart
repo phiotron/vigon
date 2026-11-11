@@ -15,14 +15,11 @@ import '../../ui/tokens.g.dart';
 /// (AC-163); rỗng khi không có gì để báo.
 final negativeNoticeProvider = StreamProvider<List<int>>((ref) {
   final db = ref.watch(databaseProvider);
-  return (db.select(db.settings)
-        ..where((s) => s.key.equals(negativeNoticeKey)))
-      .watchSingleOrNull()
-      .map(
-        (row) => [
-          for (final p in (row?.value ?? '').split(',')) ?int.tryParse(p),
-        ],
-      );
+  return (db.select(
+    db.settings,
+  )..where((s) => s.key.equals(negativeNoticeKey))).watchSingleOrNull().map(
+    (row) => [for (final p in (row?.value ?? '').split(',')) ?int.tryParse(p)],
+  );
 });
 
 /// Thông báo của "có thu mới có chi" ở màn chính (D-046): thanh "Bỏ qua N

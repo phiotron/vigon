@@ -68,7 +68,13 @@ class _GoalDetail extends ConsumerWidget {
     final history =
         ref.watch(walletHistoryProvider(goal.accountId)).value ??
         const <Entry>[];
-    final have = moneyLinesText(context, ref, progress.balance, goal.currency);
+    final have = moneyLinesText(
+      context,
+      ref,
+      progress.balance,
+      goal.currency,
+      primaryAmount: goalWalletPrimary(ref, goal),
+    );
     final target = moneyLinesText(context, ref, progress.target, goal.currency);
     final persons = ref.watch(debtPersonsProvider);
     final categories = {

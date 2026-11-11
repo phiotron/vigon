@@ -16,6 +16,7 @@ import 'package:vigon/src/data/exchange_rate.dart';
 import 'package:vigon/src/data/money_sum.dart';
 import 'package:vigon/src/data/period.dart';
 import 'package:vigon/src/data/rate_repository.dart';
+import 'package:vigon/src/data/recurring_repository.dart';
 import 'package:vigon/src/data/summary.dart';
 
 /// SPEC 3h — lớp dữ liệu của F-49 (có thu mới có chi) và F-52 (khoản nợ qua
@@ -232,6 +233,47 @@ void main() {
         await guard.checkAdd(usd.copyWith(originalAmount: const Value(1900))),
         isNull,
       );
+    });
+  });
+
+  group('Khoản định kỳ thiếu tiền (AC-164)', () {
+    test('lần thiếu tiền bị bỏ hẳn, không sinh bù, chuỗi vẫn chạy', () async {
+      final trip = await vndAccount('Trip', 150000);
+      final recurring = RecurringRepository(db);
+      await recurring.addWithRepeat(
+        expense(trip, 100000, date: '2026-11-01'),
+        RecurrenceFrequency.daily,
+      );
+      // 01/11 ghi (còn 50.000); 02/11 và 03/11 thiếu tiền → bỏ.
+      final skipped = <SkippedOccurrence>[];
+      await recurring.generateDue(
+        DateTime(2026, 11, 3),
+        service: vnd,
+        skipped: skipped,
+      );
+      expect(skipped.map((s) => (s.date, s.accountId)), [
+        ('2026-11-02', trip),
+        ('2026-11-03', trip),
+      ]);
+      expect(await db.select(db.entries).get(), hasLength(1));
+      // Nạp thêm tiền: lần 04/11 ghi, hai lần đã bỏ không sinh bù.
+      await entries.add(
+        EntriesCompanion.insert(
+          type: EntryType.income,
+          amount: 500000,
+          categoryId: const Value(12),
+          accountId: trip,
+          date: '2026-11-03',
+          currency: const Value('VND'),
+          originalAmount: const Value(500000),
+        ),
+      );
+      await recurring.generateDue(DateTime(2026, 11, 4), service: vnd);
+      final dates = (await db.select(db.entries).get())
+          .where((e) => e.type == EntryType.expense)
+          .map((e) => e.date)
+          .toList();
+      expect(dates, ['2026-11-01', '2026-11-04']);
     });
   });
 

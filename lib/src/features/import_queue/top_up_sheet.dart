@@ -75,7 +75,11 @@ class _TopUpSheetState extends ConsumerState<_TopUpSheet> {
       if (!mounted) return;
       Navigator.pop(context, true);
       if (undo != null) {
-        showUndoSnackBar(message: l.topUpSaved, undoLabel: l.undo, onUndo: undo);
+        showUndoSnackBar(
+          message: l.topUpSaved,
+          undoLabel: l.undo,
+          onUndo: undo,
+        );
       }
     } finally {
       _busy = false;

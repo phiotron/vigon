@@ -307,7 +307,7 @@ void main() {
     await settle(tester);
     await tester.tap(find.text('Xoá khoản nợ'));
     await settle(tester);
-    expect(find.text('Xoá khoản nợ?'), findsOneWidget);
+    expect(find.text('Xoá khoản nợ với Lan?'), findsOneWidget);
     await tester.tap(find.text('Hủy'));
     await settle(tester);
     expect(await _all(tester, db), hasLength(1));
@@ -327,8 +327,8 @@ void main() {
     await disposeApp(tester, db);
   });
 
-  testWidgets('khoản nợ không tạo khoản, không đổi số dư tài khoản, không vào '
-      'thu chi (AC-106)', (tester) async {
+  testWidgets('khoản nợ "Không qua tài khoản" không tạo khoản, không đổi số dư '
+      '(AC-169: chỉ ghi nhớ)', (tester) async {
     final db = await pumpApp(tester);
     await _debt(tester, db, payments: [(100000, '2026-11-02')]);
     await goTo(tester, '/debts');
@@ -336,13 +336,20 @@ void main() {
     await settle(tester);
     await tester.enterText(find.widgetWithText(TextField, 'Người'), 'Hùng');
     await tester.enterText(find.widgetWithText(TextField, 'Số tiền'), '70000');
+    await tester.tap(find.byKey(const Key('debt-account')));
+    await settle(tester);
+    await tester.tap(find.text('Không qua tài khoản').last);
+    await settle(tester);
     await tester.tap(find.text('Lưu'));
     await settle(tester);
     expect(await tester.runAsync(() => db.select(db.entries).get()), isEmpty);
     final accounts = await tester.runAsync(() => db.select(db.accounts).get());
     expect(accounts!.single.initialBalance, 0);
     await goTo(tester, '/');
-    expect(findSemanticsLabel('Số dư: 0 ₫, Tháng 11 năm 2026 · theo VND'), findsOneWidget);
+    expect(
+      findSemanticsLabel('Số dư: 0 ₫, Tháng 11 năm 2026 · theo VND'),
+      findsOneWidget,
+    );
     await disposeApp(tester, db);
   });
 }

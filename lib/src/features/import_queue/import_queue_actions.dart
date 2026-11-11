@@ -199,7 +199,9 @@ class ImportQueueActions {
     final accountId = await resolveAccount(item);
     final guard = BalanceGuard(_db, await _currency());
     return guard.check(
-      add: [(accountId: accountId, currency: item.currency, minor: -item.amount)],
+      add: [
+        (accountId: accountId, currency: item.currency, minor: -item.amount),
+      ],
     );
   }
 
@@ -207,7 +209,9 @@ class ImportQueueActions {
   /// Bù tiền, AC-165): xoá khoản, đưa mục về hàng đợi, quên số tham chiếu.
   Future<void> undoConfirm(ImportQueueItem item, int entryId) =>
       _db.transaction(() async {
-        await (_db.delete(_db.entries)..where((e) => e.id.equals(entryId))).go();
+        await (_db.delete(
+          _db.entries,
+        )..where((e) => e.id.equals(entryId))).go();
         await (_db.delete(_db.seenReferences)..where(
               (s) =>
                   s.bank.equalsValue(item.bank) &
