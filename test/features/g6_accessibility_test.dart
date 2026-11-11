@@ -1,4 +1,6 @@
+import 'package:drift/drift.dart' show Value;
 import 'package:flutter/material.dart';
+import 'package:flutter/semantics.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -8,8 +10,15 @@ import 'package:vigon/src/data/database.dart';
 import 'package:vigon/src/data/period.dart';
 import 'package:vigon/src/data/pin_service.dart';
 import 'package:vigon/src/data/settings_repository.dart';
+import 'package:vigon/src/features/budget_alert/budget_alert_providers.dart';
+import 'package:vigon/src/features/budget_alert/budget_alerts.dart';
+import 'package:vigon/src/features/lock/biometric.dart';
+import 'package:vigon/src/features/reminder/reminder_providers.dart';
+import 'package:vigon/src/features/reminder/reminder_scheduler.dart';
+import 'package:vigon/src/ui/settings_rows.dart';
 import 'package:vigon/src/providers.dart';
 
+import '../fake_biometric.dart';
 import '../helpers.dart';
 
 /// Các màn chính cần đạt accessibility (AC-37 tới AC-40).
@@ -46,11 +55,15 @@ Future<AppDatabase> _seed(
   return db;
 }
 
-Future<List<String>> _audit(WidgetTester tester, String where) async {
+Future<List<String>> _audit(
+  WidgetTester tester,
+  String where, {
+  bool labels = true,
+}) async {
   final problems = <String>[];
   for (final (name, guideline) in [
     ('vùng chạm', androidTapTargetGuideline),
-    ('nhãn', labeledTapTargetGuideline),
+    if (labels) ('nhãn', labeledTapTargetGuideline),
     ('tương phản', textContrastGuideline),
   ]) {
     final result = await guideline.evaluate(tester);
@@ -134,6 +147,101 @@ void main() {
     await disposeApp(tester, db);
   });
 
+  // F-37 / F-41: trạng thái "Sắp vượt" (màu cảnh báo), hàng sinh trắc ở Cài
+  // đặt, nút sinh trắc ở màn khoá, hộp giải thích Thông báo ngân sách.
+  for (final theme in [ThemeMode.light, ThemeMode.dark]) {
+    for (final scale in [1.0, 2.0]) {
+      testWidgets('Sắp vượt, sinh trắc, Thông báo ngân sách đạt accessibility '
+          '· ${theme.name} · cỡ chữ ${(scale * 100).round()}%', (tester) async {
+        tester.platformDispatcher.textScaleFactorTestValue = scale;
+        addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
+        final handle = tester.ensureSemantics();
+        final db = await _seed(tester, theme: theme);
+        await tester.runAsync(
+          () => (db.update(db.categories)..where((c) => c.id.equals(1))).write(
+            const CategoriesCompanion(budget: Value(1000000)),
+          ),
+        );
+        final secrets = MemorySecretStore();
+        final pin = PinService(secrets);
+        await pin.setPin('2580');
+        await BiometricSettings(secrets, pin).setEnabled(true);
+        final biometric = FakeBiometricAuth(result: false);
+        await pumpApp(
+          tester,
+          db: db,
+          secrets: secrets,
+          overrides: [
+            biometricAuthProvider.overrideWithValue(biometric),
+            reminderSchedulerProvider.overrideWithValue(_NoopScheduler()),
+            budgetNotifierProvider.overrideWithValue(_NoopBudgetNotifier()),
+          ],
+        );
+        final problems = <String>[];
+        // Màn khoá: sinh trắc bị huỷ, còn PIN + nút thử lại.
+        expect(find.text('Mở bằng sinh trắc học'), findsOneWidget);
+        problems.addAll(await _audit(tester, 'màn khoá + sinh trắc'));
+        for (final d in '2580'.split('')) {
+          await tester.tap(find.text(d));
+          await tester.pump();
+        }
+        await settle(tester);
+        await insertEntry(
+          tester,
+          db,
+          type: EntryType.expense,
+          amount: 900000,
+          categoryId: 1,
+        );
+        expect(find.textContaining('Đã dùng 90%'), findsWidgets);
+        problems.addAll(await _audit(tester, '/ Sắp vượt'));
+        final context = tester.element(find.byType(Scaffold).first);
+        GoRouter.of(context).go('/entries');
+        await settle(tester);
+        expect(find.textContaining('Đã dùng 90%'), findsWidgets);
+        problems.addAll(await _audit(tester, '/entries Sắp vượt'));
+        GoRouter.of(context).go('/settings');
+        await settle(tester);
+        for (final row in ['Thông báo ngân sách', 'Mở khoá bằng vân tay']) {
+          await tester.scrollUntilVisible(
+            find.text(row),
+            200,
+            scrollable: find.byType(Scrollable).first,
+          );
+          await settle(tester);
+          // Nhãn: chỉ kiểm hàng mới; hàng "Tháng bắt đầu từ ngày" có sẵn thiếu
+          // nhãn ở nút chạm (lỗi cũ, ngoài phạm vi F-37/F-41) lọt vào khung.
+          problems.addAll(
+            await _audit(tester, '/settings · $row', labels: false),
+          );
+          final node = tester.getSemantics(find.text(row));
+          final data = node.getSemanticsData();
+          if (!data.label.contains(row) ||
+              !data.hasAction(SemanticsAction.tap)) {
+            problems.add('/settings · $row: thiếu nhãn hoặc không chạm được');
+          }
+        }
+        await tester.scrollUntilVisible(
+          find.text('Thông báo ngân sách'),
+          -200,
+          scrollable: find.byType(Scrollable).first,
+        );
+        await tester.ensureVisible(
+          find.widgetWithText(SettingsSwitchRow, 'Thông báo ngân sách'),
+        );
+        await settle(tester);
+        await tester.tap(find.text('Thông báo ngân sách'));
+        await settle(tester);
+        expect(find.text('Bật thông báo ngân sách?'), findsOneWidget);
+        problems.addAll(await _audit(tester, 'hộp Bật thông báo ngân sách'));
+        expect(tester.takeException(), isNull);
+        expect(problems, isEmpty, reason: problems.join('\n'));
+        handle.dispose();
+        await disposeApp(tester, db);
+      });
+    }
+  }
+
   testWidgets('nhóm Giới thiệu trong Cài đặt có phiên bản, chính sách, điều '
       'khoản, giấy phép, góp ý, báo lỗi (AC-41)', (tester) async {
     final db = await pumpApp(tester);
@@ -202,4 +310,35 @@ void main() {
     expect(after.start.weekday, DateTime.sunday);
     await disposeApp(tester, db);
   });
+}
+
+class _NoopScheduler implements ReminderScheduler {
+  @override
+  Future<void> initialize(void Function(String? payload) onTap) async {}
+
+  @override
+  Future<String?> launchPayload() async => null;
+
+  @override
+  Future<bool> requestPermission() async => true;
+
+  @override
+  Future<void> schedule({
+    required TimeOfDay time,
+    required String title,
+    required String body,
+    required String channelName,
+    required String channelDescription,
+  }) async {}
+
+  @override
+  Future<void> cancel() async {}
+
+  @override
+  Future<void> openSystemSettings() async {}
+}
+
+class _NoopBudgetNotifier implements BudgetNotifier {
+  @override
+  Future<void> show(BudgetAlert alert, BudgetAlertContent content) async {}
 }

@@ -700,5 +700,27 @@
   "exactAlarmOff": "Chưa bật · có thể trễ vài phút",
   "exactAlarmExplainTitle": "Báo đúng giờ?",
   "exactAlarmExplainBody": "Để thông báo đến đúng phút, Android cần bạn cho phép \"Chuông báo và lời nhắc\" (Báo thức và lời nhắc) cho Ví Gọn. Không bật thì thông báo vẫn đến nhưng có thể trễ vài phút.",
-  "exactAlarmOpen": "Mở cài đặt"
+  "exactAlarmOpen": "Mở cài đặt",
+
+  "budgetAlertUsed": "Đã dùng {percent}%",
+  "budgetAlertThreshold": "Ngưỡng \"Sắp vượt\"",
+  "budgetAlertPercent": "{percent}%",
+  "budgetAlertSwitch": "Thông báo ngân sách",
+  "budgetAlertSwitchNote": "Một lần khi chạm ngưỡng, một lần khi đủ 100%; chỉ có phần trăm",
+  "budgetAlertExplainTitle": "Bật thông báo ngân sách?",
+  "budgetAlertExplainBody": "Ví Gọn sẽ gửi một thông báo khi chi tiêu tháng này chạm ngưỡng bạn chọn và một thông báo khi đạt 100% hạn mức, mỗi ngân sách tối đa một lần mỗi tháng. Thông báo chỉ có phần trăm, không bao giờ có số tiền.",
+  "budgetAlertChannelName": "Cảnh báo ngân sách",
+  "budgetAlertChannelDescription": "Thông báo khi chi tiêu sắp hoặc đã vượt ngân sách",
+  "budgetAlertMonthly": "Ngân sách tháng {month}: đã dùng {percent}%",
+  "budgetAlertCategory": "{category}: đã dùng {percent}% hạn mức tháng {month}",
+  "biometricFingerprint": "Mở khoá bằng vân tay",
+  "biometricFaceId": "Mở khoá bằng Face ID",
+  "biometricTouchId": "Mở khoá bằng Touch ID",
+  "biometricNote": "Mã PIN vẫn luôn dùng được. Ví Gọn không lưu dữ liệu sinh trắc.",
+  "biometricUnavailable": "Máy không có hoặc chưa đăng ký sinh trắc học mạnh",
+  "biometricReason": "Mở khoá Ví Gọn",
+  "biometricEnableReason": "Xác nhận để bật mở khoá bằng sinh trắc học",
+  "biometricEnableFailed": "Chưa xác thực được, mở khoá bằng sinh trắc vẫn tắt",
+  "biometricUnlockButton": "Mở bằng sinh trắc học",
+  "biometricCancel": "Dùng mã PIN"
 }

@@ -1,0 +1,2 @@
+/* F-41 (AC-125): purpose string shown by iOS the first time Vigon asks for Face ID. */
+"NSFaceIDUsageDescription" = "Vigon uses Face ID only to unlock the app instead of typing your PIN. Your face data stays with iOS; Vigon never sees or stores it.";

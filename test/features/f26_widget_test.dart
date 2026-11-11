@@ -509,6 +509,8 @@ void main() {
           'android.permission.POST_NOTIFICATIONS',
           'android.permission.RECEIVE_BOOT_COMPLETED',
           'android.permission.SCHEDULE_EXACT_ALARM', // D-045
+          // F-41: mở khoá bằng vân tay (AC-125), không phải của widget.
+          'android.permission.USE_BIOMETRIC',
         }),
         isEmpty,
       );

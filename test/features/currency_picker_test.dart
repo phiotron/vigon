@@ -12,6 +12,12 @@ Future<void> openPicker(WidgetTester tester) async {
   await tester.tap(find.byTooltip('Cài đặt'));
   await settle(tester);
   // Cài đặt dạng thẻ (SCR-12) cao hơn: cuộn hàng vào màn trước khi chạm.
+  await tester.scrollUntilVisible(
+    find.text('Tiền tệ chính'),
+    200,
+    scrollable: find.byType(Scrollable).first,
+  );
+  await settle(tester);
   await tester.ensureVisible(find.text('Tiền tệ chính'));
   await tester.pumpAndSettle();
   await tester.tap(find.text('Tiền tệ chính'));

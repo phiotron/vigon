@@ -5,6 +5,7 @@ import 'package:crypto/crypto.dart';
 import 'database.dart';
 import 'import_repositories.dart' show entrySourceForBank;
 import 'seed.dart';
+import '../features/budget_alert/budget_alert_settings.dart';
 import 'settings_repository.dart';
 
 const backupFormat = 'vigon-backup';
@@ -36,6 +37,10 @@ const deviceOnlySettingKeys = {
   SettingsRepository.onboardingPendingKey,
   SettingsRepository.deadlineReminderOffKey,
   SettingsRepository.deadlinePermissionAskedKey,
+  // F-37: công tắc và lịch sử mốc đã báo của Thông báo ngân sách (theo máy;
+  // ngưỡng thì đi theo file).
+  BudgetAlertSettings.enabledKey,
+  BudgetAlertSettings.stateKey,
 };
 
 /// Mã cài đặt đi kèm PIN (iOS-02) gắn với máy, không phải dữ liệu: không xuất,

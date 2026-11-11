@@ -21,7 +21,9 @@ import '../../data/money_sum.dart';
 import '../debts/debts_providers.dart';
 import '../savings/savings_providers.dart';
 import '../import_queue/import_queue_providers.dart';
+import '../budget_alert/budget_alert_rows.dart';
 import '../lock/app_lock.dart';
+import '../lock/biometric_switch.dart';
 import 'appearance_sheet.dart';
 import 'about_section.dart';
 import 'auto_backup_section.dart';
@@ -88,7 +90,9 @@ class SettingsScreen extends ConsumerWidget {
         owed.add(v.debt.currency, v.remaining());
       }
     }
-    final owedTotal = service == null ? null : owed.convertTo(service, currency);
+    final owedTotal = service == null
+        ? null
+        : owed.convertTo(service, currency);
 
     const cardGap = SizedBox(height: SettingsCard.gap);
 
@@ -157,6 +161,9 @@ class SettingsScreen extends ConsumerWidget {
                     : money(context, currency, budget),
                 onTap: () => showBudgetDialog(context, ref),
               ),
+              // F-37: ngưỡng "Sắp vượt" + công tắc Thông báo ngân sách.
+              const BudgetThresholdRow(),
+              const BudgetAlertSwitchRow(),
               SettingsNavRow(
                 icon: Symbols.event_repeat_rounded,
                 title: l.recurring,
@@ -262,6 +269,8 @@ class SettingsScreen extends ConsumerWidget {
                 onChanged: (on) =>
                     on ? setupPin(context, ref) : disablePin(context, ref),
               ),
+              // F-41: chỉ hiện khi đã bật PIN (AC-119).
+              if (pinEnabled) const BiometricSwitchRow(),
               if (supportsSecureWindow)
                 SettingsSwitchRow(
                   icon: Symbols.visibility_off_rounded,

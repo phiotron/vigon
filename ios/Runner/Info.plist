@@ -103,5 +103,8 @@
 			</dict>
 		</dict>
 	</array>
+	<!-- F-41 (AC-125): mở khoá bằng Face ID; bản dịch ở en.lproj/vi.lproj InfoPlist.strings. -->
+	<key>NSFaceIDUsageDescription</key>
+	<string>Vigon uses Face ID only to unlock the app instead of typing your PIN. Your face data stays with iOS; Vigon never sees or stores it.</string>
 </dict>
 </plist>

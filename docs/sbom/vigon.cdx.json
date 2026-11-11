@@ -1,10 +1,10 @@
 {
  "bomFormat": "CycloneDX",
  "specVersion": "1.5",
- "serialNumber": "urn:uuid:a386f2d1-bf05-4e63-b245-773a05027d00",
+ "serialNumber": "urn:uuid:57282bc4-06c7-4b74-9f1b-a8cf203091a1",
  "version": 1,
  "metadata": {
-  "timestamp": "2026-11-06T07:11:42Z",
+  "timestamp": "2026-11-11T02:45:46Z",
   "tools": [
    {
     "name": "tool/make_sbom.py"
@@ -608,6 +608,20 @@
   },
   {
    "type": "library",
+   "bom-ref": "pkg:pub/flutter_plugin_android_lifecycle@2.0.35",
+   "name": "flutter_plugin_android_lifecycle",
+   "version": "2.0.35",
+   "purl": "pkg:pub/flutter_plugin_android_lifecycle@2.0.35",
+   "licenses": [
+    {
+     "license": {
+      "id": "BSD-3-Clause"
+     }
+    }
+   ]
+  },
+  {
+   "type": "library",
    "bom-ref": "pkg:pub/flutter_riverpod@3.4.3",
    "name": "flutter_riverpod",
    "version": "3.4.3",
@@ -934,6 +948,76 @@
    "name": "listen",
    "version": "1.0.1",
    "purl": "pkg:pub/listen@1.0.1",
+   "licenses": [
+    {
+     "license": {
+      "id": "BSD-3-Clause"
+     }
+    }
+   ]
+  },
+  {
+   "type": "library",
+   "bom-ref": "pkg:pub/local_auth@3.0.2",
+   "name": "local_auth",
+   "version": "3.0.2",
+   "purl": "pkg:pub/local_auth@3.0.2",
+   "licenses": [
+    {
+     "license": {
+      "id": "BSD-3-Clause"
+     }
+    }
+   ]
+  },
+  {
+   "type": "library",
+   "bom-ref": "pkg:pub/local_auth_android@2.3.0",
+   "name": "local_auth_android",
+   "version": "2.3.0",
+   "purl": "pkg:pub/local_auth_android@2.3.0",
+   "licenses": [
+    {
+     "license": {
+      "id": "BSD-3-Clause"
+     }
+    }
+   ]
+  },
+  {
+   "type": "library",
+   "bom-ref": "pkg:pub/local_auth_darwin@2.0.5",
+   "name": "local_auth_darwin",
+   "version": "2.0.5",
+   "purl": "pkg:pub/local_auth_darwin@2.0.5",
+   "licenses": [
+    {
+     "license": {
+      "id": "BSD-3-Clause"
+     }
+    }
+   ]
+  },
+  {
+   "type": "library",
+   "bom-ref": "pkg:pub/local_auth_platform_interface@1.1.0",
+   "name": "local_auth_platform_interface",
+   "version": "1.1.0",
+   "purl": "pkg:pub/local_auth_platform_interface@1.1.0",
+   "licenses": [
+    {
+     "license": {
+      "id": "BSD-3-Clause"
+     }
+    }
+   ]
+  },
+  {
+   "type": "library",
+   "bom-ref": "pkg:pub/local_auth_windows@2.0.2",
+   "name": "local_auth_windows",
+   "version": "2.0.2",
+   "purl": "pkg:pub/local_auth_windows@2.0.2",
    "licenses": [
     {
      "license": {
@@ -2124,6 +2208,12 @@
    ]
   },
   {
+   "ref": "pkg:pub/flutter_plugin_android_lifecycle@2.0.35",
+   "dependsOn": [
+    "pkg:pub/flutter@0.0.0"
+   ]
+  },
+  {
    "ref": "pkg:pub/flutter_riverpod@3.4.3",
    "dependsOn": [
     "pkg:pub/collection@1.19.1",
@@ -2343,6 +2433,50 @@
   {
    "ref": "pkg:pub/listen@1.0.1",
    "dependsOn": [
+    "pkg:pub/meta@1.18.3"
+   ]
+  },
+  {
+   "ref": "pkg:pub/local_auth@3.0.2",
+   "dependsOn": [
+    "pkg:pub/flutter@0.0.0",
+    "pkg:pub/local_auth_android@2.3.0",
+    "pkg:pub/local_auth_darwin@2.0.5",
+    "pkg:pub/local_auth_platform_interface@1.1.0",
+    "pkg:pub/local_auth_windows@2.0.2"
+   ]
+  },
+  {
+   "ref": "pkg:pub/local_auth_android@2.3.0",
+   "dependsOn": [
+    "pkg:pub/flutter@0.0.0",
+    "pkg:pub/flutter_plugin_android_lifecycle@2.0.35",
+    "pkg:pub/intl@0.20.3",
+    "pkg:pub/local_auth_platform_interface@1.1.0",
+    "pkg:pub/meta@1.18.3"
+   ]
+  },
+  {
+   "ref": "pkg:pub/local_auth_darwin@2.0.5",
+   "dependsOn": [
+    "pkg:pub/flutter@0.0.0",
+    "pkg:pub/intl@0.20.3",
+    "pkg:pub/local_auth_platform_interface@1.1.0",
+    "pkg:pub/meta@1.18.3"
+   ]
+  },
+  {
+   "ref": "pkg:pub/local_auth_platform_interface@1.1.0",
+   "dependsOn": [
+    "pkg:pub/flutter@0.0.0",
+    "pkg:pub/plugin_platform_interface@2.1.8"
+   ]
+  },
+  {
+   "ref": "pkg:pub/local_auth_windows@2.0.2",
+   "dependsOn": [
+    "pkg:pub/flutter@0.0.0",
+    "pkg:pub/local_auth_platform_interface@1.1.0",
     "pkg:pub/meta@1.18.3"
    ]
   },

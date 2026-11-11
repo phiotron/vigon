@@ -3,11 +3,12 @@ package com.phiotron.vigon
 import android.content.Intent
 import android.os.Bundle
 import android.view.WindowManager
-import io.flutter.embedding.android.FlutterActivity
+import io.flutter.embedding.android.FlutterFragmentActivity
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.plugin.common.MethodChannel
 
-class MainActivity : FlutterActivity() {
+// F-41: local_auth cần FragmentActivity để hiện hộp BiometricPrompt.
+class MainActivity : FlutterFragmentActivity() {
     private var backupFolder: BackupFolderChannel? = null
     private var deepLink: DeepLinkChannel? = null
     private var restoredState = false

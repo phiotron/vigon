@@ -20,9 +20,16 @@ void main() {
     // Cài đặt: hai hàng tiền tệ nằm cùng nhóm, hàng Tỷ giá có tóm tắt.
     await tester.tap(find.byTooltip('Cài đặt'));
     await settle(tester);
-    expect(find.text('Tiền tệ & kỳ'), findsOneWidget);
-    expect(find.text('Tiền tệ chính'), findsOneWidget);
-    expect(find.text('Tỷ giá'), findsOneWidget);
+    // Nhóm Kế hoạch dài thêm hai hàng F-37: cuộn tới từng dòng của nhóm.
+    for (final text in ['Tiền tệ & kỳ', 'Tiền tệ chính', 'Tỷ giá']) {
+      await tester.scrollUntilVisible(
+        find.text(text),
+        100,
+        scrollable: find.byType(Scrollable).first,
+      );
+      await settle(tester);
+      expect(find.text(text), findsOneWidget);
+    }
 
     // Màn Tỷ giá.
     await tester.ensureVisible(find.text('Tỷ giá'));

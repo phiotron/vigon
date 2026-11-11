@@ -8,6 +8,7 @@ import '../l10n/app_localizations.dart';
 import 'data/database.dart';
 import 'features/accounts/accounts_screen.dart';
 import 'features/accounts/transfer_screen.dart';
+import 'features/budget_alert/budget_alert_providers.dart';
 import 'features/categories/categories_screen.dart';
 import 'features/debts/debts_screen.dart';
 import 'features/entries/entries_screen.dart';
@@ -187,10 +188,12 @@ class VigonApp extends ConsumerWidget {
     ref.watch(widgetSyncProvider);
     ref.watch(reminderSyncProvider);
     ref.watch(deadlineSyncProvider);
+    ref.watch(budgetAlertSyncProvider);
     final themeMode = ref.watch(themeModeProvider).value ?? ThemeMode.system;
     final localeCode = ref.watch(localeCodeProvider).value;
     final lock = ref.watch(lockProvider);
     final appRouter = router ?? _router;
+    listenBudgetAlertTaps(ref, appRouter);
     final gate = router == null ? _onboardingGate : onboardingGate;
     // Cổng theo cờ cài mới; đổi sau khung hình (router làm mới không được chen
     // vào lúc build).

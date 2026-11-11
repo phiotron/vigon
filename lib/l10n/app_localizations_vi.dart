@@ -2143,4 +2143,82 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get exactAlarmOpen => 'Mở cài đặt';
+
+  @override
+  String budgetAlertUsed(int percent) {
+    return 'Đã dùng $percent%';
+  }
+
+  @override
+  String get budgetAlertThreshold => 'Ngưỡng \"Sắp vượt\"';
+
+  @override
+  String budgetAlertPercent(int percent) {
+    return '$percent%';
+  }
+
+  @override
+  String get budgetAlertSwitch => 'Thông báo ngân sách';
+
+  @override
+  String get budgetAlertSwitchNote =>
+      'Một lần khi chạm ngưỡng, một lần khi đủ 100%; chỉ có phần trăm';
+
+  @override
+  String get budgetAlertExplainTitle => 'Bật thông báo ngân sách?';
+
+  @override
+  String get budgetAlertExplainBody =>
+      'Ví Gọn sẽ gửi một thông báo khi chi tiêu tháng này chạm ngưỡng bạn chọn và một thông báo khi đạt 100% hạn mức, mỗi ngân sách tối đa một lần mỗi tháng. Thông báo chỉ có phần trăm, không bao giờ có số tiền.';
+
+  @override
+  String get budgetAlertChannelName => 'Cảnh báo ngân sách';
+
+  @override
+  String get budgetAlertChannelDescription =>
+      'Thông báo khi chi tiêu sắp hoặc đã vượt ngân sách';
+
+  @override
+  String budgetAlertMonthly(String month, int percent) {
+    return 'Ngân sách tháng $month: đã dùng $percent%';
+  }
+
+  @override
+  String budgetAlertCategory(String category, int percent, String month) {
+    return '$category: đã dùng $percent% hạn mức tháng $month';
+  }
+
+  @override
+  String get biometricFingerprint => 'Mở khoá bằng vân tay';
+
+  @override
+  String get biometricFaceId => 'Mở khoá bằng Face ID';
+
+  @override
+  String get biometricTouchId => 'Mở khoá bằng Touch ID';
+
+  @override
+  String get biometricNote =>
+      'Mã PIN vẫn luôn dùng được. Ví Gọn không lưu dữ liệu sinh trắc.';
+
+  @override
+  String get biometricUnavailable =>
+      'Máy không có hoặc chưa đăng ký sinh trắc học mạnh';
+
+  @override
+  String get biometricReason => 'Mở khoá Ví Gọn';
+
+  @override
+  String get biometricEnableReason =>
+      'Xác nhận để bật mở khoá bằng sinh trắc học';
+
+  @override
+  String get biometricEnableFailed =>
+      'Chưa xác thực được, mở khoá bằng sinh trắc vẫn tắt';
+
+  @override
+  String get biometricUnlockButton => 'Mở bằng sinh trắc học';
+
+  @override
+  String get biometricCancel => 'Dùng mã PIN';
 }
