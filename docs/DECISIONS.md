@@ -4,6 +4,39 @@ Mỗi quyết định một mục, mới nhất ở trên cùng.
 
 > D-030..D-035: người dùng chốt ngày 2026-11-06 — trước hết khi duyệt kế hoạch `notes/2026-11-06-ke-hoach-mo-rong.md` (sau 5 vòng hỏi đáp ở phiên điều phối), rồi **thu hẹp** cùng ngày sau khi đọc bản nháp đầu của SPEC 3d (trả lời Q-01..Q-09). Các mục dưới đây là bản sau khi thu hẹp; chỗ khác kế hoạch thì theo đây. Đặc tả tương ứng là SPEC mục 3d (F-27..F-42) — **chưa duyệt**; chưa có dòng "Đã duyệt 2.0" thì chưa viết code.
 
+## D-049 · Khoản nợ vào sổ thu chi qua tài khoản; lãi đơn theo ngày trên gốc còn lại (năm 365 ngày) · 2026-11-11
+- Bối cảnh: F-34/AC-106 coi khoản nợ là sổ ghi nhớ, không đụng tài khoản. Người dùng muốn cho vay/đi vay và **từng lần trả** đi qua tài khoản thật (ví dụ cho An vay 5 triệu từ Techcombank thì Techcombank phải giảm), và nhiều khoản vay có **lãi suất %/tháng hoặc %/năm**. Người dùng bảo "xem ngân hàng làm thế nào thì làm như vậy".
+- Quyết định:
+  1. Khoản nợ mới chọn **tài khoản**: Cho vay = tiền ra; Đi vay = tiền vào; mỗi lần Thu nợ / Trả nợ = một khoản trên tài khoản người dùng chọn. Các khoản này (**Debt movement**) **đổi số dư nhưng không tính thu/chi**, không vào biểu đồ, ngân sách (giống chuyển tiền); hiện trong Các khoản có nhãn "Cho vay · An", chạm mở Chi tiết khoản nợ. Có lựa chọn "Không qua tài khoản" cho nợ ghi lại từ trước. Khoản nợ cũ (trước D-049) giữ là ghi nhớ; lần trả mới chọn tài khoản.
+  2. **Lãi suất** tuỳ chọn, nhập theo %/tháng hoặc %/năm (tháng × 12 = năm). Cách tính theo **Thông tư 14/2017/TT-NHNN**: lãi = Σ (gốc còn lại cuối ngày × lãi suất năm ÷ 365) qua từng ngày — **lãi đơn trên dư nợ gốc thực tế, năm 365 ngày** (kể cả năm nhuận). Có **ngày bắt đầu tính lãi** (mặc định ngày vay) và **đổi lãi suất giữa chừng** (áp từ ngày chọn). Không làm lãi kép, lãi chậm trả.
+  3. **Chia lần trả:** mặc định trả hết **lãi tới ngày trả** trước, phần dư trừ gốc; người dùng sửa được. Phần lãi là **khoản chi "Lãi vay"** (đi vay) hoặc **khoản thu "Tiền lãi"** (cho vay) và **có tính vào thu/chi**; phần gốc chỉ đổi số dư.
+  4. "Còn lại" = **gốc còn lại + lãi tới hôm nay**; Đã xong khi cả hai bằng 0. Nhắc trước hạn (D-044) ghi tổng phải trả ước tính tới hạn.
+  5. Xoá khoản nợ **giữ các khoản trong sổ** (nhãn "Khoản nợ đã xoá", vẫn không tính thu/chi, xoá được từng khoản).
+- Lý do / phương án đã loại: Tính cho vay/đi vay là thu/chi (loại: cho vay 5 triệu thành "chi 5 triệu", báo cáo lệch). Công tắc theo từng khoản (loại: phức tạp). Lãi trên số vay ban đầu (loại: cao hơn thực tế khi đã trả bớt; ngân hàng không làm vậy). Lãi kép nhập gốc (loại: không phải cách ngân hàng VN tính cho vay thường). Thu gốc trước lãi: TT 39/2016/TT-NHNN (sửa bởi TT 06/2023) chỉ quy định thứ tự này cho nợ **quá hạn**; khi trả đúng hạn hai bên tự thoả thuận, thực tế trả góp lấy lãi trước — app chọn lãi trước, ghi chú ở đây.
+- Hệ quả cần nhớ: Thay AC-106 (SPEC F-52). Schema v8: liên kết khoản ↔ khoản nợ, tài khoản của khoản nợ/lần trả, phần lãi của lần trả, lãi suất + lịch đổi lãi suất. Hai danh mục mặc định mới: chi "Lãi vay", thu "Tiền lãi". Tổng quan có thẻ Nợ riêng; Tổng số dư chỉ là tiền trong tài khoản. Cho vay/trả nợ cũng chịu D-046.
+
+## D-048 · Ô số tiền khi góp/rút/trả/vay mặc định Tiền tệ chính, có chip đổi · 2026-11-11
+- Bối cảnh: Bảng Góp/Rút của mục tiêu tiết kiệm chỉ nhận tiền tệ ví. Người dùng có ví "du lịch Đà Lạt" USD, Tiền tệ chính VND: gõ 500000 nghĩ là ₫ thì app hiểu $500.000 → báo "chỉ cần góp thêm…" → không lưu được. Đồng thời chip tiền tệ màn Nhập khoản đổi tệ khác số lẻ làm nhảy số (50 $ → 5.000 ₫).
+- Quyết định: Mọi ô số tiền chuyển tiền giữa tài khoản và mục (Góp/Rút tiết kiệm, Cho vay/Đi vay, Lần trả) mặc định **Tiền tệ chính** + **chip đổi** sang tiền tệ khác; dưới ô ghi rõ hai phía ("Vào ví: 19,23 $ · Trừ từ Tiền mặt: 500.000 ₫"); giới hạn (còn thiếu / số dư ví / còn lại) và nút "Điền đủ" quy theo tiền tệ đang gõ. Đổi chip giữ nguyên con số đã gõ, chỉ cắt bớt số lẻ thừa. SPEC F-51.
+- Lý do / phương án đã loại: Theo tiền tệ tài khoản nguồn (loại: đổi tài khoản là đổi đơn vị, dễ nhầm). Giữ tiền tệ ví chỉ ghi rõ hơn (loại: người dùng nghĩ theo Tiền tệ chính).
+- Hệ quả cần nhớ: Giới hạn so bằng số gốc của ví/khoản nợ sau khi quy đổi số đã gõ; sai lệch làm tròn ở mức đơn vị nhỏ nhất thì "Điền đủ" tính ngược từ số gốc để không vượt.
+
+## D-047 · Tài khoản mặc định khi ghi = tài khoản đang lọc · 2026-11-11
+- Bối cảnh: Đang lọc màn chính theo tài khoản Trip mà bấm Thu/Chi thì khoản vẫn vào tài khoản đầu danh sách (`_defaultAccountId` bỏ qua bộ lọc).
+- Quyết định: Đang lọc một tài khoản → Thu, Chi, icon danh mục trên vòng, ô danh mục khác và "Từ" của Chuyển tiền lấy tài khoản đó. "Tất cả tài khoản" → tài khoản hiện đầu danh sách (như cũ). Widget và thông báo Nhắc không đổi (không có bộ lọc). SPEC F-50.
+- Lý do / phương án đã loại: Nhớ tài khoản dùng lần gần nhất; thêm cài đặt "Tài khoản mặc định" (loại: người dùng chọn giữ đầu danh sách).
+- Hệ quả cần nhớ: Thứ tự tài khoản quyết định mặc định khi không lọc.
+
+## D-046 · Có thu mới có chi: chặn mọi tiền ra làm số dư âm, trừ tài khoản cho phép âm · 2026-11-11
+- Bối cảnh: Tài khoản không còn tiền vẫn ghi chi được. Người dùng: "có thu mới có chi".
+- Quyết định:
+  1. Mọi tiền ra làm **số dư hiện tại** của tài khoản (cộng chính xác theo tiền tệ tài khoản, AC-148) xuống dưới 0 đều **bị chặn**: khoản chi, chuyển tiền đi, góp tiết kiệm, cho vay, trả nợ (gốc + lãi), sửa khoản làm tăng tiền ra hoặc đổi sang tài khoản thiếu, xoá/sửa khoản thu hay chuyển tiền vào làm âm. Thông báo nói số còn lại ("Trip chỉ còn 500.000 ₫").
+  2. Mỗi tài khoản có công tắc **"Cho phép số dư âm"** (mặc định tắt; dùng cho thẻ tín dụng/thấu chi). Số dư ban đầu chỉ âm được khi công tắc bật. Nâng cấp: tài khoản **đang âm** tự bật công tắc và báo một lần.
+  3. **Email MB** (tiền đã thật sự ra khỏi ngân hàng) thiếu tiền: mục ở lại hàng đợi; khi xác nhận hiện bảng **"Bù tiền"** ("MB …1234 thiếu X") với 3 cách: ghi khoản thu vào MB · chuyển tiền từ tài khoản khác · sửa số dư ban đầu; bù xong tự xác nhận mục.
+  4. **Khoản định kỳ** tới hạn mà thiếu tiền: **bỏ luôn lần đó** (không sinh bù).
+- Lý do / phương án đã loại: Chỉ cảnh báo (loại: không thực sự bắt "có thu mới có chi"). Chặn mọi tài khoản không ngoại lệ (loại: thẻ tín dụng không ghi được). Email/định kỳ chỉ cảnh báo (người dùng chọn chặn tuyệt đối). Giữ lần định kỳ chờ để ghi sau (người dùng chọn bỏ).
+- Hệ quả cần nhớ: Chỉ so với số dư **hiện tại** (mọi thời gian), không xét số dư tại ngày của khoản. Bên nhận của chuyển tiền không bao giờ bị chặn. Schema v8 có `accounts.allow_negative`. SPEC F-49.
+
 ## D-044 · Nhắc trước hạn chung cho tiết kiệm và khoản nợ, có số tiền · 2026-11-10
 - Bối cảnh: SPEC 3d (AC-105) cố ý không nhắc hạn khoản nợ. Người dùng muốn cả mục tiêu tiết kiệm lẫn khoản nợ được nhắc trước hạn, mặc định 7 ngày, tự chỉnh được.
 - Quyết định: **Một cài đặt chung** "Nhắc trước hạn" (bật mặc định, 1–30 ngày, mặc định 7, giờ mặc định 09:00) cho mọi mục có hạn chưa xong; mỗi mục báo **N ngày trước + đúng ngày hạn**; nội dung **có số tiền còn lại kể cả khi bật PIN** (người dùng chọn). Lịch xếp lại toàn bộ khi mở app/quay lại/dữ liệu đổi; id thông báo ổn định theo (loại, id, mốc); kênh riêng "Nhắc hạn". SPEC F-48.

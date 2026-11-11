@@ -1,35 +1,35 @@
-# Vigon (Ví Gọn) — Product brief for Hi‑Fi UI design (v4, whole app)
+# Vigon (Ví Gọn) — Product brief for Hi‑Fi UI design (v5, whole app)
 
 > **What this file is for:** the brief to send to **Claude Design** to produce Hi‑Fi, UX‑optimised mockups of the
 > **whole** mobile app **Vigon** (Vietnamese name **Ví Gọn**, "tidy wallet") on **Android + iOS**. It describes *what*
 > every screen must do and *why*; *how it looks* is Claude Design's proposal, within the limits in §2 and §11.
 >
-> **Why v4:** v3 (2026‑11‑06) only described the 2.0 delta. Since then the app changed a lot (multi‑currency with a
-> *main currency*, rates screen, onboarding, weekday repeats, regrouped Settings, inline About, email import live,
-> savings wallets, deadline reminders…). v4 **replaces v3 completely** and describes the app **as it is now + what is
-> still to be built**, so one brief covers everything.
+> **Why v5:** the **v4 mockups (227 frames, tokens v3)** were delivered and applied on 2026‑11‑10. On 2026‑11‑11 the owner
+> tested the app and decided five things that change screens: **(1) you can't spend money an account doesn't have**
+> ("có thu mới có chi"), **(2) the account you filter by is the account you log into**, **(3) every money field for
+> add money / withdraw / lend / borrow / repay starts in the main currency with a currency chip**, **(4) debts go through
+> real accounts and can carry an interest rate (% per month or per year, bank‑style)**, **(5) the remaining 2.0 features
+> are built now**: Overview, Statistics, Calendar, Advanced filter, Budget warnings, Excel/PDF export, Fingerprint/Face ID.
+> v5 **replaces v4**: the whole app in one brief, every screen tagged with what to draw.
 >
-> **Starting point:** the approved **Hi‑Fi P1 + P2 design system** in `design/hifi/` (tokens v2, Be Vietnam Pro, Material
-> Symbols Rounded). **Upgrade, don't redesign:** keep token names, component vocabulary and the look of screens that
-> already have a frame; draw everything that has none.
+> **Starting point:** the approved **v4 design system** in `design/hifi/` (tokens v3, Be Vietnam Pro, Material Symbols
+> Rounded, 227 frames). **Upgrade, don't redesign:** keep token names, components and every ✅ frame; draw only 🟡 and 🆕.
 >
-> Internal code `A002-vigon` · Bundle ID `com.phiotron.vigon` · Brief **v4 · 2026‑11‑10** (replaces v3).
-> Glossary: `CONTEXT.md`. Behaviour spec: `docs/SPEC.md` (F‑01..F‑48, AC‑01..AC‑158). Decisions: `docs/DECISIONS.md`
-> (D‑001..D‑044). Copy below is the **real copy** from `lib/l10n/app_en.arb` / `app_vi.arb` (shown `EN | VI`); copy that
-> does not exist yet is marked **NEW:** — keep it, the developer adds it to both files.
+> Internal code `A002-vigon` · Bundle ID `com.phiotron.vigon` · Brief **v5 · 2026‑11‑11** (replaces v4).
+> Glossary: `CONTEXT.md`. Behaviour spec: `docs/SPEC.md` (F‑01..F‑52, AC‑01..AC‑177; new in **§3h**). Decisions:
+> `docs/DECISIONS.md` (D‑001..D‑049; this brief's changes are **D‑046..D‑049**; D‑045 = exact‑time reminders). Copy below is the **real copy** from `lib/l10n/app_en.arb` /
+> `app_vi.arb` (shown `EN | VI`); copy that does not exist yet is marked **NEW:** — keep it, the developer adds it to both files.
 
 **Status legend** (on every screen heading)
-- ✅ **Built + drawn** — implemented and an approved frame exists in `design/hifi/`. Refresh only.
-- 🔨 **Built, no frame** — implemented from shared components but never designed. **Draw it** (priority).
-- 🆕 **Not built** — specified, waiting for this mockup. **Draw it.**
-- 🟡 **Changed** — drawn before, but behaviour/layout changed since (see notes).
+- ✅ **Built + drawn (v4)** — an approved v4 frame exists. **Don't redraw** unless a state below is listed as new.
+- 🟡 **Changed** — drawn in v4, but behaviour/fields changed (see "Changed:" notes). **Redraw the listed frames/states.**
+- 🆕 **New** — no frame yet (most are being coded now with placeholder UI). **Draw it, all states.**
 - 🤖 Android only · 🍏 iOS note in §9.
 
 ### Scope of this brief
-This brief covers **only what is built in the app** (plus the changes decided on 2026‑11‑10: main currency first, currency chip,
-savings wallets, deadline reminders). **Not in this brief — will come in a later brief once the requirements are settled; don't
-draw them:** Overview, Statistics, Calendar, 5‑tab shell / More hub, advanced filter, budget "almost over" warnings + budget
-notifications, Excel / PDF export, fingerprint / Face ID.
+Everything in the app. **Draw:** every 🟡 and 🆕 item (summary in §11.1). The five changes above touch Home, New record,
+Records, Accounts, Transfer, Savings add/withdraw, the whole Debts area, the Queue, and add a **navigation proposal** for the
+new screens (§4.2).
 
 ---
 
@@ -38,7 +38,7 @@ notifications, Excel / PDF export, fingerprint / Face ID.
 2. Design constraints
 3. Business rules (complete)
 4. Information architecture and navigation
-5. Screens (A Home & logging · B Records · C Money structure · D Plans: budget, savings, debts · E Currency · F Email import · G Settings & data · H Security · I First run)
+5. Screens (A Home & logging · B Records · C Money structure · D Plans: budget, savings, debts · E Currency · F Email import · G Settings & data · H Security · I First run · **J Insights — new**)
 6. Surfaces outside the app
 7. Key flows
 8. Sample data
@@ -72,10 +72,14 @@ few seconds, adds everything up in **one main currency the user picks**, and kee
 1. **Log an expense right after paying** — Home ring, − / +, widget, reminder notification.
 2. **See where money went** — Home ring per period, Records list.
 3. **Find and fix records** — list, search, edit, delete with undo.
-4. **Plan** — monthly budget + category limits, **savings goals with their own wallet**, **debt memo**, deadline reminders.
-5. **Handle several currencies without thinking** — main currency on top, original underneath, exact sums, rates screen.
-6. **Clear the email import queue** — pick a category per MB Bank receipt.
-7. **Keep data safe and private** — backup (manual/auto, encrypted), PIN, hide in app switcher.
+4. **Plan** — monthly budget + category limits with **"almost over" warnings**, **savings goals with their own wallet**,
+   **debts that move real money (with interest)**, deadline reminders.
+5. **Understand the month** — **Overview** (balance, this month vs last, budget left, debts), **Statistics**, **Calendar**.
+6. **Handle several currencies without thinking** — main currency on top, original underneath, exact sums, rates screen; every
+   money field starts in the main currency.
+7. **Clear the email import queue** — pick a category per MB Bank receipt.
+8. **Keep data safe and private** — backup (manual/auto, encrypted), PIN + fingerprint/Face ID, hide in app switcher, Excel/PDF
+   export.
 
 ### 1.5 Design principles
 1. **Offline & private by design.** No sign‑in, no cloud, no analytics. Network is used only for the daily exchange‑rate
@@ -89,6 +93,10 @@ few seconds, adds everything up in **one main currency the user picks**, and kee
 6. **Never colour alone.** Income/expense carry a sign or word; Over / Due soon / Overdue / Done carry icon + text.
 7. **Forgiving.** Deletes have 5‑s Undo or a confirm; limits are explained ("Only $40.00 more needed").
 8. **Same app on both platforms**, except OS‑owned behaviour (§9).
+9. **No spending what you don't have (NEW, D‑046).** An account can't go below zero unless the user marks it "Allow negative
+   balance" (credit card). A blocked save must **say how much is there and offer the way out** (top up, pick another
+   account) — never a dead end.
+10. **The context you're in is the default (NEW, D‑047).** Filtered to *Trip* → new records, transfers, lending all start on *Trip*.
 
 ---
 
@@ -101,7 +109,7 @@ few seconds, adds everything up in **one main currency the user picks**, and kee
 
 ### 2.2 Theme and visual system (keep)
 - **Light / Dark / System** theme; every in‑app frame in both.
-- Tokens: `design/hifi/tokens/tokens.json` (v2) → `lib/src/ui/tokens.g.dart`. Primary `#2E7D6B`/`#8CD5BF`; income
+- Tokens: `design/hifi/tokens/tokens.json` (**v3**, already has `warning*` and `success*`) → `lib/src/ui/tokens.g.dart`. Primary `#2E7D6B`/`#8CD5BF`; income
   `#2E7D32`/`#81C784`; expense `#C62828`/`#EF9A9A`; error `#BA1A1A`/`#FFB4AB`; 16 category colours `cat-01…16`. Type **Be
   Vietnam Pro** with **tabular figures**, 12 type styles. Icons **Material Symbols Rounded**.
 - Keep token names; list every change (§11.4). Contrast ≥ 4.5:1 text / 3:1 large text & icons in both themes.
@@ -133,6 +141,12 @@ few seconds, adds everything up in **one main currency the user picks**, and kee
 | `debtsNote` | A reminder list only: it doesn't count in income, expenses or account balances. | Chỉ là sổ ghi nhớ: không tính vào thu, chi hay số dư tài khoản. | Debts header |
 | `onboardingCurrencyHint` | Totals, charts and budgets use this currency. Your Cash account starts in it; you can add accounts in other currencies later. | Tổng, biểu đồ và ngân sách tính theo tiền tệ này. Tài khoản Tiền mặt cũng dùng tiền tệ này; sau này vẫn thêm được tài khoản tiền tệ khác. | Onboarding |
 | NEW deadline notification | Debt with An: 2,000,000 ₫ left, due in 7 days | Khoản nợ với An: còn 2.000.000 ₫, đến hạn sau 7 ngày | Lock screen |
+| NEW insufficient funds | Trip only has 500,000 ₫ | Trip chỉ còn 500.000 ₫ | Under amount field |
+| NEW top‑up sheet title | MB Bank …1234 is 200,000 ₫ short | MB Bank …1234 thiếu 200.000 ₫ | Queue |
+| NEW allow negative | Allow negative balance — for credit cards and overdrafts | Cho phép số dư âm — dùng cho thẻ tín dụng, thấu chi | Account editor |
+| NEW debt remaining | 10,150,000 ₫ left · Principal 10,000,000 ₫ · Interest to date 150,000 ₫ | Còn 10.150.000 ₫ · Gốc 10.000.000 ₫ · Lãi tới hôm nay 150.000 ₫ | Debt detail |
+| NEW two sides | Into wallet: $19.23 · From Cash: 500,000 ₫ | Vào ví: 19,23 $ · Trừ từ Tiền mặt: 500.000 ₫ | Add money |
+| NEW budget notification | November budget: 80% used | Ngân sách tháng 11: đã dùng 80% | Lock screen |
 
 ### 2.5 Money, currency and date formatting — **read this, it changed (D‑042)**
 - **Every record has its own currency** (ISO 4217, ~156 codes, 0/2/3 decimals): accounts, records, transfers (sent and received
@@ -148,6 +162,10 @@ few seconds, adds everything up in **one main currency the user picks**, and kee
   - Example (main USD): *Beef pho* → **$3.85** / 100,000 ₫ · *Taxi* → **$12.00** (USD, one line) · *Paris hotel* → **$108.70** / €100.00.
   - The old design (original big, "≈ main" small) is **wrong now** — redraw every place that shows it.
 - **New records default to the main currency** with a **currency chip** to switch (S‑A3). Editing keeps the saved currency.
+- **NEW (D‑048): the same chip on every money field that moves money between an account and a goal/debt** — Add money,
+  Withdraw, Lend / Borrow amount, Payment. Default = main currency. When the two sides differ, show both under the field:
+  "Into wallet: $19.23 · From Cash: 500,000 ₫". Caps and "Fill to target" / "Pay the rest" follow the typed currency.
+  Switching the chip **keeps the typed number** (50 → 50), it never rescales it.
 - **Exact sums (D‑042):** totals add originals per currency to the smallest unit, then convert and round **once**. Switching the
   main currency back and forth never changes any amount. A total may differ by a cent from adding the rounded rows by hand —
   that's fine, don't design a "rounding" note for it.
@@ -175,9 +193,20 @@ few seconds, adds everything up in **one main currency the user picks**, and kee
    day, today's record is *not* saved and the first one is shown: "First: Fri 6/11") · Monthly · Yearly. Generated on open.
    Pause / resume; edit amount, note, frequency, category, account.
 9. **Delete** a record → 5‑s **Undo** bar.
+9a. **No spending what you don't have (NEW, D‑046, SPEC F‑49).** Any save that takes money **out** of an account — expense,
+    transfer out, add money to a goal (from the source), withdraw (from the wallet), lend, repay (principal + interest), editing
+    a record upward, deleting an income/transfer‑in — is blocked if the account's **current** balance would go below 0, unless
+    the account has **Allow negative balance** on. Message under the amount: "Trip only has 500,000 ₫". The receiving side of a
+    transfer is never blocked. **Repeating records** due on an account without enough money are **skipped** (not saved, not made
+    up later) and Home shows a dismissible bar "Skipped 1 repeating record — Trip didn't have enough". **Email queue items**
+    stay in the queue and confirming one opens the **Top‑up sheet** (rule 17).
+9b. **Default account (NEW, D‑047, F‑50).** Home filtered to an account → −, +, ring icons, ⋯ and Transfer "From" start on it;
+    "All accounts" → first visible account.
 
 **Money structure**
-10. **Accounts:** name, currency, starting balance (may be negative), visible/hidden. Hidden accounts still count in balances;
+10. **Accounts:** name, currency, starting balance (negative only with **Allow negative balance**, NEW switch, default off;
+    accounts already negative when the update lands get it switched on + a one‑time notice), visible/hidden; a negative
+    balance carries a **"Negative | Âm"** badge (icon + word). Hidden accounts still count in balances;
     delete only when unused; ≥ 1 visible account always. **Savings wallets** (rule 16) are normal accounts with a goal badge.
 11. **Categories:** expense/income, name, icon (31), colour (16), order, optional **category limit** (expense). Deleting moves
     its records to another category of the same type.
@@ -190,13 +219,33 @@ few seconds, adds everything up in **one main currency the user picks**, and kee
 13. **Monthly budget** (one total limit, current month by month start day, all accounts) → Home bar; **category limits** →
     small bars on Records category rows. Budget has its own **currency selector** (default main currency); shown main‑first.
     States: normal · **Over by X**.
-14. **Debts (memo only):** person, direction **I lent** / **I borrowed**, amount, currency (locked after first payment), date,
-    optional due date, note; **payments** (never more than what's left: "More than the remaining {remaining}"); remaining 0 →
-    **Settled** (collapsed section). Overdue → word + icon. Debts never touch accounts or totals. **Deleting a debt returns to
-    the Debts list** (bug fixed — it used to jump to Settings).
+13a. **Budget warnings (NEW, F‑37):** "Almost over" threshold default **80 %** (50–95 %, step 5, Settings → Plan); spent ≥
+    threshold and ≤ limit → **Almost over** (icon + "82% used", warning colour); > limit → **Over by X** (error). Applies to the
+    monthly budget (Home bar, Overview tile) and category limits (Records). Optional **Budget notifications** (off by default):
+    one local notification per threshold per budget per month, **percent only, never amounts**.
+14. **Debts go through accounts (CHANGED, D‑049, SPEC F‑52):** person, direction **I lent** / **I borrowed**, amount + currency
+    chip (default main; locked after the first payment), **Account** (NEW; default per rule 9b; or **"Not through an account"** for
+    an old debt you're just writing down), date, optional due date, note, optional **interest rate** (rule 14a).
+    - Saving **I lent** takes the money **out** of the account (rule 9a applies); **I borrowed** puts it **in**.
+    - Each **payment** has an **Account** too: "Collected" (lent) = money in; "Repaid" (borrowed) = money out.
+    - These **debt movements** change account balances but are **not income or expense** (not in totals, charts, budgets,
+      statistics — like a transfer). They appear in Records with their own icon and a label "Lent · An", "Collected · An",
+      "Borrowed · Bình", "Repaid · Bình"; tapping one opens the **Debt detail**.
+    - Debts created before this update stay memo‑only (no movements); their new payments pick an account.
+    - **Deleting a debt keeps its movements** in Records (label "Deleted debt"), balances unchanged. Deleting the debt still
+      returns to the Debts list.
+    - Remaining 0 (principal and interest) → **Settled** (collapsed section). Overdue → word + icon.
+14a. **Interest (NEW, bank‑style — Vietnam's Circular 14/2017/TT‑NHNN):** rate in **% per month** or **% per year** (×12); simple
+    interest on the **principal still owed**, counted **per day**, year = 365 days; **interest start date** (default = loan
+    date, later = grace period); **rate change** from a chosen date. **Remaining = principal left + interest to date.**
+    A **payment** is pre‑split **interest first, then principal** (both editable). The **interest part is real income/expense**
+    — an expense in category **"Loan interest | Lãi vay"** (borrowed) or income **"Interest | Tiền lãi"** (lent); the principal
+    part is a debt movement. Example: borrow 10,000,000 ₫ at 12 %/year from Nov 1 → on Dec 1 interest is 98,630 ₫; paying
+    1,000,000 ₫ = interest 98,630 ₫ + principal 901,370 ₫ → principal left 9,098,630 ₫.
 15. **Deadline reminder (NEW, D‑044):** one global setting — on by default, **7 days** before (1–30), at **09:00** (changeable).
     Every savings goal and debt with a due date that isn't done gets a notification **N days before** and **on the due date**,
-    **with the amount still left**, even when PIN lock is on (user's choice).
+    **with the amount still left**, even when PIN lock is on (user's choice). For a debt with interest the amount is the
+    **estimated total due on the due date** ("You owe Bình: about 10,295,890 ₫ due in 7 days").
 16. **Savings goal = its own wallet (NEW, D‑043):**
     - Creating a goal **always creates a new account** (the *wallet*), never links an existing one. Form: goal name, **Account**
       (wallet name, pre‑filled with the goal name), target amount + currency (default main), **Already saved** (wallet's
@@ -205,7 +254,10 @@ few seconds, adds everything up in **one main currency the user picks**, and kee
     - The wallet is a **normal account**: spend from it, receive into it, withdraw any time — even before the goal is done.
     - **Progress = wallet balance** (in the goal's currency) vs target.
     - **Add money** = transfer from any account into the wallet, **capped at what's still missing** ("Fill to target" button).
-      **Withdraw** = transfer out, capped at the wallet balance.
+      **Withdraw** = transfer out, capped at the wallet balance. **CHANGED (D‑048):** the amount is typed in the **main currency**
+      by default with a currency chip, and both sides are spelled out ("Into wallet: $19.23 · From Cash: 500,000 ₫"); the source
+      account can't go negative (rule 9a). *(Bug that triggered this: a USD wallet only accepted USD, so typing 500000 meant
+      $500,000 and the save was refused.)*
     - **History** = every movement of the wallet (add +, withdraw −, spending/income recorded directly, the starting amount) —
       always sums to the balance; items deletable with Undo.
     - First time balance ≥ target → **"Savings goal reached"** dialog with the amount, goal moves to a collapsed **Done** section.
@@ -218,11 +270,18 @@ few seconds, adds everything up in **one main currency the user picks**, and kee
     **queue item** — *not a record yet*, excluded from all totals — until the user picks a category, **Move to my account**
     (transfer), **Edit before saving** or **Skip**. Payee suggestions remembered. First email of an unknown MB account
     auto‑creates "MB Bank …1234". A record typed by hand that matches an email (same account, amount, ±2 h) is matched silently
-    with an Undo bar. Email currency ≠ account currency → amount typed manually.
+    with an Undo bar. Email currency ≠ account currency → amount typed manually. **NEW (D‑046):** if the linked account
+    doesn't have enough money, the item stays queued and the **Top‑up sheet** opens: "MB Bank …1234 is 200,000 ₫ short" with
+    three ways — **Record income into MB …1234** · **Transfer into MB …1234** · **Edit starting balance**; once covered, the item
+    is confirmed automatically (Undo bar).
 18. **Backup:** manual `.vigon` file (optional password, AES‑256‑GCM) via share sheet; **Restore** replaces everything after a
     check + confirm; **Auto backup** daily at a chosen hour (default 21:00) into a user‑picked folder, always encrypted, keeps 2
-    files, status line. **CSV export** (language‑aware).
+    files, status line. **CSV export** (language‑aware). **NEW Excel (.xlsx) and PDF report** (F‑40): pick the range (period
+    being viewed or custom), then the OS share sheet. Excel: sheets Records · By category · Debts. PDF A4: "Income & expense
+    report <period>", totals, category table, record list.
 19. **PIN lock** (4 digits) on open and after > 1 min in background, also from widget/notifications; it does **not** encrypt.
+    **NEW Fingerprint / Face ID** (F‑41): switch in Security, only when PIN is on and the phone has biometrics enrolled; the lock
+    screen opens the system prompt automatically; cancel/fail → PIN pad (PIN always works).
     Forgot PIN → only "Delete all data". **Hide content in app switcher.**
 20. **Daily reminder** ("Have you recorded your spending today?") at a chosen time (default 20:00), **no figures**. **Deadline reminders** show amounts (rule 15).
 21. **Onboarding** (fresh install only): Language → Welcome → Main currency → Reminder → PIN; Skip = defaults (English, USD,
@@ -233,15 +292,27 @@ few seconds, adds everything up in **one main currency the user picks**, and kee
 
 ## 4. Information architecture and navigation
 
-### 4.1 Today (built)
+### 4.1 Today (built, v4)
 - **Home `/`** is the root. App bar: title + account filter (when ≥ 2 accounts) + **Records** icon + **Settings** gear.
 - Everything else is a pushed full screen or a bottom sheet with back/close. **Settings** is the hub for Categories, Accounts,
   Budget, Repeating, **Savings**, **Debts**, Main currency, Rates, Email import & Queue, Security, Reminder, Data, Appearance &
   language, About (9 titled groups, S‑G1).
 
-### 4.2 Deep links
-Widget / daily reminder → New entry; deadline reminder → Debts / Savings. All through the PIN lock. *(A 5‑tab shell is planned
-for later together with Overview / Stats / Calendar — not in this brief.)*
+### 4.2 Navigation for the new screens — 🆕 **please propose** (S‑J0)
+Overview, Statistics and Calendar are new top‑level destinations; Savings and Debts are used weekly but buried in Settings.
+The code ships **temporary entry points** (icons in the Home app bar) until your design lands. Propose **one** of these, with
+reasons, and draw it on Home + one inner screen, both platforms:
+- **A. Bottom navigation (4–5 tabs):** e.g. **Home · Records · Overview · Plans (Budget, Savings, Debts) · Settings**, with
+  Statistics and Calendar reached from Overview/Records. Must not push the big − / + buttons out of the thumb zone or add a tap to
+  logging (AC‑02).
+- **B. Keep Home as root** + a compact "Insights" entry (chip row or app‑bar menu) → Overview / Statistics / Calendar; Plans hub
+  reachable from Home.
+Whatever you choose: back behaviour on Android and iOS, where the account filter chip lives, and that the widget/notification
+deep links still land on New record / Debt detail / Overview through the PIN lock.
+
+### 4.2b Deep links
+Widget / daily reminder → New entry; deadline reminder → Debts / Savings; **NEW budget notification → Overview**. All through
+the PIN lock.
 
 ### 4.3 Routes
 | Route | Screen | ID |
@@ -260,7 +331,12 @@ for later together with Overview / Stats / Calendar — not in this brief.)*
 | `/import-queue` · `/import-queue/suggestions` | Queue · Remembered suggestions | S‑F2 |
 | `/email-import` · `/email-import/add` | Email import · Add mailbox | S‑F1 |
 | `/settings` | Settings | S‑G1 |
-| overlay | Lock | S‑H1 |
+| overlay | Lock (+ fingerprint / Face ID) | S‑H1 |
+| NEW `/overview` | Overview | S‑J1 |
+| NEW `/stats` | Statistics | S‑J2 |
+| NEW `/calendar` | Spending calendar | S‑J3 |
+| NEW sheet on `/entries` | Advanced filter | S‑B4 |
+| NEW sheet from Settings → Data | Export Excel / PDF | S‑G4 |
 
 ### 4.4 Map
 ```
@@ -277,8 +353,12 @@ Settings ─ Categories & accounts: Categories · Accounts
          ─ Data: Backup · Restore · Auto backup · Export CSV · Delete all data
          ─ Appearance & language (sheet) · About (inline card)
 Savings ─ goal card ─► Goal detail ─ Add money · Withdraw · History · Edit · Delete · Reopen
-Debts ─ debt row ─► Debt detail ─ Add payment · Payments · Edit · Delete (→ back to Debts)
-Outside: Widget · Daily reminder · NEW Deadline reminder · Recents cover
+Debts ─ debt row ─► Debt detail ─ Add payment (interest/principal split) · Payments · Change rate · Edit · Delete (→ back to Debts)
+Records ─ debt movement row ─► Debt detail · Filter ─► Advanced filter sheet
+NEW Overview ─ Debts card ─► Debts · Budget tile ─► Budget · chart ─► Statistics
+NEW Statistics · NEW Calendar ─ day ─► day's records
+Queue ─ confirm with too little money ─► NEW Top‑up sheet ─► Record income / Transfer in / Edit starting balance
+Outside: Widget · Daily reminder · Deadline reminder · NEW Budget notification · Recents cover
 ```
 
 ---
@@ -290,7 +370,10 @@ invent new copy for unchanged screens.
 
 ### A — Home & logging
 
-#### S‑A1 · Home `/` ✅🟡 (frames 01, 07)
+#### S‑A1 · Home `/` 🟡 (v4 frames 01, 07)
+**Changed (v5) — draw these states:** (a) **filtered to an account** — make the active account obvious, because − / + now log
+into it (rule 9b); (b) **"Skipped 1 repeating record — Trip didn't have enough"** dismissible bar; (c) budget bar **Almost over**
+("82% used", warning) next to the existing Over state; (d) the chosen **navigation** (§4.2).
 **Purpose:** log fast; see the period at a glance.
 **Components:** app bar (title, account filter chip *proposal: show the active account as a chip*, Records, Settings) ·
 period header ‹ **November 2026** › (tap → "View by" sheet, swipe changes period) · **ring chart** of expenses by category
@@ -304,7 +387,11 @@ filtered account · missing rate note ("1 amount left out — no rate") · 200 %
 #### S‑A2 · "View by" sheet + range calendar ✅ (frame 02) · Account filter menu ✅ (03)
 Refresh only.
 
-#### S‑A3 · New / edit record `/entry/new`, `/entry/:id` 🟡 (frames 05, 06)
+#### S‑A3 · New / edit record `/entry/new`, `/entry/:id` 🟡 (v4 frames 05, 06, 53)
+**Changed (v5) — draw these states:** (a) **insufficient funds**: expense of 700,000 ₫ on *Trip* that has 500,000 ₫ → error
+under the amount "Trip only has 500,000 ₫" + a quick way out (tap Account chip to switch; propose a "Record income to Trip"
+link); the big key stays enabled but the save is refused; (b) account chip pre‑filled with the **filtered** account; (c) editing
+a **debt‑interest** record shows "Interest on debt with Bình" and links to the debt.
 **Purpose:** type an amount and save in ≤ 3 taps.
 **Components:** type toggle (Expense / Income) · **amount display** (live expression, e.g. `120+35`) with the **currency chip**
 right next to it (**NEW**: `USD ▾`; default = main currency; tap → currency picker with search, recent/used currencies on top).
@@ -320,7 +407,11 @@ days with first‑occurrence line · edit old record with no time · from email 
 
 ### B — Records
 
-#### S‑B1 · Records `/entries` ✅🟡 (frames 10, 11)
+#### S‑B1 · Records `/entries` 🟡 (v4 frames 10, 11)
+**Changed (v5):** (a) **debt movement rows** — own icon (propose: handshake / arrows), title "Lent · An" / "Collected · An" /
+"Borrowed · Bình" / "Repaid · Bình" / "Deleted debt", amount with sign, styled so they read as *not* income/expense (like
+transfers); tap → Debt detail; (b) **interest rows** are normal expense/income rows in categories "Loan interest" / "Interest";
+(c) **Filter** button in the app bar (S‑B4) and active filter chips above the list; (d) category limit bars get **Almost over**.
 **Components:** period header + account filter · summary (income, expense, balance — main currency) · list grouped by day
 (day header with day total) · **record row**: category avatar, note/title, account · time, ✉ marker for email records, and the
 **two‑line money block** on the right (main big, original small) · category rows with limit bars · transfers section.
@@ -328,14 +419,26 @@ Search mode (frame 11): field, "All time" chip, results "N records · total X".
 **Changed:** rows main‑first.
 **States:** empty period · many records · long notes · mixed currencies · search no match · 200 % · VI.
 
-#### S‑B2 · Undo bar ✅ — "Deleted · Undo" 5 s.
+#### S‑B2 · Undo bar ✅ — "Deleted · Undo" 5 s. **New state:** delete refused — "Can't delete: Trip would be −200,000 ₫".
+
+#### S‑B4 · Advanced filter 🆕 (F‑39)
+**Purpose:** narrow Records by amount, categories and dates. **Components:** bottom sheet from **Filter**: amount **from / to**
+(either may be empty; from > to → error under the field) · **categories** multi‑select (expense and income, with icons/colours;
+picking categories hides transfers and debt movements) · **date range** (same range calendar as Custom range; replaces the
+period for this list) · **Apply** / **Clear filter**. Result: flat list newest first + "N records · spent X · received Y";
+each condition is a removable chip; combines with search and the account filter (AND). Lives only while the app runs.
+**States:** empty filter · amount only · 3 categories · date range · no results · invalid range · 200 % · VI · dark.
 
 #### S‑B3 · Repeating records `/recurring` ✅🟡 (frames 20, 21)
 List of series (amount main‑first, frequency label incl. "Mon, Tue", next date, Paused); edit sheet with Choose days.
 
 ### C — Money structure
 
-#### S‑C1 · Accounts `/accounts` ✅🟡 (frames 17, 18)
+#### S‑C1 · Accounts `/accounts` 🟡 (v4 frames 17, 18)
+**Changed (v5):** (a) editor gets a switch **"Allow negative balance | Cho phép số dư âm"** with helper "For credit cards and
+overdrafts. When off, you can't spend more than the account has."; starting balance field rejects a negative number while the
+switch is off; (b) rows with a negative balance show a **"Negative | Âm"** badge (icon + word); (c) one‑time dialog after the
+update: "We allowed a negative balance for: Old credit card, VIB card" (OK).
 **Components:** total balance (main currency, exact) · account rows: icon, name, **currency code chip** (e.g. `VND`), balance as
 two‑line block (main big / own currency small) · badges: **Savings wallet** (goal name chip, NEW), "From MB email" · hidden
 accounts collapsible · edit sheet (name, currency, starting balance, hide/show, delete rules).
@@ -343,7 +446,9 @@ accounts collapsible · edit sheet (name, currency, starting balance, hide/show,
 
 #### S‑C2 · Categories `/categories` ✅ (15, 16) — refresh; limit field has its currency (main‑first display).
 
-#### S‑C3 · Transfer `/transfer` ✅🟡 (frame 19)
+#### S‑C3 · Transfer `/transfer` 🟡 (v4 frames 19, 54)
+**Changed (v5):** "From" pre‑filled with the filtered account; **insufficient funds** state on "You send" ("Cash only has
+120,000 ₫"); opened from the Top‑up sheet with "To" locked to the short account and the amount pre‑filled with the shortfall.
 From / To account pickers (balances main‑first), amount; **different currencies → two fields "You send" / "They receive"** with
 the current rate shown and editable; date, time, note. Pre‑filled when opened from elsewhere.
 
@@ -352,7 +457,13 @@ the current rate shown and editable; date, time, note. Pre‑filled when opened 
 #### S‑D1 · Monthly budget dialog ✅🟡 (frame 04)
 Amount + **Currency** selector (default main); live line 2 in main currency when it differs; Remove budget.
 
-#### S‑D2 · Savings `/savings` 🔨🟡 — **redesigned (F‑47, D‑043), priority**
+#### S‑D2 · Savings `/savings` ✅ list/editor/detail/reached (v4 frame 41) · 🟡 **Add money + Withdraw sheets**
+**Changed (v5) — redraw `savings~add-money*`, `savings~withdraw*`:** the amount field has the **currency chip, default main
+currency** (goal in USD, main VND → you type ₫); under it two lines "Into wallet: $19.23" · "From Cash: 500,000 ₫"; the cap
+error and **Fill to target** use the typed currency ("Only 253,767,717 ₫ more needed"); new error when the **source account
+can't cover it** ("Cash only has 120,000 ₫") with "Choose another account". Withdraw: same chip, cap = wallet balance.
+States to draw: same currency · goal USD/main VND · source short · over cap · Fill to target · 200 % · VI.
+*(Everything below is the v4 description, still valid.)*
 **List screen**
 - App bar "Savings | Tiết kiệm", FAB **Add goal | Thêm mục tiêu**.
 - **In progress** section: one card per goal — name, wallet name (small, with wallet icon), **progress bar + %**, "Saved {have}
@@ -387,18 +498,47 @@ Tuyệt** · **Withdraw**. The card then animates into Done.
 **States:** empty · 1 goal · 6 goals · goal in EUR with main USD · just reached (dialog) · Done list · withdrawn after done (still
 Done) · overdue · due soon · add‑money over the cap (error) · only one other account · long names · 200 % · VI · dark.
 
-#### S‑D3 · Debts `/debts` 🔨🟡 (F‑34)
-**List:** header note `debtsNote`; two groups with totals (main currency) — **Owed to you | Người khác nợ bạn** and **You owe |
-Bạn nợ người khác**; row = person, remaining (two‑line), "Paid {paid} of {total}" mini bar, due chip (**Due soon** warning /
-**Overdue** error with icon); collapsible **Settled (n)**; Add debt.
-**Editor:** Person · Direction segmented (I lent / I borrowed) · Amount + **currency bar** (default main; locked after first
-payment) · Date · Due date (optional) · Note.
-**Detail:** person, direction, amount, date, due, note, big **Remaining**, **Payments** list (date, amount, delete), **Add payment**
-(amount ≤ remaining; "More than the remaining {remaining}"; propose a "Pay the rest" chip), Edit, **Delete → closes the detail and
-stays on Debts** (snackbar "Debt deleted").
-**States:** empty · both groups · foreign‑currency debt · overdue · due soon · settled · 200 % · VI · dark.
+#### S‑D3 · Debts `/debts` 🟡 **big change (F‑52, D‑049) — priority** (v4 frame 42)
+**List:** header note — **rewrite `debtsNote`** NEW: "Lending and borrowing move money in your accounts but don't count as
+income or expense. Interest does." | "Cho vay, đi vay làm đổi số dư tài khoản nhưng không tính là thu hay chi. Tiền lãi thì
+có tính." Two groups with totals (main currency, **incl. interest to date**) — **Owed to you** / **You owe**; row = person
+(initials avatar), account name small (or "Memo only"), **remaining** (two‑line; for interest‑bearing debts a tiny "incl.
+interest" hint or % rate chip "12%/yr"), "Paid {paid} of {total}" bar, due chip; **Settled (n)**; Add debt.
+**Editor (sheet)** — CHANGED fields, in this order:
+1. Person · 2. Direction (I lent / I borrowed) · 3. **Amount + currency chip** (default main; locked after first payment) ·
+4. **Account | Tài khoản** (NEW: picker with balances main‑first; default = filtered account; last option **"Not through an
+   account | Không qua tài khoản"** with helper "Just a note — no account balance changes") · helper under it NEW: "Lending
+   takes this money out of Cash. | Cho vay sẽ trừ số tiền này khỏi Tiền mặt." (flips for borrowing) · **insufficient funds**
+   error when lending more than the account has · 5. Date · 6. Due date (optional) · 7. **Interest (optional)** NEW: rate field
+   (up to 2 decimals) + segmented **% / month · % / year**; **Interest starts** date (default = date; helper "Set later for a
+   grace period"); live preview "≈ 100,000 ₫ interest per month at today's principal" · 8. Note.
+**Detail** — CHANGED: hero **Remaining** = principal left + interest to date, with line 2 "Principal 9,098,630 ₫ · Interest to
+date 74,780 ₫"; rate chip "12%/year since Nov 1" + **Change rate** (sheet: new rate, from date; list of rate periods); account
+line ("Through Techcombank"); due chip + reminder hint; **Payments** list: date, account, **interest part + principal part**
+(e.g. "1,000,000 ₫ · interest 98,630 ₫ · principal 901,370 ₫"), delete (Undo; refused if it would make an account negative);
+**Add payment** button; Edit; Delete.
+**Add payment sheet** NEW layout: amount + currency chip (default main) · **Account** (default = the debt's account) · date ·
+auto split shown as two editable rows **Interest** (pre‑filled with interest to that date) and **Principal** (rest), with a
+small "Interest first, like banks" note; chips **Pay interest only** · **Pay the rest** (principal + interest to date); errors:
+interest > accrued, principal > left, account short. Saved interest becomes an expense "Loan interest" / income "Interest".
+**Delete debt dialog** CHANGED: "Delete the debt with An? Its records stay in your accounts. | Xoá khoản nợ với An? Các khoản
+trong sổ vẫn giữ." → closes detail, stays on Debts.
+**States:** empty · both groups · memo‑only old debt · lent from account · borrowed into account · with interest (%/month and
+%/year) · grace period (interest starts later) · rate changed mid‑way · payment split · pay the rest · account short ·
+foreign‑currency debt (USD, main VND) · overdue · due soon · settled · 200 % · VI · dark.
 
-#### S‑D4 · Deadline reminder setting + notification 🆕 (F‑48, D‑044)
+#### S‑D5 · Budget warnings + budget notifications 🆕 (F‑37)
+- **Almost over** state for: Home budget bar, Overview "Budget left" tile, category limit bars in Records, Budget dialog preview
+  — icon + "82% used" in **warning** colour, distinct from **Over by X** (error). Example: limit 5,000,000 ₫, threshold 80 % →
+  3,999,999 normal · 4,000,000 Almost over · 5,000,000 Almost over · 5,000,001 Over by 1.
+- Settings → Plan: **"Warn at | Cảnh báo khi đạt"** row with value "80%" → sheet with a 50–95 % slider/stepper (step 5) and switch
+  **"Budget notifications | Thông báo ngân sách"** (default off; explain dialog → OS permission).
+- **Notification** (EXT 08): "November budget: 80% used" · "Food: 100% of November's limit used" — **never an amount**, even with
+  PIN off. Tap → Overview (through PIN).
+
+#### S‑D4 · Deadline reminder setting + notification ✅ (F‑48, D‑044, v4 frame 51)
+**Changed (v5):** debt with interest → notification shows the **estimated total due** ("You owe Bình: about 10,295,890 ₫, due
+in 7 days"). Only this notification state needs a new frame.
 - Settings → Plan → row **"Deadline reminders | Nhắc trước hạn"** (NEW) with value "7 days before · 09:00 | Trước 7 ngày · 09:00".
   Opens a sheet: switch (default on), **Days before** stepper/picker 1–30 (default 7), **Time** (system time picker, default
   09:00), note "For savings goals and debts with a due date. Notifications show the amount left." First turn‑on → explain dialog
@@ -417,7 +557,7 @@ Settings → Currency & period → **Main currency** → searchable picker (curr
 recorded in other currencies keep their original value, shown underneath." | "Mọi số được hiển thị và cộng theo tiền tệ này.
 Khoản ghi bằng tiền tệ khác giữ nguyên số gốc, hiện ở dòng dưới."
 
-#### S‑E2 · Exchange rates `/rates` 🔨
+#### S‑E2 · Exchange rates `/rates` ✅ (v4 frame 50)
 Intro `ratesIntro`; status chip (Auto · updated today / Offline · rates from yesterday / Built‑in estimate / Set by you); **Update
 now**; list of **pairs in use** only ("1 VND equals 0.0000385 USD"), each tappable → override sheet (auto value, "Your rate · 1 EUR
 =", preview "Cash: 500,000 ₫ ≈ $19.25", Save this rate / Restore automatic); offline banner; source attribution link.
@@ -427,24 +567,30 @@ now**; list of **pairs in use** only ("1 VND equals 0.0000385 USD"), each tappab
 
 ### F — Email import
 
-#### S‑F1 · Email import `/email-import`, `/email-import/add` 🔨
+#### S‑F1 · Email import `/email-import`, `/email-import/add` ✅ (v4 frame 44)
 Intro (title `emailIntroTitle`, four reassurance lines with icons, `emailIntroBanks`, iPhone note, **Add mailbox**) → Add mailbox
 (provider Gmail/Yahoo/iCloud, address, app password with show toggle, numbered steps per provider + "Open the app password page",
 Connect → progress → Connected / error variants) → mailbox list (status chip Connected / Paused, last check, "2 MB emails couldn't
 be read", Re‑enter password, Remove mailbox confirm; schedule note Android vs iPhone; max 3).
 
-#### S‑F2 · Queue `/import-queue` + Remembered suggestions 🔨 — **important**
+#### S‑F2 · Queue `/import-queue` + Remembered suggestions ✅ (v4 frame 43) · 🟡 Top‑up sheet
 Item cards: date + time, amount (two‑line if the email currency ≠ main), payee (or "Unknown payee"), content, "From MB Bank
 …4821", ✉; category grid with **Suggested** pre‑selected → **Save to Food**; secondary **Edit before saving · Move to my account ·
 Skip** (confirm). Currency‑mismatch note. Auto‑created account card ("Created account MB Bank …4821 · Attach to an existing account
 · Dismiss"). Pull to check. Empty state `queueEmpty`. Suggestions screen: payee → category/account, delete.
 Must clear 2 items without scrolling at 360 × 800 and work at 200 %.
+**🟡 NEW in v5 — Top‑up sheet (S‑F4):** confirming an item whose linked account is short opens a sheet: icon + title "MB Bank
+…1234 is 200,000 ₫ short | MB Bank …1234 thiếu 200.000 ₫", body "The bank already sent this money. Add what's missing so the
+account matches. | Ngân hàng đã chuyển khoản này. Bổ sung phần thiếu để số dư khớp.", three full‑width options with icons —
+**Record income into MB …1234** (→ New record, income, account and amount pre‑filled) · **Transfer into MB …1234** (→ Transfer,
+"To" pre‑filled) · **Edit starting balance** (→ account editor) — and **Not now** (item stays queued). After returning with
+enough money the item is confirmed with an Undo bar. Draw: sheet · after top‑up success · 200 % · VI.
 
 #### S‑F3 · Match bar ✅‑ish — "Matched with MB email 12:02 · Undo".
 
 ### G — Settings & data
 
-#### S‑G1 · Settings `/settings` 🔨🟡 (frame 12 is the old layout)
+#### S‑G1 · Settings `/settings` 🟡 (v4 frame 12; new rows below)
 Nine titled groups of cards (as built): **Categories & accounts** (Categories, Accounts) · **Plan** (Monthly budget, Repeating
 records, Savings, Debts, **NEW Deadline reminders**) · **Currency & period** (Main currency, Exchange rates with status, Week start,
 Month start day) · **Email import** (Import from bank email · status, Items awaiting a category · count) · **Security** (PIN lock +
@@ -453,20 +599,36 @@ backup section with folder/status/Back up now, Export CSV, Delete all data last)
 sheet: Theme System/Light/Dark + Language English/Tiếng Việt) · **About** (inline card: Version `1.0.0 (1)`, Privacy policy, Terms
 of use, Open‑source licences, Rate Vigon 🤖, Send feedback, Report a security issue; footer "Data is stored only on this phone…").
 Use status chips/values on the right (e.g. "Auto · today", "1 mailbox", "3 awaiting", "7 days before · 09:00").
+**🟡 Changed (v5) — new rows to draw:** Plan → **Warn at 80%** (+ Budget notifications, S‑D5) · Security → **Unlock with
+fingerprint / Face ID** switch (S‑H1) · Reminder → **Exact timing | Báo đúng giờ** 🤖 ("On" / "Off · may be a few minutes late",
+tap → explain dialog → Android "Alarms & reminders" page; D‑045, already built) · Data → **Export Excel** and **Export PDF**
+(S‑G4) · the temporary Overview / Statistics / Calendar entry is **not** in Settings.
 **States:** top / middle / bottom scroll positions · iOS (no Rate row) · 200 % · VI · dark.
 
 #### S‑G2 · Backup / restore / password dialogs / CSV / delete all ✅ (26–29) · Auto backup ✅ (31) — refresh; make all password
 dialogs one family.
 
-#### S‑G3 · Legal page (offline reader) 🔨 — opened when the browser can't; simple readable article.
+#### S‑G3 · Legal page (offline reader) ✅ — opened when the browser can't; simple readable article.
+
+#### S‑G4 · Export Excel / PDF 🆕 (F‑40)
+Sheet from Settings → Data: format (Excel / PDF) · **Range**: "Period being viewed (November 2026)" or "Custom range…" (range
+calendar) · what's included ("Records, totals by category, debts") · **Export** → progress ("Preparing 1,240 records…") → OS share
+sheet. Errors: nothing in range ("No records in this range"). Also draw a **thumbnail of the PDF page 1** (A4: title "Income &
+expense report · November 2026", totals income / expense / difference, category table with %, record list) so the developer can
+match the layout, Be Vietnam Pro, light only. States: sheet · custom range · exporting · empty range · 200 % · VI.
 
 ### H — Security
 
-#### S‑H1 · Lock / Set PIN / Forgot PIN ✅ (23–25) — refresh.
+#### S‑H1 · Lock / Set PIN / Forgot PIN ✅ (23–25) · 🆕 fingerprint / Face ID (F‑41)
+**New:** (a) Settings → Security switch **"Unlock with fingerprint | Mở khoá bằng vân tay"** (Android) / **"Unlock with Face ID |
+Touch ID"** (iPhone), only when PIN is on; disabled with a reason when the phone has no enrolled biometrics ("Add a fingerprint in
+your phone's settings first"); turning on asks for one biometric check. (b) Lock screen with the **system biometric prompt** on
+top (OS‑owned) and a **fingerprint / face button** on the PIN pad to retry; cancel/fail → PIN pad stays usable. Draw: settings
+row on/off/unavailable · lock screen with prompt · after cancel · iOS Face ID variant.
 
 ### I — First run
 
-#### S‑I1 · Onboarding `/onboarding` 🔨 (F‑44)
+#### S‑I1 · Onboarding `/onboarding` ✅ (v4 frame 49) (F‑44)
 Five steps with "Step n of 5", Skip on steps 2–5, system Back steps back:
 1. **Choose your language** (English pre‑selected / Tiếng Việt, applies instantly).
 2. **Welcome to Vigon** — three benefits (Record in 3 taps · See where your money goes · Private by design) + **Get started**.
@@ -474,6 +636,39 @@ Five steps with "Step n of 5", Skip on steps 2–5, system Back steps back:
 4. **A daily reminder to record** — time 20:00 (tap to change), **Turn on reminder** (asks OS permission) / **Not now**.
 5. **Lock Vigon with a PIN?** — **Set a PIN** / Not now.
 **States:** each step light/dark, VI, 200 %, permission denied bar.
+
+### J — Insights (all 🆕, being coded now with placeholder UI)
+
+#### S‑J0 · Navigation proposal 🆕 — see §4.2.
+
+#### S‑J1 · Overview `/overview` 🆕 (F‑35, D‑034)
+**Purpose:** "how am I doing this month?" in one screen. **Own month picker** ‹ November 2026 › (independent of Home's period;
+default = current month by month start day). Tiles/cards, all in the main currency, all accounts:
+1. **Total balance | Tổng số dư** — sum of every account incl. hidden ones (debts *not* included).
+2. **Income − expense this month | Thu − chi tháng** (signed).
+3. **Budget left | Ngân sách còn lại** — limit − spent; negative → "Over by X"; Almost over state; no budget → "Set a budget" tile.
+4. **Income vs expense, 6 months** — paired bars ending at the selected month; hidden data table for screen readers.
+5. **Compared with last month | So với tháng trước** — "Spending up 25% vs October" / "Income down 8%" with arrow **and** word;
+   previous month 0 → "—".
+6. **Debts | Nợ** (NEW, D‑049) — "Owed to you 2,000,000 ₫ · You owe 10,150,000 ₫" (incl. interest to date), tap → Debts;
+   hidden when there are no open debts.
+Optional (propose): entry to Statistics and Calendar from here. **States:** normal · no budget · over budget · first month
+(no history) · no debts · negative total balance · 200 % · VI · dark. Example: Oct spent 4,000,000, Nov 5,000,000 → "Spending
+up 25% vs October".
+
+#### S‑J2 · Statistics `/stats` 🆕 (F‑36)
+Same period header and account filter as Home. Sections: (1) **income/expense bars by sub‑period** — Day: one pair; Week: 7
+days; Month: each day; Year: 12 months; All time: each year; Custom ≤ 31 days daily, ≤ 366 days monthly, longer yearly;
+(2) **Top 5 expense categories** (amount + % of period spending, category icon/colour); (3) **Biggest spending day** (date +
+amount; hidden for Day); (4) **Total balance line** (end of each sub‑period). Debt movements excluded; interest included.
+Every chart has a table alternative; empty period → empty state, no empty charts. **States:** month · year · all time · empty ·
+1 category only · 200 % · VI · dark.
+
+#### S‑J3 · Spending calendar `/calendar` 🆕 (F‑38)
+Month grid (week start from Settings): each day shows **compact spending** ("50k", "1.2M" | "50k", "1,2tr") and a **dot** when
+there was income; ‹ › and swipe change month; account filter applies. Tap a day → list of that day's records with day totals
+(edit, swipe delete, Undo). Screen reader: "November 6, spent 250,000 dong". **States:** normal · empty month · heavy day (big
+number) · today · selected day open · 200 % (cells must still fit — propose a fallback, e.g. dots + list) · VI · dark.
 
 ---
 
@@ -485,7 +680,9 @@ Five steps with "Step n of 5", Skip on steps 2–5, system Back steps back:
 | 04 | Recents / app‑switcher cover | ✅ | Blank with logo |
 | 05 | OS sheets & pickers | — | Share sheet, file/folder picker, time picker, permission prompt, biometric prompt |
 | 06 | App icon incl. Android monochrome | ✅ | unchanged |
-| **07** | **Deadline reminder notification** | 🆕 | **With amount left** (S‑D4); separate channel "Deadline reminders" |
+| 07 | Deadline reminder notification | ✅🟡 | With amount left (S‑D4); **v5: interest debt → estimated total due** |
+| **08** | **Budget notification** | 🆕 | Percent only, never amounts (S‑D5); channel "Budget"; tap → Overview |
+| 05b | OS biometric prompt | — | Fingerprint (Android BiometricPrompt) / Face ID — OS‑owned, show it over the lock screen |
 
 ---
 
@@ -508,7 +705,26 @@ Five steps with "Step n of 5", Skip on steps 2–5, system Back steps back:
 - **F8 Rates:** Settings → Exchange rates → offline banner → tap VND pair → set own rate → preview → Save → totals update.
 - **F9 Queue:** banner → Queue → Suggested Food → Save to Food; next → Shopping; next → Move to my account; next → Skip.
 - **F10 Add a mailbox:** Email import → intro → Add mailbox → Gmail → steps → Connect → Connected.
-- **F11 Onboarding:** fresh install → Tiếng Việt → Bắt đầu → VND → Bật nhắc → Để sau → Home empty state.
+- **F11 Onboarding:** fresh install → Tiếng Việt → Bắt đầu → VND → Bật nhắc → Để sau → Home empty state ("Log your first
+  expense / Tap a category or −" — shortened 2026‑11‑11).
+- **F12 Can't overspend (NEW):** Home filtered to **Trip** (500,000 ₫) → − → `700000` → Food → error "Trip only has 500,000 ₫" →
+  switch account to Cash → saved. Then Records shows it on Cash.
+- **F13 Lend through an account (NEW):** Debts → Add debt → "An", I lent, 5,000,000 ₫, Account **Techcombank**, due in 30 days,
+  interest **1 %/month** → saved → Techcombank −5,000,000 ₫, Records shows "Lent · An" (not an expense), Overview Debts card
+  "Owed to you 5,000,000 ₫" → 30 days later Debt detail "Remaining 5,049,315 ₫ · interest to date 49,315 ₫" → Add payment
+  2,000,000 ₫ into Techcombank → split interest 49,315 ₫ (income "Interest") + principal 1,950,685 ₫ → remaining 3,049,315 ₫.
+- **F14 Borrow and repay with interest (NEW):** I borrowed 10,000,000 ₫ from Bình into Cash, 12 %/year from Nov 1 → Dec 1 Add
+  payment 1,000,000 ₫ from Cash → Interest 98,630 ₫ (expense "Loan interest") + Principal 901,370 ₫ → Change rate to 15 %/year
+  from Jan 1 → deadline reminder shows the estimated total due.
+- **F15 Add money in the main currency (NEW):** goal "du lịch Đà Lạt" in USD, main VND → Add money → type `500000` ₫ → lines
+  "Into wallet: $19.23 · From Cash: 500,000 ₫" → Save.
+- **F16 Queue top‑up (NEW):** Queue → item 2,000,000 ₫ → Save to Food → Top‑up sheet "MB Bank …4821 is 2,000,000 ₫ short" →
+  Transfer into MB from Bank card → back → item confirmed (Undo).
+- **F17 Insights (NEW):** Home → Overview (Nov) → Budget tile Almost over 82 % → Statistics (Month) → top category Home →
+  Calendar → tap Nov 6 → day's records.
+- **F18 Filter + export (NEW):** Records → Filter 50,000–200,000 ₫ · Food + Transport · Nov 1–15 → "12 records · spent X" →
+  Settings → Export PDF → November → share sheet.
+- **F19 Fingerprint (NEW):** Settings → Security → Unlock with fingerprint → system prompt → on; reopen app → prompt → in.
 
 ---
 
@@ -532,8 +748,17 @@ Cash **$200.00** → received 5,194,800 ₫ · Missing‑rate variant: "Gift" 50
 Laptop — $300 of $1,200 (25 %), due Mar 1, 2027 · Paris — €250 of €800 (**$271.75 of $869.60**), no deadline. **Done (1):** Emergency
 fund — $1,500 reached Oct 12. History of Trip: Nov 1 Already saved +1,000,000 ₫ · Nov 5 Added from Cash +2,000,000 ₫ · Nov 12 Spent:
 flight deposit −300,000 ₫ · Nov 20 Added from E‑wallet +1,300,000 ₫ → balance 4,000,000 ₫.
-**Debts:** Owed to you — An $100 (paid $40 → **$60 left**, due Dec 3 → Due soon), Tuấn 500,000 ₫ (**$19.25** / 500,000 ₫, due Nov 20 →
-Overdue) · You owe — Landlord $30 · Settled (1): Minh $15.
+**Debts (v5 — through accounts, some with interest):** Owed to you — An $100 lent from Bank card, no interest (paid $40 → **$60
+left**, due Dec 3 → Due soon) · Tuấn 500,000 ₫ lent from Cash, **1 %/month** since Oct 1 (**$19.25** / 500,000 ₫ + interest, due
+Nov 20 → Overdue) · Old memo‑only debt "Hà" 300,000 ₫ (Memo only). You owe — **Bình 10,000,000 ₫ borrowed into Cash, 12 %/year
+since Nov 1, one payment Dec 1 (interest 98,630 ₫ + principal 901,370 ₫)** · Landlord $30 · Settled (1): Minh $15.
+**Debt movements in Records:** Nov 1 "Borrowed · Bình" +10,000,000 ₫ (Cash) · Oct 1 "Lent · Tuấn" −500,000 ₫ · "Repaid · Bình"
+−901,370 ₫ + expense "Loan interest" 98,630 ₫.
+**Overspending examples:** account **Trip** VND 500,000 ₫ (expense 700,000 ₫ refused) · **VIB credit card** USD −$120.00 with Allow
+negative balance on (badge "Negative").
+**Overview (Nov):** Total balance $1,286.40 · Income − expense +$660.00 · Budget left $160.00 (92 % → Almost over at 80 %) · last 6
+months bars Jun–Nov · Spending up 12 % vs October · Debts: owed to you $79.25 · you owe $381.20.
+**Budget warning:** threshold 80 %; Food limit $450 → spent $495 (Over by $45.00); Transport $160 → $130 (81 % Almost over).
 **Notifications:** deadline "Debt with An: $60.00 left, due in 7 days" · daily reminder.
 **Queue (3, MB VND):** 50,000 ₫ "LE VAN KHACH — tra tien com" Suggested Food · 1,200,000 ₫ "CONG TY ABC" · 2,000,000 ₫ to own e‑wallet.
 **Rates screen:** pairs VND→USD (auto, today), EUR→USD (Set by you: 1.090).
@@ -550,9 +775,11 @@ queue · 10 000 records · negative total balance · 6 currencies in use.
 | Auto backup | Folder via Files; a notification at the chosen time, tap to back up | Background job |
 | Widget | WidgetKit (iOS 16+) | AppWidget 2×2 / 4×2 |
 | Hide in switcher | Brand cover | Secure window |
-| Reminders (daily + deadline) | Exact time | Approximate time (daily); deadline exact‑ish |
+| Reminders (daily + deadline) | Exact time | Exact when the user allowed "Alarms & reminders" (row "Exact timing"), else a few minutes late |
+| Biometric unlock | Face ID / Touch ID (name follows the phone) | Fingerprint (strong biometrics only) |
+| Budget notification | Yes | Yes |
 | Rate the app | Hidden until App Store id exists | Opens Play |
-Draw iPhone frames for every 🔨/🆕 screen; Material look, iOS safe areas.
+Draw iPhone frames for every 🟡/🆕 screen; Material look, iOS safe areas.
 
 ---
 
@@ -573,31 +800,41 @@ Draw iPhone frames for every 🔨/🆕 screen; Material look, iOS safe areas.
 9. **Queue speed** — one thumb, 12 items fast.
 10. **Empty states** for Savings, Debts, Queue, Rates (no pairs).
 11. **Password dialogs** (backup, restore, auto backup, mailbox) as one family.
+12. **NEW — "You don't have that much" without frustration:** the insufficient‑funds state on every money field must show what
+    *is* there and the next step (switch account, record income, transfer in, top up), in one tap. Never block silently.
+13. **NEW — Debt movements vs income/expense:** in Records, Overview and Statistics users must see at a glance that lending /
+    borrowing isn't spending or earning, while interest is. Same visual language as transfers, distinct from them.
+14. **NEW — Interest made understandable:** principal vs interest to date, the split of each payment, the rate period, a grace
+    period and a rate change — without a finance degree. Consider a tiny "how is this calculated?" explainer.
+15. **NEW — Two currencies in one field:** the chip + "Into wallet / From account" lines must make it impossible to type ₫ and
+    have it read as $.
+16. **NEW — Navigation** for Overview / Statistics / Calendar / Plans (§4.2).
 
 ### 10.2 Out of scope — don't draw
 Cloud sync, sign‑in, servers; banks other than MB; SMS / notification reading; receipt photos / OCR; AI; shared/family accounts;
-investments; historical exchange rates; ads, subscriptions, analytics; tablet/landscape.
+investments; historical exchange rates; ads, subscriptions, analytics; tablet/landscape; compound interest, late‑payment
+penalty interest, amortisation schedules / instalment plans for debts; net‑worth figure.
 
 ---
 
 ## 11. Deliverables
 
-### 11.1 Priority
-1. **P0 — money component + changed core:** two‑line money block (all contexts), Home, New record with currency chip, Records,
-   Accounts, Transfer cross‑currency, Budget dialog.
-2. **P1 — Plans:** Savings (list, editor, detail + history, add money, withdraw, reached dialog, Done), Debts (list, editor, detail,
-   payment), Deadline reminder setting + notification.
-3. **P2 — built but never drawn:** Settings (9 groups) + Appearance sheet + About card, Rates + override, Onboarding 5 steps, Email
-   import, Queue + suggestions, Legal reader.
-4. **P3 — refresh** remaining ✅ frames; VI variants; 200 % text.
+### 11.1 Priority (v5 — draw only these; keep every other v4 frame)
+1. **P0 — money rules:** insufficient‑funds states (New record, Transfer, Add money, Debt lend/payment), Accounts "Allow negative"
+   + Negative badge + one‑time dialog, Home filtered‑account + skipped‑repeating bar, Top‑up sheet (S‑F4), Delete refused.
+2. **P1 — Debts redesigned:** list, editor (account + interest), detail (principal/interest, rate change, payments split), Add
+   payment sheet, delete dialog, Records debt‑movement rows, interest deadline notification; Savings **Add money / Withdraw** with
+   the currency chip.
+3. **P2 — new screens:** navigation proposal (§4.2), Overview, Statistics, Calendar, Advanced filter, Budget warnings + settings
+   + notification, Export Excel/PDF (+ PDF page thumbnail), Fingerprint/Face ID, new Settings rows (incl. Exact timing).
+4. **P3 —** VI variants and 200 % for all of the above.
 
 ### 11.2 Frames
 Each platform (Android 360 × 800 dp; iPhone 393 × 852 pt) × light + dark, every screen with its states.
-- **VI variants** (light, main VND): Home, New record (currency chip), Records, Accounts, Savings list + detail + editor, Add money,
-  Reached dialog, Debts + detail, Deadline reminder sheet + notification, Settings (all groups), Rates, Onboarding, Queue.
-- **200 % text** (one platform, light): Home, New record, Records, Accounts, Savings list + detail, Debts detail, Settings, Rates,
-  Onboarding step 3, Queue.
-- **Prototype links** for F1–F11.
+- **VI variants** (light, main VND): every P0–P2 screen.
+- **200 % text** (one platform, light): New record (insufficient), Add money, Debt editor, Debt detail, Add payment, Top‑up sheet,
+  Overview, Statistics, Calendar, Filter, Export.
+- **Prototype links** for F12–F19 (F1–F11 already prototyped in v4).
 
 ### 11.3 File naming
 `design/hifi/<platform>/<theme>/<NN>_<slug>__<state>.png` + HTML. Keep numbers 01–33; numbers used now:
@@ -618,7 +855,18 @@ Each platform (Android 360 × 800 dp; iPhone 393 × 852 pt) × light + dark, eve
 | 40 | Time field | `entry-new__time`, `entry-id__no-time` |
 | 43 | Import queue | `queue`, `queue__suggested`, `queue__currency`, `queue__empty`, `queue~move`, `queue~skip`, `queue~suggestions` |
 | 44 | Email import | `email-intro`, `email-add`, `email-connected`, `email-error`, `email-paused` |
-| 34–39, 45–48 | **reserved for the later brief** (Overview, Stats, Calendar, More, Filter, Budget warnings, Export, Biometrics) — skip now; 48 Currency conversion is obsolete |
+| **34** | Overview (v5) | `overview`, `overview__no-budget`, `overview__over`, `overview__first-month` |
+| **35** | Statistics (v5) | `stats__month`, `stats__year`, `stats__empty` |
+| **36** | Calendar (v5) | `calendar`, `calendar~day`, `calendar__empty` |
+| **37** | Navigation proposal (v5) | `nav__home`, `nav__plans` |
+| **38** | Advanced filter (v5) | `entries~filter`, `entries__filtered`, `entries~filter__invalid` |
+| **39** | Budget warnings (v5) | `home__almost-over`, `settings~budget-warn`, `ext-budget-notification` |
+| **45** | Export (v5) | `settings~export`, `settings~export__custom`, `export-pdf-page1` |
+| **46** | Biometrics (v5) | `settings__biometric`, `lock__biometric`, `lock__biometric-cancel` |
+| **47** | Money rules (v5) | `entry-new__insufficient`, `transfer__insufficient`, `accounts~edit__allow-negative`, `accounts__negative-badge`, `accounts~allow-negative-notice`, `home__skipped-repeat`, `entries~delete-refused` |
+| **56** | Top‑up sheet (v5) | `queue~top-up`, `queue__topped-up` |
+| 41 / 42 (v5 additions) | Savings / Debts | `savings~add-money__main-currency`, `savings~add-money__source-short`, `debts~edit__interest`, `debts~edit__account`, `debts~detail__interest`, `debts~detail~change-rate`, `debts~payment__split`, `debts~delete-keep`, `entries__debt-rows`, `ext-deadline-notification__interest` |
+| 48 | Currency conversion — obsolete, don't use |
 
 ### 11.4 Design system page
 - **Tokens** as JSON in the schema of `design/hifi/tokens/tokens.json` + CSS variables; keep names; changelog. Required additions:
@@ -630,6 +878,10 @@ Each platform (Android 360 × 800 dp; iPhone 393 × 852 pt) × light + dark, eve
   queue card, suggested chip, ✉ marker, banner, segmented control, plus all v2 components (ring, keypad, rows, dialogs, snackbar, PIN pad, widget, notification).
 - **Motion** (150–250 ms, reduce‑motion aware): progress fill, goal → Done, reached burst, sheet open/close, period change, keypad.
 - **Icon list** for every new action (Add money, Withdraw, History, Wallet, Deadline reminder, Reopen, Currency chip).
+- **v5 additions:** insufficient‑funds field state, Negative badge, top‑up option rows, debt‑movement row icon(s), interest /
+  principal split rows, rate chip, stat tile, bar chart (paired income/expense) + line chart + their table alternatives, calendar
+  day cell (compact amount + income dot, selected/today), filter chips, Almost‑over status (warning), export option rows,
+  biometric button on the PIN pad, and the chosen navigation component. Token additions only if needed — list them in the changelog.
 
 ### 11.5 Format
 claude.ai link + HTML/PNG per frame into `apps/A002-vigon/design/hifi/` with §11.3 names, plus an **assumptions page** (what you
