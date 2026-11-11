@@ -694,5 +694,11 @@
   "goalsN": "{n} mục tiêu",
   "owedToYouShort": "Người khác nợ bạn {amount}",
 
-  "rateLine": "1 {from} = {rate} {to} · tự động"
+  "rateLine": "1 {from} = {rate} {to} · tự động",
+  "exactAlarmRow": "Báo đúng giờ",
+  "exactAlarmOn": "Đã bật",
+  "exactAlarmOff": "Chưa bật · có thể trễ vài phút",
+  "exactAlarmExplainTitle": "Báo đúng giờ?",
+  "exactAlarmExplainBody": "Để thông báo đến đúng phút, Android cần bạn cho phép \"Chuông báo và lời nhắc\" (Báo thức và lời nhắc) cho Ví Gọn. Không bật thì thông báo vẫn đến nhưng có thể trễ vài phút.",
+  "exactAlarmOpen": "Mở cài đặt"
 }

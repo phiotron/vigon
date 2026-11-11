@@ -223,6 +223,72 @@ void main() {
       },
     );
 
+    testWidgets(
+      'D-045: bật nhắc khi chưa có "Báo thức và lời nhắc" thì mời bật; '
+      'hàng "Báo đúng giờ" đổi theo',
+      (tester) async {
+        final fake = FakeReminderScheduler();
+        final exact = FakeExactAlarmAccess(granted: false);
+        final db = await pumpApp(
+          tester,
+          overrides: [reminderSchedulerProvider.overrideWithValue(fake)],
+          exactAlarm: exact,
+        );
+        await openSettings(tester);
+        await scrollToReminder(tester);
+        // Chưa bật nhắc nào thì chưa hiện hàng Báo đúng giờ... nhưng Nhắc trước
+        // hạn mặc định bật nên hàng có mặt, báo "Chưa bật".
+        await tester.ensureVisible(find.text('Nhắc ghi sổ hằng ngày'));
+        await tester.pump();
+        await tester.tap(find.text('Nhắc ghi sổ hằng ngày'));
+        await settle(tester);
+        await tester.tap(find.text('Tiếp tục'));
+        await settle(tester);
+        expect(find.text('Báo đúng giờ?'), findsOneWidget);
+        await tester.tap(find.text('Mở cài đặt'));
+        await settle(tester);
+        expect(exact.requests, 1);
+        final row = find.widgetWithText(SettingsNavRow, 'Báo đúng giờ');
+        await tester.ensureVisible(row);
+        await settle(tester);
+        expect(
+          find.descendant(of: row, matching: find.text('Đã bật')),
+          findsOneWidget,
+        );
+        await disposeApp(tester, db);
+      },
+    );
+
+    testWidgets('D-045: từ chối mời thì hàng ghi "Chưa bật", chạm để mời lại', (
+      tester,
+    ) async {
+      final fake = FakeReminderScheduler();
+      final exact = FakeExactAlarmAccess(granted: false, grantOnRequest: false);
+      final db = await pumpApp(
+        tester,
+        overrides: [reminderSchedulerProvider.overrideWithValue(fake)],
+        exactAlarm: exact,
+      );
+      await openSettings(tester);
+      await scrollToReminder(tester);
+      final row = find.widgetWithText(SettingsNavRow, 'Báo đúng giờ');
+      await tester.ensureVisible(row);
+      await settle(tester);
+      expect(
+        find.descendant(
+          of: row,
+          matching: find.text('Chưa bật · có thể trễ vài phút'),
+        ),
+        findsOneWidget,
+      );
+      await tester.tap(row);
+      await settle(tester);
+      await tester.tap(find.text('Hủy'));
+      await settle(tester);
+      expect(exact.requests, 0);
+      await disposeApp(tester, db);
+    });
+
     testWidgets('đổi giờ thì đặt lại lịch ở giờ mới', (tester) async {
       final fake = FakeReminderScheduler();
       final db = memoryDatabase();
@@ -243,14 +309,25 @@ void main() {
       await scrollToReminder(tester);
       await tester.tap(find.text('Giờ nhắc'));
       await settle(tester);
-      // Chuyển sang nhập bằng bàn phím cho dễ thao tác.
-      await tester.tap(find.byIcon(Icons.keyboard_outlined));
+      // Bộ chọn giờ chỉ có mặt đồng hồ: kiểu nhập bàn phím bị ẩn vì lỗi
+      // "BoxConstraints non-normalized" ở cỡ chữ hệ thống nhỏ (A001 b0f32fa).
+      final dialog = tester.widget<TimePickerDialog>(
+        find.byType(TimePickerDialog),
+      );
+      expect(dialog.initialEntryMode, TimePickerEntryMode.dialOnly);
+      expect(find.byIcon(Icons.keyboard_outlined), findsNothing);
+      final cancel = MaterialLocalizations.of(
+        tester.element(find.byType(TimePickerDialog)),
+      ).cancelButtonLabel;
+      await tester.tap(find.text(cancel));
       await settle(tester);
-      final fields = find.byType(TextField);
-      await tester.enterText(fields.at(0), '8');
-      await tester.enterText(fields.at(1), '45');
-      await tester.pump();
-      await tester.tap(find.text('OK'));
+      expect(fake.scheduled.length, before); // hủy thì không đặt lại
+      // Đổi giờ (như bấm OK trên mặt đồng hồ) → đặt lại lịch ở giờ mới.
+      await tester.runAsync(
+        () =>
+            SettingsRepository(db)
+                .setReminderTime(const TimeOfDay(hour: 20, minute: 45)),
+      );
       await settle(tester);
 
       expect(fake.scheduled.length, before + 1);

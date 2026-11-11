@@ -13,6 +13,18 @@ final reminderSchedulerProvider = Provider<ReminderScheduler>(
   (ref) => LocalNotificationsScheduler(),
 );
 
+final exactAlarmAccessProvider = Provider<ExactAlarmAccess>(
+  (ref) => ExactAlarmAccess(),
+);
+
+/// Đã được báo đúng giờ chưa (D-045). Đọc lại mỗi khi app quay lại từ nền —
+/// người dùng bật/tắt quyền trong cài đặt hệ thống rồi mới quay về.
+final exactAlarmAllowedProvider = FutureProvider<bool>((ref) {
+  final listener = AppLifecycleListener(onResume: ref.invalidateSelf);
+  ref.onDispose(listener.dispose);
+  return ref.watch(exactAlarmAccessProvider).allowed();
+});
+
 final reminderEnabledProvider = StreamProvider<bool>(
   (ref) => ref.watch(settingsRepositoryProvider).watchReminderEnabled(),
 );
@@ -61,6 +73,8 @@ final reminderSyncProvider = Provider<void>((ref) {
   final ready = ref.watch(reminderReadyProvider);
   final enabled = ref.watch(reminderEnabledProvider).value;
   final time = ref.watch(reminderTimeProvider).value;
+  // Đổi quyền báo đúng giờ thì đặt lại lịch theo chế độ mới (D-045).
+  ref.watch(exactAlarmAllowedProvider);
   final localeCode = ref.watch(localeCodeProvider);
   if (!ready.hasValue ||
       enabled == null ||

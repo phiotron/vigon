@@ -339,7 +339,11 @@ class _AccountEditorState extends ConsumerState<_AccountEditor> {
     setState(() {
       _currency = picked;
       if (parsed != null && text.isNotEmpty) {
-        final abs = amountInput(context, parsed, newDigits);
+        final abs = amountInput(
+          context,
+          rescaleMinorUnits(parsed, oldDigits, newDigits),
+          newDigits,
+        );
         _balance.text = negative ? '-$abs' : abs;
       }
     });

@@ -9,7 +9,30 @@ import 'package:vigon/src/data/database.dart';
 import 'package:vigon/src/data/pin_service.dart';
 import 'package:vigon/src/data/settings_repository.dart';
 import 'package:vigon/src/features/lock/app_lock.dart';
+import 'package:vigon/src/features/reminder/reminder_providers.dart';
+import 'package:vigon/src/features/reminder/reminder_scheduler.dart';
 import 'package:vigon/src/providers.dart';
+
+/// Quyền báo đúng giờ giả (D-045): test không có plugin thông báo. Mặc định
+/// coi như đã bật để các luồng bật nhắc không bị hộp mời chen vào; test cần
+/// trường hợp "chưa bật" thì truyền `exactAlarm:` cho [pumpApp].
+class FakeExactAlarmAccess extends ExactAlarmAccess {
+  FakeExactAlarmAccess({this.granted = true, this.grantOnRequest = true});
+
+  bool granted;
+  final bool grantOnRequest;
+  int requests = 0;
+
+  @override
+  Future<bool> allowed() async => granted;
+
+  @override
+  Future<bool> request() async {
+    requests++;
+    if (grantOnRequest) granted = true;
+    return granted;
+  }
+}
 
 /// Ngày cố định cho test.
 final testToday = DateTime(2026, 11, 3, 9);
@@ -36,6 +59,7 @@ Future<AppDatabase> pumpApp(
   SecretStore? secrets,
   DateTime Function()? clock,
   List overrides = const [],
+  ExactAlarmAccess? exactAlarm,
 }) async {
   usePhoneScreen(tester);
   final database = db ?? memoryDatabase();
@@ -61,6 +85,9 @@ Future<AppDatabase> pumpApp(
         clockProvider.overrideWithValue(clock ?? () => testToday),
         secretStoreProvider.overrideWithValue(secrets ?? MemorySecretStore()),
         appVersionProvider.overrideWith((ref) async => '1.0.0 (1)'),
+        exactAlarmAccessProvider.overrideWithValue(
+          exactAlarm ?? FakeExactAlarmAccess(),
+        ),
         ...overrides.cast(),
       ],
       child: VigonApp(router: createRouter()),

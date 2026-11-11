@@ -2077,8 +2077,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get homeEmptyTitle => 'Log your first expense';
 
   @override
-  String get homeEmptyBody =>
-      'Tap a category or −';
+  String get homeEmptyBody => 'Tap a category or −';
 
   @override
   String fromEmailRef(String ref) {
@@ -2160,4 +2159,23 @@ class AppLocalizationsEn extends AppLocalizations {
   String rateLine(String from, String rate, String to) {
     return '1 $from = $rate $to · auto';
   }
+
+  @override
+  String get exactAlarmRow => 'Exact timing';
+
+  @override
+  String get exactAlarmOn => 'On';
+
+  @override
+  String get exactAlarmOff => 'Off · may arrive a few minutes late';
+
+  @override
+  String get exactAlarmExplainTitle => 'Arrive on time?';
+
+  @override
+  String get exactAlarmExplainBody =>
+      'To show reminders at the exact minute, Android needs you to allow \"Alarms & reminders\" for Vigon. Without it, reminders still arrive but may be a few minutes late.';
+
+  @override
+  String get exactAlarmOpen => 'Open settings';
 }

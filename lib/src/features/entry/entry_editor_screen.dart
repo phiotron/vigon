@@ -405,7 +405,14 @@ class _EntryEditorScreenState extends ConsumerState<EntryEditorScreen> {
       _currency = picked;
       _error = null;
       if (value != null && _expression.isNotEmpty) {
-        _expression = minorUnitsToInput(value, currencyDecimalDigits(picked));
+        _expression = minorUnitsToInput(
+          rescaleMinorUnits(
+            value,
+            currencyDecimalDigits(current),
+            currencyDecimalDigits(picked),
+          ),
+          currencyDecimalDigits(picked),
+        );
       }
     });
   }

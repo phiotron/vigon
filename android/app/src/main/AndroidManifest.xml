@@ -6,6 +6,10 @@
     <uses-permission android:name="android.permission.INTERNET"/>
     <!-- F-25 nhắc ghi sổ: hai quyền này. Không báo thức chính xác. -->
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
+    <!-- Báo đúng phút (D-045): người dùng tự bật "Báo thức và lời nhắc";
+         không bật thì lịch nhắc chạy kiểu xấp xỉ. KHÔNG dùng USE_EXACT_ALARM
+         (Google Play chỉ cho app báo thức/lịch). -->
+    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM"/>
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
     <!-- Plugin thông báo tự thêm VIBRATE; app không rung nên gỡ để khỏi thêm quyền ngoài danh sách. -->
     <uses-permission android:name="android.permission.VIBRATE" tools:node="remove"/>

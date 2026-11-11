@@ -18,6 +18,7 @@ import '../../ui/messenger.dart';
 import '../../ui/tokens.g.dart';
 import '../categories/sheet_footer.dart';
 import '../reminder/deadline_reminders.dart';
+import '../settings/exact_alarm_row.dart';
 import '../settings/budget_dialog.dart' show currencySymbol;
 import '../settings/currency_picker.dart';
 import 'savings_providers.dart';
@@ -132,7 +133,15 @@ class _GoalEditorState extends ConsumerState<_GoalEditor> {
       );
       return parsed == null
           ? text
-          : amountInput(context, parsed, currencyDecimalDigits(picked));
+          : amountInput(
+              context,
+              rescaleMinorUnits(
+                parsed,
+                currencyDecimalDigits(current),
+                currencyDecimalDigits(picked),
+              ),
+              currencyDecimalDigits(picked),
+            );
     }
 
     setState(() {
@@ -228,6 +237,7 @@ class _GoalEditorState extends ConsumerState<_GoalEditor> {
           body: l.deadlineExplainBody,
           action: l.reminderContinue,
         ),
+        afterGranted: () => offerExactAlarm(context, ref), // D-045
       );
     }
     if (mounted) Navigator.pop(context);

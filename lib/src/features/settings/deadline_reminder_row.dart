@@ -13,6 +13,7 @@ import '../../ui/settings_rows.dart';
 import '../../ui/tokens.g.dart';
 import '../reminder/deadline_reminders.dart';
 import '../reminder/reminder_providers.dart';
+import 'exact_alarm_row.dart';
 
 /// Hàng "Nhắc trước hạn" ở nhóm Kế hoạch (F-48, AC-155): giá trị "Trước 7
 /// ngày · 09:00" hoặc "Tắt"; chạm mở bảng chỉnh.
@@ -76,6 +77,7 @@ class _DeadlineSheet extends ConsumerWidget {
       return;
     }
     await repo.setDeadlineReminderEnabled(true);
+    if (context.mounted) await offerExactAlarm(context, ref); // D-045
   }
 
   @override
@@ -127,6 +129,9 @@ class _DeadlineSheet extends ConsumerWidget {
               value: time.format(context),
               onTap: () async {
                 final picked = await showTimePicker(
+                  // Kiểu nhập bàn phím lỗi "BoxConstraints non-normalized" khi cỡ chữ
+                  // hệ thống nhỏ (Galaxy A13 0.8) — giữ mặt đồng hồ như A001 `b0f32fa`.
+                  initialEntryMode: TimePickerEntryMode.dialOnly,
                   context: context,
                   initialTime: time,
                 );

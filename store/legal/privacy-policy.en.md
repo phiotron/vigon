@@ -1,6 +1,6 @@
 # Vigon Privacy Policy
 
-**Last updated:** 2026-11-10
+**Last updated:** 2026-11-11
 
 Vigon is a personal income-and-expense tracker for Android and iPhone, published by Phiotron. This policy explains what data the app stores, where it stores it and how you control it.
 
@@ -53,10 +53,11 @@ Folder write access is managed by the operating system and applies only to the f
 
 ## 6. Permissions on your phone
 
-On Android, Vigon has the internet permission to download the rate table (section 4) and read the mailboxes you added (section 3); Android grants it at install time without asking. Beyond that the app has only two permissions, both used solely for the optional "Daily reminder" (off by default) and the background mail check:
+On Android, Vigon has the internet permission to download the rate table (section 4) and read the mailboxes you added (section 3); Android grants it at install time without asking. Beyond that the app has only three permissions, used solely for reminders (the "Daily reminder", off by default; "Deadline reminders" for savings goals and debts, on by default) and the background mail check:
 
-- Notifications: the app asks only when you turn on the daily reminder, or (iPhone only) when you turn on or change the automatic backup time, always after an explanation (Android 13 and later; on iPhone it is an iOS dialog). The iPhone backup notification says only "Time to back up Vigon. Tap to back up."; if you decline, the app still backs up when you open it. Reminder notifications are created and kept on the phone, with generic wording, no amounts, and never pass through a server. If you decline, the app still works normally.
+- Notifications: the app asks only when you turn on the daily reminder or deadline reminders, when you first set a due date on a savings goal or debt, or (iPhone only) when you turn on or change the automatic backup time, always after an explanation (Android 13 and later; on iPhone it is an iOS dialog). The iPhone backup notification says only "Time to back up Vigon. Tap to back up."; if you decline, the app still backs up when you open it. All reminder notifications are created and kept on the phone and never pass through a server. The daily reminder uses generic wording with no amounts. Deadline reminders show the goal or person name and the amount left (for example "Debt with An: 2,000,000 ₫ left, due in 7 days") and can appear on the lock screen, even when a PIN is set; you can turn them off in Settings → Deadline reminders. If you decline, the app still works normally.
 - Receive boot completed (Android only): granted at install time without asking. The app uses it only to reset the reminder, automatic-backup and mail-check schedules after you restart your phone (if you turned them on); it gives the app no access to any data.
+- Alarms & reminders (Android 12 and later only): not granted by Android by default. The app only invites you to allow it in system settings after you turn on a reminder, so reminders arrive at the exact minute; without it, reminders still arrive but may be a few minutes late. It only lets the app schedule notifications and gives no access to any data.
 
 The app does not request location, contacts, photos, camera or microphone. Picking a restore file and a backup folder uses the operating system's pickers, which give access only to the file or folder you choose.
 

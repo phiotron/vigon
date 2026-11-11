@@ -8,7 +8,7 @@ abstract final class LegalTexts {
   static const String privacyVi = r'''
 # Chính sách quyền riêng tư của Ví Gọn
 
-**Cập nhật lần cuối:** 2026-11-10
+**Cập nhật lần cuối:** 2026-11-11
 
 Ví Gọn là ứng dụng ghi chép thu chi cá nhân cho Android và iPhone, do Phiotron phát hành. Chính sách này giải thích ứng dụng lưu dữ liệu gì, lưu ở đâu và bạn kiểm soát chúng thế nào.
 
@@ -61,10 +61,11 @@ Quyền ghi vào thư mục do hệ điều hành quản lý và chỉ áp dụn
 
 ## 6. Quyền trên điện thoại
 
-Trên Android, Ví Gọn có quyền Internet để tải bảng tỷ giá (mục 4) và đọc hộp thư bạn đã thêm (mục 3); Android cấp sẵn quyền này khi cài, không hỏi bạn. Ngoài ra ứng dụng chỉ có hai quyền, cả hai chỉ phục vụ "Nhắc ghi sổ hằng ngày" (mặc định tắt) và lịch kiểm thư nền:
+Trên Android, Ví Gọn có quyền Internet để tải bảng tỷ giá (mục 4) và đọc hộp thư bạn đã thêm (mục 3); Android cấp sẵn quyền này khi cài, không hỏi bạn. Ngoài ra ứng dụng chỉ có ba quyền, chỉ phục vụ các thông báo nhắc ("Nhắc ghi sổ hằng ngày", mặc định tắt; "Nhắc trước hạn" của mục tiêu tiết kiệm và khoản nợ, mặc định bật) và lịch kiểm thư nền:
 
-- Thông báo: ứng dụng chỉ xin khi bạn bật Nhắc ghi sổ, hoặc (chỉ iPhone) khi bạn bật hay đổi giờ Sao lưu tự động, luôn sau một lời giải thích (Android 13 trở lên; trên iPhone là hộp thoại của iOS). Thông báo giờ sao lưu trên iPhone chỉ có câu chung "Đến giờ sao lưu Ví Gọn. Chạm để sao lưu."; từ chối thì ứng dụng vẫn sao lưu khi bạn mở. Thông báo nhắc được tạo và nằm trên máy, nội dung chung chung, không chứa số liệu và không đi qua máy chủ nào. Từ chối thì ứng dụng vẫn dùng bình thường.
+- Thông báo: ứng dụng chỉ xin khi bạn bật Nhắc ghi sổ hoặc Nhắc trước hạn, khi bạn đặt hạn cho mục tiêu tiết kiệm hay khoản nợ lần đầu, hoặc (chỉ iPhone) khi bạn bật hay đổi giờ Sao lưu tự động, luôn sau một lời giải thích (Android 13 trở lên; trên iPhone là hộp thoại của iOS). Thông báo giờ sao lưu trên iPhone chỉ có câu chung "Đến giờ sao lưu Ví Gọn. Chạm để sao lưu."; từ chối thì ứng dụng vẫn sao lưu khi bạn mở. Mọi thông báo nhắc được tạo và nằm trên máy, không đi qua máy chủ nào. Nhắc ghi sổ có nội dung chung chung, không chứa số liệu. Nhắc trước hạn có tên mục tiêu hoặc tên người và số tiền còn lại (ví dụ "Khoản nợ với An: còn 2.000.000 ₫, đến hạn sau 7 ngày") và có thể hiện trên màn khóa, kể cả khi bạn bật mã PIN; bạn tắt được trong Cài đặt → Nhắc trước hạn. Từ chối thì ứng dụng vẫn dùng bình thường.
 - Nhận tín hiệu khởi động lại máy (chỉ Android): Android cấp sẵn khi cài, không hỏi bạn. Ứng dụng chỉ dùng để đặt lại lịch nhắc, lịch sao lưu tự động và lịch kiểm thư sau khi bạn khởi động lại điện thoại (nếu đã bật); quyền này không cho ứng dụng đọc dữ liệu nào.
+- Chuông báo và lời nhắc (chỉ Android 12 trở lên; có máy gọi là "Báo thức và lời nhắc"): Android không cấp sẵn. Ứng dụng chỉ mời bạn bật trong cài đặt hệ thống sau khi bạn bật một loại nhắc, để thông báo nhắc đến đúng phút; không bật thì thông báo vẫn đến nhưng có thể trễ vài phút. Quyền này chỉ cho ứng dụng hẹn giờ thông báo, không cho đọc dữ liệu nào.
 
 Ứng dụng không xin quyền vị trí, danh bạ, ảnh, camera hay micro. Chọn file khôi phục và chọn thư mục sao lưu dùng bộ chọn của hệ điều hành, chỉ truy cập đúng file hoặc thư mục bạn chọn.
 
@@ -101,7 +102,7 @@ Phiotron, nhà phát triển Ví Gọn — email: phamphuongphuongnd@gmail.com
   static const String privacyEn = r'''
 # Vigon Privacy Policy
 
-**Last updated:** 2026-11-10
+**Last updated:** 2026-11-11
 
 Vigon is a personal income-and-expense tracker for Android and iPhone, published by Phiotron. This policy explains what data the app stores, where it stores it and how you control it.
 
@@ -154,10 +155,11 @@ Folder write access is managed by the operating system and applies only to the f
 
 ## 6. Permissions on your phone
 
-On Android, Vigon has the internet permission to download the rate table (section 4) and read the mailboxes you added (section 3); Android grants it at install time without asking. Beyond that the app has only two permissions, both used solely for the optional "Daily reminder" (off by default) and the background mail check:
+On Android, Vigon has the internet permission to download the rate table (section 4) and read the mailboxes you added (section 3); Android grants it at install time without asking. Beyond that the app has only three permissions, used solely for reminders (the "Daily reminder", off by default; "Deadline reminders" for savings goals and debts, on by default) and the background mail check:
 
-- Notifications: the app asks only when you turn on the daily reminder, or (iPhone only) when you turn on or change the automatic backup time, always after an explanation (Android 13 and later; on iPhone it is an iOS dialog). The iPhone backup notification says only "Time to back up Vigon. Tap to back up."; if you decline, the app still backs up when you open it. Reminder notifications are created and kept on the phone, with generic wording, no amounts, and never pass through a server. If you decline, the app still works normally.
+- Notifications: the app asks only when you turn on the daily reminder or deadline reminders, when you first set a due date on a savings goal or debt, or (iPhone only) when you turn on or change the automatic backup time, always after an explanation (Android 13 and later; on iPhone it is an iOS dialog). The iPhone backup notification says only "Time to back up Vigon. Tap to back up."; if you decline, the app still backs up when you open it. All reminder notifications are created and kept on the phone and never pass through a server. The daily reminder uses generic wording with no amounts. Deadline reminders show the goal or person name and the amount left (for example "Debt with An: 2,000,000 ₫ left, due in 7 days") and can appear on the lock screen, even when a PIN is set; you can turn them off in Settings → Deadline reminders. If you decline, the app still works normally.
 - Receive boot completed (Android only): granted at install time without asking. The app uses it only to reset the reminder, automatic-backup and mail-check schedules after you restart your phone (if you turned them on); it gives the app no access to any data.
+- Alarms & reminders (Android 12 and later only): not granted by Android by default. The app only invites you to allow it in system settings after you turn on a reminder, so reminders arrive at the exact minute; without it, reminders still arrive but may be a few minutes late. It only lets the app schedule notifications and gives no access to any data.
 
 The app does not request location, contacts, photos, camera or microphone. Picking a restore file and a backup folder uses the operating system's pickers, which give access only to the file or folder you choose.
 

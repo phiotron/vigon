@@ -73,6 +73,61 @@ tz.TZDateTime nextReminderInstant(
   return next;
 }
 
+/// Chế độ đặt lịch của Android (D-045): đúng phút (`exactAllowWhileIdle`) khi
+/// người dùng đã bật "Báo thức và lời nhắc" (SCHEDULE_EXACT_ALARM), không thì
+/// xấp xỉ (`inexactAllowWhileIdle`, có thể trễ vài phút). Lỗi nền tảng → xấp xỉ.
+Future<AndroidScheduleMode> reminderScheduleMode(
+  FlutterLocalNotificationsPlugin plugin,
+) async {
+  try {
+    final android = plugin
+        .resolvePlatformSpecificImplementation<
+          AndroidFlutterLocalNotificationsPlugin
+        >();
+    if (android != null &&
+        (await android.canScheduleExactNotifications() ?? false)) {
+      return AndroidScheduleMode.exactAllowWhileIdle;
+    }
+  } catch (_) {}
+  return AndroidScheduleMode.inexactAllowWhileIdle;
+}
+
+/// Quyền báo đúng giờ (SCHEDULE_EXACT_ALARM, D-045). iPhone luôn đúng giờ.
+class ExactAlarmAccess {
+  ExactAlarmAccess([FlutterLocalNotificationsPlugin? plugin])
+    : _plugin = plugin ?? FlutterLocalNotificationsPlugin();
+
+  final FlutterLocalNotificationsPlugin _plugin;
+
+  AndroidFlutterLocalNotificationsPlugin? get _android => _plugin
+      .resolvePlatformSpecificImplementation<
+        AndroidFlutterLocalNotificationsPlugin
+      >();
+
+  /// true nếu lịch nhắc sẽ đến đúng phút (Android đã cho phép, hoặc iPhone).
+  Future<bool> allowed() async {
+    try {
+      final android = _android;
+      if (android == null) return true;
+      return await android.canScheduleExactNotifications() ?? false;
+    } catch (_) {
+      return false;
+    }
+  }
+
+  /// Mở trang "Báo thức và lời nhắc" của hệ thống; trả kết quả sau khi quay
+  /// lại app.
+  Future<bool> request() async {
+    try {
+      final android = _android;
+      if (android == null) return true;
+      return await android.requestExactAlarmsPermission() ?? false;
+    } catch (_) {
+      return false;
+    }
+  }
+}
+
 bool _localZoneReady = false;
 
 /// Nạp dữ liệu múi giờ và đặt `tz.local` theo múi giờ của máy (một lần). Dùng
@@ -98,8 +153,8 @@ Future<void> ensureLocalTimeZone() async {
   _localZoneReady = true;
 }
 
-/// Bản thật dùng `flutter_local_notifications`. Lịch KHÔNG chính xác theo phút
-/// (`inexactAllowWhileIdle`) nên không cần quyền báo thức chính xác.
+/// Bản thật dùng `flutter_local_notifications`. Đúng phút khi người dùng đã
+/// bật "Báo thức và lời nhắc", không thì xấp xỉ (D-045, [reminderScheduleMode]).
 class LocalNotificationsScheduler implements ReminderScheduler {
   LocalNotificationsScheduler([FlutterLocalNotificationsPlugin? plugin])
     : _plugin = plugin ?? FlutterLocalNotificationsPlugin();
@@ -216,7 +271,8 @@ class LocalNotificationsScheduler implements ReminderScheduler {
           ),
           iOS: const DarwinNotificationDetails(),
         ),
-        androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
+        // Đúng phút nếu đã bật "Báo thức và lời nhắc" (D-045).
+        androidScheduleMode: await reminderScheduleMode(_plugin),
         matchDateTimeComponents: DateTimeComponents.time,
       );
     } catch (_) {}

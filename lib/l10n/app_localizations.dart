@@ -3625,6 +3625,42 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'1 {from} = {rate} {to} · auto'**
   String rateLine(String from, String rate, String to);
+
+  /// No description provided for @exactAlarmRow.
+  ///
+  /// In en, this message translates to:
+  /// **'Exact timing'**
+  String get exactAlarmRow;
+
+  /// No description provided for @exactAlarmOn.
+  ///
+  /// In en, this message translates to:
+  /// **'On'**
+  String get exactAlarmOn;
+
+  /// No description provided for @exactAlarmOff.
+  ///
+  /// In en, this message translates to:
+  /// **'Off · may arrive a few minutes late'**
+  String get exactAlarmOff;
+
+  /// No description provided for @exactAlarmExplainTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Arrive on time?'**
+  String get exactAlarmExplainTitle;
+
+  /// No description provided for @exactAlarmExplainBody.
+  ///
+  /// In en, this message translates to:
+  /// **'To show reminders at the exact minute, Android needs you to allow \"Alarms & reminders\" for Vigon. Without it, reminders still arrive but may be a few minutes late.'**
+  String get exactAlarmExplainBody;
+
+  /// No description provided for @exactAlarmOpen.
+  ///
+  /// In en, this message translates to:
+  /// **'Open settings'**
+  String get exactAlarmOpen;
 }
 
 class _AppLocalizationsDelegate

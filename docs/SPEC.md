@@ -368,6 +368,9 @@ Mục này sửa cách hiển thị của 3e (AC-128) và sửa F-33, F-34. Ch�
 - AC-156: Mỗi mục báo **hai lần**: N ngày trước hạn và đúng ngày hạn, vào giờ đã chọn; mốc đã qua thì bỏ; N lớn hơn số ngày còn lại thì chỉ báo ngày hạn. Xếp lại lịch khi mở app, khi quay lại từ nền, khi mục tiêu/khoản nợ/lần trả/khoản trong ví đổi, khi đổi cài đặt; xong hoặc xoá thì huỷ. Kênh thông báo riêng "Nhắc hạn". [T]
 - AC-157: Nội dung **có số tiền còn lại, kể cả khi bật PIN** (người dùng chọn): "Khoản nợ với An: còn 2.000.000 ₫, đến hạn sau 7 ngày", "Bạn nợ Bình: còn 500 $, đến hạn hôm nay", "Mục tiêu Du lịch: còn thiếu 1.500.000 ₫, hạn sau 7 ngày". Số theo tiền tệ của mục. Chạm mở Khoản nợ / Chi tiết mục tiêu (qua Màn khoá nếu bật). [T]
 
+### Sửa F-25 / F-48 · Nhắc đúng phút (D-045, 2026-11-11)
+- AC-159: Android khai báo `SCHEDULE_EXACT_ALARM`. Khi người dùng đã bật "Báo thức và lời nhắc", Nhắc ghi sổ và Nhắc trước hạn đến **đúng phút** (`exactAllowWhileIdle`); chưa bật thì như cũ (xấp xỉ, có thể trễ vài phút). Sau khi có quyền thông báo, app giải thích ("Báo đúng giờ?") rồi mở trang hệ thống; hàng "Báo đúng giờ" (nhóm Nhắc ghi sổ, chỉ Android, chỉ khi có nhắc bật) hiện "Đã bật" / "Chưa bật · có thể trễ vài phút", chạm để mời lại. Không bắt buộc. Sao lưu tự động giữ xấp xỉ. Không dùng `USE_EXACT_ALARM`. [T: `f25_reminder_test` D-045, `manifest_test`; M: Galaxy A13]
+
 ### Sửa F-34 · Khoản nợ (2026-11-10)
 - AC-158: Xoá khoản nợ từ Chi tiết → đóng Chi tiết, **ở lại màn Khoản nợ** (lỗi cũ: về Cài đặt). Còn lại/đã trả/tổng nhóm tính bằng số gốc (AC-148); lần trả vượt số còn lại báo lỗi như AC-105. [T]
 

@@ -18,6 +18,7 @@ import '../../ui/hint.dart';
 import '../../ui/tokens.g.dart';
 import '../categories/sheet_footer.dart';
 import '../reminder/deadline_reminders.dart';
+import '../settings/exact_alarm_row.dart';
 import '../settings/budget_dialog.dart' show currencySymbol;
 import '../settings/currency_picker.dart';
 import 'debts_providers.dart';
@@ -179,6 +180,7 @@ class _DebtEditorState extends ConsumerState<_DebtEditor> {
           body: l.deadlineExplainBody,
           action: l.reminderContinue,
         ),
+        afterGranted: () => offerExactAlarm(context, ref), // D-045
       );
     }
     if (mounted) Navigator.pop(context);
@@ -199,7 +201,11 @@ class _DebtEditorState extends ConsumerState<_DebtEditor> {
     setState(() {
       _currency = picked;
       if (parsed != null && text.isNotEmpty) {
-        _amount.text = amountInput(context, parsed, newDigits);
+        _amount.text = amountInput(
+          context,
+          rescaleMinorUnits(parsed, oldDigits, newDigits),
+          newDigits,
+        );
       }
     });
   }

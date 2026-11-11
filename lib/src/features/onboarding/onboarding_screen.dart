@@ -90,6 +90,9 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
 
   Future<void> _pickTime(TimeOfDay current) async {
     final picked = await showTimePicker(
+      // Kiểu nhập bàn phím lỗi "BoxConstraints non-normalized" khi cỡ chữ
+      // hệ thống nhỏ (Galaxy A13 0.8) — giữ mặt đồng hồ như A001 `b0f32fa`.
+      initialEntryMode: TimePickerEntryMode.dialOnly,
       context: context,
       initialTime: current,
       helpText: AppLocalizations.of(context).reminderTime,

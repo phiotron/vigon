@@ -11,6 +11,19 @@ int currencyDecimalDigits(String currencyCode) =>
     NumberFormat.currency(locale: 'en', name: currencyCode).decimalDigits ??
     2;
 
+/// Đổi số đơn vị nhỏ nhất từ [fromDigits] sang [toDigits] chữ số lẻ mà GIỮ
+/// NGUYÊN con số người dùng đã gõ: 10 (VND, 0 lẻ) → 1000 (USD, 2 lẻ) tức vẫn
+/// là "10". Dùng khi đổi tiền tệ của ô đang nhập; không phải quy đổi tỷ giá.
+/// Bớt chữ số lẻ thì làm tròn half-up ra xa 0 (12,345 → 12,35 → 12).
+int rescaleMinorUnits(int minor, int fromDigits, int toDigits) {
+  if (toDigits >= fromDigits) {
+    return minor * pow(10, toDigits - fromDigits).toInt();
+  }
+  final f = pow(10, fromDigits - toDigits).toInt();
+  final rounded = (minor.abs() * 2 + f) ~/ (2 * f);
+  return minor < 0 ? -rounded : rounded;
+}
+
 /// Hiển thị số tiền lưu dạng đơn vị nhỏ nhất theo ngôn ngữ (AC-22).
 /// Chỉ đổi sang số thực ở bước hiển thị; tính toán luôn dùng số nguyên (D-005).
 String formatMoney(

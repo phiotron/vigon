@@ -3,17 +3,19 @@ import 'dart:io';
 import 'package:flutter_test/flutter_test.dart';
 
 /// Quyền duy nhất được phép khai báo (F-25, AC-62; INTERNET chỉ để tải tỉ giá
-/// khi đổi tiền tệ, D-025).
+/// khi đổi tiền tệ, D-025; SCHEDULE_EXACT_ALARM để nhắc đúng phút khi người
+/// dùng tự bật, D-045).
 const allowedPermissions = {
   'android.permission.INTERNET',
   'android.permission.POST_NOTIFICATIONS',
   'android.permission.RECEIVE_BOOT_COMPLETED',
+  'android.permission.SCHEDULE_EXACT_ALARM',
 };
 
-/// Quyền tuyệt đối không có: trạng thái mạng, báo thức chính xác.
+/// Quyền tuyệt đối không có: trạng thái mạng; USE_EXACT_ALARM (tự cấp, Google
+/// Play chỉ cho app báo thức/lịch — D-045 dùng SCHEDULE_EXACT_ALARM).
 const forbiddenPermissions = [
   'android.permission.ACCESS_NETWORK_STATE',
-  'android.permission.SCHEDULE_EXACT_ALARM',
   'android.permission.USE_EXACT_ALARM',
 ];
 

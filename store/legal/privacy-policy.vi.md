@@ -1,6 +1,6 @@
 # Chính sách quyền riêng tư của Ví Gọn
 
-**Cập nhật lần cuối:** 2026-11-10
+**Cập nhật lần cuối:** 2026-11-11
 
 Ví Gọn là ứng dụng ghi chép thu chi cá nhân cho Android và iPhone, do Phiotron phát hành. Chính sách này giải thích ứng dụng lưu dữ liệu gì, lưu ở đâu và bạn kiểm soát chúng thế nào.
 
@@ -53,10 +53,11 @@ Quyền ghi vào thư mục do hệ điều hành quản lý và chỉ áp dụn
 
 ## 6. Quyền trên điện thoại
 
-Trên Android, Ví Gọn có quyền Internet để tải bảng tỷ giá (mục 4) và đọc hộp thư bạn đã thêm (mục 3); Android cấp sẵn quyền này khi cài, không hỏi bạn. Ngoài ra ứng dụng chỉ có hai quyền, cả hai chỉ phục vụ "Nhắc ghi sổ hằng ngày" (mặc định tắt) và lịch kiểm thư nền:
+Trên Android, Ví Gọn có quyền Internet để tải bảng tỷ giá (mục 4) và đọc hộp thư bạn đã thêm (mục 3); Android cấp sẵn quyền này khi cài, không hỏi bạn. Ngoài ra ứng dụng chỉ có ba quyền, chỉ phục vụ các thông báo nhắc ("Nhắc ghi sổ hằng ngày", mặc định tắt; "Nhắc trước hạn" của mục tiêu tiết kiệm và khoản nợ, mặc định bật) và lịch kiểm thư nền:
 
-- Thông báo: ứng dụng chỉ xin khi bạn bật Nhắc ghi sổ, hoặc (chỉ iPhone) khi bạn bật hay đổi giờ Sao lưu tự động, luôn sau một lời giải thích (Android 13 trở lên; trên iPhone là hộp thoại của iOS). Thông báo giờ sao lưu trên iPhone chỉ có câu chung "Đến giờ sao lưu Ví Gọn. Chạm để sao lưu."; từ chối thì ứng dụng vẫn sao lưu khi bạn mở. Thông báo nhắc được tạo và nằm trên máy, nội dung chung chung, không chứa số liệu và không đi qua máy chủ nào. Từ chối thì ứng dụng vẫn dùng bình thường.
+- Thông báo: ứng dụng chỉ xin khi bạn bật Nhắc ghi sổ hoặc Nhắc trước hạn, khi bạn đặt hạn cho mục tiêu tiết kiệm hay khoản nợ lần đầu, hoặc (chỉ iPhone) khi bạn bật hay đổi giờ Sao lưu tự động, luôn sau một lời giải thích (Android 13 trở lên; trên iPhone là hộp thoại của iOS). Thông báo giờ sao lưu trên iPhone chỉ có câu chung "Đến giờ sao lưu Ví Gọn. Chạm để sao lưu."; từ chối thì ứng dụng vẫn sao lưu khi bạn mở. Mọi thông báo nhắc được tạo và nằm trên máy, không đi qua máy chủ nào. Nhắc ghi sổ có nội dung chung chung, không chứa số liệu. Nhắc trước hạn có tên mục tiêu hoặc tên người và số tiền còn lại (ví dụ "Khoản nợ với An: còn 2.000.000 ₫, đến hạn sau 7 ngày") và có thể hiện trên màn khóa, kể cả khi bạn bật mã PIN; bạn tắt được trong Cài đặt → Nhắc trước hạn. Từ chối thì ứng dụng vẫn dùng bình thường.
 - Nhận tín hiệu khởi động lại máy (chỉ Android): Android cấp sẵn khi cài, không hỏi bạn. Ứng dụng chỉ dùng để đặt lại lịch nhắc, lịch sao lưu tự động và lịch kiểm thư sau khi bạn khởi động lại điện thoại (nếu đã bật); quyền này không cho ứng dụng đọc dữ liệu nào.
+- Chuông báo và lời nhắc (chỉ Android 12 trở lên; có máy gọi là "Báo thức và lời nhắc"): Android không cấp sẵn. Ứng dụng chỉ mời bạn bật trong cài đặt hệ thống sau khi bạn bật một loại nhắc, để thông báo nhắc đến đúng phút; không bật thì thông báo vẫn đến nhưng có thể trễ vài phút. Quyền này chỉ cho ứng dụng hẹn giờ thông báo, không cho đọc dữ liệu nào.
 
 Ứng dụng không xin quyền vị trí, danh bạ, ảnh, camera hay micro. Chọn file khôi phục và chọn thư mục sao lưu dùng bộ chọn của hệ điều hành, chỉ truy cập đúng file hoặc thư mục bạn chọn.
 

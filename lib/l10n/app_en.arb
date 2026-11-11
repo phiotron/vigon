@@ -716,5 +716,11 @@
   "@owedToYouShort": {"placeholders": {"amount": {"type": "String"}}},
 
   "rateLine": "1 {from} = {rate} {to} · auto",
-  "@rateLine": {"placeholders": {"from": {"type": "String"}, "rate": {"type": "String"}, "to": {"type": "String"}}}
+  "@rateLine": {"placeholders": {"from": {"type": "String"}, "rate": {"type": "String"}, "to": {"type": "String"}}},
+  "exactAlarmRow": "Exact timing",
+  "exactAlarmOn": "On",
+  "exactAlarmOff": "Off · may arrive a few minutes late",
+  "exactAlarmExplainTitle": "Arrive on time?",
+  "exactAlarmExplainBody": "To show reminders at the exact minute, Android needs you to allow \"Alarms & reminders\" for Vigon. Without it, reminders still arrive but may be a few minutes late.",
+  "exactAlarmOpen": "Open settings"
 }

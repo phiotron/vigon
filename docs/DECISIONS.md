@@ -37,6 +37,14 @@ Mỗi quyết định một mục, mới nhất ở trên cùng.
 - Lý do / phương án đã loại: Chỉ cảnh báo (loại: không thực sự bắt "có thu mới có chi"). Chặn mọi tài khoản không ngoại lệ (loại: thẻ tín dụng không ghi được). Email/định kỳ chỉ cảnh báo (người dùng chọn chặn tuyệt đối). Giữ lần định kỳ chờ để ghi sau (người dùng chọn bỏ).
 - Hệ quả cần nhớ: Chỉ so với số dư **hiện tại** (mọi thời gian), không xét số dư tại ngày của khoản. Bên nhận của chuyển tiền không bao giờ bị chặn. Schema v8 có `accounts.allow_negative`. SPEC F-49.
 
+## D-045 · Nhắc đúng phút bằng SCHEDULE_EXACT_ALARM khi người dùng tự bật · 2026-11-11
+- Bối cảnh: Thử máy thật 2026-11-11: nhắc trước hạn hẹn 09:00 đến lúc 09:12 vì lịch dùng `inexactAllowWhileIdle` (Android được dời tới ~12 phút). Người dùng muốn báo chính xác. D-016 (F-25) trước đây cố ý không xin `SCHEDULE_EXACT_ALARM` ("nhắc ghi chép không cần chính xác theo phút").
+- Quyết định (người dùng chọn 2026-11-11): khai báo `SCHEDULE_EXACT_ALARM` (không tự cấp trên Android 14; người dùng bật "Báo thức và lời nhắc"). Áp cho **Nhắc trước hạn** và **Nhắc ghi sổ**; **sao lưu tự động giữ xấp xỉ**. Khi đặt lịch: đã được phép → `exactAllowWhileIdle`, chưa → `inexactAllowWhileIdle` như cũ (`reminderScheduleMode`). Sau khi có quyền thông báo (bật Nhắc ghi sổ, bật Nhắc trước hạn, đặt hạn lần đầu) app giải thích rồi mở trang hệ thống (`requestExactAlarmsPermission`); hàng "Báo đúng giờ" trong nhóm Nhắc ghi sổ (chỉ Android, chỉ khi có nhắc bật) hiện "Đã bật"/"Chưa bật · có thể trễ vài phút", chạm để mời lại; trạng thái đọc lại mỗi lần app quay về (`exactAlarmAllowedProvider`) và lịch được đặt lại theo chế độ mới.
+- Lý do / phương án đã loại: `USE_EXACT_ALARM` tự cấp (loại: Google Play chỉ cho app báo thức/lịch → dễ bị từ chối). Giữ xấp xỉ (loại: người dùng muốn đúng giờ). Bắt buộc quyền mới cho bật nhắc (loại: D-11 COMPLIANCE — không ép quyền).
+- Hệ quả cần nhớ: `manifest_test` cho phép `SCHEDULE_EXACT_ALARM`, vẫn cấm `USE_EXACT_ALARM`. Chính sách quyền riêng tư mục 6 đã thêm quyền này + nội dung nhắc trước hạn có số tiền (cập nhật 2026-11-11; **chưa đăng lại** lên trang công khai). Play Console: khai "exact alarm" nếu biểu mẫu hỏi. Test dùng `FakeExactAlarmAccess` (mặc định đã bật) qua `pumpApp(exactAlarm:)`.
+
+
+
 ## D-044 · Nhắc trước hạn chung cho tiết kiệm và khoản nợ, có số tiền · 2026-11-10
 - Bối cảnh: SPEC 3d (AC-105) cố ý không nhắc hạn khoản nợ. Người dùng muốn cả mục tiêu tiết kiệm lẫn khoản nợ được nhắc trước hạn, mặc định 7 ngày, tự chỉnh được.
 - Quyết định: **Một cài đặt chung** "Nhắc trước hạn" (bật mặc định, 1–30 ngày, mặc định 7, giờ mặc định 09:00) cho mọi mục có hạn chưa xong; mỗi mục báo **N ngày trước + đúng ngày hạn**; nội dung **có số tiền còn lại kể cả khi bật PIN** (người dùng chọn). Lịch xếp lại toàn bộ khi mở app/quay lại/dữ liệu đổi; id thông báo ổn định theo (loại, id, mốc); kênh riêng "Nhắc hạn". SPEC F-48.

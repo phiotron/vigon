@@ -2054,8 +2054,7 @@ class AppLocalizationsVi extends AppLocalizations {
   String get homeEmptyTitle => 'Ghi khoản chi đầu tiên';
 
   @override
-  String get homeEmptyBody =>
-      'Chạm danh mục hoặc −';
+  String get homeEmptyBody => 'Chạm danh mục hoặc −';
 
   @override
   String fromEmailRef(String ref) {
@@ -2125,4 +2124,23 @@ class AppLocalizationsVi extends AppLocalizations {
   String rateLine(String from, String rate, String to) {
     return '1 $from = $rate $to · tự động';
   }
+
+  @override
+  String get exactAlarmRow => 'Báo đúng giờ';
+
+  @override
+  String get exactAlarmOn => 'Đã bật';
+
+  @override
+  String get exactAlarmOff => 'Chưa bật · có thể trễ vài phút';
+
+  @override
+  String get exactAlarmExplainTitle => 'Báo đúng giờ?';
+
+  @override
+  String get exactAlarmExplainBody =>
+      'Để thông báo đến đúng phút, Android cần bạn cho phép \"Chuông báo và lời nhắc\" (Báo thức và lời nhắc) cho Ví Gọn. Không bật thì thông báo vẫn đến nhưng có thể trễ vài phút.';
+
+  @override
+  String get exactAlarmOpen => 'Mở cài đặt';
 }

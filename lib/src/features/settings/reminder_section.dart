@@ -10,6 +10,7 @@ import '../../ui/messenger.dart';
 import '../../ui/settings_rows.dart';
 import '../reminder/reminder_providers.dart';
 import 'deadline_reminder_row.dart';
+import 'exact_alarm_row.dart';
 
 /// Nhóm "Nhắc ghi sổ" trong Cài đặt (AC-61, SCR-30): tiêu đề nhóm, thẻ gồm
 /// công tắc và giờ nhắc. Giờ nhắc sửa được cả khi công tắc tắt (chỉ lưu giờ).
@@ -43,6 +44,8 @@ class ReminderSection extends ConsumerWidget {
             // Nhắc trước hạn nợ / tiết kiệm (D-044) nằm cùng nhóm nhắc
             // (mockup v4 SCR-12).
             const DeadlineReminderRow(),
+            // Báo đúng phút (D-045): chỉ Android, chỉ khi có nhắc đang bật.
+            const ExactAlarmRow(),
           ],
         ),
       ],
@@ -80,6 +83,8 @@ class ReminderSection extends ConsumerWidget {
       return;
     }
     await repo.setReminderEnabled(true);
+    // Có quyền thông báo rồi: mời bật báo đúng giờ (D-045).
+    if (context.mounted) await offerExactAlarm(context, ref);
   }
 
   /// Chọn giờ (A14): `showTimePicker` Material trên cả hai nền tảng, 12/24 h
@@ -91,6 +96,9 @@ class ReminderSection extends ConsumerWidget {
   ) async {
     final l = AppLocalizations.of(context);
     final picked = await showTimePicker(
+      // Kiểu nhập bàn phím lỗi "BoxConstraints non-normalized" khi cỡ chữ
+      // hệ thống nhỏ (Galaxy A13 0.8) — giữ mặt đồng hồ như A001 `b0f32fa`.
+      initialEntryMode: TimePickerEntryMode.dialOnly,
       context: context,
       initialTime: current,
       helpText: l.reminderTime,

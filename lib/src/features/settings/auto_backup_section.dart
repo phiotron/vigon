@@ -299,6 +299,9 @@ Future<void> enableAutoBackup(BuildContext context, WidgetRef ref) async {
   var time = BackupTime.defaultTime;
   if (context.mounted) {
     final picked = await showTimePicker(
+      // Kiểu nhập bàn phím lỗi "BoxConstraints non-normalized" khi cỡ chữ
+      // hệ thống nhỏ (Galaxy A13 0.8) — giữ mặt đồng hồ như A001 `b0f32fa`.
+      initialEntryMode: TimePickerEntryMode.dialOnly,
       context: context,
       initialTime: _timeOfDay(time),
       helpText: l.autoBackupTime,
@@ -331,6 +334,9 @@ Future<void> pickBackupTime(BuildContext context, WidgetRef ref) async {
   final current = (await service.state()).time;
   if (!context.mounted) return;
   final picked = await showTimePicker(
+    // Kiểu nhập bàn phím lỗi "BoxConstraints non-normalized" khi cỡ chữ
+    // hệ thống nhỏ (Galaxy A13 0.8) — giữ mặt đồng hồ như A001 `b0f32fa`.
+    initialEntryMode: TimePickerEntryMode.dialOnly,
     context: context,
     initialTime: _timeOfDay(current),
     helpText: l.autoBackupTime,

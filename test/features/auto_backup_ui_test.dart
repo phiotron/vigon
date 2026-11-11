@@ -15,6 +15,7 @@ import 'package:vigon/src/providers.dart';
 import 'package:vigon/src/ui/settings_rows.dart';
 
 import '../fake_backup_folder.dart';
+import '../time_dial.dart';
 import '../helpers.dart';
 
 const _tree = 'content://tree/Vigon';
@@ -321,18 +322,9 @@ void main() {
     await settle(tester);
   }
 
-  /// Đổi giờ trong bộ chọn đang mở bằng chế độ nhập bàn phím rồi nhận.
+  /// Đổi giờ trong bộ chọn đang mở (chỉ có mặt đồng hồ) rồi nhận.
   Future<void> typeTime(WidgetTester tester, String hour, String minute) async {
-    await tester.tap(find.byIcon(Icons.keyboard_outlined));
-    await tester.pumpAndSettle();
-    final fields = find.descendant(
-      of: find.byType(TimePickerDialog),
-      matching: find.byType(TextField),
-    );
-    await tester.enterText(fields.at(0), hour);
-    await tester.enterText(fields.at(1), minute);
-    await tester.pumpAndSettle();
-    await tester.tap(find.text('OK'));
+    await pickTimeOnDial(tester, int.parse(hour), int.parse(minute));
     await settle(tester);
   }
 
@@ -347,8 +339,8 @@ void main() {
     );
     expect(picker.initialTime, const TimeOfDay(hour: 21, minute: 0));
     expect(picker.helpText, 'Giờ sao lưu');
-    // Màn test dùng 12 giờ: bộ chọn giữ "CH" của 21:00, nên 7:30 là 19:30.
-    await typeTime(tester, '07', '30');
+    // Mặt đồng hồ 24 giờ (dialOnly): chọn thẳng 19:30.
+    await typeTime(tester, '19', '30');
     await finishBackup(tester);
     expect(h.secrets.values[AutoBackupService.timeKey], '19:30');
     expect(h.folder.writes, 1, reason: 'vẫn sao lưu ngay lần đầu');
@@ -366,7 +358,7 @@ void main() {
           .initialTime,
       const TimeOfDay(hour: 19, minute: 30),
     );
-    await typeTime(tester, '10', '15');
+    await typeTime(tester, '22', '15');
     expect(h.secrets.values[AutoBackupService.timeKey], '22:15');
     expect(
       find.descendant(of: row, matching: find.text('22:15')),

@@ -44,25 +44,29 @@ void main() {
       await settle(tester);
       await tester.tap(find.byTooltip('Giờ'));
       await settle(tester);
-      // Bộ chọn giờ hệ thống; chuyển sang chế độ nhập số.
-      await tester.tap(find.byIcon(Icons.keyboard_outlined));
-      await settle(tester);
-      final fields = find.descendant(
-        of: find.byType(Dialog),
-        matching: find.byType(TextField),
+      // Bộ chọn giờ chỉ có mặt đồng hồ (dialOnly — kiểu bàn phím lỗi ở cỡ chữ
+      // hệ thống nhỏ). Đổi phút: chạm "35" ở đầu hộp rồi chạm vị trí 30° (phút
+      // 05) trên mặt đồng hồ.
+      expect(find.byIcon(Icons.keyboard_outlined), findsNothing);
+      await tester.tap(
+        find.descendant(of: find.byType(Dialog), matching: find.text('35')),
       );
-      await tester.enterText(fields.at(0), '07');
-      await tester.enterText(fields.at(1), '05');
+      await settle(tester);
+      final dial = find.byWidgetPredicate((w) => '${w.runtimeType}' == '_Dial');
+      final center = tester.getCenter(dial);
+      final r = tester.getSize(dial).shortestSide / 2 * 0.75;
+      await tester.tapAt(center + Offset(r * 0.5, -r * 0.866)); // sin/cos 30°
+      await settle(tester);
       await tester.tap(find.text('OK'));
       await settle(tester);
-      expect(find.text('07:05'), findsOneWidget);
+      expect(find.text('14:05'), findsOneWidget);
       await typeKeys(tester, '15');
       await tester.tap(find.text('Chọn danh mục'));
       await settle(tester);
       await tester.tap(find.text('Ăn uống'));
       await settle(tester);
       final rows = await tester.runAsync(() => db.select(db.entries).get());
-      expect(rows!.single.time, '07:05');
+      expect(rows!.single.time, '14:05');
       expect(rows.single.date, '2026-11-03');
       await disposeApp(tester, db);
     });

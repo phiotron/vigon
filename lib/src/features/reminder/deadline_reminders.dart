@@ -160,6 +160,7 @@ class LocalDeadlineNotifier implements DeadlineNotifier {
           await _plugin.cancel(id: p.id);
         }
       }
+      final mode = await reminderScheduleMode(_plugin);
       for (final n in items) {
         await _plugin.zonedSchedule(
           id: n.id,
@@ -179,7 +180,7 @@ class LocalDeadlineNotifier implements DeadlineNotifier {
             ),
             iOS: const DarwinNotificationDetails(),
           ),
-          androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
+          androidScheduleMode: mode, // đúng phút nếu được phép (D-045)
         );
       }
     } catch (_) {
@@ -252,6 +253,7 @@ final deadlineSyncProvider = Provider<void>((ref) {
   final bags = ref.watch(accountBalanceBagsProvider).value;
   final service = ref.watch(currencyServiceProvider).value;
   ref.watch(todayProvider);
+  ref.watch(exactAlarmAllowedProvider); // đổi quyền đúng giờ → đặt lại (D-045)
   if (!ready.hasValue ||
       enabled == null ||
       days == null ||
@@ -296,6 +298,9 @@ Future<void> ensureDeadlinePermission(
   BuildContext context,
   WidgetRef ref, {
   required Future<bool> Function() explain,
+
+  /// Chạy sau khi đã có quyền thông báo — vd mời bật báo đúng giờ (D-045).
+  Future<void> Function()? afterGranted,
 }) async {
   final settings = ref.read(settingsRepositoryProvider);
   if (await settings.readDeadlinePermissionAsked()) return;
@@ -309,5 +314,9 @@ Future<void> ensureDeadlinePermission(
     return;
   }
   final granted = await ref.read(reminderSchedulerProvider).requestPermission();
-  if (!granted) await settings.setDeadlineReminderEnabled(false);
+  if (!granted) {
+    await settings.setDeadlineReminderEnabled(false);
+    return;
+  }
+  await afterGranted?.call();
 }

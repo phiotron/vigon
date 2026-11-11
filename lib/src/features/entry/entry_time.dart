@@ -66,6 +66,9 @@ class TimeChip extends StatelessWidget {
       tooltip: l.entryTime,
       onPressed: () async {
         final picked = await showTimePicker(
+          // Kiểu nhập bàn phím lỗi "BoxConstraints non-normalized" khi cỡ chữ
+          // hệ thống nhỏ (Galaxy A13 0.8) — giữ mặt đồng hồ như A001 `b0f32fa`.
+          initialEntryMode: TimePickerEntryMode.dialOnly,
           context: context,
           initialTime:
               parseTimeKey(time) ??
