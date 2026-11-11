@@ -92,8 +92,9 @@ void main() {
         expect(kt, isNot(contains('SCHEDULE_EXACT_ALARM')));
         final manifest = File('android/app/src/main/AndroidManifest.xml')
             .readAsStringSync();
-        expect(manifest, isNot(contains('SCHEDULE_EXACT_ALARM')));
-        expect(manifest, isNot(contains('USE_EXACT_ALARM')));
+        // SCHEDULE_EXACT_ALARM có từ D-045 (nhắc trước hạn), không phải
+        // của widget; widget vẫn chỉ dùng báo thức không chính xác ở trên.
+        expect(manifest, isNot(contains('android.permission.USE_EXACT_ALARM')));
         for (final dir in ['values', 'values-vi']) {
           final xml = File('android/app/src/main/res/$dir/widget_strings.xml')
               .readAsStringSync();

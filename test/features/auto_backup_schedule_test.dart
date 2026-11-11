@@ -243,9 +243,12 @@ void main() {
         'SCHEDULE_EXACT_ALARM',
         'USE_EXACT_ALARM',
       ]) {
+        // Sao lưu tự động vẫn KHÔNG dùng báo thức chính xác. Manifest được
+        // có SCHEDULE_EXACT_ALARM từ D-045 (nhắc trước hạn đúng phút), nhưng
+        // không bao giờ USE_EXACT_ALARM.
         expect(kotlin.contains(exact), isFalse, reason: exact);
-        expect(manifest.contains(exact), isFalse, reason: exact);
       }
+      expect(manifest.contains('android.permission.USE_EXACT_ALARM'), isFalse);
     });
 
     test('receiver không xuất ra ngoài, đặt lại lịch khi khởi động, cập nhật, '

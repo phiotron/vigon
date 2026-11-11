@@ -26,6 +26,9 @@ void main() {
     await tester.pumpAndSettle();
     // Nhóm Giao diện & ngôn ngữ nằm gần cuối màn (2026-11-10).
     await tester.scrollUntilVisible(find.text('Giao diện'), 300);
+    // Cho hàng nằm hẳn trong màn (không sát mép dưới).
+    await tester.ensureVisible(find.text('Giao diện'));
+    await settle(tester);
     await tester.tap(find.text('Giao diện'));
     await settle(tester);
     await tester.tap(find.text('Tối'));
