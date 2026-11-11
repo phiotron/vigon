@@ -9,6 +9,7 @@ import 'data/database.dart';
 import 'features/accounts/accounts_screen.dart';
 import 'features/accounts/transfer_screen.dart';
 import 'features/budget_alert/budget_alert_providers.dart';
+import 'features/calendar/calendar_screen.dart';
 import 'features/categories/categories_screen.dart';
 import 'features/debts/debts_screen.dart';
 import 'features/entries/entries_screen.dart';
@@ -19,6 +20,7 @@ import 'features/import_queue/payee_suggestions_screen.dart';
 import 'features/lock/app_lock.dart';
 import 'features/lock/lock_screen.dart';
 import 'features/onboarding/onboarding_screen.dart';
+import 'features/overview/overview_screen.dart';
 import 'features/recurring/recurring_screen.dart';
 import 'features/reminder/deadline_reminders.dart';
 import 'features/reminder/reminder_providers.dart';
@@ -28,6 +30,7 @@ import 'features/settings/email_mailbox_form.dart';
 import 'features/settings/rates_screen.dart';
 import 'features/settings/secure_window.dart';
 import 'features/settings/settings_screen.dart';
+import 'features/stats/stats_screen.dart';
 import 'features/widget/deep_link.dart';
 import 'features/widget/widget_sync.dart';
 import 'import/mail/mailbox_store.dart';
@@ -143,6 +146,20 @@ GoRouter createRouter({ValueListenable<bool?>? onboarding}) => GoRouter(
         GoRoute(
           path: 'savings',
           builder: (context, state) => const SavingsScreen(),
+        ),
+        // F-35, F-36, F-38: Tổng quan, Thống kê, Lịch (lối vào tạm từ thanh
+        // trên màn chính, đợt 5).
+        GoRoute(
+          path: 'overview',
+          builder: (context, state) => const OverviewScreen(),
+        ),
+        GoRoute(
+          path: 'stats',
+          builder: (context, state) => const StatsScreen(),
+        ),
+        GoRoute(
+          path: 'calendar',
+          builder: (context, state) => const CalendarScreen(),
         ),
         // F-28: hộp thư email; `?id=` chỉ nhận id ô có thật (nhập lại mật khẩu).
         GoRoute(

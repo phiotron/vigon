@@ -40,6 +40,10 @@ const _routes = [
   '/debts',
   '/import-queue',
   '/import-queue/suggestions',
+  // 2.0 (AC-126): Tổng quan, Thống kê, Lịch (F-35, F-36, F-38).
+  '/overview',
+  '/stats',
+  '/calendar',
 ];
 
 Future<AppDatabase> _seed(
