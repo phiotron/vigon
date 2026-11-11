@@ -126,9 +126,13 @@ class _AppLifecycleWatcherState extends ConsumerState<AppLifecycleWatcher> {
             CurrencyService(table, primary),
           );
         }
-        await ref
-            .read(recurringRepositoryProvider)
-            .generateDue(ref.read(clockProvider)());
+        // Có thu mới có chi: lần thiếu tiền bị bỏ, màn chính báo (AC-164).
+        await generateRecurringWith(
+          ref.read(recurringRepositoryProvider),
+          ref.read(clockProvider)(),
+          await ref.read(currencyServiceProvider.future),
+          ref.read(skippedOccurrencesProvider.notifier),
+        );
       },
     );
   }

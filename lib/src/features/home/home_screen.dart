@@ -24,6 +24,7 @@ import '../../ui/status.dart';
 import '../import_queue/import_queue_providers.dart';
 import '../settings/budget_dialog.dart';
 import 'home_extras.dart';
+import 'ledger_notices.dart';
 import 'period_picker.dart';
 
 /// Màn chính: biểu đồ chi theo danh mục, tổng thu chi, số dư (F-02).
@@ -81,6 +82,8 @@ class HomeScreen extends ConsumerWidget {
                 text: l.importQueueCount(queueCount),
                 onTap: () => context.push('/import-queue'),
               ),
+            // Có thu mới có chi: lần định kỳ bị bỏ, hộp nâng cấp (D-046).
+            const LedgerNotices(),
             Expanded(
               child: GestureDetector(
                 behavior: HitTestBehavior.opaque,

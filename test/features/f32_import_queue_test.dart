@@ -390,7 +390,8 @@ void main() {
     final usd = await tester.runAsync(
       () =>
           AccountRepository(db)
-              .add(name: 'Ví USD', initialBalance: 0, currency: 'USD'),
+              // Có tiền để khoản chi lưu được (có thu mới có chi, D-046).
+              .add(name: 'Ví USD', initialBalance: 10000, currency: 'USD'),
     );
     await settle(tester);
     await _item(tester, db, accountId: usd, currency: 'VND', amount: 50000);
@@ -430,7 +431,10 @@ void main() {
     final mb = accounts!.singleWhere((a) => a.bankLast4 == '4821');
     expect(mb.name, 'MB Bank …4821');
     expect(mb.bank, Bank.mb);
-    expect((await _entries(tester, db)).single.accountId, mb.id);
+    // Tài khoản tạo lại có số dư 0: mục ở lại, mở Bù tiền (D-046, AC-165).
+    expect(find.text('Bù tiền'), findsOneWidget);
+    expect(await _entries(tester, db), isEmpty);
+    expect(await _queue(tester, db), hasLength(1));
     await disposeApp(tester, db);
   });
 

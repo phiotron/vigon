@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:material_symbols_icons/symbols.dart';
 
 import '../../../l10n/app_localizations.dart';
+import '../../data/balance_guard.dart';
 import '../../data/calculator.dart';
 import '../../data/database.dart';
 import '../../data/dates.dart';
@@ -24,10 +25,13 @@ import '../../ui/theme.dart';
 import '../import_queue/import_queue_actions.dart';
 import '../import_queue/import_queue_providers.dart';
 import '../import_queue/queue_match.dart';
+import '../import_queue/top_up_sheet.dart';
+import '../debts/debt_movement.dart';
 import '../recurring/repeat_picker.dart';
 import '../../ui/tokens.g.dart';
 import 'entry_time.dart';
 import 'keypad.dart';
+import 'ledger_guard.dart';
 
 /// Ghi khoản mới hoặc sửa khoản có sẵn (F-01, F-04).
 class EntryEditorScreen extends ConsumerStatefulWidget {
@@ -37,11 +41,20 @@ class EntryEditorScreen extends ConsumerStatefulWidget {
     this.type = EntryType.expense,
     this.categoryId,
     this.queueItemId,
+    this.accountId,
+    this.amount,
+    this.currency,
   });
 
   final int? entryId;
   final EntryType type;
   final int? categoryId;
+
+  /// Điền sẵn cho khoản mới (Bù tiền, AC-165): tài khoản, số tiền (đơn vị
+  /// nhỏ nhất của [currency]) và tiền tệ.
+  final int? accountId;
+  final int? amount;
+  final String? currency;
 
   /// Mục hàng đợi đang "Sửa trước khi lưu" (AC-96): màn điền sẵn dữ liệu của
   /// mục; lưu thì tạo khoản có nguồn + số tham chiếu và mục rời hàng đợi.
@@ -83,6 +96,17 @@ class _EntryEditorScreenState extends ConsumerState<EntryEditorScreen> {
     } else if (widget.queueItemId != null) {
       _loading = true;
       _loadQueueItem(widget.queueItemId!);
+    } else {
+      _accountId = widget.accountId;
+      final currency = widget.currency;
+      final amount = widget.amount;
+      if (currency != null) _currency = currency;
+      if (amount != null && amount > 0) {
+        _expression = minorUnitsToInput(
+          amount,
+          currencyDecimalDigits(currency ?? 'USD'),
+        );
+      }
     }
   }
 
@@ -191,7 +215,7 @@ class _EntryEditorScreenState extends ConsumerState<EntryEditorScreen> {
     if (_saving) return;
     final amountOriginal = _validAmount();
     if (amountOriginal == null) return;
-    if (_categoryId == null) {
+    if (_categoryId == null && _type != EntryType.debt) {
       final picked = await _pickCategory();
       if (picked == null) return;
       _categoryId = picked;
@@ -219,6 +243,7 @@ class _EntryEditorScreenState extends ConsumerState<EntryEditorScreen> {
         }
         return;
       }
+      final guard = BalanceGuard(ref.read(databaseProvider), service);
       if (queueItem != null) {
         // Từ hàng đợi: tạo khoản chi có nguồn + số tham chiếu của email, mục
         // rời hàng đợi, nhớ gợi ý (AC-96). Giữ số chính xác nếu không đổi số.
@@ -226,23 +251,43 @@ class _EntryEditorScreenState extends ConsumerState<EntryEditorScreen> {
             queueItem.currency == currency &&
             amountOriginal == queueItem.amount &&
             currency == service.primary;
+        final queued = EntriesCompanion.insert(
+          type: EntryType.expense,
+          amount: amount,
+          amountMicro: Value(same ? queueItem.amountMicro : null),
+          categoryId: Value(_categoryId),
+          accountId: accountId,
+          date: dateKey(_date),
+          time: Value(_time),
+          note: Value(note),
+          currency: Value(currency),
+          originalAmount: Value(amountOriginal),
+        );
+        // Tài khoản liên kết thiếu tiền: mục ở lại, mở Bù tiền; bù đủ thì
+        // lưu đúng khoản đã sửa (AC-165).
+        final short = await guard.checkAdd(queued);
+        if (short != null) {
+          _saving = false;
+          if (!mounted) return;
+          final done = await showTopUpSheet(
+            context,
+            ref,
+            short,
+            confirm: () async {
+              final actions = ref.read(importQueueActionsProvider);
+              final id = await actions.saveEdited(queueItem, queued);
+              return id == null
+                  ? null
+                  : () => actions.undoConfirm(queueItem, id);
+            },
+            check: () => guard.checkAdd(queued),
+          );
+          if (done && mounted) context.pop();
+          return;
+        }
         await ref
             .read(importQueueActionsProvider)
-            .saveEdited(
-              queueItem,
-              EntriesCompanion.insert(
-                type: EntryType.expense,
-                amount: amount,
-                amountMicro: Value(same ? queueItem.amountMicro : null),
-                categoryId: Value(_categoryId),
-                accountId: accountId,
-                date: dateKey(_date),
-                time: Value(_time),
-                note: Value(note),
-                currency: Value(currency),
-                originalAmount: Value(amountOriginal),
-              ),
-            );
+            .saveEdited(queueItem, queued);
       } else if (original == null) {
         final entry = EntriesCompanion.insert(
           type: _type,
@@ -255,6 +300,15 @@ class _EntryEditorScreenState extends ConsumerState<EntryEditorScreen> {
           currency: Value(currency),
           originalAmount: Value(amountOriginal),
         );
+        // Có thu mới có chi (AC-160): khoản chi làm âm tài khoản thì báo.
+        final short = await guard.checkAdd(entry);
+        if (short != null) {
+          _saving = false;
+          if (mounted) {
+            setState(() => _error = shortfallMessage(context, ref, short));
+          }
+          return;
+        }
         final repeat = _repeat;
         if (repeat == null) {
           savedId = await repo.add(entry);
@@ -266,7 +320,12 @@ class _EntryEditorScreenState extends ConsumerState<EntryEditorScreen> {
             repeat.frequency,
             weekdays: repeat.weekdays,
           );
-          await recurring.generateDue(ref.read(clockProvider)());
+          await generateRecurringWith(
+            recurring,
+            ref.read(clockProvider)(),
+            service,
+            ref.read(skippedOccurrencesProvider.notifier),
+          );
           // "Chọn thứ" mà ngày khoản không thuộc thứ đã chọn: khoản hôm nay
           // không được ghi (D-040) → báo ngày của khoản đầu (F-45).
           final firstOn = repeat.firstOn(_date);
@@ -276,23 +335,31 @@ class _EntryEditorScreenState extends ConsumerState<EntryEditorScreen> {
           }
         }
       } else {
-        await repo.update(
-          original.copyWith(
-            amount: amount,
-            amountMicro: Value(
-              currency == service.primary && amount == original.amount
-                  ? original.amountMicro
-                  : null,
-            ),
-            categoryId: Value(_categoryId),
-            accountId: accountId,
-            date: dateKey(_date),
-            time: Value(_time),
-            note: Value(note),
-            currency: currency,
-            originalAmount: Value(amountOriginal),
+        final updated = original.copyWith(
+          amount: amount,
+          amountMicro: Value(
+            currency == service.primary && amount == original.amount
+                ? original.amountMicro
+                : null,
           ),
+          categoryId: Value(_categoryId),
+          accountId: accountId,
+          date: dateKey(_date),
+          time: Value(_time),
+          note: Value(note),
+          currency: currency,
+          originalAmount: Value(amountOriginal),
         );
+        // Sửa tăng tiền ra / đổi sang tài khoản thiếu tiền (AC-161).
+        final short = await guard.checkReplace(original, updated);
+        if (short != null) {
+          _saving = false;
+          if (mounted) {
+            setState(() => _error = shortfallMessage(context, ref, short));
+          }
+          return;
+        }
+        await repo.update(updated);
         savedId = original.id;
       }
     } catch (_) {
@@ -309,24 +376,21 @@ class _EntryEditorScreenState extends ConsumerState<EntryEditorScreen> {
     if (createdFirstOn != null) showMessage(createdFirstOn);
   }
 
+  /// Tài khoản mặc định (D-047, AC-166): tài khoản đang lọc ở màn chính nếu
+  /// có, không thì tài khoản hiện đầu danh sách.
   Future<int> _defaultAccountId() async {
     final accounts = await ref.read(accountRepositoryProvider).watch().first;
+    final filter = ref.read(accountFilterProvider);
+    if (filter != null && accounts.any((a) => a.id == filter)) return filter;
     return accounts.first.id;
   }
 
+  /// Xoá có kiểm "có thu mới có chi" (AC-161) và Hoàn tác.
   Future<void> _delete() async {
-    final l = AppLocalizations.of(context);
-    final repo = ref.read(entryRepositoryProvider);
-    final deleted = await repo.delete(_original!.id);
-    if (!mounted) return;
-    context.pop();
-    if (deleted != null) {
-      showUndoSnackBar(
-        message: l.deleted,
-        undoLabel: l.undo,
-        onUndo: () => repo.restore(deleted),
-      );
-    }
+    final original = _original!;
+    if (!await canDeleteEntry(context, ref, original) || !mounted) return;
+    await deleteEntryWithUndo(context, ref, original);
+    if (mounted) context.pop();
   }
 
   /// Lưới danh mục; chạm một danh mục là chọn nó (AC-02).
@@ -424,7 +488,13 @@ class _EntryEditorScreenState extends ConsumerState<EntryEditorScreen> {
     final scheme = Theme.of(context).colorScheme;
     final weekStart = ref.watch(weekStartProvider).value ?? DateTime.monday;
     final isIncome = _type == EntryType.income;
-    final color = isIncome ? incomeColor(context) : expenseColor(context);
+    // Debt movement mồ côi (AC-175) mở ở đây để xoá: không thu/chi.
+    final isDebt = _type == EntryType.debt;
+    final color = isDebt
+        ? scheme.primary
+        : isIncome
+        ? incomeColor(context)
+        : expenseColor(context);
     final category = _categoryId == null
         ? null
         : (ref
@@ -438,9 +508,11 @@ class _EntryEditorScreenState extends ConsumerState<EntryEditorScreen> {
               .where((c) => c.id == _categoryId)
               .firstOrNull;
     // Khoản cũ của tài khoản đã ẩn vẫn hiện đúng tên tài khoản đó (AC-44).
+    // Khoản mới: tài khoản đang lọc ở màn chính (D-047, AC-166).
+    final shownId = _accountId ?? ref.watch(accountFilterProvider);
     final account =
         (ref.watch(allAccountsProvider).value ?? accounts)
-            .where((a) => a.id == _accountId)
+            .where((a) => a.id == shownId)
             .firstOrNull ??
         accounts.firstOrNull;
     final pickable = [
@@ -462,7 +534,9 @@ class _EntryEditorScreenState extends ConsumerState<EntryEditorScreen> {
         ? l.rateMissing(activeCurrency, primary)
         : '≈ ${money(context, primary, converted)}';
     // Màn sửa giữ tiêu đề "Sửa khoản" cả lúc đang nạp (4.7).
-    final title = widget.entryId != null
+    final title = isDebt && _original != null
+        ? debtMovementLabel(l, _original!, ref.watch(debtPersonsProvider))
+        : widget.entryId != null
         ? l.editEntry
         : (isIncome ? l.newIncome : l.newExpense);
 
@@ -685,11 +759,13 @@ class _EntryEditorScreenState extends ConsumerState<EntryEditorScreen> {
                     child: Keypad(
                       decimalDigits: digits,
                       onKey: _onKey,
-                      saveLabel: _categoryId == null
+                      saveLabel: _categoryId == null && !isDebt
                           ? l.chooseCategory
                           : l.save,
                       saveColor: color,
-                      saveForeground: isIncome
+                      saveForeground: isDebt
+                          ? scheme.onPrimary
+                          : isIncome
                           ? context.vg.onIncome
                           : context.vg.onExpense,
                       onSave: _save,
