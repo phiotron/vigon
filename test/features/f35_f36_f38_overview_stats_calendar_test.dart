@@ -113,6 +113,32 @@ void main() {
       await disposeApp(tester, db);
     });
 
+    testWidgets('ô Ngân sách còn lại: Sắp vượt ở ngưỡng 80% (F-37, AC-111)', (
+      tester,
+    ) async {
+      final db = memoryDatabase();
+      await tester.runAsync(() => SettingsRepository(db).setBudget(5000000));
+      await pumpApp(tester, db: db);
+      await insertEntry(
+        tester,
+        db,
+        type: EntryType.expense,
+        amount: 4000000,
+        categoryId: 1,
+        date: '2026-11-02',
+      );
+      await goTo(tester, '/overview');
+      expect(findPlainText('1.000.000 ₫'), findsWidgets);
+      expect(findPlainText('Đã dùng 80%'), findsOneWidget);
+      expect(
+        findSemanticsLabel(
+          'Ngân sách còn lại, 1.000.000 ₫, Sắp vượt, Đã dùng 80%',
+        ),
+        findsOneWidget,
+      );
+      await disposeApp(tester, db);
+    });
+
     testWidgets('tháng không có khoản: trạng thái trống, không vẽ biểu đồ; '
         'chưa đặt ngân sách thì có nút "Đặt ngân sách"', (tester) async {
       final db = await pumpApp(tester);

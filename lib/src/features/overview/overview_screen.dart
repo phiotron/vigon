@@ -9,7 +9,10 @@ import '../../data/period.dart';
 import '../../data/stats.dart';
 import '../../providers.dart';
 import '../../ui/format.dart';
+import '../../ui/theme.dart';
 import '../../ui/tokens.g.dart';
+import '../budget_alert/budget_alert_providers.dart';
+import '../budget_alert/budget_status.dart';
 import '../import_queue/import_queue_providers.dart';
 import '../settings/budget_dialog.dart';
 import '../stats/stats_widgets.dart';
@@ -85,6 +88,15 @@ class _Body extends ConsumerWidget {
         ? incomeColor(context)
         : (net < 0 ? expenseColor(context) : scheme.onSurface);
     final left = data.budgetLeft;
+    final limit = data.budget ?? 0;
+    final near =
+        left != null &&
+        budgetStateFor(ref, spent: data.current.expense, limit: limit) ==
+            BudgetState.almostOver;
+    final usedPercent = budgetUsedPercent(
+      spent: data.current.expense,
+      limit: limit,
+    );
 
     final netTile = _Tile(
       title: l.overviewNet,
@@ -103,6 +115,8 @@ class _Body extends ConsumerWidget {
             title: l.overviewBudgetLeft,
             spoken: left < 0
                 ? '${l.overviewBudgetLeft}, ${l.budgetOver(amount(-left))}'
+                : near
+                ? '${l.overviewBudgetLeft}, ${amount(left)}, ${l.almostOver}, ${l.budgetAlertUsed(usedPercent)}'
                 : '${l.overviewBudgetLeft}, ${amount(left)}',
             child: left < 0
                 // Vượt: icon + chữ, không chỉ dựa vào màu (AC-27, AC-40).
@@ -120,6 +134,39 @@ class _Body extends ConsumerWidget {
                           l.budgetOver(amount(-left)),
                           style: VgType.amountMd.copyWith(color: scheme.error),
                         ),
+                      ),
+                    ],
+                  )
+                : near
+                // Sắp vượt (F-37, AC-111): icon + "Đã dùng 82%", màu cảnh báo
+                // (hổ phách), khác đỏ của Vượt.
+                ? Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        amount(left),
+                        style: VgType.amountMd.copyWith(
+                          color: scheme.onSurface,
+                        ),
+                      ),
+                      Row(
+                        children: [
+                          Icon(
+                            Symbols.info_rounded,
+                            fill: 1,
+                            size: 16,
+                            color: context.vg.warning,
+                          ),
+                          const SizedBox(width: VgSpace.s1),
+                          Flexible(
+                            child: Text(
+                              l.budgetAlertUsed(usedPercent),
+                              style: VgType.bodySm.copyWith(
+                                color: context.vg.warning,
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                     ],
                   )
