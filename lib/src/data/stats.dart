@@ -1,56 +1,68 @@
 import 'dates.dart';
 import 'database.dart';
+import 'money_sum.dart';
 import 'period.dart';
+import 'rate_repository.dart';
 import 'summary.dart';
 
-/// Tổng thu và chi của một ngày (F-35, F-36, F-38). Chuyển tiền không tính là
-/// thu hay chi (AC-19) và mục hàng đợi chưa là khoản (AC-95), nên không có ở đây.
+/// Quy một túi tiền (gom theo tiền tệ gốc) ra MỘT số theo Tiền tệ chính, làm
+/// tròn một lần (D-042, AC-148). Phần thiếu tỷ giá không vào tổng (AC-134).
+typedef MoneyConvert = int Function(MoneyBag bag);
+
+/// Quy đổi theo Tiền tệ chính của [service].
+MoneyConvert convertWith(CurrencyService service) =>
+    (bag) => bag.convertTo(service, service.primary) ?? 0;
+
+/// Chỉ dùng khi mọi số cùng một tiền tệ (test): cộng thẳng các phần.
+int sumParts(MoneyBag bag) => bag.parts.values.fold(0, (a, b) => a + b);
+
+/// Thu và chi của một ngày theo từng tiền tệ gốc (F-35, F-36, F-38). Chuyển
+/// tiền không tính là thu hay chi (AC-19) và mục hàng đợi chưa là khoản
+/// (AC-95), nên không có ở đây.
 class DailyFlow {
-  const DailyFlow(this.date, this.income, this.expense);
+  DailyFlow(this.date, [MoneyBag? income, MoneyBag? expense])
+    : income = income ?? MoneyBag(),
+      expense = expense ?? MoneyBag();
 
   /// Ngày `YYYY-MM-DD` (D-005).
   final String date;
-  final int income;
-  final int expense;
+  final MoneyBag income;
+  final MoneyBag expense;
 
-  @override
-  bool operator ==(Object other) =>
-      other is DailyFlow &&
-      other.date == date &&
-      other.income == income &&
-      other.expense == expense;
-
-  @override
-  int get hashCode => Object.hash(date, income, expense);
+  bool get isEmpty => income.isZero && expense.isZero;
 
   @override
   String toString() => 'DailyFlow($date, +$income, -$expense)';
 }
 
-/// Gom các khoản thành tổng thu chi từng ngày; bỏ chuyển tiền. Dùng cho test
-/// và cho nơi đã có sẵn danh sách khoản; truy vấn thật dùng SQL gom nhóm.
+/// Gom các khoản thành thu chi từng ngày theo số gốc; bỏ chuyển tiền. Dùng cho
+/// test và nơi đã có sẵn danh sách khoản; truy vấn thật gom bằng SQL.
 List<DailyFlow> dailyFlowOf(Iterable<EntryView> rows) {
-  final income = <String, int>{}, expense = <String, int>{};
+  final byDate = <String, DailyFlow>{};
   for (final r in rows) {
     final e = r.entry;
     switch (e.type) {
       case EntryType.income:
-        income[e.date] = (income[e.date] ?? 0) + e.amount;
+        (byDate[e.date] ??= DailyFlow(
+          e.date,
+        )).income.add(e.currency, entryOriginal(e));
       case EntryType.expense:
-        expense[e.date] = (expense[e.date] ?? 0) + e.amount;
+        (byDate[e.date] ??= DailyFlow(
+          e.date,
+        )).expense.add(e.currency, entryOriginal(e));
       case EntryType.transfer:
         break;
     }
   }
-  final dates = {...income.keys, ...expense.keys}.toList()..sort();
-  return [for (final d in dates) DailyFlow(d, income[d] ?? 0, expense[d] ?? 0)];
+  final dates = byDate.keys.toList()..sort();
+  return [for (final d in dates) byDate[d]!];
 }
 
 /// Đơn vị của một cột ở biểu đồ Thống kê (AC-109).
 enum BucketUnit { day, month, year }
 
-/// Một cột: thu và chi từ [start] tới [end] (tính cả hai đầu). Cột đầu và cuối
-/// bị cắt theo kỳ, nên tổng các cột bằng tổng kỳ.
+/// Một cột: thu và chi (theo Tiền tệ chính) từ [start] tới [end] (tính cả hai
+/// đầu). Cột đầu và cuối bị cắt theo kỳ, nên các cột phủ đúng kỳ.
 class FlowBucket {
   const FlowBucket({
     required this.unit,
@@ -128,25 +140,30 @@ List<({BucketUnit unit, DateTime start, DateTime end})> bucketRanges(
   return out;
 }
 
-/// Cột thu/chi của Thống kê (AC-109). [flows] là tổng từng ngày đã lọc theo
-/// tài khoản; ngày ngoài kỳ bị bỏ qua. Kỳ không có khoản thu chi nào cho danh
-/// sách rỗng (trạng thái trống, AC-110).
-List<FlowBucket> flowBuckets(Period period, Iterable<DailyFlow> flows) {
+/// Cột thu/chi của Thống kê (AC-109). [flows] là thu chi từng ngày đã lọc theo
+/// tài khoản; ngày ngoài kỳ bị bỏ qua. Mỗi cột cộng số gốc theo tiền tệ rồi
+/// mới quy đổi một lần bằng [convert] (AC-148). Kỳ không có khoản thu chi nào
+/// cho danh sách rỗng (trạng thái trống, AC-110).
+List<FlowBucket> flowBuckets(
+  Period period,
+  Iterable<DailyFlow> flows,
+  MoneyConvert convert,
+) {
   final inPeriod = flows.where((f) => period.contains(f.date)).toList();
-  if (inPeriod.every((f) => f.income == 0 && f.expense == 0)) return const [];
+  if (inPeriod.every((f) => f.isEmpty)) return const [];
   final ranges = bucketRanges(period, inPeriod);
   if (ranges.isEmpty) return const [];
   final unit = ranges.first.unit;
   final index = <String, int>{
     for (final (i, r) in ranges.indexed) _bucketKey(dateKey(r.start), unit): i,
   };
-  final income = List<int>.filled(ranges.length, 0);
-  final expense = List<int>.filled(ranges.length, 0);
+  final income = [for (final _ in ranges) MoneyBag()];
+  final expense = [for (final _ in ranges) MoneyBag()];
   for (final f in inPeriod) {
     final i = index[_bucketKey(f.date, unit)];
     if (i == null) continue;
-    income[i] += f.income;
-    expense[i] += f.expense;
+    income[i].addBag(f.income);
+    expense[i].addBag(f.expense);
   }
   return [
     for (final (i, r) in ranges.indexed)
@@ -154,8 +171,8 @@ List<FlowBucket> flowBuckets(Period period, Iterable<DailyFlow> flows) {
         unit: unit,
         start: r.start,
         end: r.end,
-        income: income[i],
-        expense: expense[i],
+        income: convert(income[i]),
+        expense: convert(expense[i]),
       ),
   ];
 }
@@ -165,34 +182,38 @@ class BiggestDay {
   const BiggestDay(this.date, this.expense);
 
   final DateTime date;
+
+  /// Theo Tiền tệ chính.
   final int expense;
 }
 
-/// Ngày chi nhiều nhất trong [flows]; null khi không có khoản chi nào (số chi 0
-/// không tính là "nhiều nhất"). Màn ẩn thẻ này ở kỳ Ngày (AC-109).
-BiggestDay? biggestSpendingDay(Iterable<DailyFlow> flows) {
-  DailyFlow? best;
+/// Ngày chi nhiều nhất trong [flows] (so theo Tiền tệ chính, mỗi ngày quy đổi
+/// một lần); null khi không có khoản chi nào. Màn ẩn thẻ này ở kỳ Ngày.
+BiggestDay? biggestSpendingDay(
+  Iterable<DailyFlow> flows,
+  MoneyConvert convert,
+) {
+  String? bestDate;
+  var best = 0;
   for (final f in flows) {
-    if (f.expense <= 0) continue;
-    if (best == null ||
-        f.expense > best.expense ||
-        (f.expense == best.expense && f.date.compareTo(best.date) < 0)) {
-      best = f;
+    if (f.expense.isZero) continue;
+    final spent = convert(f.expense);
+    if (spent <= 0) continue;
+    if (bestDate == null ||
+        spent > best ||
+        (spent == best && f.date.compareTo(bestDate) < 0)) {
+      bestDate = f.date;
+      best = spent;
     }
   }
-  return best == null
-      ? null
-      : BiggestDay(parseDateKey(best.date), best.expense);
+  return bestDate == null ? null : BiggestDay(parseDateKey(bestDate), best);
 }
 
-/// [n] danh mục chi nhiều nhất của kỳ, kèm số tiền và phần trăm trên tổng chi
-/// (AC-109). Bằng tiền thì danh mục có id nhỏ hơn đứng trước, nên thứ tự không
-/// đổi giữa các lần tính.
-List<CategoryTotal> topExpenseCategories(
-  Iterable<EntryView> rows, {
-  int n = 5,
-}) {
-  final all = [...PeriodSummary.of(rows).expenseByCategory]
+/// [n] danh mục chi nhiều nhất của kỳ từ tổng kỳ đã cộng chính xác (D-042),
+/// kèm số tiền và phần trăm trên tổng chi (AC-109). Bằng tiền thì danh mục có
+/// id nhỏ hơn đứng trước, nên thứ tự không đổi giữa các lần tính.
+List<CategoryTotal> topExpenseCategories(PeriodSummary summary, {int n = 5}) {
+  final all = [...summary.expenseByCategory]
     ..sort((a, b) {
       final byTotal = b.total.compareTo(a.total);
       return byTotal != 0 ? byTotal : a.category.id.compareTo(b.category.id);
@@ -200,26 +221,30 @@ List<CategoryTotal> topExpenseCategories(
   return all.take(n).toList();
 }
 
-/// Tổng số dư của mọi tài khoản (kể cả đã ẩn) theo từng ngày (AC-109, đường
-/// lịch sử). Giữ số dư đầu và thay đổi ròng mỗi ngày; chuyển tiền giữa hai
-/// tài khoản không làm đổi tổng nên không có trong [netByDate].
+/// Tổng số dư của mọi tài khoản (kể cả đã ẩn) theo từng ngày, gom theo tiền
+/// tệ gốc (AC-109, đường lịch sử; AC-148). Giữ số dư đầu và thay đổi ròng mỗi
+/// ngày; chuyển tiền cùng tiền tệ tự triệt tiêu, khác tiền tệ thì một phần
+/// trừ ở tiền gửi, một phần cộng ở tiền nhận — như số dư từng tài khoản.
 class BalanceLedger {
-  BalanceLedger({required this.initial, required Map<String, int> netByDate})
-    : _dates = netByDate.keys.toList()..sort() {
-    var running = initial;
+  BalanceLedger({
+    required MoneyBag initial,
+    required Map<String, MoneyBag> netByDate,
+  }) : initial = initial.copy(),
+       _dates = netByDate.keys.toList()..sort() {
+    final running = initial.copy();
     for (final d in _dates) {
-      running += netByDate[d]!;
-      _prefix.add(running);
+      running.addBag(netByDate[d]!);
+      _prefix.add(running.copy());
     }
   }
 
   /// Tổng số dư ban đầu của mọi tài khoản.
-  final int initial;
+  final MoneyBag initial;
   final List<String> _dates;
-  final List<int> _prefix = [];
+  final List<MoneyBag> _prefix = [];
 
   /// Tổng số dư cuối ngày [dateKeyValue] (đã tính mọi khoản tới hết ngày đó).
-  int at(String dateKeyValue) {
+  MoneyBag at(String dateKeyValue) {
     var lo = 0, hi = _dates.length; // số ngày có thay đổi ≤ dateKeyValue
     while (lo < hi) {
       final mid = (lo + hi) >> 1;
@@ -233,10 +258,10 @@ class BalanceLedger {
   }
 
   /// Tổng số dư hiện tại (sau mọi khoản).
-  int get total => _prefix.isEmpty ? initial : _prefix.last;
+  MoneyBag get total => _prefix.isEmpty ? initial : _prefix.last;
 }
 
-/// Một điểm của đường lịch sử số dư: số dư cuối [bucket].
+/// Một điểm của đường lịch sử số dư: số dư (Tiền tệ chính) cuối [bucket].
 class BalancePoint {
   const BalancePoint(this.bucket, this.balance);
 
@@ -244,18 +269,21 @@ class BalancePoint {
   final int balance;
 }
 
-/// Đường lịch sử tổng số dư: giá trị cuối mỗi cột (AC-109). Cột bắt đầu sau
-/// [today] bị bỏ để đường không kéo dài phẳng vào tương lai.
+/// Đường lịch sử tổng số dư: giá trị cuối mỗi cột (AC-109), mỗi điểm cộng gốc
+/// rồi quy đổi một lần. Cột bắt đầu sau [today] bị bỏ để đường không kéo dài
+/// phẳng vào tương lai.
 List<BalancePoint> balanceHistory(
   List<FlowBucket> buckets,
-  BalanceLedger ledger, {
+  BalanceLedger ledger,
+  MoneyConvert convert, {
   required DateTime today,
 }) => [
   for (final b in buckets)
-    if (!b.start.isAfter(today)) BalancePoint(b, ledger.at(dateKey(b.end))),
+    if (!b.start.isAfter(today))
+      BalancePoint(b, convert(ledger.at(dateKey(b.end)))),
 ];
 
-/// Một tháng của biểu đồ cột Tổng quan (AC-107).
+/// Một tháng của biểu đồ cột Tổng quan (AC-107), theo Tiền tệ chính.
 class MonthFlow {
   const MonthFlow(this.period, this.income, this.expense);
 
@@ -263,6 +291,8 @@ class MonthFlow {
   final int income;
   final int expense;
 
+  /// Thu − chi theo Tiền tệ chính. Tổng quan dùng [OverviewData.net] (cộng
+  /// gốc rồi mới quy đổi) cho tháng đang chọn.
   int get net => income - expense;
 }
 
@@ -272,21 +302,36 @@ List<Period> monthsEndingAt(Period month, {int count = 6}) => [
   for (var i = count - 1; i >= 0; i--) month.shift(-i),
 ];
 
-/// Thu chi từng tháng trong [months] từ tổng từng ngày [flows].
-List<MonthFlow> monthlyFlows(List<Period> months, Iterable<DailyFlow> flows) {
-  final income = List<int>.filled(months.length, 0);
-  final expense = List<int>.filled(months.length, 0);
+/// Thu chi gốc của từng tháng trong [months] (chưa quy đổi).
+List<({MoneyBag income, MoneyBag expense})> monthlyBags(
+  List<Period> months,
+  Iterable<DailyFlow> flows,
+) {
+  final out = [
+    for (final _ in months) (income: MoneyBag(), expense: MoneyBag()),
+  ];
   for (final f in flows) {
     for (var i = 0; i < months.length; i++) {
       if (months[i].contains(f.date)) {
-        income[i] += f.income;
-        expense[i] += f.expense;
+        out[i].income.addBag(f.income);
+        out[i].expense.addBag(f.expense);
         break;
       }
     }
   }
+  return out;
+}
+
+/// Thu chi từng tháng trong [months], mỗi tháng quy đổi một lần.
+List<MonthFlow> monthlyFlows(
+  List<Period> months,
+  Iterable<DailyFlow> flows,
+  MoneyConvert convert,
+) {
+  final bags = monthlyBags(months, flows);
   return [
-    for (final (i, m) in months.indexed) MonthFlow(m, income[i], expense[i]),
+    for (final (i, m) in months.indexed)
+      MonthFlow(m, convert(bags[i].income), convert(bags[i].expense)),
   ];
 }
 
@@ -317,14 +362,43 @@ PercentChange? percentChange(int previous, int current) {
   return PercentChange(up ? ChangeDirection.up : ChangeDirection.down, pct);
 }
 
-/// Dữ liệu một màn Tổng quan (AC-107).
+/// Dữ liệu một màn Tổng quan (AC-107), mọi số theo Tiền tệ chính.
 class OverviewData {
   const OverviewData({
     required this.month,
     required this.months,
+    required this.net,
     required this.totalBalance,
     required this.budget,
   });
+
+  /// Gom từ thu chi gốc 6 tháng: mỗi tháng quy đổi một lần; "thu − chi" của
+  /// tháng đang chọn cộng gốc (thu trừ chi theo từng tiền tệ) rồi mới quy đổi.
+  factory OverviewData.of({
+    required Period month,
+    required List<Period> months,
+    required Iterable<DailyFlow> flows,
+    required MoneyBag totalBalance,
+    required int? budget,
+    required MoneyConvert convert,
+  }) {
+    final bags = monthlyBags(months, flows);
+    final current = bags.last;
+    final net = current.income.copy();
+    for (final e in current.expense.parts.entries) {
+      net.add(e.key, -e.value);
+    }
+    return OverviewData(
+      month: month,
+      months: [
+        for (final (i, m) in months.indexed)
+          MonthFlow(m, convert(bags[i].income), convert(bags[i].expense)),
+      ],
+      net: convert(net),
+      totalBalance: convert(totalBalance),
+      budget: budget,
+    );
+  }
 
   /// Tháng đang chọn.
   final Period month;
@@ -332,7 +406,10 @@ class OverviewData {
   /// 6 tháng kết thúc ở [month], cũ nhất trước.
   final List<MonthFlow> months;
 
-  /// Tổng số dư mọi tài khoản, kể cả đã ẩn.
+  /// Thu − chi của tháng đang chọn.
+  final int net;
+
+  /// Tổng số dư mọi tài khoản, kể cả đã ẩn; không gồm khoản nợ.
   final int totalBalance;
 
   /// Hạn mức chi tháng; null là chưa đặt.
@@ -341,9 +418,6 @@ class OverviewData {
   MonthFlow get current => months.last;
   MonthFlow? get previous =>
       months.length < 2 ? null : months[months.length - 2];
-
-  /// Thu − chi của tháng.
-  int get net => current.net;
 
   /// Ngân sách còn lại = hạn mức − đã chi; âm là vượt. Null khi chưa đặt.
   int? get budgetLeft => budget == null ? null : budget! - current.expense;

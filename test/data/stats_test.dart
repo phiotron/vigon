@@ -5,8 +5,11 @@ import 'package:vigon/src/data/account_repository.dart';
 import 'package:vigon/src/data/compact_amount.dart';
 import 'package:vigon/src/data/database.dart';
 import 'package:vigon/src/data/dates.dart';
+import 'package:vigon/src/data/exchange_rate.dart';
 import 'package:vigon/src/data/import_repositories.dart';
+import 'package:vigon/src/data/money_sum.dart';
 import 'package:vigon/src/data/period.dart';
+import 'package:vigon/src/data/rate_repository.dart';
 import 'package:vigon/src/data/stats.dart';
 import 'package:vigon/src/data/stats_repository.dart';
 import 'package:vigon/src/data/summary.dart';
@@ -28,6 +31,7 @@ EntryView _row(
   String date, {
   Category? category,
   int account = 1,
+  String currency = 'VND',
 }) => EntryView(
   Entry(
     id: id,
@@ -41,9 +45,25 @@ EntryView _row(
     recurringRuleId: null,
     source: EntrySource.manual,
     createdAt: DateTime(2026),
+    currency: currency,
+    originalAmount: amount,
   ),
   category,
 );
+
+/// Thu chi một ngày, một tiền tệ (mặc định VND).
+DailyFlow _f(String date, int income, int expense, [String currency = 'VND']) =>
+    DailyFlow(
+      date,
+      MoneyBag({currency: income}),
+      MoneyBag({currency: expense}),
+    );
+
+/// Một ngày thành chữ để so (bỏ phần 0).
+String _s(DailyFlow f) => '${f.date} +${f.income.parts} -${f.expense.parts}';
+
+/// Túi một tiền tệ.
+MoneyBag _vnd(int v) => MoneyBag({'VND': v});
 
 void main() {
   group('dailyFlowOf', () {
@@ -57,9 +77,9 @@ void main() {
         _row(4, EntryType.transfer, 700, '2026-11-02'),
         _row(5, EntryType.expense, 7, '2026-11-01', category: food),
       ]);
-      expect(flows, const [
-        DailyFlow('2026-11-01', 0, 7),
-        DailyFlow('2026-11-02', 900, 150),
+      expect(flows.map(_s), [
+        _s(_f('2026-11-01', 0, 7)),
+        _s(_f('2026-11-02', 900, 150)),
       ]);
     });
   });
@@ -97,7 +117,7 @@ void main() {
 
     test('kỳ Ngày: một cặp cột', () {
       final p = Period.containing(PeriodType.day, DateTime(2026, 11, 6));
-      final b = flowBuckets(p, const [DailyFlow('2026-11-06', 10, 20)]);
+      final b = flowBuckets(p, [_f('2026-11-06', 10, 20)], sumParts);
       expect(b, hasLength(1));
       expect(b.single.income, 10);
       expect(b.single.expense, 20);
@@ -105,7 +125,7 @@ void main() {
 
     test('kỳ Tuần: 7 ngày, kể cả ngày không có khoản', () {
       final p = Period.containing(PeriodType.week, DateTime(2026, 11, 6));
-      final b = flowBuckets(p, [DailyFlow(dateKey(p.start), 5, 0)]);
+      final b = flowBuckets(p, [_f(dateKey(p.start), 5, 0)], sumParts);
       expect(b, hasLength(7));
       expect(b.every((x) => x.unit == BucketUnit.day), isTrue);
       expect(b.first.income, 5);
@@ -117,7 +137,7 @@ void main() {
       () {
         final nov = Period.containing(PeriodType.month, DateTime(2026, 11, 6));
         expect(
-          flowBuckets(nov, const [DailyFlow('2026-11-30', 0, 1)]),
+          flowBuckets(nov, [_f('2026-11-30', 0, 1)], sumParts),
           hasLength(30),
         );
         final mid = Period.containing(
@@ -125,7 +145,7 @@ void main() {
           DateTime(2026, 11, 20),
           monthStartDay: 15,
         );
-        final b = flowBuckets(mid, const [DailyFlow('2026-12-14', 0, 3)]);
+        final b = flowBuckets(mid, [_f('2026-12-14', 0, 3)], sumParts);
         expect(b.first.start, DateTime(2026, 11, 15));
         expect(b.last.end, DateTime(2026, 12, 14));
         expect(b, hasLength(30));
@@ -135,11 +155,11 @@ void main() {
 
     test('kỳ Năm: 12 tháng', () {
       final p = Period.containing(PeriodType.year, DateTime(2026, 6, 1));
-      final b = flowBuckets(p, const [
-        DailyFlow('2026-01-31', 1, 2),
-        DailyFlow('2026-02-01', 3, 4),
-        DailyFlow('2026-12-31', 5, 6),
-      ]);
+      final b = flowBuckets(p, [
+        _f('2026-01-31', 1, 2),
+        _f('2026-02-01', 3, 4),
+        _f('2026-12-31', 5, 6),
+      ], sumParts);
       expect(b, hasLength(12));
       expect(b.every((x) => x.unit == BucketUnit.month), isTrue);
       expect([b[0].income, b[0].expense], [1, 2]);
@@ -151,10 +171,10 @@ void main() {
 
     test('kỳ Tất cả: từng năm từ khoản đầu tới khoản cuối', () {
       final p = Period.containing(PeriodType.all, DateTime(2026, 11, 6));
-      final b = flowBuckets(p, const [
-        DailyFlow('2024-05-05', 0, 10),
-        DailyFlow('2026-02-02', 7, 0),
-      ]);
+      final b = flowBuckets(p, [
+        _f('2024-05-05', 0, 10),
+        _f('2026-02-02', 7, 0),
+      ], sumParts);
       expect(b.map((x) => x.start.year), [2024, 2025, 2026]);
       expect(b.map((x) => x.expense), [10, 0, 0]);
       expect(b.last.income, 7);
@@ -165,11 +185,11 @@ void main() {
       'khoảng tùy chọn 40 ngày: từng tháng, cột đầu/cuối cắt theo khoảng',
       () {
         final p = Period.custom(DateTime(2026, 1, 20), DateTime(2026, 2, 28));
-        final b = flowBuckets(p, const [
-          DailyFlow('2026-01-20', 0, 1),
-          DailyFlow('2026-01-31', 0, 2),
-          DailyFlow('2026-02-28', 0, 4),
-        ]);
+        final b = flowBuckets(p, [
+          _f('2026-01-20', 0, 1),
+          _f('2026-01-31', 0, 2),
+          _f('2026-02-28', 0, 4),
+        ], sumParts);
         expect(b, hasLength(2));
         expect(b[0].start, DateTime(2026, 1, 20));
         expect(b[0].end, DateTime(2026, 1, 31));
@@ -181,12 +201,12 @@ void main() {
 
     test('khoảng tùy chọn dài hơn 366 ngày: từng năm, cắt theo khoảng', () {
       final p = Period.custom(DateTime(2024, 7, 1), DateTime(2026, 3, 31));
-      final b = flowBuckets(p, const [
-        DailyFlow('2024-07-01', 1, 0),
-        DailyFlow('2025-06-06', 2, 0),
-        DailyFlow('2026-03-31', 4, 0),
-        DailyFlow('2026-04-01', 99, 99), // ngoài khoảng
-      ]);
+      final b = flowBuckets(p, [
+        _f('2024-07-01', 1, 0),
+        _f('2025-06-06', 2, 0),
+        _f('2026-03-31', 4, 0),
+        _f('2026-04-01', 99, 99), // ngoài khoảng
+      ], sumParts);
       expect(b.map((x) => x.start), [
         DateTime(2024, 7, 1),
         DateTime(2025, 1, 1),
@@ -200,47 +220,47 @@ void main() {
       final p = Period.containing(PeriodType.month, DateTime(2026, 11, 6));
       final flows = [
         for (var d = 1; d <= 30; d++)
-          DailyFlow('2026-11-${'$d'.padLeft(2, '0')}', d * 1000, d * 700 + 1),
-        const DailyFlow('2026-10-31', 5, 5),
-        const DailyFlow('2026-12-01', 5, 5),
+          _f('2026-11-${'$d'.padLeft(2, '0')}', d * 1000, d * 700 + 1),
+        _f('2026-10-31', 5, 5),
+        _f('2026-12-01', 5, 5),
       ];
-      final b = flowBuckets(p, flows);
+      final b = flowBuckets(p, flows, sumParts);
       expect(sum(b, (x) => x.income), 1000 * (30 * 31 ~/ 2));
       expect(sum(b, (x) => x.expense), 700 * (30 * 31 ~/ 2) + 30);
     });
 
     test('kỳ không có khoản: danh sách rỗng, không cột rỗng (AC-110)', () {
       final p = Period.containing(PeriodType.month, DateTime(2026, 11, 6));
-      expect(flowBuckets(p, const []), isEmpty);
-      expect(flowBuckets(p, const [DailyFlow('2026-10-01', 1, 1)]), isEmpty);
+      expect(flowBuckets(p, <DailyFlow>[], sumParts), isEmpty);
+      expect(flowBuckets(p, [_f('2026-10-01', 1, 1)], sumParts), isEmpty);
       final all = Period.containing(PeriodType.all, DateTime(2026, 11, 6));
-      expect(flowBuckets(all, const []), isEmpty);
+      expect(flowBuckets(all, <DailyFlow>[], sumParts), isEmpty);
     });
   });
 
   group('biggestSpendingDay (AC-109)', () {
     test('lấy ngày chi nhiều nhất', () {
-      final d = biggestSpendingDay(const [
-        DailyFlow('2026-11-01', 0, 540000),
-        DailyFlow('2026-11-14', 0, 310000),
-        DailyFlow('2026-11-06', 9999999, 250000),
-      ]);
+      final d = biggestSpendingDay([
+        _f('2026-11-01', 0, 540000),
+        _f('2026-11-14', 0, 310000),
+        _f('2026-11-06', 9999999, 250000),
+      ], sumParts);
       expect(d!.date, DateTime(2026, 11, 1));
       expect(d.expense, 540000);
     });
 
     test('bằng nhau thì ngày sớm hơn, dù xuất hiện sau', () {
-      final d = biggestSpendingDay(const [
-        DailyFlow('2026-11-20', 0, 100),
-        DailyFlow('2026-11-03', 0, 100),
-        DailyFlow('2026-11-09', 0, 100),
-      ]);
+      final d = biggestSpendingDay([
+        _f('2026-11-20', 0, 100),
+        _f('2026-11-03', 0, 100),
+        _f('2026-11-09', 0, 100),
+      ], sumParts);
       expect(d!.date, DateTime(2026, 11, 3));
     });
 
     test('không có khoản chi thì null', () {
-      expect(biggestSpendingDay(const []), isNull);
-      expect(biggestSpendingDay(const [DailyFlow('2026-11-01', 5, 0)]), isNull);
+      expect(biggestSpendingDay(<DailyFlow>[], sumParts), isNull);
+      expect(biggestSpendingDay([_f('2026-11-01', 5, 0)], sumParts), isNull);
     });
   });
 
@@ -260,7 +280,7 @@ void main() {
         _row(20, EntryType.income, 99999, '2026-11-02', category: salary),
         _row(21, EntryType.transfer, 99999, '2026-11-02'),
       ];
-      final top = topExpenseCategories(rows);
+      final top = topExpenseCategories(PeriodSummary.of(rows));
       expect(top.map((t) => t.category.id), [7, 6, 5, 4, 3]);
       expect(top.map((t) => t.total), [700, 600, 500, 400, 300]);
       // Tổng chi = 2800: 700/2800 = 25,0%.
@@ -270,44 +290,50 @@ void main() {
     test('bằng tiền thì id nhỏ trước; ít hơn 5 thì trả hết', () {
       final a = _cat(5, CategoryType.expense),
           b = _cat(2, CategoryType.expense);
-      final top = topExpenseCategories([
-        _row(1, EntryType.expense, 100, '2026-11-02', category: a),
-        _row(2, EntryType.expense, 100, '2026-11-02', category: b),
-      ]);
+      final top = topExpenseCategories(
+        PeriodSummary.of([
+          _row(1, EntryType.expense, 100, '2026-11-02', category: a),
+          _row(2, EntryType.expense, 100, '2026-11-02', category: b),
+        ]),
+      );
       expect(top.map((t) => t.category.id), [2, 5]);
-      expect(topExpenseCategories(const []), isEmpty);
+      expect(topExpenseCategories(PeriodSummary.empty), isEmpty);
     });
   });
 
   group('BalanceLedger và đường lịch sử số dư (AC-109)', () {
     final ledger = BalanceLedger(
-      initial: 1000,
-      netByDate: const {
-        '2026-11-10': -300,
-        '2026-11-02': 500,
-        '2026-12-01': 50,
+      initial: _vnd(1000),
+      netByDate: {
+        '2026-11-10': _vnd(-300),
+        '2026-11-02': _vnd(500),
+        '2026-12-01': _vnd(50),
       },
     );
+    int at(String d) => sumParts(ledger.at(d));
 
     test('số dư cuối ngày', () {
-      expect(ledger.at('2026-10-31'), 1000);
-      expect(ledger.at('2026-11-02'), 1500);
-      expect(ledger.at('2026-11-09'), 1500);
-      expect(ledger.at('2026-11-10'), 1200);
-      expect(ledger.at('2027-01-01'), 1250);
-      expect(ledger.total, 1250);
+      expect(at('2026-10-31'), 1000);
+      expect(at('2026-11-02'), 1500);
+      expect(at('2026-11-09'), 1500);
+      expect(at('2026-11-10'), 1200);
+      expect(at('2027-01-01'), 1250);
+      expect(sumParts(ledger.total), 1250);
       expect(
-        BalanceLedger(initial: 7, netByDate: const {}).at('2026-01-01'),
+        sumParts(
+          BalanceLedger(initial: _vnd(7), netByDate: const {}).at('2026-01-01'),
+        ),
         7,
       );
     });
 
     test('giá trị cuối mỗi cột; bỏ cột sau hôm nay', () {
       final p = Period.containing(PeriodType.year, DateTime(2026, 11, 6));
-      final buckets = flowBuckets(p, const [DailyFlow('2026-11-02', 500, 0)]);
+      final buckets = flowBuckets(p, [_f('2026-11-02', 500, 0)], sumParts);
       final points = balanceHistory(
         buckets,
         ledger,
+        sumParts,
         today: DateTime(2026, 11, 15),
       );
       expect(points, hasLength(11)); // tháng 12 bắt đầu sau hôm nay: bỏ
@@ -343,14 +369,14 @@ void main() {
 
     test('monthlyFlows khớp tổng các khoản', () {
       final nov = Period.containing(PeriodType.month, DateTime(2026, 11, 6));
-      final flows = monthlyFlows(monthsEndingAt(nov), const [
-        DailyFlow('2026-06-01', 10, 20),
-        DailyFlow('2026-10-31', 0, 4000000),
-        DailyFlow('2026-11-01', 100, 3000000),
-        DailyFlow('2026-11-30', 7, 2000000),
-        DailyFlow('2026-12-01', 1, 1), // ngoài 6 tháng
-        DailyFlow('2026-05-31', 1, 1), // ngoài 6 tháng
-      ]);
+      final flows = monthlyFlows(monthsEndingAt(nov), [
+        _f('2026-06-01', 10, 20),
+        _f('2026-10-31', 0, 4000000),
+        _f('2026-11-01', 100, 3000000),
+        _f('2026-11-30', 7, 2000000),
+        _f('2026-12-01', 1, 1), // ngoài 6 tháng
+        _f('2026-05-31', 1, 1), // ngoài 6 tháng
+      ], sumParts);
       expect(flows.first.income, 10);
       expect(flows.first.expense, 20);
       expect(flows[4].expense, 4000000);
@@ -387,20 +413,24 @@ void main() {
 
     test('OverviewData: net, ngân sách còn lại, vượt, chưa đặt', () {
       final nov = Period.containing(PeriodType.month, DateTime(2026, 11, 6));
-      final months = [
-        for (final (i, p) in monthsEndingAt(nov).indexed)
-          MonthFlow(
-            p,
+      final months = monthsEndingAt(nov);
+      final flows = [
+        for (final (i, p) in months.indexed)
+          _f(
+            dateKey(p.start),
             i == 5 ? 9000000 : 1,
             i == 4 ? 4000000 : (i == 5 ? 5000000 : 0),
           ),
       ];
-      OverviewData data(int? budget) => OverviewData(
+      OverviewData data(int? budget) => OverviewData.of(
         month: nov,
         months: months,
-        totalBalance: 123,
+        flows: flows,
+        totalBalance: _vnd(123),
         budget: budget,
+        convert: sumParts,
       );
+      expect(data(null).totalBalance, 123);
       expect(data(6000000).net, 4000000);
       expect(data(6000000).budgetLeft, 1000000);
       expect(data(4000000).budgetLeft, -1000000);
@@ -509,11 +539,11 @@ void main() {
         ),
       );
       final all = await repo.watchDailyFlow('2026-11-01', '2026-11-30').first;
-      expect(all, const [DailyFlow('2026-11-02', 900, 150)]);
+      expect(all.map(_s), [_s(_f('2026-11-02', 900, 150, 'USD'))]);
       final onlySecond = await repo
           .watchDailyFlow('2026-11-01', '2026-11-30', accountId: second)
           .first;
-      expect(onlySecond, const [DailyFlow('2026-11-02', 0, 50)]);
+      expect(onlySecond.map(_s), [_s(_f('2026-11-02', 0, 50, 'USD'))]);
       final allTime = await repo
           .watchPeriodFlow(
             Period.containing(PeriodType.all, DateTime(2026, 11, 6)),
@@ -539,16 +569,17 @@ void main() {
         await add(EntryType.transfer, 300, '2026-11-04', to: hidden);
         await accounts.archive(hidden);
         final ledger = await repo.balanceLedger();
-        expect(ledger.initial, 3000);
-        expect(ledger.at('2026-11-02'), 3500);
-        expect(ledger.at('2026-11-03'), 3300);
-        expect(ledger.at('2026-11-04'), 3300);
+        expect(sumParts(ledger.initial), 3000);
+        expect(sumParts(ledger.at('2026-11-02')), 3500);
+        expect(sumParts(ledger.at('2026-11-03')), 3300);
+        expect(sumParts(ledger.at('2026-11-04')), 3300);
         // Khớp tổng số dư từng tài khoản của app.
-        final perAccount = balances(
+        final perAccount = MoneyBag();
+        balanceBags(
           await db.select(db.accounts).get(),
           await db.select(db.entries).get(),
-        );
-        expect(ledger.total, perAccount.values.fold<int>(0, (a, b) => a + b));
+        ).values.forEach(perAccount.addBag);
+        expect(ledger.total.parts, perAccount.parts);
       },
     );
 
@@ -584,14 +615,184 @@ void main() {
             Period.containing(PeriodType.all, DateTime(2026, 11, 6)),
           )
           .first;
-      expect(flows.fold<int>(0, (a, f) => a + f.income), income);
-      expect(flows.fold<int>(0, (a, f) => a + f.expense), expense);
+      expect(flows.fold<int>(0, (a, f) => a + sumParts(f.income)), income);
+      expect(flows.fold<int>(0, (a, f) => a + sumParts(f.expense)), expense);
       final year = Period.containing(PeriodType.year, DateTime(2026, 6, 1));
-      final buckets = flowBuckets(year, flows);
+      final buckets = flowBuckets(year, flows, sumParts);
       expect(buckets, hasLength(12));
       expect(buckets.fold<int>(0, (a, b) => a + b.expense), expense);
       final ledger = await repo.balanceLedger();
-      expect(ledger.total, ledger.initial + income - expense);
+      expect(
+        sumParts(ledger.total),
+        sumParts(ledger.initial) + income - expense,
+      );
+    });
+  });
+
+  group('Tiền tệ chính, cộng chính xác (D-042, AC-148)', () {
+    // 1 USD = 25 974 VND (như test/data/exact_sum_test.dart).
+    const table = RateTable(
+      base: 'USD',
+      date: '2026-11-10',
+      rates: {'VND': 25974, 'EUR': 0.92},
+    );
+    final usd = convertWith(const CurrencyService(table, 'USD'));
+    final vnd = convertWith(const CurrencyService(table, 'VND'));
+
+    test('cột cộng gốc theo tiền tệ rồi quy đổi một lần', () {
+      // 3 ngày × 10 000 ₫: quy từng ngày rồi cộng = 3 × 39 = 117 cent; cộng
+      // gốc rồi quy một lần = 30 000 / 25 974 → 116 cent.
+      final year = Period.containing(PeriodType.year, DateTime(2026, 11, 6));
+      final flows = [
+        for (final d in ['2026-11-01', '2026-11-02', '2026-11-03'])
+          _f(d, 0, 10000),
+      ];
+      final b = flowBuckets(year, flows, usd);
+      expect(b[10].expense, 116);
+      // Theo VND thì từng đồng.
+      expect(flowBuckets(year, flows, vnd)[10].expense, 30000);
+    });
+
+    test('nhiều tiền tệ trong một ngày: mỗi phần giữ số gốc', () {
+      final rows = dailyFlowOf([
+        _row(1, EntryType.expense, 10000, '2026-11-02', currency: 'VND'),
+        _row(2, EntryType.expense, 150, '2026-11-02', currency: 'USD'),
+        _row(3, EntryType.expense, 20000, '2026-11-02', currency: 'VND'),
+      ]);
+      expect(rows.single.expense.parts, {'VND': 30000, 'USD': 150});
+      // 150 cent + 30 000 ₫ (≈ 115,5 cent) = 265,5 → 266 cent, làm tròn một lần.
+      expect(usd(rows.single.expense), 266);
+      expect(biggestSpendingDay(rows, usd)!.expense, 266);
+    });
+
+    test('thiếu tỷ giá: phần đó không vào tổng (AC-134)', () {
+      final bag = MoneyBag({'VND': 25974, 'XYZ': 999});
+      expect(usd(bag), 100);
+    });
+
+    test('Tổng quan: thu − chi tháng cộng gốc rồi quy đổi một lần', () {
+      final nov = Period.containing(PeriodType.month, DateTime(2026, 11, 6));
+      final data = OverviewData.of(
+        month: nov,
+        months: monthsEndingAt(nov),
+        flows: [
+          _f('2026-11-01', 0, 10000),
+          _f('2026-11-02', 0, 10000),
+          _f('2026-11-03', 0, 10000),
+        ],
+        totalBalance: MoneyBag({'VND': 25974, 'USD': 100}),
+        budget: 200,
+        convert: usd,
+      );
+      expect(data.current.expense, 116);
+      expect(data.net, -116);
+      expect(data.totalBalance, 200);
+      expect(data.budgetLeft, 84);
+    });
+
+    test('AC-108: tháng 10 chi 4.000.000 ₫, tháng 11 chi 5.000.000 ₫ → '
+        'tăng 25%', () {
+      final nov = Period.containing(PeriodType.month, DateTime(2026, 11, 6));
+      final data = OverviewData.of(
+        month: nov,
+        months: monthsEndingAt(nov),
+        flows: [
+          _f('2026-10-15', 0, 1500000),
+          _f('2026-10-31', 0, 2500000),
+          _f('2026-11-03', 0, 5000000),
+        ],
+        totalBalance: MoneyBag(),
+        budget: null,
+        convert: vnd,
+      );
+      expect(data.previous!.expense, 4000000);
+      expect(data.current.expense, 5000000);
+      expect(data.expenseChange!.direction, ChangeDirection.up);
+      expect(data.expenseChange!.percent, 25);
+      expect(data.incomeChange, isNull); // tháng trước thu 0 → "—"
+    });
+
+    test('sổ số dư: chuyển tiền khác tiền tệ, tài khoản ẩn — khớp số dư '
+        'từng tài khoản', () async {
+      final db = AppDatabase(NativeDatabase.memory());
+      addTearDown(db.close);
+      final accounts = AccountRepository(db);
+      await (db.update(db.accounts)..where((a) => a.id.equals(1))).write(
+        const AccountsCompanion(
+          currency: Value('VND'),
+          initialCurrency: Value('VND'),
+          initialBalanceOriginal: Value(1000000),
+          initialBalance: Value(1000000),
+        ),
+      );
+      final wallet = await accounts.add(name: 'USD');
+      await (db.update(db.accounts)..where((a) => a.id.equals(wallet))).write(
+        const AccountsCompanion(
+          currency: Value('USD'),
+          initialCurrency: Value('USD'),
+          initialBalanceOriginal: Value(500),
+          initialBalance: Value(500),
+        ),
+      );
+      Future<void> add(
+        EntryType type,
+        int original,
+        String currency,
+        String date, {
+        int account = 1,
+        int? to,
+        int? toOriginal,
+        String? toCurrency,
+      }) => db
+          .into(db.entries)
+          .insert(
+            EntriesCompanion.insert(
+              type: type,
+              amount: original,
+              categoryId: Value(
+                type == EntryType.transfer
+                    ? null
+                    : (type == EntryType.income ? 11 : 1),
+              ),
+              accountId: account,
+              toAccountId: Value(to),
+              date: date,
+              currency: Value(currency),
+              originalAmount: Value(original),
+              toOriginalAmount: Value(toOriginal),
+              toCurrency: Value(toCurrency),
+            ),
+          );
+      await add(EntryType.expense, 10000, 'VND', '2026-11-01');
+      await add(EntryType.expense, 10000, 'VND', '2026-11-01');
+      await add(EntryType.income, 250, 'USD', '2026-11-02', account: wallet);
+      await add(
+        EntryType.transfer,
+        259740,
+        'VND',
+        '2026-11-03',
+        to: wallet,
+        toOriginal: 1000,
+        toCurrency: 'USD',
+      );
+      await accounts.archive(wallet);
+      final repo = StatsRepository(db);
+      final ledger = await repo.balanceLedger();
+      expect(ledger.initial.parts, {'VND': 1000000, 'USD': 500});
+      expect(ledger.at('2026-11-01').parts, {'VND': 980000, 'USD': 500});
+      expect(ledger.at('2026-11-03').parts, {'VND': 720260, 'USD': 1750});
+      final perAccount = MoneyBag();
+      balanceBags(
+        await db.select(db.accounts).get(),
+        await db.select(db.entries).get(),
+      ).values.forEach(perAccount.addBag);
+      expect(ledger.total.parts, perAccount.parts);
+      // Thu chi gốc theo ngày, theo tiền tệ.
+      final flows = await repo.watchDailyFlow('2026-11-01', '2026-11-30').first;
+      expect(flows.map(_s), [
+        '2026-11-01 +{} -{VND: 20000}',
+        '2026-11-02 +{USD: 250} -{}',
+      ]);
     });
   });
 }
