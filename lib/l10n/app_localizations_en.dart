@@ -2077,8 +2077,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get homeEmptyTitle => 'Log your first expense';
 
   @override
-  String get homeEmptyBody =>
-      'Tap a category or −';
+  String get homeEmptyBody => 'Tap a category or −';
 
   @override
   String fromEmailRef(String ref) {
@@ -2160,4 +2159,179 @@ class AppLocalizationsEn extends AppLocalizations {
   String rateLine(String from, String rate, String to) {
     return '1 $from = $rate $to · auto';
   }
+
+  @override
+  String get overviewTitle => 'Overview';
+
+  @override
+  String get overviewMenu => 'Overview, statistics, calendar';
+
+  @override
+  String get overviewTotalBalance => 'Total balance';
+
+  @override
+  String get overviewAllAccounts =>
+      'All accounts, hidden ones included. Debts not included.';
+
+  @override
+  String get overviewNet => 'Income − expenses';
+
+  @override
+  String get overviewBudgetLeft => 'Budget left';
+
+  @override
+  String get overviewSetBudget => 'Set a budget';
+
+  @override
+  String get overviewMonthEmpty => 'Nothing recorded this month yet';
+
+  @override
+  String get overviewChartTitle => 'Income and expenses, last 6 months';
+
+  @override
+  String get overviewVsLastMonth => 'Compared with last month';
+
+  @override
+  String overviewChangeUp(int percent) {
+    return 'up $percent%';
+  }
+
+  @override
+  String overviewChangeDown(int percent) {
+    return 'down $percent%';
+  }
+
+  @override
+  String get overviewChangeSame => 'no change';
+
+  @override
+  String get overviewChangeNone => '—';
+
+  @override
+  String get overviewChangeNoneSpoken => 'no comparison, last month was zero';
+
+  @override
+  String overviewSummaryUp(int percent, String month) {
+    return 'Spending up $percent% from $month';
+  }
+
+  @override
+  String overviewSummaryDown(int percent, String month) {
+    return 'Spending down $percent% from $month';
+  }
+
+  @override
+  String overviewSummarySame(String month) {
+    return 'Spending unchanged from $month';
+  }
+
+  @override
+  String get overviewDebtTitle => 'Debts';
+
+  @override
+  String overviewDebtOwedToYou(String amount) {
+    return 'Others owe you $amount';
+  }
+
+  @override
+  String overviewDebtYouOwe(String amount) {
+    return 'You owe $amount';
+  }
+
+  @override
+  String get overviewDebtNone => 'No open debts';
+
+  @override
+  String overviewQueueNote(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count records are waiting and are not counted yet',
+      one: '1 record is waiting and is not counted yet',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get statsTitle => 'Statistics';
+
+  @override
+  String get statsFlowTitle => 'Income and expenses';
+
+  @override
+  String get statsTopCategories => 'Top spending categories';
+
+  @override
+  String get statsBiggestDay => 'Biggest spending day';
+
+  @override
+  String get statsBalanceHistory => 'Total balance history';
+
+  @override
+  String get statsBalanceNote => 'All accounts, hidden ones included';
+
+  @override
+  String get statsEmptyHint =>
+      'Pick another period or account, or add a record.';
+
+  @override
+  String statsChartRow(String label, String income, String expense) {
+    return '$label: income $income, expenses $expense';
+  }
+
+  @override
+  String statsChartReadout(String label, String income, String expense) {
+    return '$label · Income $income · Expenses $expense';
+  }
+
+  @override
+  String statsValueRow(String label, String amount) {
+    return '$label: $amount';
+  }
+
+  @override
+  String statsChartSummary(String title, String details) {
+    return '$title. $details';
+  }
+
+  @override
+  String statsCategoryRow(String name, String amount, String percent) {
+    return '$name, $amount, $percent';
+  }
+
+  @override
+  String get statsShowTable => 'Show as table';
+
+  @override
+  String get statsShowChart => 'Show as chart';
+
+  @override
+  String get calendarTitle => 'Calendar';
+
+  @override
+  String calendarDaySpent(String date, String amount) {
+    return '$date, spent $amount';
+  }
+
+  @override
+  String calendarDayIncome(String date) {
+    return '$date, has income';
+  }
+
+  @override
+  String calendarDaySpentIncome(String date, String amount) {
+    return '$date, spent $amount, has income';
+  }
+
+  @override
+  String calendarDayTotals(String spent, String income) {
+    return 'Spent $spent · Income $income';
+  }
+
+  @override
+  String get calendarDayEmpty => 'No records on this day';
+
+  @override
+  String get calendarTapHint =>
+      'Tap a day to see its records. A dot means income.';
 }

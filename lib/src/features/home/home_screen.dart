@@ -57,6 +57,37 @@ class HomeScreen extends ConsumerWidget {
               tooltip: '${l.importQueue}: $queueCount',
               onPressed: () => context.push('/import-queue'),
             ),
+          // Đợt 5 (lối vào tạm, chờ mockup v5): một nút gom Tổng quan,
+          // Thống kê, Lịch (F-35, F-36, F-38).
+          PopupMenuButton<String>(
+            icon: const Icon(Symbols.insights_rounded),
+            tooltip: l.overviewMenu,
+            position: PopupMenuPosition.under,
+            onSelected: (route) => context.push(route),
+            itemBuilder: (context) => [
+              PopupMenuItem(
+                value: '/overview',
+                child: ListTile(
+                  leading: const Icon(Symbols.dashboard_rounded),
+                  title: Text(l.overviewTitle),
+                ),
+              ),
+              PopupMenuItem(
+                value: '/stats',
+                child: ListTile(
+                  leading: const Icon(Symbols.bar_chart_rounded),
+                  title: Text(l.statsTitle),
+                ),
+              ),
+              PopupMenuItem(
+                value: '/calendar',
+                child: ListTile(
+                  leading: const Icon(Symbols.calendar_month_rounded),
+                  title: Text(l.calendarTitle),
+                ),
+              ),
+            ],
+          ),
           // Mockup v4 không vẽ nút này (chỉ thanh Số dư mở danh sách); giữ
           // lối tắt của app hiện tại.
           IconButton(

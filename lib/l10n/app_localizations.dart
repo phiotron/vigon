@@ -3625,6 +3625,270 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'1 {from} = {rate} {to} · auto'**
   String rateLine(String from, String rate, String to);
+
+  /// No description provided for @overviewTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Overview'**
+  String get overviewTitle;
+
+  /// No description provided for @overviewMenu.
+  ///
+  /// In en, this message translates to:
+  /// **'Overview, statistics, calendar'**
+  String get overviewMenu;
+
+  /// No description provided for @overviewTotalBalance.
+  ///
+  /// In en, this message translates to:
+  /// **'Total balance'**
+  String get overviewTotalBalance;
+
+  /// No description provided for @overviewAllAccounts.
+  ///
+  /// In en, this message translates to:
+  /// **'All accounts, hidden ones included. Debts not included.'**
+  String get overviewAllAccounts;
+
+  /// No description provided for @overviewNet.
+  ///
+  /// In en, this message translates to:
+  /// **'Income − expenses'**
+  String get overviewNet;
+
+  /// No description provided for @overviewBudgetLeft.
+  ///
+  /// In en, this message translates to:
+  /// **'Budget left'**
+  String get overviewBudgetLeft;
+
+  /// No description provided for @overviewSetBudget.
+  ///
+  /// In en, this message translates to:
+  /// **'Set a budget'**
+  String get overviewSetBudget;
+
+  /// No description provided for @overviewMonthEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing recorded this month yet'**
+  String get overviewMonthEmpty;
+
+  /// No description provided for @overviewChartTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Income and expenses, last 6 months'**
+  String get overviewChartTitle;
+
+  /// No description provided for @overviewVsLastMonth.
+  ///
+  /// In en, this message translates to:
+  /// **'Compared with last month'**
+  String get overviewVsLastMonth;
+
+  /// No description provided for @overviewChangeUp.
+  ///
+  /// In en, this message translates to:
+  /// **'up {percent}%'**
+  String overviewChangeUp(int percent);
+
+  /// No description provided for @overviewChangeDown.
+  ///
+  /// In en, this message translates to:
+  /// **'down {percent}%'**
+  String overviewChangeDown(int percent);
+
+  /// No description provided for @overviewChangeSame.
+  ///
+  /// In en, this message translates to:
+  /// **'no change'**
+  String get overviewChangeSame;
+
+  /// No description provided for @overviewChangeNone.
+  ///
+  /// In en, this message translates to:
+  /// **'—'**
+  String get overviewChangeNone;
+
+  /// No description provided for @overviewChangeNoneSpoken.
+  ///
+  /// In en, this message translates to:
+  /// **'no comparison, last month was zero'**
+  String get overviewChangeNoneSpoken;
+
+  /// No description provided for @overviewSummaryUp.
+  ///
+  /// In en, this message translates to:
+  /// **'Spending up {percent}% from {month}'**
+  String overviewSummaryUp(int percent, String month);
+
+  /// No description provided for @overviewSummaryDown.
+  ///
+  /// In en, this message translates to:
+  /// **'Spending down {percent}% from {month}'**
+  String overviewSummaryDown(int percent, String month);
+
+  /// No description provided for @overviewSummarySame.
+  ///
+  /// In en, this message translates to:
+  /// **'Spending unchanged from {month}'**
+  String overviewSummarySame(String month);
+
+  /// No description provided for @overviewDebtTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Debts'**
+  String get overviewDebtTitle;
+
+  /// No description provided for @overviewDebtOwedToYou.
+  ///
+  /// In en, this message translates to:
+  /// **'Others owe you {amount}'**
+  String overviewDebtOwedToYou(String amount);
+
+  /// No description provided for @overviewDebtYouOwe.
+  ///
+  /// In en, this message translates to:
+  /// **'You owe {amount}'**
+  String overviewDebtYouOwe(String amount);
+
+  /// No description provided for @overviewDebtNone.
+  ///
+  /// In en, this message translates to:
+  /// **'No open debts'**
+  String get overviewDebtNone;
+
+  /// No description provided for @overviewQueueNote.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 record is waiting and is not counted yet} other{{count} records are waiting and are not counted yet}}'**
+  String overviewQueueNote(int count);
+
+  /// No description provided for @statsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Statistics'**
+  String get statsTitle;
+
+  /// No description provided for @statsFlowTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Income and expenses'**
+  String get statsFlowTitle;
+
+  /// No description provided for @statsTopCategories.
+  ///
+  /// In en, this message translates to:
+  /// **'Top spending categories'**
+  String get statsTopCategories;
+
+  /// No description provided for @statsBiggestDay.
+  ///
+  /// In en, this message translates to:
+  /// **'Biggest spending day'**
+  String get statsBiggestDay;
+
+  /// No description provided for @statsBalanceHistory.
+  ///
+  /// In en, this message translates to:
+  /// **'Total balance history'**
+  String get statsBalanceHistory;
+
+  /// No description provided for @statsBalanceNote.
+  ///
+  /// In en, this message translates to:
+  /// **'All accounts, hidden ones included'**
+  String get statsBalanceNote;
+
+  /// No description provided for @statsEmptyHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Pick another period or account, or add a record.'**
+  String get statsEmptyHint;
+
+  /// No description provided for @statsChartRow.
+  ///
+  /// In en, this message translates to:
+  /// **'{label}: income {income}, expenses {expense}'**
+  String statsChartRow(String label, String income, String expense);
+
+  /// No description provided for @statsChartReadout.
+  ///
+  /// In en, this message translates to:
+  /// **'{label} · Income {income} · Expenses {expense}'**
+  String statsChartReadout(String label, String income, String expense);
+
+  /// No description provided for @statsValueRow.
+  ///
+  /// In en, this message translates to:
+  /// **'{label}: {amount}'**
+  String statsValueRow(String label, String amount);
+
+  /// No description provided for @statsChartSummary.
+  ///
+  /// In en, this message translates to:
+  /// **'{title}. {details}'**
+  String statsChartSummary(String title, String details);
+
+  /// No description provided for @statsCategoryRow.
+  ///
+  /// In en, this message translates to:
+  /// **'{name}, {amount}, {percent}'**
+  String statsCategoryRow(String name, String amount, String percent);
+
+  /// No description provided for @statsShowTable.
+  ///
+  /// In en, this message translates to:
+  /// **'Show as table'**
+  String get statsShowTable;
+
+  /// No description provided for @statsShowChart.
+  ///
+  /// In en, this message translates to:
+  /// **'Show as chart'**
+  String get statsShowChart;
+
+  /// No description provided for @calendarTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Calendar'**
+  String get calendarTitle;
+
+  /// No description provided for @calendarDaySpent.
+  ///
+  /// In en, this message translates to:
+  /// **'{date}, spent {amount}'**
+  String calendarDaySpent(String date, String amount);
+
+  /// No description provided for @calendarDayIncome.
+  ///
+  /// In en, this message translates to:
+  /// **'{date}, has income'**
+  String calendarDayIncome(String date);
+
+  /// No description provided for @calendarDaySpentIncome.
+  ///
+  /// In en, this message translates to:
+  /// **'{date}, spent {amount}, has income'**
+  String calendarDaySpentIncome(String date, String amount);
+
+  /// No description provided for @calendarDayTotals.
+  ///
+  /// In en, this message translates to:
+  /// **'Spent {spent} · Income {income}'**
+  String calendarDayTotals(String spent, String income);
+
+  /// No description provided for @calendarDayEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No records on this day'**
+  String get calendarDayEmpty;
+
+  /// No description provided for @calendarTapHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap a day to see its records. A dot means income.'**
+  String get calendarTapHint;
 }
 
 class _AppLocalizationsDelegate

@@ -2054,8 +2054,7 @@ class AppLocalizationsVi extends AppLocalizations {
   String get homeEmptyTitle => 'Ghi khoản chi đầu tiên';
 
   @override
-  String get homeEmptyBody =>
-      'Chạm danh mục hoặc −';
+  String get homeEmptyBody => 'Chạm danh mục hoặc −';
 
   @override
   String fromEmailRef(String ref) {
@@ -2125,4 +2124,178 @@ class AppLocalizationsVi extends AppLocalizations {
   String rateLine(String from, String rate, String to) {
     return '1 $from = $rate $to · tự động';
   }
+
+  @override
+  String get overviewTitle => 'Tổng quan';
+
+  @override
+  String get overviewMenu => 'Tổng quan, thống kê, lịch';
+
+  @override
+  String get overviewTotalBalance => 'Tổng số dư';
+
+  @override
+  String get overviewAllAccounts =>
+      'Mọi tài khoản, kể cả tài khoản ẩn. Không gồm khoản nợ.';
+
+  @override
+  String get overviewNet => 'Thu − chi tháng';
+
+  @override
+  String get overviewBudgetLeft => 'Ngân sách còn lại';
+
+  @override
+  String get overviewSetBudget => 'Đặt ngân sách';
+
+  @override
+  String get overviewMonthEmpty => 'Tháng này chưa có khoản nào';
+
+  @override
+  String get overviewChartTitle => 'Thu và chi 6 tháng gần nhất';
+
+  @override
+  String get overviewVsLastMonth => 'So với tháng trước';
+
+  @override
+  String overviewChangeUp(int percent) {
+    return 'tăng $percent%';
+  }
+
+  @override
+  String overviewChangeDown(int percent) {
+    return 'giảm $percent%';
+  }
+
+  @override
+  String get overviewChangeSame => 'không đổi';
+
+  @override
+  String get overviewChangeNone => '—';
+
+  @override
+  String get overviewChangeNoneSpoken => 'không so được, tháng trước bằng 0';
+
+  @override
+  String overviewSummaryUp(int percent, String month) {
+    return 'Chi tăng $percent% so với $month';
+  }
+
+  @override
+  String overviewSummaryDown(int percent, String month) {
+    return 'Chi giảm $percent% so với $month';
+  }
+
+  @override
+  String overviewSummarySame(String month) {
+    return 'Chi không đổi so với $month';
+  }
+
+  @override
+  String get overviewDebtTitle => 'Nợ';
+
+  @override
+  String overviewDebtOwedToYou(String amount) {
+    return 'Người khác nợ bạn $amount';
+  }
+
+  @override
+  String overviewDebtYouOwe(String amount) {
+    return 'Bạn nợ $amount';
+  }
+
+  @override
+  String get overviewDebtNone => 'Không có khoản nợ nào đang mở';
+
+  @override
+  String overviewQueueNote(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count khoản đang chờ, chưa được tính',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get statsTitle => 'Thống kê';
+
+  @override
+  String get statsFlowTitle => 'Thu và chi';
+
+  @override
+  String get statsTopCategories => 'Danh mục chi nhiều nhất';
+
+  @override
+  String get statsBiggestDay => 'Ngày chi nhiều nhất';
+
+  @override
+  String get statsBalanceHistory => 'Lịch sử tổng số dư';
+
+  @override
+  String get statsBalanceNote => 'Mọi tài khoản, kể cả tài khoản ẩn';
+
+  @override
+  String get statsEmptyHint =>
+      'Chọn kỳ hoặc tài khoản khác, hoặc ghi một khoản.';
+
+  @override
+  String statsChartRow(String label, String income, String expense) {
+    return '$label: thu $income, chi $expense';
+  }
+
+  @override
+  String statsChartReadout(String label, String income, String expense) {
+    return '$label · Thu $income · Chi $expense';
+  }
+
+  @override
+  String statsValueRow(String label, String amount) {
+    return '$label: $amount';
+  }
+
+  @override
+  String statsChartSummary(String title, String details) {
+    return '$title. $details';
+  }
+
+  @override
+  String statsCategoryRow(String name, String amount, String percent) {
+    return '$name, $amount, $percent';
+  }
+
+  @override
+  String get statsShowTable => 'Xem dạng bảng';
+
+  @override
+  String get statsShowChart => 'Xem dạng biểu đồ';
+
+  @override
+  String get calendarTitle => 'Lịch';
+
+  @override
+  String calendarDaySpent(String date, String amount) {
+    return '$date, chi $amount';
+  }
+
+  @override
+  String calendarDayIncome(String date) {
+    return '$date, có thu';
+  }
+
+  @override
+  String calendarDaySpentIncome(String date, String amount) {
+    return '$date, chi $amount, có thu';
+  }
+
+  @override
+  String calendarDayTotals(String spent, String income) {
+    return 'Chi $spent · Thu $income';
+  }
+
+  @override
+  String get calendarDayEmpty => 'Ngày này chưa có khoản nào';
+
+  @override
+  String get calendarTapHint =>
+      'Chạm một ngày để xem các khoản. Chấm là ngày có thu.';
 }
