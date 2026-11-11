@@ -22,6 +22,8 @@ import '../../ui/theme.dart';
 import '../../ui/tokens.g.dart';
 import '../../ui/status.dart';
 import '../import_queue/import_queue_providers.dart';
+import '../budget_alert/budget_alert_providers.dart';
+import '../budget_alert/budget_status.dart';
 import '../settings/budget_dialog.dart';
 import 'home_extras.dart';
 import 'period_picker.dart';
@@ -787,10 +789,19 @@ class BudgetBar extends ConsumerWidget {
     final l = AppLocalizations.of(context);
     final spent = spentValue.value ?? 0;
     final currency = ref.watch(currencyProvider).value ?? 'USD';
-    final over = spent > limit;
+    // Sắp vượt (F-37, AC-111): "Đã dùng 82%" + đã chi / hạn mức, màu cảnh báo.
+    final state = budgetStateFor(ref, spent: spent, limit: limit);
+    final over = state == BudgetState.over;
+    final near = state == BudgetState.almostOver;
+    final progress = l.budgetProgress(
+      money(context, currency, spent),
+      money(context, currency, limit),
+    );
     final text = over
         ? '${l.budget}: ${l.budgetOver(money(context, currency, spent - limit))}'
-        : '${l.budget}: ${l.budgetProgress(money(context, currency, spent), money(context, currency, limit))}';
+        : near
+        ? '${l.budget}: ${l.budgetAlertUsed(budgetUsedPercent(spent: spent, limit: limit))} · $progress'
+        : '${l.budget}: $progress';
     return InkWell(
       onTap: () => showBudgetDialog(context, ref),
       child: Padding(
@@ -804,6 +815,7 @@ class BudgetBar extends ConsumerWidget {
           text: text,
           progress: spent / limit,
           over: over,
+          near: near,
           thickness: 8,
         ),
       ),

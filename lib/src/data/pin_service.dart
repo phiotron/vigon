@@ -61,6 +61,10 @@ class PinService {
   static const _hashKey = 'pin_hash';
   static const _saltKey = 'pin_salt';
   static const _installKey = 'pin_install_id';
+
+  /// Cờ "Mở khoá bằng sinh trắc" (F-41). Nằm cùng chỗ PIN để [disable] (tắt PIN,
+  /// Xoá toàn bộ dữ liệu, cài lại trên iOS) tắt luôn sinh trắc (AC-119).
+  static const biometricKey = 'biometric_enabled';
   static const _iterations = 20000;
 
   static bool isValidPin(String pin) => RegExp(r'^\d{4}$').hasMatch(pin);
@@ -110,6 +114,7 @@ class PinService {
     await _store.delete(_hashKey);
     await _store.delete(_saltKey);
     await _store.delete(_installKey);
+    await _store.delete(biometricKey);
   }
 
   String _randomBase64() =>

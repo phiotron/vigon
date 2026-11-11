@@ -7,6 +7,11 @@
     <!-- F-25 nhắc ghi sổ: hai quyền này. Không báo thức chính xác. -->
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
+    <!-- F-41: mở khoá bằng vân tay (quyền thường, không hộp thoại). App không thấy dữ liệu sinh trắc. -->
+    <uses-permission android:name="android.permission.USE_BIOMETRIC"/>
+    <!-- androidx.biometric tự thêm USE_FINGERPRINT (API 23–27); gỡ để giữ đúng danh sách quyền (AC-125):
+         Android 7–8 coi như không có sinh trắc (công tắc tắt kèm lý do), Android 9+ dùng USE_BIOMETRIC. -->
+    <uses-permission android:name="android.permission.USE_FINGERPRINT" tools:node="remove"/>
     <!-- Plugin thông báo tự thêm VIBRATE; app không rung nên gỡ để khỏi thêm quyền ngoài danh sách. -->
     <uses-permission android:name="android.permission.VIBRATE" tools:node="remove"/>
     <application

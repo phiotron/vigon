@@ -48,7 +48,36 @@ void main() {
     );
     expect(orientations, contains('UIInterfaceOrientationPortrait<'));
     expect(plist.contains('~ipad'), isFalse);
-    expect(plist.contains('UsageDescription'), isFalse);
+    // AC-125: đúng một chuỗi mục đích, NSFaceIDUsageDescription (F-41); không
+    // camera hay thư viện ảnh.
+    expect(
+      RegExp(r'<key>NS\w+UsageDescription</key>')
+          .allMatches(plist)
+          .map((m) => m[0])
+          .toList(),
+      ['<key>NSFaceIDUsageDescription</key>'],
+    );
+    expect(plist.contains('NSCamera'), isFalse);
+    expect(plist.contains('NSPhotoLibrary'), isFalse);
+  });
+
+  test('chuỗi Face ID có bản vi + en và được đóng gói (F-41, AC-125)', () {
+    for (final lang in ['en', 'vi']) {
+      final strings = read('ios/Runner/$lang.lproj/InfoPlist.strings');
+      expect(
+        RegExp(r'"NSFaceIDUsageDescription" = "[^"]+";').hasMatch(strings),
+        isTrue,
+        reason: lang,
+      );
+    }
+    expect(
+      read('ios/Runner/vi.lproj/InfoPlist.strings'),
+      contains('Face ID để mở khoá'),
+    );
+    final project = read('ios/Runner.xcodeproj/project.pbxproj');
+    expect(project, contains('path = en.lproj/InfoPlist.strings;'));
+    expect(project, contains('path = vi.lproj/InfoPlist.strings;'));
+    expect(project, contains('/* InfoPlist.strings in Resources */,'));
   });
 
   test('privacy manifest: không theo dõi, không thu thập (D-002)', () {

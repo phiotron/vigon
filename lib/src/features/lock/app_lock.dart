@@ -79,6 +79,12 @@ class LockNotifier extends Notifier<AppLockState> {
     return ok;
   }
 
+  /// Mở khoá sau khi hộp sinh trắc của hệ điều hành báo đúng (F-41, AC-120).
+  /// Chỉ khi đang khoá: kết quả đến muộn không làm gì.
+  void unlockWithBiometric() {
+    if (state == AppLockState.locked) state = AppLockState.unlocked;
+  }
+
   /// Mở khóa sau khi người dùng đã xóa toàn bộ dữ liệu vì quên mã (AC-34).
   void unlockAfterReset() => state = AppLockState.unlocked;
 }

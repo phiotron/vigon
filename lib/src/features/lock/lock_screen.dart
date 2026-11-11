@@ -8,6 +8,8 @@ import '../../ui/confirm_dialog.dart';
 import '../../ui/tokens.g.dart';
 import '../settings/data_actions.dart';
 import 'app_lock.dart';
+import 'biometric.dart';
+import 'biometric_switch.dart';
 import 'pin_pad.dart';
 
 /// Màn khóa phủ lên toàn app khi bật PIN (AC-32, AC-34). Có Navigator riêng
@@ -39,6 +41,41 @@ class _LockBody extends ConsumerStatefulWidget {
 
 class _LockBodyState extends ConsumerState<_LockBody> {
   String? _error;
+  bool _biometricBusy = false;
+
+  @override
+  void initState() {
+    super.initState();
+    // F-41 (AC-120): bật sinh trắc thì tự mở hộp của hệ thống một lần khi màn
+    // khoá hiện (mở app, quay lại sau > 1 phút, vào từ widget hay thông báo).
+    WidgetsBinding.instance.addPostFrameCallback((_) => _tryBiometric());
+  }
+
+  /// Hỏi sinh trắc. Đúng → vào app; huỷ, sai, bị khoá tạm → ở lại màn PIN,
+  /// nhập PIN vẫn được, nút sinh trắc để thử lại.
+  Future<void> _tryBiometric() async {
+    if (_biometricBusy || !mounted) return;
+    _biometricBusy = true;
+    try {
+      if (!await ref.read(biometricEnabledProvider.future)) return;
+      final availability = await ref.read(biometricAvailabilityProvider.future);
+      if (!availability.available || !mounted) return;
+      final l = AppLocalizations.of(context);
+      final ok = await ref
+          .read(biometricAuthProvider)
+          .authenticate(
+            BiometricPromptText(
+              reason: l.biometricReason,
+              cancel: l.biometricCancel,
+            ),
+          );
+      if (ok) ref.read(lockProvider.notifier).unlockWithBiometric();
+    } catch (_) {
+      // Lỗi đọc cờ hay plugin: ở lại màn PIN.
+    } finally {
+      _biometricBusy = false;
+    }
+  }
 
   /// Quên mã (1.3): báo không lấy lại được mã; đồng ý thì sang hai bước xác
   /// nhận xóa (1.4, 1.5) trong [deleteEverything]. Hủy ở bước nào cũng về
@@ -62,6 +99,13 @@ class _LockBodyState extends ConsumerState<_LockBody> {
   @override
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context);
+    // Nút thử lại sinh trắc chỉ hiện khi đã bật và máy còn sinh trắc mạnh.
+    final availability = ref.watch(biometricAvailabilityProvider).value;
+    final biometric =
+        (ref.watch(biometricEnabledProvider).value ?? false) &&
+            (availability?.available ?? false)
+        ? availability
+        : null;
     // Bố cục `.vg-pin` (1.1, 1.2): icon khóa, tiêu đề, chấm, dòng lỗi ở trên;
     // bàn phím dồn xuống đáy, "Quên mã" dưới cùng. Thiếu chỗ (cỡ chữ 200%)
     // thì cả khối cuộn được.
@@ -98,6 +142,15 @@ class _LockBodyState extends ConsumerState<_LockBody> {
                         },
                       ),
                     ),
+                    if (biometric != null)
+                      Padding(
+                        padding: const EdgeInsets.only(top: VgSpace.s4),
+                        child: TextButton.icon(
+                          onPressed: _tryBiometric,
+                          icon: Icon(biometricIcon(biometric.kind)),
+                          label: Text(l.biometricUnlockButton),
+                        ),
+                      ),
                     Padding(
                       padding: const EdgeInsets.only(
                         top: VgSpace.s4,

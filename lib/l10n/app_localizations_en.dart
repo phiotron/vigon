@@ -2077,8 +2077,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get homeEmptyTitle => 'Log your first expense';
 
   @override
-  String get homeEmptyBody =>
-      'Tap a category or −';
+  String get homeEmptyBody => 'Tap a category or −';
 
   @override
   String fromEmailRef(String ref) {
@@ -2160,4 +2159,81 @@ class AppLocalizationsEn extends AppLocalizations {
   String rateLine(String from, String rate, String to) {
     return '1 $from = $rate $to · auto';
   }
+
+  @override
+  String budgetAlertUsed(int percent) {
+    return 'Used $percent%';
+  }
+
+  @override
+  String get budgetAlertThreshold => 'Near-budget threshold';
+
+  @override
+  String budgetAlertPercent(int percent) {
+    return '$percent%';
+  }
+
+  @override
+  String get budgetAlertSwitch => 'Budget alerts';
+
+  @override
+  String get budgetAlertSwitchNote =>
+      'Once at the threshold and once at 100%; percentages only';
+
+  @override
+  String get budgetAlertExplainTitle => 'Turn on budget alerts?';
+
+  @override
+  String get budgetAlertExplainBody =>
+      'Vigon will send one notification when this month\'s spending reaches your threshold and one when it reaches 100% of the limit, at most once a month for each budget. Notifications contain percentages only, never amounts.';
+
+  @override
+  String get budgetAlertChannelName => 'Budget alerts';
+
+  @override
+  String get budgetAlertChannelDescription =>
+      'Notifications when spending nears or passes a budget';
+
+  @override
+  String budgetAlertMonthly(String month, int percent) {
+    return '$month budget: $percent% used';
+  }
+
+  @override
+  String budgetAlertCategory(String category, int percent, String month) {
+    return '$category: $percent% of the $month limit used';
+  }
+
+  @override
+  String get biometricFingerprint => 'Unlock with fingerprint';
+
+  @override
+  String get biometricFaceId => 'Unlock with Face ID';
+
+  @override
+  String get biometricTouchId => 'Unlock with Touch ID';
+
+  @override
+  String get biometricNote =>
+      'Your PIN always works too. Vigon never stores biometric data.';
+
+  @override
+  String get biometricUnavailable =>
+      'No strong biometrics set up on this device';
+
+  @override
+  String get biometricReason => 'Unlock Vigon';
+
+  @override
+  String get biometricEnableReason => 'Confirm to turn on biometric unlock';
+
+  @override
+  String get biometricEnableFailed =>
+      'Not verified — biometric unlock stays off';
+
+  @override
+  String get biometricUnlockButton => 'Unlock with biometrics';
+
+  @override
+  String get biometricCancel => 'Use PIN';
 }

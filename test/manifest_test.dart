@@ -3,16 +3,27 @@ import 'dart:io';
 import 'package:flutter_test/flutter_test.dart';
 
 /// Quyền duy nhất được phép khai báo (F-25, AC-62; INTERNET chỉ để tải tỉ giá
-/// khi đổi tiền tệ, D-025).
+/// khi đổi tiền tệ, D-025; USE_BIOMETRIC cho mở khoá bằng vân tay, F-41,
+/// AC-125).
 const allowedPermissions = {
   'android.permission.INTERNET',
   'android.permission.POST_NOTIFICATIONS',
   'android.permission.RECEIVE_BOOT_COMPLETED',
+  'android.permission.USE_BIOMETRIC',
 };
 
 /// Quyền tuyệt đối không có: trạng thái mạng, báo thức chính xác.
 const forbiddenPermissions = [
   'android.permission.ACCESS_NETWORK_STATE',
+  // AC-125 (D-032): không camera, ảnh, bộ nhớ, SMS, đọc thông báo, dịch vụ nền.
+  'android.permission.CAMERA',
+  'android.permission.READ_MEDIA_',
+  'android.permission.READ_EXTERNAL_STORAGE',
+  'android.permission.WRITE_EXTERNAL_STORAGE',
+  'android.permission.READ_SMS',
+  'android.permission.RECEIVE_SMS',
+  'android.permission.BIND_NOTIFICATION_LISTENER_SERVICE',
+  'android.permission.FOREGROUND_SERVICE',
   'android.permission.SCHEDULE_EXACT_ALARM',
   'android.permission.USE_EXACT_ALARM',
 ];

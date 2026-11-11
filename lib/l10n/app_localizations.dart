@@ -3625,6 +3625,132 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'1 {from} = {rate} {to} · auto'**
   String rateLine(String from, String rate, String to);
+
+  /// No description provided for @budgetAlertUsed.
+  ///
+  /// In en, this message translates to:
+  /// **'Used {percent}%'**
+  String budgetAlertUsed(int percent);
+
+  /// No description provided for @budgetAlertThreshold.
+  ///
+  /// In en, this message translates to:
+  /// **'Near-budget threshold'**
+  String get budgetAlertThreshold;
+
+  /// No description provided for @budgetAlertPercent.
+  ///
+  /// In en, this message translates to:
+  /// **'{percent}%'**
+  String budgetAlertPercent(int percent);
+
+  /// No description provided for @budgetAlertSwitch.
+  ///
+  /// In en, this message translates to:
+  /// **'Budget alerts'**
+  String get budgetAlertSwitch;
+
+  /// No description provided for @budgetAlertSwitchNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Once at the threshold and once at 100%; percentages only'**
+  String get budgetAlertSwitchNote;
+
+  /// No description provided for @budgetAlertExplainTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Turn on budget alerts?'**
+  String get budgetAlertExplainTitle;
+
+  /// No description provided for @budgetAlertExplainBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Vigon will send one notification when this month\'s spending reaches your threshold and one when it reaches 100% of the limit, at most once a month for each budget. Notifications contain percentages only, never amounts.'**
+  String get budgetAlertExplainBody;
+
+  /// No description provided for @budgetAlertChannelName.
+  ///
+  /// In en, this message translates to:
+  /// **'Budget alerts'**
+  String get budgetAlertChannelName;
+
+  /// No description provided for @budgetAlertChannelDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Notifications when spending nears or passes a budget'**
+  String get budgetAlertChannelDescription;
+
+  /// No description provided for @budgetAlertMonthly.
+  ///
+  /// In en, this message translates to:
+  /// **'{month} budget: {percent}% used'**
+  String budgetAlertMonthly(String month, int percent);
+
+  /// No description provided for @budgetAlertCategory.
+  ///
+  /// In en, this message translates to:
+  /// **'{category}: {percent}% of the {month} limit used'**
+  String budgetAlertCategory(String category, int percent, String month);
+
+  /// No description provided for @biometricFingerprint.
+  ///
+  /// In en, this message translates to:
+  /// **'Unlock with fingerprint'**
+  String get biometricFingerprint;
+
+  /// No description provided for @biometricFaceId.
+  ///
+  /// In en, this message translates to:
+  /// **'Unlock with Face ID'**
+  String get biometricFaceId;
+
+  /// No description provided for @biometricTouchId.
+  ///
+  /// In en, this message translates to:
+  /// **'Unlock with Touch ID'**
+  String get biometricTouchId;
+
+  /// No description provided for @biometricNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Your PIN always works too. Vigon never stores biometric data.'**
+  String get biometricNote;
+
+  /// No description provided for @biometricUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'No strong biometrics set up on this device'**
+  String get biometricUnavailable;
+
+  /// No description provided for @biometricReason.
+  ///
+  /// In en, this message translates to:
+  /// **'Unlock Vigon'**
+  String get biometricReason;
+
+  /// No description provided for @biometricEnableReason.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm to turn on biometric unlock'**
+  String get biometricEnableReason;
+
+  /// No description provided for @biometricEnableFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Not verified — biometric unlock stays off'**
+  String get biometricEnableFailed;
+
+  /// No description provided for @biometricUnlockButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Unlock with biometrics'**
+  String get biometricUnlockButton;
+
+  /// No description provided for @biometricCancel.
+  ///
+  /// In en, this message translates to:
+  /// **'Use PIN'**
+  String get biometricCancel;
 }
 
 class _AppLocalizationsDelegate

@@ -1,0 +1,2 @@
+/* F-41 (AC-125): chuỗi iOS hiện lần đầu Ví Gọn xin dùng Face ID. */
+"NSFaceIDUsageDescription" = "Ví Gọn chỉ dùng Face ID để mở khoá app thay cho nhập mã PIN. Dữ liệu khuôn mặt do iOS giữ; Ví Gọn không bao giờ thấy hay lưu.";

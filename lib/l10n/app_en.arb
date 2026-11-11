@@ -716,5 +716,31 @@
   "@owedToYouShort": {"placeholders": {"amount": {"type": "String"}}},
 
   "rateLine": "1 {from} = {rate} {to} · auto",
-  "@rateLine": {"placeholders": {"from": {"type": "String"}, "rate": {"type": "String"}, "to": {"type": "String"}}}
+  "@rateLine": {"placeholders": {"from": {"type": "String"}, "rate": {"type": "String"}, "to": {"type": "String"}}},
+
+  "budgetAlertUsed": "Used {percent}%",
+  "@budgetAlertUsed": {"placeholders": {"percent": {"type": "int"}}},
+  "budgetAlertThreshold": "Near-budget threshold",
+  "budgetAlertPercent": "{percent}%",
+  "@budgetAlertPercent": {"placeholders": {"percent": {"type": "int"}}},
+  "budgetAlertSwitch": "Budget alerts",
+  "budgetAlertSwitchNote": "Once at the threshold and once at 100%; percentages only",
+  "budgetAlertExplainTitle": "Turn on budget alerts?",
+  "budgetAlertExplainBody": "Vigon will send one notification when this month's spending reaches your threshold and one when it reaches 100% of the limit, at most once a month for each budget. Notifications contain percentages only, never amounts.",
+  "budgetAlertChannelName": "Budget alerts",
+  "budgetAlertChannelDescription": "Notifications when spending nears or passes a budget",
+  "budgetAlertMonthly": "{month} budget: {percent}% used",
+  "@budgetAlertMonthly": {"placeholders": {"month": {"type": "String"}, "percent": {"type": "int"}}},
+  "budgetAlertCategory": "{category}: {percent}% of the {month} limit used",
+  "@budgetAlertCategory": {"placeholders": {"category": {"type": "String"}, "percent": {"type": "int"}, "month": {"type": "String"}}},
+  "biometricFingerprint": "Unlock with fingerprint",
+  "biometricFaceId": "Unlock with Face ID",
+  "biometricTouchId": "Unlock with Touch ID",
+  "biometricNote": "Your PIN always works too. Vigon never stores biometric data.",
+  "biometricUnavailable": "No strong biometrics set up on this device",
+  "biometricReason": "Unlock Vigon",
+  "biometricEnableReason": "Confirm to turn on biometric unlock",
+  "biometricEnableFailed": "Not verified — biometric unlock stays off",
+  "biometricUnlockButton": "Unlock with biometrics",
+  "biometricCancel": "Use PIN"
 }

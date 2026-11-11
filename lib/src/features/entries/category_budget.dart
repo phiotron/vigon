@@ -9,6 +9,8 @@ import '../../providers.dart';
 import '../../ui/format.dart';
 import '../../ui/limit_bar.dart';
 import '../../ui/tokens.g.dart';
+import '../budget_alert/budget_alert_providers.dart';
+import '../budget_alert/budget_status.dart';
 
 /// Tổng chi của THÁNG HIỆN TẠI theo từng danh mục chi (khóa là id danh mục),
 /// mọi tài khoản, không phụ thuộc kỳ đang xem (AC-54). Cùng cách tính tháng
@@ -44,13 +46,19 @@ class CategoryBudgetBar extends ConsumerWidget {
     final l = AppLocalizations.of(context);
     final spent = ref.watch(categorySpentProvider).value?[category.id] ?? 0;
     final currency = ref.watch(currencyProvider).value ?? 'USD';
-    final over = spent > limit;
+    // Sắp vượt (F-37, AC-111) theo cùng ngưỡng với ngân sách tháng.
+    final state = budgetStateFor(ref, spent: spent, limit: limit);
+    final over = state == BudgetState.over;
+    final near = state == BudgetState.almostOver;
+    final progress = l.budgetProgress(
+      money(context, currency, spent),
+      money(context, currency, limit),
+    );
     final status = over
         ? l.budgetOver(money(context, currency, spent - limit))
-        : l.budgetProgress(
-            money(context, currency, spent),
-            money(context, currency, limit),
-          );
+        : near
+        ? '${l.budgetAlertUsed(budgetUsedPercent(spent: spent, limit: limit))} · $progress'
+        : progress;
     final viewed = ref.watch(periodProvider);
     final month = Period.containing(
       PeriodType.month,
@@ -67,6 +75,7 @@ class CategoryBudgetBar extends ConsumerWidget {
         text: isThisMonth ? status : l.categoryLimitThisMonth(status),
         progress: spent / limit,
         over: over,
+        near: near,
       ),
     );
   }
