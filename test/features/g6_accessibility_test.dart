@@ -202,4 +202,52 @@ void main() {
     expect(after.start.weekday, DateTime.sunday);
     await disposeApp(tester, db);
   });
+
+  // 2.0 (AC-126): bảng Lọc (F-39) và bảng "Xuất khoảng nào" (F-40).
+  for (final theme in [ThemeMode.light, ThemeMode.dark]) {
+    for (final scale in [1.0, 2.0]) {
+      testWidgets('bảng Lọc và bảng Xuất đạt accessibility · ${theme.name} · '
+          'cỡ chữ ${(scale * 100).round()}%', (tester) async {
+        tester.platformDispatcher.textScaleFactorTestValue = scale;
+        addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
+        final handle = tester.ensureSemantics();
+        final db = await _seed(tester, theme: theme);
+        await pumpApp(tester, db: db);
+        final problems = <String>[];
+        Future<void> openAndAudit(
+          String route,
+          String tap,
+          String where,
+        ) async {
+          final context = tester.element(find.byType(Scaffold).first);
+          GoRouter.of(context).go(route);
+          await settle(tester);
+          final target = find.byTooltip(tap).evaluate().isNotEmpty
+              ? find.byTooltip(tap)
+              : find.text(tap);
+          if (target.evaluate().isEmpty) {
+            await tester.dragUntilVisible(
+              target,
+              find.byType(ListView).first,
+              const Offset(0, -300),
+            );
+          }
+          await tester.ensureVisible(target);
+          await settle(tester);
+          await tester.tap(target);
+          await settle(tester);
+          problems.addAll(await _audit(tester, where));
+          expect(tester.takeException(), isNull, reason: where);
+          await tester.tapAt(const Offset(10, 10));
+          await settle(tester);
+        }
+
+        await openAndAudit('/entries', 'Lọc', 'bảng Lọc');
+        await openAndAudit('/settings', 'Xuất PDF', 'bảng Xuất');
+        expect(problems, isEmpty, reason: problems.join('\n'));
+        handle.dispose();
+        await disposeApp(tester, db);
+      });
+    }
+  }
 }

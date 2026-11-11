@@ -1,10 +1,10 @@
 {
  "bomFormat": "CycloneDX",
  "specVersion": "1.5",
- "serialNumber": "urn:uuid:a386f2d1-bf05-4e63-b245-773a05027d00",
+ "serialNumber": "urn:uuid:15a7ac3e-064f-4193-8784-a580cb9f2c61",
  "version": 1,
  "metadata": {
-  "timestamp": "2026-11-06T07:11:42Z",
+  "timestamp": "2026-11-11T02:39:45Z",
   "tools": [
    {
     "name": "tool/make_sbom.py"
@@ -90,10 +90,38 @@
   },
   {
    "type": "library",
+   "bom-ref": "pkg:pub/barcode@2.2.9",
+   "name": "barcode",
+   "version": "2.2.9",
+   "purl": "pkg:pub/barcode@2.2.9",
+   "licenses": [
+    {
+     "license": {
+      "id": "Apache-2.0"
+     }
+    }
+   ]
+  },
+  {
+   "type": "library",
    "bom-ref": "pkg:pub/basic_utils@5.8.2",
    "name": "basic_utils",
    "version": "5.8.2",
    "purl": "pkg:pub/basic_utils@5.8.2",
+   "licenses": [
+    {
+     "license": {
+      "id": "MIT"
+     }
+    }
+   ]
+  },
+  {
+   "type": "library",
+   "bom-ref": "pkg:pub/bidi@2.0.13",
+   "name": "bidi",
+   "version": "2.0.13",
+   "purl": "pkg:pub/bidi@2.0.13",
    "licenses": [
     {
      "license": {
@@ -818,6 +846,20 @@
   },
   {
    "type": "library",
+   "bom-ref": "pkg:pub/image@4.12.0",
+   "name": "image",
+   "version": "4.12.0",
+   "purl": "pkg:pub/image@4.12.0",
+   "licenses": [
+    {
+     "license": {
+      "id": "MIT"
+     }
+    }
+   ]
+  },
+  {
+   "type": "library",
    "bom-ref": "pkg:pub/intl@0.20.3",
    "name": "intl",
    "version": "0.20.3",
@@ -1126,6 +1168,20 @@
   },
   {
    "type": "library",
+   "bom-ref": "pkg:pub/path_parsing@1.1.0",
+   "name": "path_parsing",
+   "version": "1.1.0",
+   "purl": "pkg:pub/path_parsing@1.1.0",
+   "licenses": [
+    {
+     "license": {
+      "id": "MIT"
+     }
+    }
+   ]
+  },
+  {
+   "type": "library",
    "bom-ref": "pkg:pub/path_provider@2.1.6",
    "name": "path_provider",
    "version": "2.1.6",
@@ -1210,6 +1266,20 @@
   },
   {
    "type": "library",
+   "bom-ref": "pkg:pub/pdf@3.13.1",
+   "name": "pdf",
+   "version": "3.13.1",
+   "purl": "pkg:pub/pdf@3.13.1",
+   "licenses": [
+    {
+     "license": {
+      "id": "Apache-2.0"
+     }
+    }
+   ]
+  },
+  {
+   "type": "library",
    "bom-ref": "pkg:pub/petitparser@7.0.2",
    "name": "petitparser",
    "version": "7.0.2",
@@ -1284,6 +1354,20 @@
    "name": "pub_semver",
    "version": "2.2.1",
    "purl": "pkg:pub/pub_semver@2.2.1",
+   "licenses": [
+    {
+     "license": {
+      "id": "BSD-3-Clause"
+     }
+    }
+   ]
+  },
+  {
+   "type": "library",
+   "bom-ref": "pkg:pub/qr@3.0.3",
+   "name": "qr",
+   "version": "3.0.3",
+   "purl": "pkg:pub/qr@3.0.3",
    "licenses": [
     {
      "license": {
@@ -1816,6 +1900,13 @@
    ]
   },
   {
+   "ref": "pkg:pub/barcode@2.2.9",
+   "dependsOn": [
+    "pkg:pub/meta@1.18.3",
+    "pkg:pub/qr@3.0.3"
+   ]
+  },
+  {
    "ref": "pkg:pub/basic_utils@5.8.2",
    "dependsOn": [
     "pkg:pub/http@1.6.0",
@@ -1824,6 +1915,10 @@
     "pkg:pub/pointycastle@4.0.0",
     "pkg:pub/archive@4.6.0"
    ]
+  },
+  {
+   "ref": "pkg:pub/bidi@2.0.13",
+   "dependsOn": []
   },
   {
    "ref": "pkg:pub/boolean_selector@2.1.2",
@@ -2273,6 +2368,12 @@
    ]
   },
   {
+   "ref": "pkg:pub/image@4.12.0",
+   "dependsOn": [
+    "pkg:pub/archive@4.6.0"
+   ]
+  },
+  {
    "ref": "pkg:pub/intl@0.20.3",
    "dependsOn": [
     "pkg:pub/clock@1.1.3",
@@ -2449,6 +2550,13 @@
    "dependsOn": []
   },
   {
+   "ref": "pkg:pub/path_parsing@1.1.0",
+   "dependsOn": [
+    "pkg:pub/meta@1.18.3",
+    "pkg:pub/vector_math@2.4.0"
+   ]
+  },
+  {
    "ref": "pkg:pub/path_provider@2.1.6",
    "dependsOn": [
     "pkg:pub/flutter@0.0.0",
@@ -2505,6 +2613,20 @@
    ]
   },
   {
+   "ref": "pkg:pub/pdf@3.13.1",
+   "dependsOn": [
+    "pkg:pub/archive@4.6.0",
+    "pkg:pub/barcode@2.2.9",
+    "pkg:pub/bidi@2.0.13",
+    "pkg:pub/crypto@3.0.8",
+    "pkg:pub/image@4.12.0",
+    "pkg:pub/meta@1.18.3",
+    "pkg:pub/path_parsing@1.1.0",
+    "pkg:pub/vector_math@2.4.0",
+    "pkg:pub/xml@7.0.1"
+   ]
+  },
+  {
    "ref": "pkg:pub/petitparser@7.0.2",
    "dependsOn": [
     "pkg:pub/meta@1.18.3",
@@ -2542,6 +2664,12 @@
    "ref": "pkg:pub/pub_semver@2.2.1",
    "dependsOn": [
     "pkg:pub/collection@1.19.1"
+   ]
+  },
+  {
+   "ref": "pkg:pub/qr@3.0.3",
+   "dependsOn": [
+    "pkg:pub/meta@1.18.3"
    ]
   },
   {

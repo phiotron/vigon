@@ -277,6 +277,68 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get filter => 'Filter';
+
+  @override
+  String get filterAmountRange => 'Amount range';
+
+  @override
+  String get filterFrom => 'From';
+
+  @override
+  String get filterTo => 'To';
+
+  @override
+  String get filterAmountInvalid => 'Enter a valid amount';
+
+  @override
+  String get filterAmountRangeError => '“From” can’t be more than “To”';
+
+  @override
+  String get filterCategories => 'Categories';
+
+  @override
+  String get filterDateRange => 'Date range';
+
+  @override
+  String get filterAnyDate => 'Any date';
+
+  @override
+  String get filterRemoveDates => 'Remove date range';
+
+  @override
+  String get filterClear => 'Clear';
+
+  @override
+  String get filterClearAll => 'Clear filters';
+
+  @override
+  String filterRemove(String name) {
+    return 'Remove filter $name';
+  }
+
+  @override
+  String filterChipFrom(String amount) {
+    return 'From $amount';
+  }
+
+  @override
+  String filterChipUpTo(String amount) {
+    return 'Up to $amount';
+  }
+
+  @override
+  String filterSummary(int count, String spent, String income) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count records',
+      one: '1 record',
+    );
+    return '$_temp0 · spent $spent · income $income';
+  }
+
+  @override
   String get keypadBackspace => 'Backspace';
 
   @override
@@ -622,6 +684,126 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get exportCsv => 'Export CSV';
+
+  @override
+  String get exportExcel => 'Export Excel';
+
+  @override
+  String get exportPdf => 'Export PDF';
+
+  @override
+  String get exportExcelNote => 'Records, by category, debts (.xlsx)';
+
+  @override
+  String get exportPdfNote => 'A4 income and spending report';
+
+  @override
+  String get exportRangeTitle => 'What to export';
+
+  @override
+  String get exportRangeCurrent => 'Current period';
+
+  @override
+  String get exportIncludesExcel =>
+      'Excel file with three sheets: Records, By category and Debts.';
+
+  @override
+  String get exportIncludesPdf =>
+      'A4 report with income, expenses, a category table and the list of records.';
+
+  @override
+  String get exportAction => 'Export';
+
+  @override
+  String get exportPreparing => 'Preparing the file…';
+
+  @override
+  String get exportEmpty => 'No records in this range';
+
+  @override
+  String get exportFailed => 'Couldn’t create the file';
+
+  @override
+  String get xlsxSheetRecords => 'Records';
+
+  @override
+  String get xlsxSheetByCategory => 'By category';
+
+  @override
+  String get xlsxSheetDebts => 'Debts';
+
+  @override
+  String get xlsxColDate => 'Date';
+
+  @override
+  String get xlsxColType => 'Type';
+
+  @override
+  String get xlsxColAmount => 'Amount';
+
+  @override
+  String get xlsxColCurrency => 'Currency';
+
+  @override
+  String get xlsxColCategory => 'Category';
+
+  @override
+  String get xlsxColAccount => 'Account';
+
+  @override
+  String get xlsxColToAccount => 'To account';
+
+  @override
+  String get xlsxColNote => 'Note';
+
+  @override
+  String get xlsxTypeExpense => 'Expense';
+
+  @override
+  String get xlsxTypeIncome => 'Income';
+
+  @override
+  String get xlsxColTotal => 'Total';
+
+  @override
+  String get xlsxColShare => 'Share';
+
+  @override
+  String get xlsxColPerson => 'Person';
+
+  @override
+  String get xlsxColDirection => 'Direction';
+
+  @override
+  String get xlsxColPaid => 'Paid';
+
+  @override
+  String get xlsxColRemaining => 'Remaining';
+
+  @override
+  String get xlsxColDue => 'Due date';
+
+  @override
+  String get xlsxColStatus => 'Status';
+
+  @override
+  String get xlsxStatusOpen => 'Open';
+
+  @override
+  String pdfTitle(String period) {
+    return 'Income & expense report — $period';
+  }
+
+  @override
+  String get pdfDifference => 'Difference';
+
+  @override
+  String get pdfNoRecords => 'No records';
+
+  @override
+  String pdfPage(int page, int pages) {
+    return 'Page $page of $pages';
+  }
 
   @override
   String get backupNote =>
@@ -2077,8 +2259,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get homeEmptyTitle => 'Log your first expense';
 
   @override
-  String get homeEmptyBody =>
-      'Tap a category or −';
+  String get homeEmptyBody => 'Tap a category or −';
 
   @override
   String fromEmailRef(String ref) {
@@ -2159,5 +2340,134 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String rateLine(String from, String rate, String to) {
     return '1 $from = $rate $to · auto';
+  }
+
+  @override
+  String get exportScopeTitle => 'Which dates to export';
+
+  @override
+  String get exportScopeCurrent => 'Current period';
+
+  @override
+  String get exportScopeCustom => 'Custom range…';
+
+  @override
+  String get exportWorking => 'Creating file…';
+
+  @override
+  String get exportSheetEntries => 'Records';
+
+  @override
+  String get exportSheetCategories => 'By category';
+
+  @override
+  String get exportSheetDebts => 'Debts';
+
+  @override
+  String get exportColDate => 'Date';
+
+  @override
+  String get exportColTime => 'Time';
+
+  @override
+  String get exportColType => 'Type';
+
+  @override
+  String get exportColAmount => 'Amount';
+
+  @override
+  String get exportColCurrency => 'Currency';
+
+  @override
+  String exportColAmountIn(String currency) {
+    return 'Amount ($currency)';
+  }
+
+  @override
+  String get exportColCategory => 'Category';
+
+  @override
+  String get exportColAccount => 'Account';
+
+  @override
+  String get exportColToAccount => 'To account';
+
+  @override
+  String get exportColReceived => 'Received';
+
+  @override
+  String get exportColReceivedCurrency => 'Received currency';
+
+  @override
+  String get exportColNote => 'Note';
+
+  @override
+  String get exportColSource => 'Source';
+
+  @override
+  String exportColTotalIn(String currency) {
+    return 'Total ($currency)';
+  }
+
+  @override
+  String get exportColShare => 'Share';
+
+  @override
+  String get exportColPerson => 'Person';
+
+  @override
+  String get exportColDirection => 'Direction';
+
+  @override
+  String get exportColPaid => 'Paid';
+
+  @override
+  String get exportColRemaining => 'Remaining';
+
+  @override
+  String exportColRemainingIn(String currency) {
+    return 'Remaining ($currency)';
+  }
+
+  @override
+  String get exportColDue => 'Due';
+
+  @override
+  String get exportColStatus => 'Status';
+
+  @override
+  String get exportDebtOpen => 'Open';
+
+  @override
+  String exportReportTitle(String period) {
+    return 'Income and spending report $period';
+  }
+
+  @override
+  String get exportTotalIncome => 'Total income';
+
+  @override
+  String get exportTotalExpense => 'Total spending';
+
+  @override
+  String get exportDifference => 'Difference';
+
+  @override
+  String exportAmountsIn(String currency) {
+    return 'Amounts in $currency';
+  }
+
+  @override
+  String get exportEntriesHeading => 'Records';
+
+  @override
+  String get exportNoEntries => 'No records in this range';
+
+  @override
+  String get exportMissingRate => 'No exchange rate';
+
+  @override
+  String exportPage(int page, int total) {
+    return 'Page $page of $total';
   }
 }

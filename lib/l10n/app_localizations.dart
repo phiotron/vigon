@@ -590,6 +590,102 @@ abstract class AppLocalizations {
   /// **'{count, plural, one{1 record} other{{count} records}} · total {total}'**
   String searchTotal(int count, String total);
 
+  /// No description provided for @filter.
+  ///
+  /// In en, this message translates to:
+  /// **'Filter'**
+  String get filter;
+
+  /// No description provided for @filterAmountRange.
+  ///
+  /// In en, this message translates to:
+  /// **'Amount range'**
+  String get filterAmountRange;
+
+  /// No description provided for @filterFrom.
+  ///
+  /// In en, this message translates to:
+  /// **'From'**
+  String get filterFrom;
+
+  /// No description provided for @filterTo.
+  ///
+  /// In en, this message translates to:
+  /// **'To'**
+  String get filterTo;
+
+  /// No description provided for @filterAmountInvalid.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a valid amount'**
+  String get filterAmountInvalid;
+
+  /// No description provided for @filterAmountRangeError.
+  ///
+  /// In en, this message translates to:
+  /// **'“From” can’t be more than “To”'**
+  String get filterAmountRangeError;
+
+  /// No description provided for @filterCategories.
+  ///
+  /// In en, this message translates to:
+  /// **'Categories'**
+  String get filterCategories;
+
+  /// No description provided for @filterDateRange.
+  ///
+  /// In en, this message translates to:
+  /// **'Date range'**
+  String get filterDateRange;
+
+  /// No description provided for @filterAnyDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Any date'**
+  String get filterAnyDate;
+
+  /// No description provided for @filterRemoveDates.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove date range'**
+  String get filterRemoveDates;
+
+  /// No description provided for @filterClear.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear'**
+  String get filterClear;
+
+  /// No description provided for @filterClearAll.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear filters'**
+  String get filterClearAll;
+
+  /// No description provided for @filterRemove.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove filter {name}'**
+  String filterRemove(String name);
+
+  /// No description provided for @filterChipFrom.
+  ///
+  /// In en, this message translates to:
+  /// **'From {amount}'**
+  String filterChipFrom(String amount);
+
+  /// No description provided for @filterChipUpTo.
+  ///
+  /// In en, this message translates to:
+  /// **'Up to {amount}'**
+  String filterChipUpTo(String amount);
+
+  /// No description provided for @filterSummary.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, one{1 record} other{{count} records}} · spent {spent} · income {income}'**
+  String filterSummary(int count, String spent, String income);
+
   /// No description provided for @keypadBackspace.
   ///
   /// In en, this message translates to:
@@ -1231,6 +1327,234 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Export CSV'**
   String get exportCsv;
+
+  /// No description provided for @exportExcel.
+  ///
+  /// In en, this message translates to:
+  /// **'Export Excel'**
+  String get exportExcel;
+
+  /// No description provided for @exportPdf.
+  ///
+  /// In en, this message translates to:
+  /// **'Export PDF'**
+  String get exportPdf;
+
+  /// No description provided for @exportExcelNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Records, by category, debts (.xlsx)'**
+  String get exportExcelNote;
+
+  /// No description provided for @exportPdfNote.
+  ///
+  /// In en, this message translates to:
+  /// **'A4 income and spending report'**
+  String get exportPdfNote;
+
+  /// No description provided for @exportRangeTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'What to export'**
+  String get exportRangeTitle;
+
+  /// No description provided for @exportRangeCurrent.
+  ///
+  /// In en, this message translates to:
+  /// **'Current period'**
+  String get exportRangeCurrent;
+
+  /// No description provided for @exportIncludesExcel.
+  ///
+  /// In en, this message translates to:
+  /// **'Excel file with three sheets: Records, By category and Debts.'**
+  String get exportIncludesExcel;
+
+  /// No description provided for @exportIncludesPdf.
+  ///
+  /// In en, this message translates to:
+  /// **'A4 report with income, expenses, a category table and the list of records.'**
+  String get exportIncludesPdf;
+
+  /// No description provided for @exportAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Export'**
+  String get exportAction;
+
+  /// No description provided for @exportPreparing.
+  ///
+  /// In en, this message translates to:
+  /// **'Preparing the file…'**
+  String get exportPreparing;
+
+  /// No description provided for @exportEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No records in this range'**
+  String get exportEmpty;
+
+  /// No description provided for @exportFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn’t create the file'**
+  String get exportFailed;
+
+  /// No description provided for @xlsxSheetRecords.
+  ///
+  /// In en, this message translates to:
+  /// **'Records'**
+  String get xlsxSheetRecords;
+
+  /// No description provided for @xlsxSheetByCategory.
+  ///
+  /// In en, this message translates to:
+  /// **'By category'**
+  String get xlsxSheetByCategory;
+
+  /// No description provided for @xlsxSheetDebts.
+  ///
+  /// In en, this message translates to:
+  /// **'Debts'**
+  String get xlsxSheetDebts;
+
+  /// No description provided for @xlsxColDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Date'**
+  String get xlsxColDate;
+
+  /// No description provided for @xlsxColType.
+  ///
+  /// In en, this message translates to:
+  /// **'Type'**
+  String get xlsxColType;
+
+  /// No description provided for @xlsxColAmount.
+  ///
+  /// In en, this message translates to:
+  /// **'Amount'**
+  String get xlsxColAmount;
+
+  /// No description provided for @xlsxColCurrency.
+  ///
+  /// In en, this message translates to:
+  /// **'Currency'**
+  String get xlsxColCurrency;
+
+  /// No description provided for @xlsxColCategory.
+  ///
+  /// In en, this message translates to:
+  /// **'Category'**
+  String get xlsxColCategory;
+
+  /// No description provided for @xlsxColAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Account'**
+  String get xlsxColAccount;
+
+  /// No description provided for @xlsxColToAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'To account'**
+  String get xlsxColToAccount;
+
+  /// No description provided for @xlsxColNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Note'**
+  String get xlsxColNote;
+
+  /// No description provided for @xlsxTypeExpense.
+  ///
+  /// In en, this message translates to:
+  /// **'Expense'**
+  String get xlsxTypeExpense;
+
+  /// No description provided for @xlsxTypeIncome.
+  ///
+  /// In en, this message translates to:
+  /// **'Income'**
+  String get xlsxTypeIncome;
+
+  /// No description provided for @xlsxColTotal.
+  ///
+  /// In en, this message translates to:
+  /// **'Total'**
+  String get xlsxColTotal;
+
+  /// No description provided for @xlsxColShare.
+  ///
+  /// In en, this message translates to:
+  /// **'Share'**
+  String get xlsxColShare;
+
+  /// No description provided for @xlsxColPerson.
+  ///
+  /// In en, this message translates to:
+  /// **'Person'**
+  String get xlsxColPerson;
+
+  /// No description provided for @xlsxColDirection.
+  ///
+  /// In en, this message translates to:
+  /// **'Direction'**
+  String get xlsxColDirection;
+
+  /// No description provided for @xlsxColPaid.
+  ///
+  /// In en, this message translates to:
+  /// **'Paid'**
+  String get xlsxColPaid;
+
+  /// No description provided for @xlsxColRemaining.
+  ///
+  /// In en, this message translates to:
+  /// **'Remaining'**
+  String get xlsxColRemaining;
+
+  /// No description provided for @xlsxColDue.
+  ///
+  /// In en, this message translates to:
+  /// **'Due date'**
+  String get xlsxColDue;
+
+  /// No description provided for @xlsxColStatus.
+  ///
+  /// In en, this message translates to:
+  /// **'Status'**
+  String get xlsxColStatus;
+
+  /// No description provided for @xlsxStatusOpen.
+  ///
+  /// In en, this message translates to:
+  /// **'Open'**
+  String get xlsxStatusOpen;
+
+  /// No description provided for @pdfTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Income & expense report — {period}'**
+  String pdfTitle(String period);
+
+  /// No description provided for @pdfDifference.
+  ///
+  /// In en, this message translates to:
+  /// **'Difference'**
+  String get pdfDifference;
+
+  /// No description provided for @pdfNoRecords.
+  ///
+  /// In en, this message translates to:
+  /// **'No records'**
+  String get pdfNoRecords;
+
+  /// No description provided for @pdfPage.
+  ///
+  /// In en, this message translates to:
+  /// **'Page {page} of {pages}'**
+  String pdfPage(int page, int pages);
 
   /// No description provided for @backupNote.
   ///
@@ -3625,6 +3949,240 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'1 {from} = {rate} {to} · auto'**
   String rateLine(String from, String rate, String to);
+
+  /// No description provided for @exportScopeTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Which dates to export'**
+  String get exportScopeTitle;
+
+  /// No description provided for @exportScopeCurrent.
+  ///
+  /// In en, this message translates to:
+  /// **'Current period'**
+  String get exportScopeCurrent;
+
+  /// No description provided for @exportScopeCustom.
+  ///
+  /// In en, this message translates to:
+  /// **'Custom range…'**
+  String get exportScopeCustom;
+
+  /// No description provided for @exportWorking.
+  ///
+  /// In en, this message translates to:
+  /// **'Creating file…'**
+  String get exportWorking;
+
+  /// No description provided for @exportSheetEntries.
+  ///
+  /// In en, this message translates to:
+  /// **'Records'**
+  String get exportSheetEntries;
+
+  /// No description provided for @exportSheetCategories.
+  ///
+  /// In en, this message translates to:
+  /// **'By category'**
+  String get exportSheetCategories;
+
+  /// No description provided for @exportSheetDebts.
+  ///
+  /// In en, this message translates to:
+  /// **'Debts'**
+  String get exportSheetDebts;
+
+  /// No description provided for @exportColDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Date'**
+  String get exportColDate;
+
+  /// No description provided for @exportColTime.
+  ///
+  /// In en, this message translates to:
+  /// **'Time'**
+  String get exportColTime;
+
+  /// No description provided for @exportColType.
+  ///
+  /// In en, this message translates to:
+  /// **'Type'**
+  String get exportColType;
+
+  /// No description provided for @exportColAmount.
+  ///
+  /// In en, this message translates to:
+  /// **'Amount'**
+  String get exportColAmount;
+
+  /// No description provided for @exportColCurrency.
+  ///
+  /// In en, this message translates to:
+  /// **'Currency'**
+  String get exportColCurrency;
+
+  /// No description provided for @exportColAmountIn.
+  ///
+  /// In en, this message translates to:
+  /// **'Amount ({currency})'**
+  String exportColAmountIn(String currency);
+
+  /// No description provided for @exportColCategory.
+  ///
+  /// In en, this message translates to:
+  /// **'Category'**
+  String get exportColCategory;
+
+  /// No description provided for @exportColAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Account'**
+  String get exportColAccount;
+
+  /// No description provided for @exportColToAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'To account'**
+  String get exportColToAccount;
+
+  /// No description provided for @exportColReceived.
+  ///
+  /// In en, this message translates to:
+  /// **'Received'**
+  String get exportColReceived;
+
+  /// No description provided for @exportColReceivedCurrency.
+  ///
+  /// In en, this message translates to:
+  /// **'Received currency'**
+  String get exportColReceivedCurrency;
+
+  /// No description provided for @exportColNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Note'**
+  String get exportColNote;
+
+  /// No description provided for @exportColSource.
+  ///
+  /// In en, this message translates to:
+  /// **'Source'**
+  String get exportColSource;
+
+  /// No description provided for @exportColTotalIn.
+  ///
+  /// In en, this message translates to:
+  /// **'Total ({currency})'**
+  String exportColTotalIn(String currency);
+
+  /// No description provided for @exportColShare.
+  ///
+  /// In en, this message translates to:
+  /// **'Share'**
+  String get exportColShare;
+
+  /// No description provided for @exportColPerson.
+  ///
+  /// In en, this message translates to:
+  /// **'Person'**
+  String get exportColPerson;
+
+  /// No description provided for @exportColDirection.
+  ///
+  /// In en, this message translates to:
+  /// **'Direction'**
+  String get exportColDirection;
+
+  /// No description provided for @exportColPaid.
+  ///
+  /// In en, this message translates to:
+  /// **'Paid'**
+  String get exportColPaid;
+
+  /// No description provided for @exportColRemaining.
+  ///
+  /// In en, this message translates to:
+  /// **'Remaining'**
+  String get exportColRemaining;
+
+  /// No description provided for @exportColRemainingIn.
+  ///
+  /// In en, this message translates to:
+  /// **'Remaining ({currency})'**
+  String exportColRemainingIn(String currency);
+
+  /// No description provided for @exportColDue.
+  ///
+  /// In en, this message translates to:
+  /// **'Due'**
+  String get exportColDue;
+
+  /// No description provided for @exportColStatus.
+  ///
+  /// In en, this message translates to:
+  /// **'Status'**
+  String get exportColStatus;
+
+  /// No description provided for @exportDebtOpen.
+  ///
+  /// In en, this message translates to:
+  /// **'Open'**
+  String get exportDebtOpen;
+
+  /// No description provided for @exportReportTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Income and spending report {period}'**
+  String exportReportTitle(String period);
+
+  /// No description provided for @exportTotalIncome.
+  ///
+  /// In en, this message translates to:
+  /// **'Total income'**
+  String get exportTotalIncome;
+
+  /// No description provided for @exportTotalExpense.
+  ///
+  /// In en, this message translates to:
+  /// **'Total spending'**
+  String get exportTotalExpense;
+
+  /// No description provided for @exportDifference.
+  ///
+  /// In en, this message translates to:
+  /// **'Difference'**
+  String get exportDifference;
+
+  /// No description provided for @exportAmountsIn.
+  ///
+  /// In en, this message translates to:
+  /// **'Amounts in {currency}'**
+  String exportAmountsIn(String currency);
+
+  /// No description provided for @exportEntriesHeading.
+  ///
+  /// In en, this message translates to:
+  /// **'Records'**
+  String get exportEntriesHeading;
+
+  /// No description provided for @exportNoEntries.
+  ///
+  /// In en, this message translates to:
+  /// **'No records in this range'**
+  String get exportNoEntries;
+
+  /// No description provided for @exportMissingRate.
+  ///
+  /// In en, this message translates to:
+  /// **'No exchange rate'**
+  String get exportMissingRate;
+
+  /// No description provided for @exportPage.
+  ///
+  /// In en, this message translates to:
+  /// **'Page {page} of {total}'**
+  String exportPage(int page, int total);
 }
 
 class _AppLocalizationsDelegate
