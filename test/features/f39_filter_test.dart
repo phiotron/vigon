@@ -11,7 +11,8 @@ import 'package:vigon/src/providers.dart';
 
 import '../helpers.dart';
 
-/// Ghi các khoản mẫu: id danh mục theo seed (1 Ăn uống, 2 Đi lại, 5 Mua sắm, 11 Lương).
+/// Ghi các khoản mẫu: id danh mục theo seed (1 Ăn uống, 2 Đi lại, 5 Mua sắm,
+/// 12 Lương — hai danh mục lãi thêm ở schema 8 đẩy id danh mục thu lên 12).
 Future<void> _seedEntries(WidgetTester tester, AppDatabase db) async {
   Future<void> add(
     EntryType type,
@@ -32,7 +33,7 @@ Future<void> _seedEntries(WidgetTester tester, AppDatabase db) async {
   await add(EntryType.expense, 30000, 2, '2026-11-02', 'Xe buýt');
   await add(EntryType.expense, 120000, 2, '2026-11-01', 'Grab');
   await add(EntryType.expense, 90000, 5, '2026-11-02', 'Áo');
-  await add(EntryType.income, 9000000, 11, '2026-11-01', 'Lương');
+  await add(EntryType.income, 9000000, 12, '2026-11-01', 'Lương');
   await add(EntryType.expense, 100000, 1, '2026-10-20', 'Cơm cũ');
 }
 
@@ -171,6 +172,8 @@ void main() {
     await tester.tap(find.byTooltip('Kỳ trước'));
     await settle(tester);
     await _openFilter(tester);
+    await tester.ensureVisible(find.byKey(const ValueKey('filter-dates')));
+    await settle(tester);
     await tester.tap(find.byKey(const ValueKey('filter-dates')));
     await settle(tester);
     // Lịch của kỳ hiện tại (tháng 11): chọn 01–02/11.

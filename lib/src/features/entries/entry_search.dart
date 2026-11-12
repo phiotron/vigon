@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import 'package:material_symbols_icons/symbols.dart';
 
 import '../../../l10n/app_localizations.dart';
@@ -16,9 +15,11 @@ import '../../providers.dart';
 import '../../ui/category_avatar.dart';
 import '../../ui/fields.dart';
 import '../../ui/format.dart';
-import '../../ui/messenger.dart';
 import '../../ui/theme.dart';
 import '../../ui/tokens.g.dart';
+import '../../data/money_sum.dart' show isDebtInflow;
+import '../debts/debt_movement.dart';
+import '../entry/ledger_guard.dart';
 import 'entry_filter_chips.dart';
 import 'entry_filter_sheet.dart';
 import 'entry_filter_state.dart';
@@ -236,8 +237,13 @@ class EntrySearchResults extends ConsumerWidget {
       const EntryFilterChips(),
     ];
     if (rows != null) {
-      String categoryName(EntryView r) =>
-          r.category == null ? '' : categoryLabel(l, r.category!);
+      final persons = ref.watch(debtPersonsProvider);
+      // Debt movement tìm được theo nhãn "Cho vay · An" (AC-169).
+      String categoryName(EntryView r) => r.entry.type == EntryType.debt
+          ? debtMovementLabel(l, r.entry, persons)
+          : r.category == null
+          ? ''
+          : categoryLabel(l, r.category!);
       final matches = [
         ...filterEntries(
           applyEntryFilter(rows, filter),
@@ -351,10 +357,14 @@ class EntrySearchResults extends ConsumerWidget {
                 final r = matches[i];
                 return SearchResultTile(
                   row: r,
-                  title: _titleOf(l, r, accounts),
-                  categoryName: r.entry.type == EntryType.transfer
-                      ? l.transfer
-                      : categoryName(r),
+                  title: r.entry.type == EntryType.debt
+                      ? categoryName(r)
+                      : _titleOf(l, r, accounts),
+                  categoryName: switch (r.entry.type) {
+                    EntryType.transfer => l.transfer,
+                    EntryType.debt => l.debtMovementsSection,
+                    _ => categoryName(r),
+                  },
                   amount: money(
                     context,
                     r.entry.currency,
@@ -420,10 +430,13 @@ class SearchResultTile extends ConsumerWidget {
     final entry = row.entry;
     final large = isLargeText(context);
     final isTransfer = entry.type == EntryType.transfer;
+    final isDebt = entry.type == EntryType.debt;
     final (sign, color) = switch (entry.type) {
       EntryType.expense => ('−', expenseColor(context)),
       EntryType.income => ('+', incomeColor(context)),
       EntryType.transfer => ('', scheme.onSurface),
+      // Debt movement: dấu theo chiều tiền, màu trung tính (không thu/chi).
+      EntryType.debt => (isDebtInflow(entry) ? '+' : '−', scheme.onSurface),
     };
     final mark = TextStyle(
       backgroundColor: scheme.primaryContainer,
@@ -477,11 +490,11 @@ class SearchResultTile extends ConsumerWidget {
         if (large) ...[const SizedBox(height: 2), amountText],
       ],
     );
-    final leading = isTransfer
+    final leading = isTransfer || isDebt
         ? SizedBox.square(
             dimension: 40,
             child: Icon(
-              Symbols.swap_horiz_rounded,
+              isDebt ? debtMovementIcon : Symbols.swap_horiz_rounded,
               color: scheme.onSurfaceVariant,
             ),
           )
@@ -490,28 +503,19 @@ class SearchResultTile extends ConsumerWidget {
         : CategoryAvatar(category: row.category!, size: 40);
     return Dismissible(
       key: ValueKey('search-${entry.id}'),
-      direction: DismissDirection.endToStart,
+      direction: opensDebtDetail(entry)
+          ? DismissDirection.none
+          : DismissDirection.endToStart,
       background: Container(
         color: context.vg.swipeDelete,
         alignment: Alignment.centerRight,
         padding: const EdgeInsets.only(right: VgSpace.s6),
         child: Icon(Symbols.delete_rounded, color: context.vg.error),
       ),
-      onDismissed: (_) async {
-        final repo = ref.read(entryRepositoryProvider);
-        final deleted = await repo.delete(entry.id);
-        if (deleted != null) {
-          showUndoSnackBar(
-            message: l.deleted,
-            undoLabel: l.undo,
-            onUndo: () => repo.restore(deleted),
-          );
-        }
-      },
+      confirmDismiss: (_) => canDeleteEntry(context, ref, entry),
+      onDismissed: (_) => deleteEntryWithUndo(context, ref, entry),
       child: InkWell(
-        onTap: () => context.push(
-          isTransfer ? '/transfer/${entry.id}' : '/entry/${entry.id}',
-        ),
+        onTap: () => openEntry(context, entry),
         child: ConstrainedBox(
           constraints: const BoxConstraints(minHeight: VgSize.rowTwoLine),
           child: Padding(

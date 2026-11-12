@@ -2532,6 +2532,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get exportColStatus => 'Status';
 
   @override
+  String get exportColInterestRate => 'Interest rate';
+
+  @override
+  String get exportColPrincipalLeft => 'Principal left';
+
+  @override
+  String get exportColInterestToDate => 'Interest to date';
+
+  @override
   String get exportDebtOpen => 'Open';
 
   @override
@@ -2741,4 +2750,257 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get calendarTapHint =>
       'Tap a day to see its records. A dot means income.';
+
+  @override
+  String ledgerOnlyLeft(String account, String amount) {
+    return '$account only has $amount';
+  }
+
+  @override
+  String get ledgerDeleteBlockedTitle => 'Can\'t delete';
+
+  @override
+  String ledgerDeleteBlocked(String account, String amount) {
+    return 'Can\'t delete: $account would be negative by $amount';
+  }
+
+  @override
+  String get ledgerOk => 'OK';
+
+  @override
+  String get ledgerAllowNegative => 'Allow negative balance';
+
+  @override
+  String get ledgerAllowNegativeSub => 'For credit cards, overdrafts';
+
+  @override
+  String get ledgerInitialNegativeOff =>
+      'Turn on \"Allow negative balance\" to enter a negative balance';
+
+  @override
+  String get ledgerNegativeBadge => 'Negative';
+
+  @override
+  String get ledgerUpgradeTitle => 'Negative balance allowed';
+
+  @override
+  String ledgerUpgradeBody(String accounts) {
+    return 'Negative balance is now allowed for: $accounts. These accounts are below zero, so you can keep recording as before. Other accounts can now only spend money they have. Turn the switch off in Edit account if you don\'t need it.';
+  }
+
+  @override
+  String ledgerSkipped(int count, String accounts) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other:
+          'Skipped $count recurring entries: $accounts didn\'t have enough money',
+      one: 'Skipped 1 recurring entry: $accounts didn\'t have enough money',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get ledgerDismiss => 'Dismiss';
+
+  @override
+  String ledgerIntoWallet(String amount) {
+    return 'Into wallet: $amount';
+  }
+
+  @override
+  String ledgerOutOfWallet(String amount) {
+    return 'Out of wallet: $amount';
+  }
+
+  @override
+  String ledgerFrom(String account, String amount) {
+    return 'From $account: $amount';
+  }
+
+  @override
+  String ledgerInto(String account, String amount) {
+    return 'Into $account: $amount';
+  }
+
+  @override
+  String ledgerDebtSide(String amount) {
+    return 'Debt: $amount';
+  }
+
+  @override
+  String get topUpTitle => 'Top up';
+
+  @override
+  String topUpShort(String account, String amount) {
+    return '$account is short $amount';
+  }
+
+  @override
+  String get topUpBody =>
+      'The money already left the bank, but this account doesn\'t have enough in your book. Top up one of these ways; once there\'s enough, the item is saved.';
+
+  @override
+  String topUpIncome(String account) {
+    return 'Record income into $account';
+  }
+
+  @override
+  String topUpTransfer(String account) {
+    return 'Transfer into $account';
+  }
+
+  @override
+  String get topUpEditInitial => 'Edit starting balance';
+
+  @override
+  String topUpStillShort(String account, String amount) {
+    return '$account is still short $amount · item still waiting';
+  }
+
+  @override
+  String get topUpSaved => 'Topped up · item saved';
+
+  @override
+  String get debtMovementsSection => 'Debts';
+
+  @override
+  String debtMovementLend(String person) {
+    return 'Lent · $person';
+  }
+
+  @override
+  String debtMovementBorrow(String person) {
+    return 'Borrowed · $person';
+  }
+
+  @override
+  String debtMovementCollect(String person) {
+    return 'Collected · $person';
+  }
+
+  @override
+  String debtMovementRepay(String person) {
+    return 'Repaid · $person';
+  }
+
+  @override
+  String get debtMovementOrphan => 'Deleted debt';
+
+  @override
+  String get debtNoAccount => 'Not through an account';
+
+  @override
+  String get debtNoAccountHelper => 'Just a note, no account balance changes';
+
+  @override
+  String get debtInterestRate => 'Interest rate (optional)';
+
+  @override
+  String get debtPerMonth => '%/month';
+
+  @override
+  String get debtPerYear => '%/year';
+
+  @override
+  String get debtRateInvalid => 'Rate from 0.01 to 100, up to 2 decimals';
+
+  @override
+  String get debtInterestStart => 'Interest start date';
+
+  @override
+  String debtInterestStartOn(String date) {
+    return 'Interest from $date';
+  }
+
+  @override
+  String debtInterestPreview(String amount) {
+    return 'Interest for the first 30 days: about $amount';
+  }
+
+  @override
+  String debtPrincipalInterest(String principal, String interest) {
+    return 'Principal $principal · Interest to date $interest';
+  }
+
+  @override
+  String get debtChangeRate => 'Change rate';
+
+  @override
+  String debtRateFrom(String date) {
+    return 'From $date';
+  }
+
+  @override
+  String get debtRateSteps => 'Rate history';
+
+  @override
+  String get debtRateBeforeStart =>
+      'Must be on or after the interest start date';
+
+  @override
+  String get debtNewRate => 'New rate';
+
+  @override
+  String get debtPaymentInterest => 'Interest';
+
+  @override
+  String get debtPaymentPrincipal => 'Principal';
+
+  @override
+  String get debtInterestOnly => 'Interest only';
+
+  @override
+  String get debtPayAll => 'Pay all';
+
+  @override
+  String debtInterestOver(String amount) {
+    return 'Interest due is only $amount';
+  }
+
+  @override
+  String debtPrincipalOver(String amount) {
+    return 'Only $amount principal left';
+  }
+
+  @override
+  String debtPaymentSplit(String interest, String principal) {
+    return 'Interest $interest · Principal $principal';
+  }
+
+  @override
+  String debtDeleteTitlePerson(String person) {
+    return 'Delete the debt with $person?';
+  }
+
+  @override
+  String get debtDeleteKeepsEntries =>
+      'Entries in your book stay. Payments and the rate history are deleted; account balances don\'t change.';
+
+  @override
+  String get debtCurrencyLockedMovement =>
+      'Currency can\'t change once the debt went through an account.';
+
+  @override
+  String debtDeadlineLentEstimate(String person, String amount, String when) {
+    return 'Debt with $person: about $amount to collect, $when';
+  }
+
+  @override
+  String debtDeadlineBorrowedEstimate(
+    String person,
+    String amount,
+    String when,
+  ) {
+    return 'You owe $person: about $amount to pay, $when';
+  }
+
+  @override
+  String get categoryLoanInterest => 'Loan interest';
+
+  @override
+  String get categoryInterestIncome => 'Interest';
+
+  @override
+  String get csvTypeDebt => 'Debt';
 }

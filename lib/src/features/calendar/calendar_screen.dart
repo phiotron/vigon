@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:material_symbols_icons/symbols.dart';
 
@@ -19,6 +18,7 @@ import '../../ui/messenger.dart';
 import '../../ui/money_lines.dart';
 import '../../ui/theme.dart';
 import '../../ui/tokens.g.dart';
+import '../debts/debt_movement.dart';
 import '../entry/entry_time.dart';
 import '../home/home_extras.dart';
 import '../stats/stats_providers.dart';
@@ -276,10 +276,17 @@ class _DayEntryTile extends ConsumerWidget {
       EntryType.income => l.income,
       EntryType.expense => l.expense,
       EntryType.transfer => l.transfer,
+      EntryType.debt => debtMovementLabel(
+        l,
+        entry,
+        ref.watch(debtPersonsProvider),
+      ),
     };
+    // Khoản thuộc khoản nợ xoá ở Chi tiết khoản nợ, không vuốt xoá (AC-170).
+    final locked = opensDebtDetail(entry);
     return Dismissible(
       key: ValueKey('calendar-entry-${entry.id}'),
-      direction: DismissDirection.endToStart,
+      direction: locked ? DismissDirection.none : DismissDirection.endToStart,
       background: Container(
         color: context.vg.swipeDelete,
         alignment: Alignment.centerRight,
@@ -299,9 +306,15 @@ class _DayEntryTile extends ConsumerWidget {
       },
       child: ListTile(
         leading: isTransfer || category == null
-            ? const SizedBox(
+            ? SizedBox(
                 width: 40,
-                child: Center(child: Icon(Symbols.swap_horiz_rounded)),
+                child: Center(
+                  child: Icon(
+                    entry.type == EntryType.debt
+                        ? debtMovementIcon
+                        : Symbols.swap_horiz_rounded,
+                  ),
+                ),
               )
             : ExcludeSemantics(
                 child: CategoryAvatar(category: category, size: 40),
@@ -322,9 +335,7 @@ class _DayEntryTile extends ConsumerWidget {
               )
             : (subtitle.isEmpty ? null : Text(subtitle)),
         trailing: large ? null : amount,
-        onTap: () => context.push(
-          isTransfer ? '/transfer/${entry.id}' : '/entry/${entry.id}',
-        ),
+        onTap: () => openEntry(context, entry),
       ),
     );
   }

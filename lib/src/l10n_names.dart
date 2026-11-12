@@ -18,6 +18,8 @@ String? defaultName(AppLocalizations l, String key) => switch (key) {
   'salary' => l.categorySalary,
   'bonus' => l.categoryBonus,
   'otherIncome' => l.categoryOtherIncome,
+  'loanInterest' => l.categoryLoanInterest,
+  'interestIncome' => l.categoryInterestIncome,
   _ => null,
 };
 

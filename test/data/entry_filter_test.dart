@@ -166,6 +166,18 @@ void main() {
     expect((empty.count, empty.expense, empty.income), (0, 0, 0));
   });
 
+  test(
+    'dòng tổng: Debt movement vào số khoản nhưng không vào thu/chi (AC-169)',
+    () {
+      final list = [
+        _row(98, EntryType.debt, 300000, null, '2026-11-10'),
+        _row(99, EntryType.income, 100000, null, '2026-11-10'),
+      ];
+      final totals = FilterTotals.of(list);
+      expect((totals.count, totals.income, totals.expense), (2, 100000, 0));
+    },
+  );
+
   test('dòng tổng cộng gốc theo tiền tệ rồi quy một lần (D-042, AC-148)', () {
     const table = RateTable(
       base: 'USD',

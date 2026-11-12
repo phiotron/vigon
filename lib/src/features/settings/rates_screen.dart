@@ -8,6 +8,7 @@ import '../../../l10n/app_localizations.dart';
 import '../../data/database.dart';
 import '../../data/exchange_rate.dart';
 import '../../data/money.dart';
+import '../../data/money_sum.dart' show isDebtInflow;
 import '../../data/rate_repository.dart';
 import '../../l10n_names.dart';
 import '../../providers.dart';
@@ -550,6 +551,11 @@ class _OverrideSheetState extends ConsumerState<_OverrideSheet> {
           }
           if (e.toAccountId == account.id && e.toCurrency == widget.from) {
             balance += e.toOriginalAmount ?? e.toAmount ?? e.amount;
+          }
+        case EntryType.debt:
+          if (e.accountId == account.id && e.currency == widget.from) {
+            final v = e.originalAmount ?? e.amount;
+            balance += isDebtInflow(e) ? v : -v;
           }
       }
     }

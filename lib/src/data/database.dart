@@ -15,10 +15,36 @@ part 'database.g.dart';
 /// người thụ hưởng, hàng đợi nhập, số tham chiếu đã gặp.
 /// 5: đa tiền tệ (D-037) — tiền tệ của tài khoản, số tiền gốc + tiền tệ của
 /// khoản/định kỳ/nợ/mục tiêu/ngân sách, số nhận của chuyển tiền khác tiền tệ.
-const currentSchemaVersion = 7;
+/// 8: có thu mới có chi + nợ qua tài khoản có lãi (D-046, D-049) — công tắc
+/// cho phép âm của tài khoản; tài khoản, lãi suất, mốc đổi lãi suất của khoản
+/// nợ; tài khoản + phần lãi của lần trả; khoản liên kết khoản nợ / lần trả.
+const currentSchemaVersion = 8;
 
-/// Loại khoản ghi. Chuyển tiền không tính là thu hay chi (AC-19).
-enum EntryType { expense, income, transfer }
+/// Loại khoản ghi. Chuyển tiền không tính là thu hay chi (AC-19). [debt] là
+/// Debt movement (D-049): đổi số dư tài khoản theo [DebtMovementKind] nhưng
+/// KHÔNG là thu/chi — như chuyển tiền, không vào tổng thu/chi, biểu đồ, ngân
+/// sách, hạn mức, thống kê. Lưu bằng chỉ số (`intEnum`): chỉ thêm vào CUỐI.
+enum EntryType { expense, income, transfer, debt }
+
+/// Loại Debt movement (D-049): cho vay (tiền ra), đi vay (tiền vào), thu nợ
+/// (tiền vào), trả nợ (tiền ra) — phần gốc. Lưu bằng tên.
+enum DebtMovementKind {
+  lend,
+  borrow,
+  collect,
+  repay;
+
+  /// Tiền vào tài khoản (đi vay, thu nợ) hay tiền ra (cho vay, trả nợ).
+  bool get isInflow => this == borrow || this == collect;
+}
+
+/// Kỳ của lãi suất khoản nợ (AC-171): %/tháng hoặc %/năm; tháng × 12 = năm.
+enum InterestPeriod { month, year }
+
+/// Cài đặt đánh dấu còn phải bật "Cho phép số dư âm" cho tài khoản đang âm
+/// (AC-163): đặt khi nâng cấp lên schema 8 hoặc khôi phục file schema ≤ 7;
+/// `applyNegativeUpgrade` xử lý ở lần mở kế tiếp rồi xoá.
+const negativeCheckPendingKey = 'negativeCheckPending';
 
 /// Loại danh mục: chi hoặc thu.
 enum CategoryType { expense, income }
@@ -90,6 +116,11 @@ class Accounts extends Table {
   IntColumn get initialBalanceOriginal => integer().nullable()();
   TextColumn get initialCurrency =>
       text().withLength(min: 3, max: 3).nullable()();
+
+  /// "Cho phép số dư âm" (D-046, AC-162): tắt thì mọi tiền ra làm số dư hiện
+  /// tại < 0 bị chặn. Thêm ở schema 8; nâng cấp tự bật cho tài khoản đang âm.
+  BoolColumn get allowNegative =>
+      boolean().withDefault(const Constant(false))();
 }
 
 class Categories extends Table {
@@ -221,6 +252,28 @@ class Entries extends Table {
   IntColumn get toOriginalAmount => integer().nullable()();
   TextColumn get toCurrency => text().withLength(min: 3, max: 3).nullable()();
   IntColumn get toAmount => integer().nullable()();
+
+  /// Loại Debt movement khi [type] là `debt` (D-049); null với khoản khác.
+  /// Giữ cả sau khi khoản nợ bị xoá (Orphan debt movement, AC-175). Schema 8.
+  TextColumn get debtKind => textEnum<DebtMovementKind>().nullable()();
+
+  /// Khoản nợ sinh ra khoản này (Debt movement, hoặc khoản lãi của lần trả);
+  /// xoá khoản nợ thì thành null nhưng khoản giữ nguyên (AC-175). Schema 8.
+  @ReferenceName('debtEntries')
+  IntColumn get debtId => integer().nullable().references(
+    Debts,
+    #id,
+    onDelete: KeyAction.setNull,
+  )();
+
+  /// Lần trả sinh ra khoản này (phần gốc hoặc phần lãi, AC-170, AC-173).
+  /// Schema 8.
+  @ReferenceName('paymentEntries')
+  IntColumn get debtPaymentId => integer().nullable().references(
+    DebtPayments,
+    #id,
+    onDelete: KeyAction.setNull,
+  )();
 }
 
 /// Mục tiêu tiết kiệm (Savings goal, AC-100..AC-103): tiến độ là số dư của
@@ -258,8 +311,9 @@ class SavingsGoals extends Table {
       text().withLength(min: 10, max: 10).nullable()();
 }
 
-/// Khoản nợ (Debt record, AC-104..AC-106): sổ ghi nhớ, không phải khoản,
-/// không đụng số dư tài khoản. Thêm ở schema 4.
+/// Khoản nợ (Debt record, AC-104..AC-106; từ schema 8 D-049): không phải
+/// khoản; có [accountId] thì số tiền vay và mỗi lần trả là Debt movement trên
+/// tài khoản, không có thì chỉ ghi nhớ. Thêm ở schema 4.
 class Debts extends Table {
   IntColumn get id => integer().autoIncrement()();
   TextColumn get person => text().withLength(min: 1, max: 50)();
@@ -283,9 +337,38 @@ class Debts extends Table {
   TextColumn get currency =>
       text().withLength(min: 3, max: 3).withDefault(const Constant('USD'))();
   IntColumn get originalAmount => integer().nullable()();
+
+  /// Tài khoản của khoản nợ (D-049, AC-169); null = "Không qua tài khoản" hoặc
+  /// khoản nợ có từ trước schema 8 (chỉ ghi nhớ). Schema 8.
+  @ReferenceName('accountDebts')
+  IntColumn get accountId => integer().nullable().references(Accounts, #id)();
+
+  /// Lãi suất ban đầu, phần trăm × 100 (12,5 % → 1250; AC-171: 0 < r ≤ 100,
+  /// tối đa 2 chữ số lẻ); null = không lãi. Kỳ ở [interestPeriod]. Schema 8.
+  IntColumn get interestRate => integer().nullable()();
+  TextColumn get interestPeriod => textEnum<InterestPeriod>().nullable()();
+
+  /// Ngày bắt đầu tính lãi `YYYY-MM-DD` (AC-171); null = ngày vay. Schema 8.
+  TextColumn get interestStart =>
+      text().withLength(min: 10, max: 10).nullable()();
+}
+
+/// Mốc đổi lãi suất của khoản nợ (AC-171): áp từ [date] (gồm). Xoá khoản nợ
+/// xoá theo. Thêm ở schema 8.
+class DebtRateChanges extends Table {
+  IntColumn get id => integer().autoIncrement()();
+  IntColumn get debtId =>
+      integer().references(Debts, #id, onDelete: KeyAction.cascade)();
+  TextColumn get date => text().withLength(min: 10, max: 10)();
+
+  /// Phần trăm × 100, như [Debts.interestRate].
+  // ignore: recursive_getters
+  IntColumn get rate => integer().check(rate.isBiggerThanValue(0))();
+  TextColumn get period => textEnum<InterestPeriod>()();
 }
 
 /// Lần trả của khoản nợ (Debt payment, AC-105). Xoá khoản nợ xoá luôn lần trả.
+/// Từ schema 8: [amount]/[originalAmount] là phần GỐC, [interest] là phần lãi.
 /// Thêm ở schema 4.
 class DebtPayments extends Table {
   IntColumn get id => integer().autoIncrement()();
@@ -304,6 +387,16 @@ class DebtPayments extends Table {
   TextColumn get currency =>
       text().withLength(min: 3, max: 3).withDefault(const Constant('USD'))();
   IntColumn get originalAmount => integer().nullable()();
+
+  /// Tài khoản của lần trả (AC-170); null = không qua tài khoản. Schema 8.
+  @ReferenceName('accountDebtPayments')
+  IntColumn get accountId => integer().nullable().references(Accounts, #id)();
+
+  /// Phần lãi theo tiền tệ khoản nợ, đơn vị nhỏ nhất (AC-173). Schema 8.
+  IntColumn get interest => integer()
+      .withDefault(const Constant(0))
+      // ignore: recursive_getters
+      .check(interest.isBiggerOrEqualValue(0))();
 }
 
 /// Gợi ý theo người thụ hưởng (Payee suggestion, AC-97): lựa chọn gần nhất
@@ -421,6 +514,7 @@ class Settings extends Table {
     PayeeSuggestions,
     ImportQueueItems,
     SeenReferences,
+    DebtRateChanges,
   ],
 )
 class AppDatabase extends _$AppDatabase {
@@ -491,6 +585,9 @@ class AppDatabase extends _$AppDatabase {
               entries.toOriginalAmount,
               entries.toCurrency,
               entries.toAmount,
+              entries.debtKind,
+              entries.debtId,
+              entries.debtPaymentId,
             ],
           ),
         );
@@ -604,6 +701,43 @@ class AppDatabase extends _$AppDatabase {
       // tạo ở bước 4 theo định nghĩa hiện tại (đã có cột).
       if (from < 7 && from >= 4) {
         await m.addColumn(savingsGoals, savingsGoals.completedAt);
+      }
+      // 7 -> 8: có thu mới có chi + nợ qua tài khoản có lãi (D-046, D-049).
+      // `entries` dựng lại ở bước 3 (from < 3), `debts`/`debt_payments` tạo
+      // ở bước 4 (from < 4) theo định nghĩa hiện tại — đã có cột.
+      // Chỉ thêm cột/bảng còn thiếu: chạy lại an toàn.
+      if (from < 8) {
+        Future<void> add(TableInfo table, GeneratedColumn column) async {
+          final cols = await customSelect(
+            'PRAGMA table_info("${table.actualTableName}")',
+          ).get();
+          if (cols.any((c) => c.read<String>('name') == column.name)) return;
+          await m.addColumn(table, column);
+        }
+
+        await add(accounts, accounts.allowNegative);
+        await add(entries, entries.debtKind);
+        await add(entries, entries.debtId);
+        await add(entries, entries.debtPaymentId);
+        await add(debts, debts.accountId);
+        await add(debts, debts.interestRate);
+        await add(debts, debts.interestPeriod);
+        await add(debts, debts.interestStart);
+        await add(debtPayments, debtPayments.accountId);
+        await add(debtPayments, debtPayments.interest);
+        await m.createTable(debtRateChanges);
+        await addInterestCategories(this);
+        // Tài khoản đang âm được bật "Cho phép số dư âm" ở lần mở đầu, khi đã
+        // có tỷ giá để tính số dư theo tiền tệ tài khoản (AC-163,
+        // `applyNegativeUpgrade`).
+        await customStatement(
+          'INSERT OR REPLACE INTO settings (key, value) '
+          "VALUES ('$negativeCheckPendingKey', '1')",
+        );
+        final broken = await customSelect('PRAGMA foreign_key_check').get();
+        if (broken.isNotEmpty) {
+          throw StateError('foreign_key_check after v8 migration: $broken');
+        }
       }
     },
     beforeOpen: (details) async {

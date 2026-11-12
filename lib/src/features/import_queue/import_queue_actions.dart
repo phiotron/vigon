@@ -1,6 +1,7 @@
 import 'package:drift/drift.dart';
 
 import '../../data/account_repository.dart';
+import '../../data/balance_guard.dart';
 import '../../data/database.dart';
 import '../../data/exchange_rate.dart';
 import '../../data/import_repositories.dart';
@@ -189,6 +190,37 @@ class ImportQueueActions {
           await _remember(removed, categoryId: categoryId);
         }
         return entryId;
+      });
+
+  /// Có thu mới có chi cho mục hàng đợi (D-046, AC-165): lưu [item] (khoản chi
+  /// hoặc chuyển tiền đi) làm tài khoản trích nợ thiếu tiền thì trả về tài
+  /// khoản thiếu; null là lưu được.
+  Future<Shortfall?> shortfallFor(ImportQueueItem item) async {
+    final accountId = await resolveAccount(item);
+    final guard = BalanceGuard(_db, await _currency());
+    return guard.check(
+      add: [
+        (accountId: accountId, currency: item.currency, minor: -item.amount),
+      ],
+    );
+  }
+
+  /// Hoàn tác việc lưu mục [item] thành khoản [entryId] (thanh Hoàn tác sau
+  /// Bù tiền, AC-165): xoá khoản, đưa mục về hàng đợi, quên số tham chiếu.
+  Future<void> undoConfirm(ImportQueueItem item, int entryId) =>
+      _db.transaction(() async {
+        await (_db.delete(
+          _db.entries,
+        )..where((e) => e.id.equals(entryId))).go();
+        await (_db.delete(_db.seenReferences)..where(
+              (s) =>
+                  s.bank.equalsValue(item.bank) &
+                  s.referenceNumber.equals(item.referenceNumber),
+            ))
+            .go();
+        await _db
+            .into(_db.importQueueItems)
+            .insert(item, mode: InsertMode.insertOrIgnore);
       });
 
   /// "Bỏ qua" (AC-99): xoá mục khỏi hàng đợi, nhớ số tham chiếu là đã bỏ qua để

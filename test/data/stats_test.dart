@@ -523,7 +523,7 @@ void main() {
         category: 1,
         account: second,
       );
-      await add(EntryType.income, 900, '2026-11-02', category: 11);
+      await add(EntryType.income, 900, '2026-11-02', category: 12);
       await add(EntryType.transfer, 700, '2026-11-02', to: second);
       await add(EntryType.expense, 7, '2026-12-01', category: 1);
       // Mục hàng đợi chưa là khoản (AC-95): có trong bảng của nó, không vào số liệu.
@@ -558,7 +558,7 @@ void main() {
         final accounts = AccountRepository(db);
         final hidden = await accounts.add(name: 'Cũ', initialBalance: 2000);
         await accounts.edit(1, name: 'Chính', initialBalance: 1000);
-        await add(EntryType.income, 500, '2026-11-02', category: 11);
+        await add(EntryType.income, 500, '2026-11-02', category: 12);
         await add(
           EntryType.expense,
           200,

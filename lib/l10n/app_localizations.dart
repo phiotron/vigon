@@ -4286,6 +4286,24 @@ abstract class AppLocalizations {
   /// **'Status'**
   String get exportColStatus;
 
+  /// No description provided for @exportColInterestRate.
+  ///
+  /// In en, this message translates to:
+  /// **'Interest rate'**
+  String get exportColInterestRate;
+
+  /// No description provided for @exportColPrincipalLeft.
+  ///
+  /// In en, this message translates to:
+  /// **'Principal left'**
+  String get exportColPrincipalLeft;
+
+  /// No description provided for @exportColInterestToDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Interest to date'**
+  String get exportColInterestToDate;
+
   /// No description provided for @exportDebtOpen.
   ///
   /// In en, this message translates to:
@@ -4609,6 +4627,376 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Tap a day to see its records. A dot means income.'**
   String get calendarTapHint;
+
+  /// No description provided for @ledgerOnlyLeft.
+  ///
+  /// In en, this message translates to:
+  /// **'{account} only has {amount}'**
+  String ledgerOnlyLeft(String account, String amount);
+
+  /// No description provided for @ledgerDeleteBlockedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Can\'t delete'**
+  String get ledgerDeleteBlockedTitle;
+
+  /// No description provided for @ledgerDeleteBlocked.
+  ///
+  /// In en, this message translates to:
+  /// **'Can\'t delete: {account} would be negative by {amount}'**
+  String ledgerDeleteBlocked(String account, String amount);
+
+  /// No description provided for @ledgerOk.
+  ///
+  /// In en, this message translates to:
+  /// **'OK'**
+  String get ledgerOk;
+
+  /// No description provided for @ledgerAllowNegative.
+  ///
+  /// In en, this message translates to:
+  /// **'Allow negative balance'**
+  String get ledgerAllowNegative;
+
+  /// No description provided for @ledgerAllowNegativeSub.
+  ///
+  /// In en, this message translates to:
+  /// **'For credit cards, overdrafts'**
+  String get ledgerAllowNegativeSub;
+
+  /// No description provided for @ledgerInitialNegativeOff.
+  ///
+  /// In en, this message translates to:
+  /// **'Turn on \"Allow negative balance\" to enter a negative balance'**
+  String get ledgerInitialNegativeOff;
+
+  /// No description provided for @ledgerNegativeBadge.
+  ///
+  /// In en, this message translates to:
+  /// **'Negative'**
+  String get ledgerNegativeBadge;
+
+  /// No description provided for @ledgerUpgradeTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Negative balance allowed'**
+  String get ledgerUpgradeTitle;
+
+  /// No description provided for @ledgerUpgradeBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Negative balance is now allowed for: {accounts}. These accounts are below zero, so you can keep recording as before. Other accounts can now only spend money they have. Turn the switch off in Edit account if you don\'t need it.'**
+  String ledgerUpgradeBody(String accounts);
+
+  /// No description provided for @ledgerSkipped.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{Skipped 1 recurring entry: {accounts} didn\'t have enough money} other{Skipped {count} recurring entries: {accounts} didn\'t have enough money}}'**
+  String ledgerSkipped(int count, String accounts);
+
+  /// No description provided for @ledgerDismiss.
+  ///
+  /// In en, this message translates to:
+  /// **'Dismiss'**
+  String get ledgerDismiss;
+
+  /// No description provided for @ledgerIntoWallet.
+  ///
+  /// In en, this message translates to:
+  /// **'Into wallet: {amount}'**
+  String ledgerIntoWallet(String amount);
+
+  /// No description provided for @ledgerOutOfWallet.
+  ///
+  /// In en, this message translates to:
+  /// **'Out of wallet: {amount}'**
+  String ledgerOutOfWallet(String amount);
+
+  /// No description provided for @ledgerFrom.
+  ///
+  /// In en, this message translates to:
+  /// **'From {account}: {amount}'**
+  String ledgerFrom(String account, String amount);
+
+  /// No description provided for @ledgerInto.
+  ///
+  /// In en, this message translates to:
+  /// **'Into {account}: {amount}'**
+  String ledgerInto(String account, String amount);
+
+  /// No description provided for @ledgerDebtSide.
+  ///
+  /// In en, this message translates to:
+  /// **'Debt: {amount}'**
+  String ledgerDebtSide(String amount);
+
+  /// No description provided for @topUpTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Top up'**
+  String get topUpTitle;
+
+  /// No description provided for @topUpShort.
+  ///
+  /// In en, this message translates to:
+  /// **'{account} is short {amount}'**
+  String topUpShort(String account, String amount);
+
+  /// No description provided for @topUpBody.
+  ///
+  /// In en, this message translates to:
+  /// **'The money already left the bank, but this account doesn\'t have enough in your book. Top up one of these ways; once there\'s enough, the item is saved.'**
+  String get topUpBody;
+
+  /// No description provided for @topUpIncome.
+  ///
+  /// In en, this message translates to:
+  /// **'Record income into {account}'**
+  String topUpIncome(String account);
+
+  /// No description provided for @topUpTransfer.
+  ///
+  /// In en, this message translates to:
+  /// **'Transfer into {account}'**
+  String topUpTransfer(String account);
+
+  /// No description provided for @topUpEditInitial.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit starting balance'**
+  String get topUpEditInitial;
+
+  /// No description provided for @topUpStillShort.
+  ///
+  /// In en, this message translates to:
+  /// **'{account} is still short {amount} · item still waiting'**
+  String topUpStillShort(String account, String amount);
+
+  /// No description provided for @topUpSaved.
+  ///
+  /// In en, this message translates to:
+  /// **'Topped up · item saved'**
+  String get topUpSaved;
+
+  /// No description provided for @debtMovementsSection.
+  ///
+  /// In en, this message translates to:
+  /// **'Debts'**
+  String get debtMovementsSection;
+
+  /// No description provided for @debtMovementLend.
+  ///
+  /// In en, this message translates to:
+  /// **'Lent · {person}'**
+  String debtMovementLend(String person);
+
+  /// No description provided for @debtMovementBorrow.
+  ///
+  /// In en, this message translates to:
+  /// **'Borrowed · {person}'**
+  String debtMovementBorrow(String person);
+
+  /// No description provided for @debtMovementCollect.
+  ///
+  /// In en, this message translates to:
+  /// **'Collected · {person}'**
+  String debtMovementCollect(String person);
+
+  /// No description provided for @debtMovementRepay.
+  ///
+  /// In en, this message translates to:
+  /// **'Repaid · {person}'**
+  String debtMovementRepay(String person);
+
+  /// No description provided for @debtMovementOrphan.
+  ///
+  /// In en, this message translates to:
+  /// **'Deleted debt'**
+  String get debtMovementOrphan;
+
+  /// No description provided for @debtNoAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Not through an account'**
+  String get debtNoAccount;
+
+  /// No description provided for @debtNoAccountHelper.
+  ///
+  /// In en, this message translates to:
+  /// **'Just a note, no account balance changes'**
+  String get debtNoAccountHelper;
+
+  /// No description provided for @debtInterestRate.
+  ///
+  /// In en, this message translates to:
+  /// **'Interest rate (optional)'**
+  String get debtInterestRate;
+
+  /// No description provided for @debtPerMonth.
+  ///
+  /// In en, this message translates to:
+  /// **'%/month'**
+  String get debtPerMonth;
+
+  /// No description provided for @debtPerYear.
+  ///
+  /// In en, this message translates to:
+  /// **'%/year'**
+  String get debtPerYear;
+
+  /// No description provided for @debtRateInvalid.
+  ///
+  /// In en, this message translates to:
+  /// **'Rate from 0.01 to 100, up to 2 decimals'**
+  String get debtRateInvalid;
+
+  /// No description provided for @debtInterestStart.
+  ///
+  /// In en, this message translates to:
+  /// **'Interest start date'**
+  String get debtInterestStart;
+
+  /// No description provided for @debtInterestStartOn.
+  ///
+  /// In en, this message translates to:
+  /// **'Interest from {date}'**
+  String debtInterestStartOn(String date);
+
+  /// No description provided for @debtInterestPreview.
+  ///
+  /// In en, this message translates to:
+  /// **'Interest for the first 30 days: about {amount}'**
+  String debtInterestPreview(String amount);
+
+  /// No description provided for @debtPrincipalInterest.
+  ///
+  /// In en, this message translates to:
+  /// **'Principal {principal} · Interest to date {interest}'**
+  String debtPrincipalInterest(String principal, String interest);
+
+  /// No description provided for @debtChangeRate.
+  ///
+  /// In en, this message translates to:
+  /// **'Change rate'**
+  String get debtChangeRate;
+
+  /// No description provided for @debtRateFrom.
+  ///
+  /// In en, this message translates to:
+  /// **'From {date}'**
+  String debtRateFrom(String date);
+
+  /// No description provided for @debtRateSteps.
+  ///
+  /// In en, this message translates to:
+  /// **'Rate history'**
+  String get debtRateSteps;
+
+  /// No description provided for @debtRateBeforeStart.
+  ///
+  /// In en, this message translates to:
+  /// **'Must be on or after the interest start date'**
+  String get debtRateBeforeStart;
+
+  /// No description provided for @debtNewRate.
+  ///
+  /// In en, this message translates to:
+  /// **'New rate'**
+  String get debtNewRate;
+
+  /// No description provided for @debtPaymentInterest.
+  ///
+  /// In en, this message translates to:
+  /// **'Interest'**
+  String get debtPaymentInterest;
+
+  /// No description provided for @debtPaymentPrincipal.
+  ///
+  /// In en, this message translates to:
+  /// **'Principal'**
+  String get debtPaymentPrincipal;
+
+  /// No description provided for @debtInterestOnly.
+  ///
+  /// In en, this message translates to:
+  /// **'Interest only'**
+  String get debtInterestOnly;
+
+  /// No description provided for @debtPayAll.
+  ///
+  /// In en, this message translates to:
+  /// **'Pay all'**
+  String get debtPayAll;
+
+  /// No description provided for @debtInterestOver.
+  ///
+  /// In en, this message translates to:
+  /// **'Interest due is only {amount}'**
+  String debtInterestOver(String amount);
+
+  /// No description provided for @debtPrincipalOver.
+  ///
+  /// In en, this message translates to:
+  /// **'Only {amount} principal left'**
+  String debtPrincipalOver(String amount);
+
+  /// No description provided for @debtPaymentSplit.
+  ///
+  /// In en, this message translates to:
+  /// **'Interest {interest} · Principal {principal}'**
+  String debtPaymentSplit(String interest, String principal);
+
+  /// No description provided for @debtDeleteTitlePerson.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete the debt with {person}?'**
+  String debtDeleteTitlePerson(String person);
+
+  /// No description provided for @debtDeleteKeepsEntries.
+  ///
+  /// In en, this message translates to:
+  /// **'Entries in your book stay. Payments and the rate history are deleted; account balances don\'t change.'**
+  String get debtDeleteKeepsEntries;
+
+  /// No description provided for @debtCurrencyLockedMovement.
+  ///
+  /// In en, this message translates to:
+  /// **'Currency can\'t change once the debt went through an account.'**
+  String get debtCurrencyLockedMovement;
+
+  /// No description provided for @debtDeadlineLentEstimate.
+  ///
+  /// In en, this message translates to:
+  /// **'Debt with {person}: about {amount} to collect, {when}'**
+  String debtDeadlineLentEstimate(String person, String amount, String when);
+
+  /// No description provided for @debtDeadlineBorrowedEstimate.
+  ///
+  /// In en, this message translates to:
+  /// **'You owe {person}: about {amount} to pay, {when}'**
+  String debtDeadlineBorrowedEstimate(
+    String person,
+    String amount,
+    String when,
+  );
+
+  /// No description provided for @categoryLoanInterest.
+  ///
+  /// In en, this message translates to:
+  /// **'Loan interest'**
+  String get categoryLoanInterest;
+
+  /// No description provided for @categoryInterestIncome.
+  ///
+  /// In en, this message translates to:
+  /// **'Interest'**
+  String get categoryInterestIncome;
+
+  /// No description provided for @csvTypeDebt.
+  ///
+  /// In en, this message translates to:
+  /// **'Debt'**
+  String get csvTypeDebt;
 }
 
 class _AppLocalizationsDelegate

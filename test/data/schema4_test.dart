@@ -250,13 +250,14 @@ void main() {
         final cats = await old.select(old.categories).get();
         expect(
           [for (final c in cats) (c.budget, c.budgetMicro)],
-          [(2000000, 2000000400000), (null, null)],
+          // + 2 danh mục lãi thêm ở schema 8 (AC-173).
+          [(2000000, 2000000400000), (null, null), (null, null), (null, null)],
         );
         final rule = await old.select(old.recurringRules).getSingle();
         expect((rule.amount, rule.lastGeneratedDate), (3000000, '2026-11-01'));
         expect(await SettingsRepository(old).readBudget(), 9000000);
         // Không chạy lại onCreate (không thêm danh mục/tài khoản mặc định).
-        expect(cats, hasLength(2));
+        expect(cats, hasLength(4));
         // Bảng mới có và rỗng.
         expect(await old.select(old.savingsGoals).get(), isEmpty);
         expect(await old.select(old.debts).get(), isEmpty);
@@ -290,7 +291,7 @@ void main() {
           everyElement(isNull),
         );
         final cats = await old.select(old.categories).get();
-        expect(cats.map((c) => c.budgetCurrency), ['VND', null]);
+        expect(cats.map((c) => c.budgetCurrency), ['VND', null, null, null]);
         final rule = await old.select(old.recurringRules).getSingle();
         expect((rule.currency, rule.originalAmount), ('VND', null));
         expect(await old.select(old.savingsGoals).get(), isEmpty);

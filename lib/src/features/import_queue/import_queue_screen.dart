@@ -24,6 +24,7 @@ import '../settings/settings_lead.dart' show useIosCopy;
 import '../../ui/tokens.g.dart';
 import '../entry/entry_time.dart';
 import 'import_queue_providers.dart';
+import 'top_up_sheet.dart';
 
 /// Màn Hàng đợi (F-32, AC-95..AC-99): mỗi email biên lai không ghép được là
 /// một mục chờ chọn danh mục. Mục CHƯA là khoản: không vào tổng, biểu đồ,
@@ -421,9 +422,24 @@ class _ItemCard extends ConsumerWidget {
     final cats =
         ref.read(categoriesProvider(CategoryType.expense)).value ?? const [];
     final name = cats.where((c) => c.id == categoryId).firstOrNull;
-    final id = await ref
-        .read(importQueueActionsProvider)
-        .saveToCategory(item, categoryId);
+    final actions = ref.read(importQueueActionsProvider);
+    // Tài khoản liên kết thiếu tiền: mục ở lại, mở Bù tiền (AC-165).
+    final short = await actions.shortfallFor(item);
+    if (short != null) {
+      if (!context.mounted) return;
+      await showTopUpSheet(
+        context,
+        ref,
+        short,
+        confirm: () async {
+          final id = await actions.saveToCategory(item, categoryId);
+          return id == null ? null : () => actions.undoConfirm(item, id);
+        },
+        check: () => actions.shortfallFor(item),
+      );
+      return;
+    }
+    final id = await actions.saveToCategory(item, categoryId);
     if (id != null && name != null) {
       showMessage(l.queueSaved(categoryLabel(l, name)));
     }
@@ -473,9 +489,24 @@ class _ItemCard extends ConsumerWidget {
     Account target,
   ) async {
     final l = AppLocalizations.of(context);
-    final id = await ref
-        .read(importQueueActionsProvider)
-        .saveAsTransfer(item, target.id);
+    final actions = ref.read(importQueueActionsProvider);
+    // Chuyển đi cũng là tiền ra: thiếu tiền thì Bù tiền (AC-165).
+    final short = await actions.shortfallFor(item);
+    if (short != null) {
+      if (!context.mounted) return;
+      await showTopUpSheet(
+        context,
+        ref,
+        short,
+        confirm: () async {
+          final id = await actions.saveAsTransfer(item, target.id);
+          return id == null ? null : () => actions.undoConfirm(item, id);
+        },
+        check: () => actions.shortfallFor(item),
+      );
+      return;
+    }
+    final id = await actions.saveAsTransfer(item, target.id);
     if (id != null) showMessage(l.queueMoved(accountLabel(l, target)));
   }
 

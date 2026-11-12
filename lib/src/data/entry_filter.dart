@@ -123,7 +123,8 @@ class FilterTotals {
     for (final r in rows) {
       count++;
       final e = r.entry;
-      if (e.type == EntryType.transfer) continue;
+      // Chuyển tiền và Debt movement không phải thu/chi (AC-19, AC-169).
+      if (e.type == EntryType.transfer || e.type == EntryType.debt) continue;
       if (service != null && !service.has(e.currency, service.primary)) {
         continue;
       }

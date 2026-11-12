@@ -6,7 +6,6 @@ import 'package:material_symbols_icons/symbols.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../data/database.dart';
 import '../../data/dates.dart';
-import '../../data/money.dart';
 import '../../l10n_names.dart';
 import '../../providers.dart';
 import '../../ui/choice_sheet.dart';
@@ -14,6 +13,10 @@ import '../../ui/format.dart';
 import '../../ui/messenger.dart';
 import '../../ui/money_lines.dart';
 import '../../ui/tokens.g.dart';
+import '../../data/balance_guard.dart';
+import '../../data/rate_repository.dart';
+import '../entry/ledger_guard.dart';
+import '../entry/typed_amount.dart';
 import '../categories/sheet_footer.dart';
 import '../settings/budget_dialog.dart' show currencySymbol;
 import 'savings_screen.dart';
@@ -46,7 +49,8 @@ class _GoalMoneySheet extends ConsumerStatefulWidget {
 }
 
 class _GoalMoneySheetState extends ConsumerState<_GoalMoneySheet> {
-  final _amount = TextEditingController();
+  /// Ô số tiền theo Tiền tệ chính + chip (D-048, AC-167).
+  late final _amount = TypedAmount(ref.read(currencyProvider).value ?? 'USD');
   late DateTime _date = ref.read(todayProvider);
   int? _otherId;
   String? _error;
@@ -97,6 +101,31 @@ class _GoalMoneySheetState extends ConsumerState<_GoalMoneySheet> {
     if (picked != null) setState(() => _otherId = picked.$1);
   }
 
+  /// Số đã gõ (tiền tệ đang gõ) quy về hai phía: số trừ ở tài khoản gửi, số
+  /// vào ở tài khoản nhận; "Điền đủ"/"Rút hết" chưa sửa thì phía ví đúng
+  /// bằng giới hạn (D-048).
+  ({int sent, int received})? _sides(
+    CurrencyService service,
+    Account from,
+    Account to,
+    Account wallet,
+  ) {
+    final sent = _amount.valueIn(
+      context,
+      service,
+      from.currency,
+      fillTarget: from.id == wallet.id ? goal.currency : null,
+    );
+    final received = _amount.valueIn(
+      context,
+      service,
+      to.currency,
+      fillTarget: to.id == wallet.id ? goal.currency : null,
+    );
+    if (sent == null || received == null) return null;
+    return (sent: sent, received: received);
+  }
+
   Future<void> _save(
     GoalProgress progress,
     Account other,
@@ -104,20 +133,33 @@ class _GoalMoneySheetState extends ConsumerState<_GoalMoneySheet> {
   ) async {
     if (_saving) return;
     final l = AppLocalizations.of(context);
-    final digits = currencyDecimalDigits(goal.currency);
-    final text = _amount.text.trim();
-    final value = text.isEmpty ? null : parseAmountField(context, text, digits);
+    final typedCurrency = _amount.currency;
+    final value = _amount.value(context);
+    final service = await ref.read(currencyServiceProvider.future);
+    if (!mounted) return;
     if (value == null || value <= 0) {
       setState(
-        () => _error = text.isNotEmpty && value == null
+        () =>
+            _error = _amount.controller.text.trim().isNotEmpty && value == null
             ? l.invalidExpression
             : l.amountMustBePositive,
       );
       return;
     }
+    // Giới hạn so bằng số gốc theo tiền tệ mục tiêu (D-048), báo theo tiền
+    // tệ đang gõ (làm tròn xuống).
     final limit = _limit(progress);
-    if (value > limit) {
-      final cap = money(context, goal.currency, limit);
+    final inGoal = _amount.valueIn(context, service, goal.currency);
+    if (inGoal == null) {
+      setState(() => _error = l.rateMissing(typedCurrency, goal.currency));
+      return;
+    }
+    if (inGoal > limit) {
+      final cap = money(
+        context,
+        typedCurrency,
+        convertDown(service, limit, goal.currency, typedCurrency) ?? 0,
+      );
       setState(
         () => _error = widget.withdraw
             ? l.savingsOverBalance(cap)
@@ -125,25 +167,30 @@ class _GoalMoneySheetState extends ConsumerState<_GoalMoneySheet> {
       );
       return;
     }
-    final service = await ref.read(currencyServiceProvider.future);
-    if (!mounted) return;
     final from = widget.withdraw ? wallet : other;
     final to = widget.withdraw ? other : wallet;
-    // Số gửi (tiền tệ nguồn) và số nhận (tiền tệ đích) quy từ số đã gõ theo
-    // tiền tệ mục tiêu; cùng tiền tệ thì giữ nguyên.
-    final sent = service.convert(value, goal.currency, from.currency);
-    final received = service.convert(value, goal.currency, to.currency);
-    final sentDerived = sent == null
+    // Lưu số gốc theo tiền tệ từng tài khoản như AC-132.
+    final sides = _sides(service, from, to, wallet);
+    final sentDerived = sides == null
         ? null
-        : service.toPrimary(sent, from.currency);
-    final receivedDerived = received == null
+        : service.toPrimary(sides.sent, from.currency);
+    final receivedDerived = sides == null
         ? null
-        : service.toPrimary(received, to.currency);
-    if (sent == null ||
-        received == null ||
-        sentDerived == null ||
-        receivedDerived == null) {
-      setState(() => _error = l.rateMissing(goal.currency, from.currency));
+        : service.toPrimary(sides.received, to.currency);
+    if (sides == null || sentDerived == null || receivedDerived == null) {
+      setState(() => _error = l.rateMissing(typedCurrency, from.currency));
+      return;
+    }
+    // Có thu mới có chi (AC-160): góp → tài khoản nguồn, rút → ví.
+    final short = await BalanceGuard(ref.read(databaseProvider), service).check(
+      add: [
+        (accountId: from.id, currency: from.currency, minor: -sides.sent),
+        (accountId: to.id, currency: to.currency, minor: sides.received),
+      ],
+    );
+    if (!mounted) return;
+    if (short != null) {
+      setState(() => _error = shortfallMessage(context, ref, short));
       return;
     }
     _saving = true;
@@ -154,15 +201,15 @@ class _GoalMoneySheetState extends ConsumerState<_GoalMoneySheet> {
           fromAccountId: from.id,
           toAccountId: to.id,
           amount: sentDerived,
-          originalAmount: sent,
+          originalAmount: sides.sent,
           currency: from.currency,
           toAmount: cross ? receivedDerived : null,
-          toOriginalAmount: cross ? received : null,
+          toOriginalAmount: cross ? sides.received : null,
           toCurrency: cross ? to.currency : null,
           date: dateKey(_date),
         );
     if (!mounted) return;
-    final shown = moneyOneLine(context, ref, value, goal.currency);
+    final shown = moneyOneLine(context, ref, value, typedCurrency);
     Navigator.pop(context);
     showMessage(
       widget.withdraw ? l.savingsWithdrawn(shown) : l.savingsAdded(shown),
@@ -187,27 +234,47 @@ class _GoalMoneySheetState extends ConsumerState<_GoalMoneySheet> {
         others.where((a) => a.id == _otherId).firstOrNull ?? others.firstOrNull;
     final limit = _limit(progress);
     final today = ref.watch(todayProvider);
-    final digits = currencyDecimalDigits(goal.currency);
     final service = ref.watch(currencyServiceProvider).value;
-    final typed = parseAmountField(context, _amount.text.trim(), digits);
-    // Khác tiền tệ: báo trước số sẽ chuyển từ tài khoản nguồn.
-    String? sendsNote;
+    final typedCurrency = _amount.currency;
+    final typed = _amount.value(context);
+    // Số đã gõ theo tiền tệ mục tiêu (để xem trước tiến độ).
+    final typedInGoal = service == null
+        ? null
+        : _amount.valueIn(context, service, goal.currency);
+    // Hai dòng ghi rõ hai phía khi khác tiền tệ (AC-167): "Vào ví: 19,23 $"
+    // · "Trừ từ Tiền mặt: 500.000 ₫".
+    String? sidesNote;
     if (typed != null &&
         typed > 0 &&
         other != null &&
         wallet != null &&
-        service != null) {
+        service != null &&
+        (wallet.currency != typedCurrency || other.currency != typedCurrency)) {
       final from = widget.withdraw ? wallet : other;
-      if (from.currency != goal.currency) {
-        final sent = service.convert(typed, goal.currency, from.currency);
-        if (sent != null) {
-          sendsNote = l.savingsSendsApprox(
-            money(context, from.currency, sent),
-            accountLabel(l, from),
-          );
-        }
+      final to = widget.withdraw ? other : wallet;
+      final sides = _sides(service, from, to, wallet);
+      if (sides != null) {
+        final walletLine = money(
+          context,
+          wallet.currency,
+          widget.withdraw ? sides.sent : sides.received,
+        );
+        final otherLine = money(
+          context,
+          other.currency,
+          widget.withdraw ? sides.received : sides.sent,
+        );
+        sidesNote = widget.withdraw
+            ? '${l.ledgerOutOfWallet(walletLine)}\n'
+                  '${l.ledgerInto(accountLabel(l, other), otherLine)}'
+            : '${l.ledgerIntoWallet(walletLine)}\n'
+                  '${l.ledgerFrom(accountLabel(l, other), otherLine)}';
       }
     }
+    // Giới hạn theo tiền tệ đang gõ, làm tròn xuống (D-048).
+    final limitTyped = service == null
+        ? null
+        : convertDown(service, limit, goal.currency, typedCurrency);
     final title = widget.withdraw ? l.savingsWithdraw : l.savingsContribute;
     if (other == null || wallet == null) {
       return SafeArea(
@@ -251,7 +318,7 @@ class _GoalMoneySheetState extends ConsumerState<_GoalMoneySheet> {
           Padding(
             padding: pad(VgSpace.s3),
             child: TextField(
-              controller: _amount,
+              controller: _amount.controller,
               autofocus: true,
               keyboardType: const TextInputType.numberWithOptions(
                 decimal: true,
@@ -265,9 +332,9 @@ class _GoalMoneySheetState extends ConsumerState<_GoalMoneySheet> {
               onChanged: (_) => setState(() => _error = null),
               decoration: InputDecoration(
                 labelText: l.savingsMoveAmount,
-                suffixText: currencySymbol(goal.currency),
-                helperText: sendsNote,
-                helperMaxLines: 3,
+                suffixText: currencySymbol(typedCurrency),
+                helperText: sidesNote,
+                helperMaxLines: 4,
                 errorText: _error,
                 errorMaxLines: 3,
               ),
@@ -279,7 +346,14 @@ class _GoalMoneySheetState extends ConsumerState<_GoalMoneySheet> {
               spacing: VgSpace.s2,
               runSpacing: VgSpace.s2,
               children: [
-                if (limit > 0)
+                TypedCurrencyChip(
+                  currency: typedCurrency,
+                  onPicked: (c) => setState(() {
+                    _amount.switchTo(context, c);
+                    _error = null;
+                  }),
+                ),
+                if (limit > 0 && limitTyped != null && service != null)
                   ActionChip(
                     avatar: Icon(
                       widget.withdraw
@@ -288,10 +362,10 @@ class _GoalMoneySheetState extends ConsumerState<_GoalMoneySheet> {
                       size: 18,
                     ),
                     label: Text(
-                      '${widget.withdraw ? l.savingsWithdrawAll : l.savingsFillToTarget} · ${money(context, goal.currency, limit)}',
+                      '${widget.withdraw ? l.savingsWithdrawAll : l.savingsFillToTarget} · ${money(context, typedCurrency, limitTyped)}',
                     ),
                     onPressed: () => setState(() {
-                      _amount.text = amountInput(context, limit, digits);
+                      _amount.fill(context, service, limit, goal.currency);
                       _error = null;
                     }),
                   ),
@@ -350,7 +424,7 @@ class _GoalMoneySheetState extends ConsumerState<_GoalMoneySheet> {
             padding: pad(VgSpace.s3),
             child: Builder(
               builder: (context) {
-                final delta = (typed ?? 0).clamp(0, limit);
+                final delta = (typedInGoal ?? 0).clamp(0, limit);
                 final after = widget.withdraw
                     ? progress.balance - delta
                     : progress.balance + delta;

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import 'package:material_symbols_icons/symbols.dart';
 
 import '../../../l10n/app_localizations.dart';
@@ -11,12 +10,14 @@ import '../../l10n_names.dart';
 import '../../providers.dart';
 import '../../ui/category_avatar.dart';
 import '../../ui/format.dart';
-import '../../ui/messenger.dart';
 import '../../ui/money_lines.dart';
 import '../../ui/status.dart';
 import '../../ui/theme.dart';
 import '../../ui/tokens.g.dart';
+import '../../data/money_sum.dart' show isDebtInflow;
+import '../debts/debt_movement.dart';
 import '../entry/entry_time.dart';
+import '../entry/ledger_guard.dart';
 import '../home/home_extras.dart';
 import 'category_budget.dart';
 import 'entry_filter_state.dart';
@@ -58,6 +59,11 @@ class _EntriesScreenState extends ConsumerState<EntriesScreen> {
     final transfers = rows
         .where((r) => r.entry.type == EntryType.transfer)
         .toList();
+    // Debt movement (D-049): không thu/chi, nhóm riêng như chuyển tiền.
+    final debtMoves = rows
+        .where((r) => r.entry.type == EntryType.debt)
+        .toList();
+    final persons = ref.watch(debtPersonsProvider);
     final byCategory = <int, List<EntryView>>{};
     for (final r in rows) {
       final id = r.category?.id;
@@ -188,6 +194,29 @@ class _EntriesScreenState extends ConsumerState<EntriesScreen> {
             ),
             leading: const Icon(Symbols.swap_horiz_rounded),
             accountName: name(r.entry.accountId),
+          ),
+        );
+      }
+    }
+    if (debtMoves.isNotEmpty) {
+      items.add(() => _SectionHeader(title: l.debtMovementsSection));
+      for (final r in debtMoves) {
+        final e = r.entry;
+        final amount = e.originalAmount ?? e.amount;
+        items.add(
+          () => _EntryTile(
+            row: r,
+            title: debtMovementLabel(l, e, persons),
+            amount: MoneyLines(
+              amount: isDebtInflow(e) ? amount : -amount,
+              currency: e.currency,
+              style: _rowAmount.copyWith(color: theme.colorScheme.onSurface),
+              secondaryStyle: VgType.bodySm,
+              crossAxisAlignment: CrossAxisAlignment.end,
+              textAlign: TextAlign.end,
+            ),
+            leading: const Icon(debtMovementIcon),
+            accountName: accountName(e.accountId),
           ),
         );
       }
@@ -386,7 +415,6 @@ class _EntryTile extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final l = AppLocalizations.of(context);
     final entry = row.entry;
-    final isTransfer = entry.type == EntryType.transfer;
     // ✉ cho khoản lưu từ email MB hoặc khoản ghi tay đã ghép với email
     // (mockup v4 SCR-10).
     final fromEmail =
@@ -408,7 +436,10 @@ class _EntryTile extends ConsumerWidget {
           ].join(' · ');
     return Dismissible(
       key: ValueKey('entry-${entry.id}'),
-      direction: DismissDirection.endToStart,
+      // Khoản thuộc khoản nợ: sửa/xoá trong Chi tiết khoản nợ (AC-170).
+      direction: opensDebtDetail(entry)
+          ? DismissDirection.none
+          : DismissDirection.endToStart,
       // Nền `swipe-delete`, thùng rác màu `error`. Từ token v2 errorContainer
       // của theme là dải lỗi (khác màu ở chủ đề tối), nên dùng token riêng.
       background: Container(
@@ -417,17 +448,9 @@ class _EntryTile extends ConsumerWidget {
         padding: const EdgeInsets.only(right: VgSpace.s6),
         child: Icon(Symbols.delete_rounded, color: context.vg.error),
       ),
-      onDismissed: (_) async {
-        final repo = ref.read(entryRepositoryProvider);
-        final deleted = await repo.delete(entry.id);
-        if (deleted != null) {
-          showUndoSnackBar(
-            message: l.deleted,
-            undoLabel: l.undo,
-            onUndo: () => repo.restore(deleted),
-          );
-        }
-      },
+      // Có thu mới có chi (AC-161): xoá làm âm tài khoản thì báo, không xoá.
+      confirmDismiss: (_) => canDeleteEntry(context, ref, entry),
+      onDismissed: (_) => deleteEntryWithUndo(context, ref, entry),
       child: ListTile(
         contentPadding: EdgeInsets.only(
           left: leading == null ? 72 : VgSpace.s4,
@@ -468,9 +491,7 @@ class _EntryTile extends ConsumerWidget {
                   const SizedBox(width: VgSpace.s1 + 24),
                 ],
               ),
-        onTap: () => context.push(
-          isTransfer ? '/transfer/${entry.id}' : '/entry/${entry.id}',
-        ),
+        onTap: () => openEntry(context, entry),
       ),
     );
   }

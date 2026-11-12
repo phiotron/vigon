@@ -3,6 +3,18 @@ import 'package:drift/drift.dart';
 import 'database.dart';
 import 'dates.dart';
 import 'repeat.dart';
+import 'rate_repository.dart';
+import 'balance_guard.dart';
+
+/// Lần định kỳ bị bỏ qua vì tài khoản [accountId] thiếu tiền (Skipped
+/// occurrence, D-046, AC-164).
+class SkippedOccurrence {
+  const SkippedOccurrence(this.ruleId, this.date, this.accountId);
+
+  final int ruleId;
+  final String date;
+  final int accountId;
+}
 
 /// Lần lặp thứ [n] (0 là ngày bắt đầu) của tần suất đơn giản (không "Chọn
 /// thứ"). Tính từ ngày bắt đầu chứ không từ lần trước, nên khoản ngày 31 vẫn
@@ -79,7 +91,16 @@ class RecurringRepository {
 
   /// Tạo các khoản tới hạn còn thiếu tới hết [today]; chạy nhiều lần không tạo
   /// trùng vì chỉ tạo sau `lastGeneratedDate` (AC-24). Trả về số khoản đã tạo.
-  Future<int> generateDue(DateTime today) => _db.transaction(() async {
+  ///
+  /// Có [service]: "có thu mới có chi" (D-046, AC-164) — lần tới hạn làm tài
+  /// khoản thiếu tiền bị BỎ HẲN (không ghi, không sinh bù về sau, chuỗi vẫn
+  /// chạy) và được thêm vào [skipped] (tài khoản bị thiếu).
+  Future<int> generateDue(
+    DateTime today, {
+    CurrencyService? service,
+    List<SkippedOccurrence>? skipped,
+  }) => _db.transaction(() async {
+    final guard = service == null ? null : BalanceGuard(_db, service);
     final todayKey = dateKey(today);
     final rules = await (_db.select(
       _db.recurringRules,
@@ -95,28 +116,30 @@ class RecurringRepository {
         final key = dateKey(day);
         if (key.compareTo(todayKey) > 0) break;
         if (last != null && key.compareTo(last) <= 0) continue;
-        await _db
-            .into(_db.entries)
-            .insert(
-              EntriesCompanion.insert(
-                type: rule.type,
-                amount: rule.amount,
-                // Số chính xác đi theo chuỗi (D-029): quy đổi lại vẫn đúng.
-                amountMicro: Value(rule.amountMicro),
-                categoryId: Value(rule.categoryId),
-                accountId: rule.accountId,
-                toAccountId: Value(rule.toAccountId),
-                date: key,
-                note: Value(rule.note),
-                recurringRuleId: Value(rule.id),
-                currency: Value(rule.currency),
-                originalAmount: Value(rule.originalAmount ?? rule.amount),
-                toAmount: Value(rule.toAmount),
-                toOriginalAmount: Value(rule.toOriginalAmount),
-                toCurrency: Value(rule.toCurrency),
-              ),
-            );
+        final entry = EntriesCompanion.insert(
+          type: rule.type,
+          amount: rule.amount,
+          // Số chính xác đi theo chuỗi (D-029): quy đổi lại vẫn đúng.
+          amountMicro: Value(rule.amountMicro),
+          categoryId: Value(rule.categoryId),
+          accountId: rule.accountId,
+          toAccountId: Value(rule.toAccountId),
+          date: key,
+          note: Value(rule.note),
+          recurringRuleId: Value(rule.id),
+          currency: Value(rule.currency),
+          originalAmount: Value(rule.originalAmount ?? rule.amount),
+          toAmount: Value(rule.toAmount),
+          toOriginalAmount: Value(rule.toOriginalAmount),
+          toCurrency: Value(rule.toCurrency),
+        );
         newLast = key;
+        final short = await guard?.checkAdd(entry);
+        if (short != null) {
+          skipped?.add(SkippedOccurrence(rule.id, key, short.account.id));
+          continue;
+        }
+        await _db.into(_db.entries).insert(entry);
         made++;
         created++;
       }

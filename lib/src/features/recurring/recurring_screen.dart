@@ -77,7 +77,7 @@ class RecurringScreen extends ConsumerWidget {
     RecurringRule rule,
   ) async {
     final categories = switch (rule.type) {
-      EntryType.transfer => const <Category>[],
+      EntryType.transfer || EntryType.debt => const <Category>[],
       EntryType.income =>
         ref.read(categoriesProvider(CategoryType.income)).value,
       EntryType.expense =>

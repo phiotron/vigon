@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
 import 'data/account_repository.dart';
+import 'data/balance_guard.dart';
 import 'data/category_repository.dart';
 import 'data/database.dart';
 import 'data/dates.dart';
@@ -224,10 +225,53 @@ final startupProvider = FutureProvider<void>((ref) async {
   if (refresh == RatesRefreshResult.updated || applied != table.date) {
     await recomputeDerivedAmounts(db, CurrencyService(table, primary));
   }
-  await ref
-      .read(recurringRepositoryProvider)
-      .generateDue(ref.read(clockProvider)());
+  final service = CurrencyService(table, primary);
+  // Nâng cấp schema 8 / khôi phục file cũ: tài khoản đang âm được phép âm
+  // (AC-163); màn chính báo một lần.
+  await applyNegativeUpgrade(db, service);
+  await generateRecurring(ref, service);
 });
+
+/// Tạo khoản định kỳ tới hạn có kiểm "có thu mới có chi" (AC-164): lần thiếu
+/// tiền bị bỏ và ghi vào [skippedOccurrencesProvider] cho thanh ở màn chính.
+Future<void> generateRecurring(Ref ref, [CurrencyService? service]) async =>
+    generateRecurringWith(
+      ref.read(recurringRepositoryProvider),
+      ref.read(clockProvider)(),
+      service ?? await ref.read(currencyServiceProvider.future),
+      ref.read(skippedOccurrencesProvider.notifier),
+    );
+
+/// Như [generateRecurring] cho nơi chỉ có `WidgetRef` (quay lại từ nền, màn
+/// Nhập khoản).
+Future<void> generateRecurringWith(
+  RecurringRepository repo,
+  DateTime today,
+  CurrencyService service,
+  SkippedOccurrencesNotifier sink,
+) async {
+  final skipped = <SkippedOccurrence>[];
+  await repo.generateDue(today, service: service, skipped: skipped);
+  sink.add(skipped);
+}
+
+/// Các lần định kỳ vừa bị bỏ vì thiếu tiền (AC-164), chờ màn chính báo;
+/// đóng thanh thì xoá.
+class SkippedOccurrencesNotifier extends Notifier<List<SkippedOccurrence>> {
+  @override
+  List<SkippedOccurrence> build() => const [];
+
+  void add(List<SkippedOccurrence> more) {
+    if (more.isNotEmpty) state = [...state, ...more];
+  }
+
+  void clear() => state = const [];
+}
+
+final skippedOccurrencesProvider =
+    NotifierProvider<SkippedOccurrencesNotifier, List<SkippedOccurrence>>(
+      SkippedOccurrencesNotifier.new,
+    );
 
 /// Số dư từng tài khoản gom theo tiền tệ gốc (D-042).
 final accountBalanceBagsProvider = StreamProvider<Map<int, MoneyBag>>(

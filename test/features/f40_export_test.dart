@@ -98,7 +98,7 @@ Future<AppDatabase> _seed() async {
     db,
     type: EntryType.income,
     original: 9000000,
-    categoryId: 11,
+    categoryId: 12,
     date: '2026-11-01',
     note: '+84 912 345 678',
     source: EntrySource.emailMb,
@@ -303,16 +303,19 @@ void main() {
       expect(rows[1][3].numFmt, '0.0%');
     });
 
-    test('khoản nợ: số tiền, đã trả, còn lại, hạn, trạng thái', () {
+    test('khoản nợ: số tiền, đã trả, còn lại, lãi, hạn, trạng thái', () {
       final rows = book['Khoản nợ']!;
       expect(
         [for (final c in rows.first) c.value],
         [
           'Người',
           'Chiều',
+          'Lãi suất',
           'Số tiền',
           'Đã trả',
           'Còn lại',
+          'Gốc còn lại',
+          'Lãi tới hôm nay',
           'Tiền tệ',
           'Còn lại (USD)',
           'Ngày',
@@ -322,13 +325,92 @@ void main() {
         ],
       );
       final d = rows[1];
+      String cellOf(String letter) {
+        for (final c in d) {
+          if (c.ref.startsWith(letter)) return c.value;
+        }
+        return '';
+      }
+
       expect(
-        [for (final c in d.take(7)) c.value],
-        ['Anh Tuấn', 'Cho vay', '1000000', '400000', '600000', 'VND', '23.10'],
+        [
+          cellOf('A'),
+          cellOf('B'),
+          cellOf('C'),
+          cellOf('D'),
+          cellOf('E'),
+          cellOf('F'),
+          cellOf('G'),
+          cellOf('H'),
+          cellOf('I'),
+          cellOf('J'),
+        ],
+        [
+          'Anh Tuấn',
+          'Cho vay',
+          '',
+          '1000000',
+          '400000',
+          '600000',
+          '600000',
+          '0',
+          'VND',
+          '23.10',
+        ],
       );
-      expect(d.firstWhere((c) => c.ref.startsWith('J')).value, 'Chưa xong');
-      expect(d.firstWhere((c) => c.ref.startsWith('I')).numFmt, 'yyyy-mm-dd');
+      expect(d.firstWhere((c) => c.ref.startsWith('M')).value, 'Chưa xong');
+      expect(d.firstWhere((c) => c.ref.startsWith('L')).numFmt, 'yyyy-mm-dd');
     });
+
+    test(
+      'AC-176: khoản nợ có lãi — lãi suất, gốc còn lại, lãi tới hôm nay',
+      () async {
+        final db2 = await _seed();
+        addTearDown(db2.close);
+        final repo = DebtRepository(db2, () => testToday);
+        await repo.add(
+          person: 'Bình',
+          direction: DebtDirection.borrowed,
+          amount: 25974000,
+          originalAmount: 10000000,
+          currency: 'VND',
+          date: '2026-09-01',
+          interestRate: 1200,
+          interestPeriod: InterestPeriod.year,
+        );
+        final view = (await repo.all()).firstWhere(
+          (v) => v.debt.person == 'Bình',
+        );
+        final data = ExportData(
+          range: _november,
+          rows: const [],
+          accounts: const {},
+          debts: [view],
+          service: _usd,
+        );
+        final rows = readXlsx(buildExportXlsx(data, _l('vi')))['Khoản nợ']!;
+        String cellOf(String letter) {
+          for (final c in rows[1]) {
+            if (c.ref.startsWith(letter)) return c.value;
+          }
+          return '';
+        }
+
+        // Lãi 12 %/năm từ 01/09 tới hôm nay (testToday 03/11): 63 ngày.
+        expect(cellOf('C'), '12 %/năm');
+        expect(cellOf('G'), '10000000'); // gốc còn lại
+        expect(cellOf('H'), '207123'); // 10.000.000 × 12 % ÷ 365 × 63
+        final en = readXlsx(buildExportXlsx(data, _l('en')))['Debts']!;
+        expect([for (final c in en.first) c.value].sublist(2, 8), [
+          'Interest rate',
+          'Amount',
+          'Paid',
+          'Remaining',
+          'Principal left',
+          'Interest to date',
+        ]);
+      },
+    );
   });
 
   group('xlsx_writer', () {

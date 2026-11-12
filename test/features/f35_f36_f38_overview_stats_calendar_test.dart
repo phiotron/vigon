@@ -58,7 +58,7 @@ void main() {
         db,
         type: EntryType.income,
         amount: 9000000,
-        categoryId: 11,
+        categoryId: 12,
         date: '2026-11-01',
       );
       await goTo(tester, '/overview');
@@ -307,7 +307,7 @@ void main() {
         db,
         type: EntryType.income,
         amount: 9000000,
-        categoryId: 11,
+        categoryId: 12,
         date: '2026-11-06',
       );
       await goTo(tester, '/calendar');

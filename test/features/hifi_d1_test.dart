@@ -188,7 +188,7 @@ void main() {
         db,
         type: EntryType.income,
         amount: 1550000,
-        categoryId: 11,
+        categoryId: 12,
         note: 'Thưởng',
         date: '2026-11-02',
       );

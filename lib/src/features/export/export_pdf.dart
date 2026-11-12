@@ -12,7 +12,7 @@ import '../../data/money.dart';
 import '../../data/money_sum.dart';
 import '../../data/summary.dart';
 import '../../l10n_names.dart';
-import 'export_xlsx.dart' show exportTypeName;
+import 'export_xlsx.dart' show exportDebtLabel, exportTypeName;
 
 /// Font Be Vietnam Pro nhúng vào PDF để chữ có dấu hiện đúng (AC-118).
 class ExportFonts {
@@ -45,6 +45,7 @@ Future<Uint8List> buildExportPdf(
       formatMoney(minor, currencyCode: currency, locale: locale);
   final dateFormat = DateFormat.yMd(locale);
   final summary = data.summary;
+  final debtPersons = {for (final d in data.debts) d.debt.id: d.debt.person};
   // Be Vietnam Pro không có "→": dùng ký tự gần nhất font có (không thì ô trống).
   final glyphs = TtfParser(fonts.regular.buffer.asByteData())
       .charToGlyphIndexMap;
@@ -143,6 +144,8 @@ Future<Uint8List> buildExportPdf(
     final sign = switch (e.type) {
       EntryType.expense => '-',
       EntryType.income => '+',
+      // Debt movement không phải thu/chi; dấu chỉ để đọc chiều tiền (AC-169).
+      EntryType.debt => isDebtInflow(e) ? '+' : '-',
       EntryType.transfer => '',
     };
     final lines = <pw.Widget>[];
@@ -171,6 +174,8 @@ Future<Uint8List> buildExportPdf(
     final when = dateFormat.format(parseDateKey(e.date));
     final category = e.type == EntryType.transfer
         ? '${l.transfer}: ${l.transferLabel(accountName(e.accountId), accountName(e.toAccountId)).replaceAll('→', arrow)}'
+        : e.type == EntryType.debt
+        ? exportDebtLabel(l, e, debtPersons)
         : r.category == null
         ? ''
         : categoryLabel(l, r.category!);

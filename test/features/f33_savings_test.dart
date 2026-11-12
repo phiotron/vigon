@@ -429,7 +429,7 @@ void main() {
         db,
         type: EntryType.income,
         amount: 1000,
-        categoryId: 11,
+        categoryId: 12,
         accountId: accountId,
       );
       await goTo(tester, '/savings');

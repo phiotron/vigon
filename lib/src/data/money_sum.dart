@@ -101,6 +101,11 @@ int entryReceivedOriginal(Entry e) =>
 /// Tiền tệ nhận của chuyển tiền.
 String entryReceivedCurrency(Entry e) => e.toCurrency ?? e.currency;
 
+/// Debt movement (D-049) là tiền vào (đi vay, thu nợ) hay tiền ra (cho vay,
+/// trả nợ). Khoản không phải Debt movement: false.
+bool isDebtInflow(Entry e) =>
+    e.type == EntryType.debt && (e.debtKind?.isInflow ?? false);
+
 /// Số dư mọi tài khoản, gom theo tiền tệ gốc (AC-148): số dư ban đầu + thu −
 /// chi + nhận − chuyển đi.
 Map<int, MoneyBag> balanceBags(List<Account> accounts, List<Entry> entries) {
@@ -126,6 +131,9 @@ Map<int, MoneyBag> balanceBags(List<Account> accounts, List<Entry> entries) {
         if (to != null) {
           bag(to).add(entryReceivedCurrency(e), entryReceivedOriginal(e));
         }
+      case EntryType.debt:
+        bag(e.accountId)
+            .add(e.currency, isDebtInflow(e) ? original : -original);
     }
   }
   return result;

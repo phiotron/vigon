@@ -49,19 +49,37 @@ class AccountsScreen extends ConsumerWidget {
     };
     // Số dư: Tiền tệ chính to ở trên, số theo tiền tệ tài khoản nhỏ ở dưới
     // (D-042). Cả hai tính thẳng từ số gốc, không quy ngược (AC-148).
-    Widget balance(Account a) => MoneyLines(
-      amount: own[a.id] ?? a.initialBalanceOriginal ?? a.initialBalance,
-      currency: a.currency,
-      primaryAmount: balances[a.id],
-      style: VgType.bodyMd.copyWith(
-        color: Theme.of(context).colorScheme.onSurface,
-        fontWeight: FontWeight.w600,
-        fontFeatures: const [FontFeature.tabularFigures()],
-      ),
-      secondaryStyle: VgType.bodySm,
-      crossAxisAlignment: CrossAxisAlignment.end,
-      textAlign: TextAlign.end,
-    );
+    Widget balance(Account a) {
+      final amount = own[a.id] ?? a.initialBalanceOriginal ?? a.initialBalance;
+      final lines = MoneyLines(
+        amount: amount,
+        currency: a.currency,
+        primaryAmount: balances[a.id],
+        style: VgType.bodyMd.copyWith(
+          color: Theme.of(context).colorScheme.onSurface,
+          fontWeight: FontWeight.w600,
+          fontFeatures: const [FontFeature.tabularFigures()],
+        ),
+        secondaryStyle: VgType.bodySm,
+        crossAxisAlignment: CrossAxisAlignment.end,
+        textAlign: TextAlign.end,
+      );
+      if (amount >= 0) return lines;
+      // Nhãn "Âm": icon + chữ, không chỉ màu (AC-162).
+      return Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          StatusChip(
+            key: Key('negative-${a.id}'),
+            label: l.ledgerNegativeBadge,
+            icon: Symbols.trending_down_rounded,
+            tone: StatusTone.warn,
+          ),
+          const SizedBox(width: VgSpace.s2),
+          Flexible(child: lines),
+        ],
+      );
+    }
 
     return Scaffold(
       appBar: AppBar(
@@ -247,6 +265,9 @@ class _AccountEditorState extends ConsumerState<_AccountEditor> {
   String? _balanceError;
   String? _currency;
 
+  /// "Cho phép số dư âm" (D-046, AC-162); mặc định tắt.
+  late bool _allowNegative = widget.account?.allowNegative ?? false;
+
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
@@ -288,6 +309,11 @@ class _AccountEditorState extends ConsumerState<_AccountEditor> {
     });
     if (_nameError != null || abs == null) return;
     final original = negative ? -abs : abs;
+    // Số dư ban đầu âm chỉ nhập được khi bật công tắc (AC-162).
+    if (original < 0 && !_allowNegative) {
+      setState(() => _balanceError = l.ledgerInitialNegativeOff);
+      return;
+    }
     final service = await ref.read(currencyServiceProvider.future);
     final balance = service.toPrimary(original, currency);
     if (balance == null) {
@@ -306,6 +332,7 @@ class _AccountEditorState extends ConsumerState<_AccountEditor> {
         initialBalance: balance,
         initialBalanceOriginal: original,
         currency: currency,
+        allowNegative: _allowNegative,
       );
     } else {
       await repo.edit(
@@ -314,6 +341,7 @@ class _AccountEditorState extends ConsumerState<_AccountEditor> {
         initialBalance: balance,
         initialBalanceOriginal: original,
         currency: currency,
+        allowNegative: _allowNegative,
       );
     }
     if (mounted) Navigator.pop(context);
@@ -440,6 +468,20 @@ class _AccountEditorState extends ConsumerState<_AccountEditor> {
                         errorMaxLines: 3,
                       ),
                     ),
+                  ),
+                  // Thẻ tín dụng, thấu chi (D-046, AC-162).
+                  SwitchListTile(
+                    key: const Key('allow-negative'),
+                    contentPadding: const EdgeInsets.symmetric(
+                      horizontal: VgSpace.s4,
+                    ),
+                    title: Text(l.ledgerAllowNegative),
+                    subtitle: Text(l.ledgerAllowNegativeSub),
+                    value: _allowNegative,
+                    onChanged: (v) => setState(() {
+                      _allowNegative = v;
+                      _balanceError = null;
+                    }),
                   ),
                   // Vùng quản lý chỉ có khi sửa (SCR-18).
                   if (account != null) AccountRemoveSection(account: account),

@@ -60,6 +60,7 @@ Future<AppDatabase> pumpApp(
   DateTime Function()? clock,
   List overrides = const [],
   ExactAlarmAccess? exactAlarm,
+  bool allowNegative = true,
 }) async {
   usePhoneScreen(tester);
   final database = db ?? memoryDatabase();
@@ -72,9 +73,12 @@ Future<AppDatabase> pumpApp(
     await database
         .update(database.accounts)
         .write(
-          const AccountsCompanion(
-            currency: Value('VND'),
-            initialCurrency: Value('VND'),
+          AccountsCompanion(
+            currency: const Value('VND'),
+            initialCurrency: const Value('VND'),
+            // Test cũ ghi chi vào "Tiền mặt" 0 ₫: giữ như trước luật có thu
+            // mới có chi (D-046); test của luật truyền `allowNegative: false`.
+            allowNegative: Value(allowNegative),
           ),
         );
   });

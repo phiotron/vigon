@@ -57,6 +57,7 @@ class DeadlineItem {
     required this.remaining,
     required this.currency,
     this.borrowed = false,
+    this.estimate = false,
   });
 
   final DeadlineKind kind;
@@ -70,6 +71,10 @@ class DeadlineItem {
 
   /// Khoản nợ chiều "Đi vay".
   final bool borrowed;
+
+  /// [remaining] là tổng phải trả ước tính tới hạn của khoản nợ có lãi (gốc
+  /// + lãi tới hạn, AC-174): "phải trả khoảng …".
+  final bool estimate;
 }
 
 enum DeadlineKind { goal, debt }
@@ -103,10 +108,16 @@ List<DeadlineNotification> planDeadlineNotifications({
           : l.deadlineWhenDays(before);
       final body = switch (item.kind) {
         DeadlineKind.goal => l.deadlineGoal(item.name, amount, when),
-        DeadlineKind.debt =>
-          item.borrowed
-              ? l.deadlineDebtBorrowed(item.name, amount, when)
-              : l.deadlineDebtLent(item.name, amount, when),
+        DeadlineKind.debt => switch ((item.borrowed, item.estimate)) {
+          (true, false) => l.deadlineDebtBorrowed(item.name, amount, when),
+          (false, false) => l.deadlineDebtLent(item.name, amount, when),
+          (true, true) => l.debtDeadlineBorrowedEstimate(
+            item.name,
+            amount,
+            when,
+          ),
+          (false, true) => l.debtDeadlineLentEstimate(item.name, amount, when),
+        },
       };
       // Mã ổn định theo (loại, id, mốc): goal chẵn, debt lẻ; mốc 0 hoặc 1.
       final kindBit = item.kind == DeadlineKind.goal ? 0 : 1;
@@ -233,9 +244,11 @@ List<DeadlineItem> deadlineItems({
         id: v.debt.id,
         name: v.debt.person,
         due: parseDateKey(v.debt.dueDate!),
-        remaining: v.remaining(),
+        // Có lãi: tổng phải trả ước tính tới hạn (AC-174).
+        remaining: v.dueEstimate(),
         currency: v.debt.currency,
         borrowed: v.debt.direction == DebtDirection.borrowed,
+        estimate: v.hasInterest,
       ),
 ];
 

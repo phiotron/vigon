@@ -15,7 +15,31 @@ String exportTypeName(AppLocalizations l, EntryType type) => switch (type) {
   EntryType.expense => l.expense,
   EntryType.income => l.income,
   EntryType.transfer => l.transfer,
+  EntryType.debt => l.csvTypeDebt,
 };
+
+/// "12 %/năm" theo ngôn ngữ app cho sheet "Khoản nợ" (AC-176).
+String exportInterestRate(
+  AppLocalizations l,
+  int rate,
+  InterestPeriod period,
+) =>
+    '${formatAmountInput(rate, decimalDigits: 2, locale: l.localeName)} '
+    '${period == InterestPeriod.month ? l.debtPerMonth : l.debtPerYear}';
+
+/// Nhãn của Debt movement trong báo cáo (AC-169): "Cho vay · An"; khoản nợ đã
+/// xoá → "Khoản nợ đã xoá" (AC-175). Cùng chữ với Các khoản.
+String exportDebtLabel(AppLocalizations l, Entry e, Map<int, String> persons) {
+  final person = e.debtId == null ? null : persons[e.debtId];
+  final kind = e.debtKind;
+  if (person == null || kind == null) return l.debtMovementOrphan;
+  return switch (kind) {
+    DebtMovementKind.lend => l.debtMovementLend(person),
+    DebtMovementKind.borrow => l.debtMovementBorrow(person),
+    DebtMovementKind.collect => l.debtMovementCollect(person),
+    DebtMovementKind.repay => l.debtMovementRepay(person),
+  };
+}
 
 /// Chữ của nguồn khoản: "Ghi tay" / "Email MB" (như CSV, AC-124).
 String exportSourceName(AppLocalizations l, EntrySource source) =>
@@ -38,6 +62,7 @@ XlsxCell _text(String? s) =>
 Uint8List buildExportXlsx(ExportData data, AppLocalizations l) {
   final primary = data.primary;
   final service = data.service;
+  final debtPersons = {for (final d in data.debts) d.debt.id: d.debt.person};
   String accountName(int? id) {
     final a = id == null ? null : data.accounts[id];
     return a == null ? '' : accountLabel(l, a);
@@ -77,7 +102,9 @@ Uint8List buildExportXlsx(ExportData data, AppLocalizations l) {
             XlsxText(e.currency),
             _money(entryPrimaryAmount(e, service), primary),
             isTransfer || r.category == null
-                ? const XlsxBlank()
+                ? e.type == EntryType.debt
+                      ? XlsxText(exportDebtLabel(l, e, debtPersons))
+                      : const XlsxBlank()
                 : XlsxText(categoryLabel(l, r.category!)),
             _text(accountName(e.accountId)),
             _text(isTransfer ? accountName(e.toAccountId) : null),
@@ -122,9 +149,12 @@ Uint8List buildExportXlsx(ExportData data, AppLocalizations l) {
     header: [
       l.exportColPerson,
       l.exportColDirection,
+      l.exportColInterestRate,
       l.exportColAmount,
       l.exportColPaid,
       l.exportColRemaining,
+      l.exportColPrincipalLeft,
+      l.exportColInterestToDate,
       l.exportColCurrency,
       l.exportColRemainingIn(primary),
       l.exportColDate,
@@ -132,7 +162,7 @@ Uint8List buildExportXlsx(ExportData data, AppLocalizations l) {
       l.exportColStatus,
       l.exportColNote,
     ],
-    widths: const [20, 10, 14, 14, 14, 9, 18, 12, 12, 12, 30],
+    widths: const [20, 10, 12, 14, 14, 14, 14, 14, 9, 18, 12, 12, 12, 30],
     rows: [
       for (final d in data.debts)
         <XlsxCell>[
@@ -141,9 +171,20 @@ Uint8List buildExportXlsx(ExportData data, AppLocalizations l) {
             DebtDirection.lent => l.debtLent,
             DebtDirection.borrowed => l.debtBorrowed,
           }),
+          d.debt.interestRate == null
+              ? const XlsxBlank()
+              : XlsxText(
+                  exportInterestRate(
+                    l,
+                    d.debt.interestRate!,
+                    d.debt.interestPeriod ?? InterestPeriod.year,
+                  ),
+                ),
           _money(d.total, d.debt.currency),
           _money(d.paid(), d.debt.currency),
           _money(d.remaining(), d.debt.currency),
+          _money(d.principalLeft, d.debt.currency),
+          _money(d.unpaidInterest, d.debt.currency),
           XlsxText(d.debt.currency),
           _money(debtPrimaryRemaining(d, service), primary),
           XlsxDate(parseDateKey(d.debt.date)),

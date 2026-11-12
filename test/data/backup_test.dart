@@ -199,7 +199,7 @@ void main() {
             id: 1,
             type: EntryType.income,
             amount: 5,
-            categoryId: 11,
+            categoryId: 12,
             accountId: 1,
             toAccountId: null,
             date: '2026-11-01',
@@ -462,6 +462,6 @@ void main() {
     final accounts = await db.select(db.accounts).get();
     expect(accounts.single.nameKey, 'cash');
     expect(accounts.single.id, 1);
-    expect(await db.select(db.categories).get(), hasLength(13));
+    expect(await db.select(db.categories).get(), hasLength(15));
   });
 }

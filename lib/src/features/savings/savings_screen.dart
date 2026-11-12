@@ -79,6 +79,19 @@ int? goalWalletBalance(WidgetRef ref, SavingsGoal goal) {
   return (bags[goal.accountId] ?? MoneyBag()).convertTo(service, goal.currency);
 }
 
+/// Số dư ví của [goal] quy MỘT lần từ tổng gốc sang Tiền tệ chính (AC-148),
+/// không qua số đã làm tròn theo tiền tệ mục tiêu: dòng chính của thẻ khớp
+/// đúng thẻ tổng "Ví tiết kiệm" (lỗi lệch 37 ₫: hai chỗ làm tròn khác nhau).
+int? goalWalletPrimary(WidgetRef ref, SavingsGoal goal) {
+  final bags = ref.watch(accountBalanceBagsProvider).value;
+  final service = ref.watch(currencyServiceProvider).value;
+  if (bags == null || service == null) return null;
+  return (bags[goal.accountId] ?? MoneyBag()).convertTo(
+    service,
+    service.primary,
+  );
+}
+
 /// Tiến độ của [goal] (null khi chưa nạp xong).
 GoalProgress? goalProgress(WidgetRef ref, SavingsGoal goal) {
   final balance = goalWalletBalance(ref, goal);
@@ -302,7 +315,13 @@ class GoalCard extends ConsumerWidget {
         GoalProgress.of(goal, 0, ref.watch(todayProvider));
     final accounts = ref.watch(allAccountsProvider).value ?? const <Account>[];
     final wallet = accounts.where((a) => a.id == goal.accountId).firstOrNull;
-    final have = moneyLinesText(context, ref, progress.balance, goal.currency);
+    final have = moneyLinesText(
+      context,
+      ref,
+      progress.balance,
+      goal.currency,
+      primaryAmount: goalWalletPrimary(ref, goal),
+    );
     final target = moneyLinesText(context, ref, progress.target, goal.currency);
     final completed = goal.completedAt != null;
 
@@ -558,7 +577,10 @@ class _SavingsHero extends ConsumerWidget {
               ),
             ),
             const SizedBox(height: VgSpace.s1),
-            Text(l.walletBalanceNote, style: VgType.bodySm.copyWith(color: muted)),
+            Text(
+              l.walletBalanceNote,
+              style: VgType.bodySm.copyWith(color: muted),
+            ),
           ],
         ),
       ),

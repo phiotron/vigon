@@ -74,6 +74,7 @@ CsvFormat csvFormatFor(AppLocalizations l) => CsvFormat.forLanguage(
   expense: l.csvTypeExpense,
   income: l.csvTypeIncome,
   transfer: l.csvTypeTransfer,
+  debt: l.csvTypeDebt,
   timeHeader: l.csvColTime,
   sourceHeader: l.csvColSource,
   manualSource: l.csvSourceManual,

@@ -51,6 +51,7 @@ List<DailyFlow> dailyFlowOf(Iterable<EntryView> rows) {
           e.date,
         )).expense.add(e.currency, entryOriginal(e));
       case EntryType.transfer:
+      case EntryType.debt:
         break;
     }
   }

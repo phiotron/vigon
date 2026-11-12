@@ -116,6 +116,12 @@ GoRouter createRouter({ValueListenable<bool?>? onboarding}) => GoRouter(
               categoryId: int.tryParse(q['category'] ?? ''),
               // `?queue=` chỉ nhận số nguyên: "Sửa trước khi lưu" mục hàng đợi.
               queueItemId: int.tryParse(q['queue'] ?? ''),
+              // Bù tiền (AC-165): tài khoản + số gợi ý; tiền tệ phải là mã 3 chữ.
+              accountId: int.tryParse(q['account'] ?? ''),
+              amount: int.tryParse(q['amount'] ?? ''),
+              currency: RegExp(r'^[A-Z]{3}$').hasMatch(q['currency'] ?? '')
+                  ? q['currency']
+                  : null,
             );
           },
         ),

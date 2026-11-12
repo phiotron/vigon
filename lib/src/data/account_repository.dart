@@ -95,6 +95,18 @@ class AccountRepository {
       _db.savingsGoals,
     )..where((g) => g.accountId.equals(id))).getSingleOrNull();
     if (goal != null) return AccountBlock.inUse;
+    // Khoản nợ / lần trả đi qua tài khoản này (D-049) cũng tính là đang dùng.
+    final debt =
+        await (_db.select(_db.debts)
+              ..where((d) => d.accountId.equals(id))
+              ..limit(1))
+            .get();
+    final payment =
+        await (_db.select(_db.debtPayments)
+              ..where((p) => p.accountId.equals(id))
+              ..limit(1))
+            .get();
+    if (debt.isNotEmpty || payment.isNotEmpty) return AccountBlock.inUse;
     if (await _isLastVisible(id)) return AccountBlock.lastVisible;
     await (_db.delete(_db.accounts)..where((a) => a.id.equals(id))).go();
     return null;
@@ -105,6 +117,7 @@ class AccountRepository {
     int initialBalance = 0,
     int? initialBalanceOriginal,
     String currency = 'USD',
+    bool allowNegative = false,
   }) => _db
       .into(_db.accounts)
       .insert(
@@ -116,6 +129,7 @@ class AccountRepository {
           ),
           currency: Value(currency),
           initialCurrency: Value(currency),
+          allowNegative: Value(allowNegative),
         ),
       );
 
@@ -125,9 +139,13 @@ class AccountRepository {
     required int initialBalance,
     int? initialBalanceOriginal,
     String? currency,
+    bool? allowNegative,
   }) => (_db.update(_db.accounts)..where((a) => a.id.equals(id))).write(
     AccountsCompanion(
       name: Value(name),
+      allowNegative: allowNegative == null
+          ? const Value.absent()
+          : Value(allowNegative),
       nameKey: const Value(null),
       initialBalance: Value(initialBalance),
       initialBalanceOriginal: Value(initialBalanceOriginal ?? initialBalance),
@@ -137,6 +155,13 @@ class AccountRepository {
           : Value(currency),
     ),
   );
+
+  /// Bật/tắt "Cho phép số dư âm" (D-046, AC-162). Tắt khi đang âm vẫn được;
+  /// mọi tiền ra bị chặn tới khi số dư ≥ 0.
+  Future<void> setAllowNegative(int id, bool value) =>
+      (_db.update(_db.accounts)..where((a) => a.id.equals(id))).write(
+        AccountsCompanion(allowNegative: Value(value)),
+      );
 
   /// Đổi tiền tệ tài khoản (D-037): không sửa số gốc của khoản đã có; khoản
   /// mới sẽ mặc định dùng tiền tệ mới. Số dư ban đầu giữ nguyên số, đổi tiền
@@ -231,6 +256,9 @@ Map<int, int> balances(List<Account> accounts, List<Entry> entries) {
           final received = e.toAmount ?? e.amount;
           result.update(to, (v) => v + received, ifAbsent: () => received);
         }
+      case EntryType.debt:
+        final signed = isDebtInflow(e) ? e.amount : -e.amount;
+        result.update(e.accountId, (v) => v + signed, ifAbsent: () => signed);
     }
   }
   return result;

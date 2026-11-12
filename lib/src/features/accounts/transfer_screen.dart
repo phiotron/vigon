@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:material_symbols_icons/symbols.dart';
 
 import '../../../l10n/app_localizations.dart';
+import '../../data/balance_guard.dart';
 import '../../data/calculator.dart';
 import '../../data/database.dart';
 import '../../data/money_sum.dart';
@@ -18,6 +19,7 @@ import '../../ui/messenger.dart';
 import '../../ui/tokens.g.dart';
 import '../entry/entry_time.dart';
 import '../entry/keypad.dart';
+import '../entry/ledger_guard.dart';
 import '../import_queue/queue_match.dart';
 import '../settings/currency_conversion.dart' show formatRate;
 import '../settings/rates_format.dart' show ratePairFor;
@@ -110,8 +112,16 @@ class _TransferScreenState extends ConsumerState<TransferScreen> {
 
   /// Tài khoản Từ mặc định: tài khoản hiện đầu tiên, trừ tài khoản Đến đã điền
   /// sẵn (AC-102: Từ = tài khoản mặc định).
+  /// Đang lọc một tài khoản ở màn chính thì "Từ" = tài khoản đó (D-047,
+  /// AC-166).
   int? _defaultFrom(List<Account> accounts) {
     if (accounts.isEmpty) return null;
+    final filter = ref.read(accountFilterProvider);
+    if (filter != null &&
+        filter != widget.toAccountId &&
+        accounts.any((a) => a.id == filter)) {
+      return filter;
+    }
     return accounts
         .firstWhere(
           (a) => a.id != widget.toAccountId,
@@ -194,6 +204,20 @@ class _TransferScreenState extends ConsumerState<TransferScreen> {
     final repo = ref.read(entryRepositoryProvider);
     final note = _note.text.trim().isEmpty ? null : _note.text.trim();
     final original = _original;
+    // Có thu mới có chi (AC-160): bên gửi thiếu tiền thì báo; bên nhận không
+    // bao giờ bị chặn. Sửa: so với khoản cũ (AC-161).
+    final guard = BalanceGuard(ref.read(databaseProvider), service);
+    final effects = <BalanceEffect>[
+      (accountId: from, currency: fromCurrency, minor: -sentOriginal),
+      (accountId: to, currency: toCurrency, minor: receivedOriginal),
+    ];
+    final short = await guard.check(add: effects, remove: [?original]);
+    if (short != null) {
+      if (mounted) {
+        setState(() => _error = shortfallMessage(context, ref, short));
+      }
+      return;
+    }
     int savedId;
     if (original == null) {
       savedId = await repo.addTransfer(
@@ -239,19 +263,12 @@ class _TransferScreenState extends ConsumerState<TransferScreen> {
     matched?.showUndo();
   }
 
+  /// Xoá có kiểm "có thu mới có chi" (AC-161) và Hoàn tác.
   Future<void> _delete() async {
-    final l = AppLocalizations.of(context);
-    final repo = ref.read(entryRepositoryProvider);
-    final deleted = await repo.delete(_original!.id);
-    if (!mounted) return;
-    context.pop();
-    if (deleted != null) {
-      showUndoSnackBar(
-        message: l.deleted,
-        undoLabel: l.undo,
-        onUndo: () => repo.restore(deleted),
-      );
-    }
+    final original = _original!;
+    if (!await canDeleteEntry(context, ref, original) || !mounted) return;
+    await deleteEntryWithUndo(context, ref, original);
+    if (mounted) context.pop();
   }
 
   @override
@@ -302,7 +319,9 @@ class _TransferScreenState extends ConsumerState<TransferScreen> {
     final pair = table == null || !cross
         ? null
         : ratePairFor(table, fromCurrency, toCurrency);
-    final pairRate = pair == null ? null : table!.rate(pair.$1, pair.$2)?.toDouble();
+    final pairRate = pair == null
+        ? null
+        : table!.rate(pair.$1, pair.$2)?.toDouble();
     final rateLine = pair == null || pairRate == null
         ? null
         : l.rateLine(pair.$1, formatRate(pairRate, l.localeName), pair.$2);

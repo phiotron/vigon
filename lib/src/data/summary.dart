@@ -61,6 +61,7 @@ class PeriodSummary {
       // kèm ghi chú "không có tỷ giá".
       if (service != null &&
           e.type != EntryType.transfer &&
+          e.type != EntryType.debt &&
           !service.has(e.currency, service.primary)) {
         continue;
       }
@@ -79,7 +80,7 @@ class PeriodSummary {
             category,
             MoneyBag(),
           )).$2.add(currency, amount);
-        case EntryType.transfer:
+        case EntryType.transfer || EntryType.debt:
           break;
       }
     }
