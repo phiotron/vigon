@@ -8,7 +8,7 @@ abstract final class LegalTexts {
   static const String privacyVi = r'''
 # Chính sách quyền riêng tư của Ví Gọn
 
-**Cập nhật lần cuối:** 2026-11-11
+**Cập nhật lần cuối:** 2026-11-12
 
 Ví Gọn là ứng dụng ghi chép thu chi cá nhân cho Android và iPhone, do Phiotron phát hành. Chính sách này giải thích ứng dụng lưu dữ liệu gì, lưu ở đâu và bạn kiểm soát chúng thế nào.
 
@@ -28,6 +28,8 @@ Những gì bạn nhập — khoản thu, khoản chi, danh mục, tài khoản,
 Vì vậy trên cả hai nền tảng, đừng trông vào bản sao lưu của điện thoại để giữ dữ liệu Ví Gọn: khi bạn cài lại ứng dụng hoặc khôi phục điện thoại từ bản sao lưu, dữ liệu của ứng dụng không được khôi phục theo. Muốn mang dữ liệu sang máy khác, hãy tự xuất file sao lưu `.vigon` (mục 5) rồi chọn "Khôi phục từ bản sao lưu" trên máy mới.
 
 Nếu bạn bật khóa bằng mã PIN, ứng dụng chỉ lưu một giá trị băm có muối của mã PIN, không lưu mã PIN gốc. Trên Android, giá trị này nằm trong bộ nhớ an toàn được bảo vệ bằng Android Keystore. Trên iPhone, nó nằm trong Keychain của máy và không đồng bộ qua iCloud Keychain. iOS có thể giữ mục Keychain này sau khi bạn gỡ ứng dụng; khi bạn cài lại và ứng dụng bắt đầu với dữ liệu trống, ứng dụng tự nhận ra và xóa mã PIN cũ, nên bạn không bị khóa bằng mã PIN của lần cài trước.
+
+Mở khóa bằng vân tay, Face ID hoặc Touch ID là tùy chọn, chỉ bật được khi đã có mã PIN. Khi bật, ứng dụng chỉ lưu một cờ bật/tắt trong kho khóa an toàn. Vân tay hay khuôn mặt do hệ điều hành giữ và đối chiếu: ứng dụng không bao giờ đọc, không nhận và không lưu dữ liệu sinh trắc, chỉ nhận kết quả đúng hoặc sai. Cờ này không nằm trong file sao lưu và tự mất khi bạn tắt mã PIN hoặc chọn "Xóa toàn bộ dữ liệu". Trên Android, tùy chọn chỉ hiện khi máy có sinh trắc lớp mạnh; máy chỉ có mở khóa khuôn mặt 2D sẽ không thấy tùy chọn này.
 
 **Widget màn hình chính (Android và iPhone).** Nếu bạn thêm widget, widget luôn có hai nút "Chi" và "Thu" để mở nhanh màn nhập khoản. Mặc định widget không hiện số tiền nào. Chỉ khi bạn tự bật "Hiện số tiền trên widget" và không dùng khóa PIN thì widget mới hiện số đã chi trong tháng (và hạn mức nếu bạn đã đặt ngân sách tháng). Khi khóa PIN đang bật, widget luôn ẩn số tiền. Số liệu này chỉ nằm trong bộ nhớ riêng của ứng dụng trên máy (trên iPhone là vùng lưu trữ dùng chung chỉ giữa Ví Gọn và widget của chính nó) và trên màn hình chờ của bạn; không gửi đi đâu, và bị xóa khi bạn tắt công tắc hoặc bật PIN. Khi công tắc đang bật, ai cầm máy bạn cũng có thể thấy số trên màn hình chờ.
 
@@ -87,7 +89,7 @@ Ví Gọn không nhắm tới trẻ em và không thu thập dữ liệu của b
 
 ## 11. Bảo mật
 
-Dữ liệu được bảo vệ bằng cơ chế cách ly ứng dụng của Android và iOS, khóa PIN tùy chọn và tùy chọn "Che nội dung khi chuyển ứng dụng". Khóa PIN giúp ngăn người khác mở ứng dụng trên máy bạn, nhưng không mã hóa dữ liệu. Khi bật tùy chọn che nội dung: trên Android, ứng dụng chặn chụp màn hình và ẩn ảnh xem trước trong danh sách ứng dụng gần đây; trên iPhone, ứng dụng phủ một lớp che lên nội dung khi bạn rời ứng dụng hoặc mở màn chuyển ứng dụng, nhưng iPhone không cho ứng dụng chặn chụp màn hình. Khi chưa bật tùy chọn này, ảnh xem trước của ứng dụng trong màn đa nhiệm có thể hiện số liệu đang mở. Mật khẩu ứng dụng của hộp thư và mật khẩu sao lưu tự động nằm trong kho khóa an toàn của hệ điều hành, không nằm trong cơ sở dữ liệu hay file sao lưu. Nếu bạn phát hiện lỗ hổng bảo mật, hãy gửi email tới địa chỉ ở mục 13.
+Dữ liệu được bảo vệ bằng cơ chế cách ly ứng dụng của Android và iOS, khóa PIN tùy chọn (có thể mở bằng sinh trắc học) và tùy chọn "Che nội dung khi chuyển ứng dụng". Khóa PIN giúp ngăn người khác mở ứng dụng trên máy bạn, nhưng không mã hóa dữ liệu. Sinh trắc chỉ là cách mở khóa nhanh: dữ liệu sinh trắc do hệ điều hành giữ, ứng dụng không đọc và không lưu (mục 2). Khi bật tùy chọn che nội dung: trên Android, ứng dụng chặn chụp màn hình và ẩn ảnh xem trước trong danh sách ứng dụng gần đây; trên iPhone, ứng dụng phủ một lớp che lên nội dung khi bạn rời ứng dụng hoặc mở màn chuyển ứng dụng, nhưng iPhone không cho ứng dụng chặn chụp màn hình. Khi chưa bật tùy chọn này, ảnh xem trước của ứng dụng trong màn đa nhiệm có thể hiện số liệu đang mở. Mật khẩu ứng dụng của hộp thư và mật khẩu sao lưu tự động nằm trong kho khóa an toàn của hệ điều hành, không nằm trong cơ sở dữ liệu hay file sao lưu. Nếu bạn phát hiện lỗ hổng bảo mật, hãy gửi email tới địa chỉ ở mục 13.
 
 ## 12. Thay đổi chính sách
 
@@ -102,7 +104,7 @@ Phiotron, nhà phát triển Ví Gọn — email: phamphuongphuongnd@gmail.com
   static const String privacyEn = r'''
 # Vigon Privacy Policy
 
-**Last updated:** 2026-11-11
+**Last updated:** 2026-11-12
 
 Vigon is a personal income-and-expense tracker for Android and iPhone, published by Phiotron. This policy explains what data the app stores, where it stores it and how you control it.
 
@@ -122,6 +124,8 @@ What you enter — income and expenses, categories, accounts, transfers, notes, 
 So on both platforms, do not rely on your phone's backup to keep Vigon data: if you reinstall the app or restore your phone from a backup, the app's data is not restored with it. To move data to another phone, export a `.vigon` backup file yourself (section 5) and choose "Restore from backup" on the new phone.
 
 If you turn on the PIN lock, the app stores only a salted hash of your PIN, never the PIN itself. On Android this value lives in secure storage protected by the Android Keystore. On iPhone it lives in the device Keychain and is not synchronised through iCloud Keychain. iOS may keep this Keychain item after you uninstall the app; when you reinstall and the app starts with empty data, it notices and removes the old PIN, so you are not locked out by a PIN from a previous install.
+
+Unlocking with a fingerprint, Face ID or Touch ID is optional and can only be turned on while the PIN lock is on. When it is on, the app stores just an on/off flag in secure storage. Your fingerprint or face is held and matched by the operating system: the app never reads, receives or stores biometric data, and only gets a yes or no result. The flag is not included in backup files and is removed when you turn the PIN off or choose "Delete all data". On Android the option only appears when the phone has strong biometrics; a phone with only 2D face unlock will not show it.
 
 **Home-screen widget (Android and iPhone).** If you add the widget, it always has two buttons, "Expense" and "Income", to open the entry screen quickly. By default the widget shows no amounts. Only if you turn on "Show amounts on widget" and do not use the PIN lock does the widget show the amount spent this month (and the monthly limit if you set a budget). While the PIN lock is on, the widget always hides amounts. This data stays only in the app's private storage on the phone (on iPhone, in the shared container used only by Vigon and its own widget) and on your home screen; it is not sent anywhere and is removed when you turn the switch off or turn the PIN on. While the switch is on, anyone holding your phone can see the amount on the home screen.
 
@@ -181,7 +185,7 @@ Vigon is not aimed at children and does not collect data from anyone, including 
 
 ## 11. Security
 
-Data is protected by Android's and iOS's app sandboxing, the optional PIN lock and the optional "Hide content when switching apps". The PIN lock prevents others from opening the app on your phone, but it does not encrypt data. When the hide option is on: on Android the app blocks screenshots and hides its preview in the recent-apps list; on iPhone the app covers its content when you leave the app or open the app switcher, but iPhone does not let apps block screenshots. When the option is off, the app's preview in the task switcher may show the figures on screen. Mailbox app passwords and the automatic-backup password live in the operating system's secure key store, not in the database or backup files. If you find a security vulnerability, please email the address in section 13.
+Data is protected by Android's and iOS's app sandboxing, the optional PIN lock (which can be opened with biometrics) and the optional "Hide content when switching apps". The PIN lock prevents others from opening the app on your phone, but it does not encrypt data. Biometrics are only a quick way to unlock: your biometric data is held by the operating system, and the app neither reads nor stores it (section 2). When the hide option is on: on Android the app blocks screenshots and hides its preview in the recent-apps list; on iPhone the app covers its content when you leave the app or open the app switcher, but iPhone does not let apps block screenshots. When the option is off, the app's preview in the task switcher may show the figures on screen. Mailbox app passwords and the automatic-backup password live in the operating system's secure key store, not in the database or backup files. If you find a security vulnerability, please email the address in section 13.
 
 ## 12. Changes to this policy
 

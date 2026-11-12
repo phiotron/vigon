@@ -483,37 +483,46 @@ class _MonthStartRowState extends State<_MonthStartRow> {
         ),
       ),
     );
-    return InkWell(
+    // Cả hàng chạm được (mở cùng menu với ô xổ), nên cả hàng là MỘT nút trợ
+    // năng: nhãn "tên cài đặt: giá trị". Ô xổ bên trong bị gộp vào nút này để
+    // TalkBack không đọc hai lần cùng một việc.
+    return Semantics(
+      label: '${l.monthStartDay}: ${widget.value}',
+      button: true,
       onTap: _toggle,
-      child: ConstrainedBox(
-        constraints: const BoxConstraints(minHeight: VgSize.tapKey),
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(
-            VgSpace.s4,
-            VgSpace.s1,
-            VgSpace.s2,
-            VgSpace.s1,
-          ),
-          child: Row(
-            children: [
-              ExcludeSemantics(
-                child: Icon(
-                  Symbols.calendar_month_rounded,
-                  color: scheme.onSurfaceVariant,
-                ),
-              ),
-              const SizedBox(width: VgSpace.s4),
-              Expanded(
-                child: ExcludeSemantics(
-                  child: Text(
-                    l.monthStartDay,
-                    style: VgType.bodyMd.copyWith(color: scheme.onSurface),
+      excludeSemantics: true,
+      child: InkWell(
+        onTap: _toggle,
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(minHeight: VgSize.tapKey),
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(
+              VgSpace.s4,
+              VgSpace.s1,
+              VgSpace.s2,
+              VgSpace.s1,
+            ),
+            child: Row(
+              children: [
+                ExcludeSemantics(
+                  child: Icon(
+                    Symbols.calendar_month_rounded,
+                    color: scheme.onSurfaceVariant,
                   ),
                 ),
-              ),
-              const SizedBox(width: VgSpace.s2),
-              dropdown,
-            ],
+                const SizedBox(width: VgSpace.s4),
+                Expanded(
+                  child: ExcludeSemantics(
+                    child: Text(
+                      l.monthStartDay,
+                      style: VgType.bodyMd.copyWith(color: scheme.onSurface),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: VgSpace.s2),
+                dropdown,
+              ],
+            ),
           ),
         ),
       ),

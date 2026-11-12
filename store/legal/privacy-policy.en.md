@@ -1,6 +1,6 @@
 # Vigon Privacy Policy
 
-**Last updated:** 2026-11-11
+**Last updated:** 2026-11-12
 
 Vigon is a personal income-and-expense tracker for Android and iPhone, published by Phiotron. This policy explains what data the app stores, where it stores it and how you control it.
 
@@ -20,6 +20,8 @@ What you enter — income and expenses, categories, accounts, transfers, notes, 
 So on both platforms, do not rely on your phone's backup to keep Vigon data: if you reinstall the app or restore your phone from a backup, the app's data is not restored with it. To move data to another phone, export a `.vigon` backup file yourself (section 5) and choose "Restore from backup" on the new phone.
 
 If you turn on the PIN lock, the app stores only a salted hash of your PIN, never the PIN itself. On Android this value lives in secure storage protected by the Android Keystore. On iPhone it lives in the device Keychain and is not synchronised through iCloud Keychain. iOS may keep this Keychain item after you uninstall the app; when you reinstall and the app starts with empty data, it notices and removes the old PIN, so you are not locked out by a PIN from a previous install.
+
+Unlocking with a fingerprint, Face ID or Touch ID is optional and can only be turned on while the PIN lock is on. When it is on, the app stores just an on/off flag in secure storage. Your fingerprint or face is held and matched by the operating system: the app never reads, receives or stores biometric data, and only gets a yes or no result. The flag is not included in backup files and is removed when you turn the PIN off or choose "Delete all data". On Android the option only appears when the phone has strong biometrics; a phone with only 2D face unlock will not show it.
 
 **Home-screen widget (Android and iPhone).** If you add the widget, it always has two buttons, "Expense" and "Income", to open the entry screen quickly. By default the widget shows no amounts. Only if you turn on "Show amounts on widget" and do not use the PIN lock does the widget show the amount spent this month (and the monthly limit if you set a budget). While the PIN lock is on, the widget always hides amounts. This data stays only in the app's private storage on the phone (on iPhone, in the shared container used only by Vigon and its own widget) and on your home screen; it is not sent anywhere and is removed when you turn the switch off or turn the PIN on. While the switch is on, anyone holding your phone can see the amount on the home screen.
 
@@ -79,7 +81,7 @@ Vigon is not aimed at children and does not collect data from anyone, including 
 
 ## 11. Security
 
-Data is protected by Android's and iOS's app sandboxing, the optional PIN lock and the optional "Hide content when switching apps". The PIN lock prevents others from opening the app on your phone, but it does not encrypt data. When the hide option is on: on Android the app blocks screenshots and hides its preview in the recent-apps list; on iPhone the app covers its content when you leave the app or open the app switcher, but iPhone does not let apps block screenshots. When the option is off, the app's preview in the task switcher may show the figures on screen. Mailbox app passwords and the automatic-backup password live in the operating system's secure key store, not in the database or backup files. If you find a security vulnerability, please email the address in section 13.
+Data is protected by Android's and iOS's app sandboxing, the optional PIN lock (which can be opened with biometrics) and the optional "Hide content when switching apps". The PIN lock prevents others from opening the app on your phone, but it does not encrypt data. Biometrics are only a quick way to unlock: your biometric data is held by the operating system, and the app neither reads nor stores it (section 2). When the hide option is on: on Android the app blocks screenshots and hides its preview in the recent-apps list; on iPhone the app covers its content when you leave the app or open the app switcher, but iPhone does not let apps block screenshots. When the option is off, the app's preview in the task switcher may show the figures on screen. Mailbox app passwords and the automatic-backup password live in the operating system's secure key store, not in the database or backup files. If you find a security vulnerability, please email the address in section 13.
 
 ## 12. Changes to this policy
 

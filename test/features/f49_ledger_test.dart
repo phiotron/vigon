@@ -41,6 +41,31 @@ ProviderContainer _container(WidgetTester tester) =>
 Future<List<Entry>> _entries(WidgetTester tester, AppDatabase db) async =>
     (await tester.runAsync(() => db.select(db.entries).get()))!;
 
+/// Một mục email MB đang chờ chọn danh mục cho tài khoản [accountId].
+Future<int> _queuedEmail(
+  WidgetTester tester,
+  AppDatabase db,
+  int accountId, {
+  String referenceNumber = 'REF9',
+  int amount = 200000,
+}) async => (await tester.runAsync(
+  () => db
+      .into(db.importQueueItems)
+      .insert(
+        ImportQueueItemsCompanion.insert(
+          bank: Bank.mb,
+          referenceNumber: referenceNumber,
+          debitLast4: '1234',
+          accountId: Value(accountId),
+          currency: 'VND',
+          amount: amount,
+          date: '2026-11-03',
+          time: '12:02',
+          payee: const Value('Quán A'),
+        ),
+      ),
+))!;
+
 void main() {
   testWidgets('AC-160 + AC-166: lọc Trip → Nhập khoản mặc định Trip; chi vượt '
       'báo "Trip chỉ còn 500.000 ₫", chi đúng 500.000 lưu được', (
@@ -247,6 +272,82 @@ void main() {
       () => db.select(db.importQueueItems).get(),
     );
     expect(queue, hasLength(1));
+    await disposeApp(tester, db);
+  });
+
+  testWidgets('AC-165: cách 1 · ghi khoản thu vào tài khoản thiếu tiền rồi quay '
+      'lại thì mục tự được lưu, có Hoàn tác', (tester) async {
+    final db = await pumpApp(tester, allowNegative: false);
+    final mb = await _account(tester, db, 'MB Bank …1234', 0);
+    await _queuedEmail(tester, db, mb);
+    await settle(tester);
+    await goTo(tester, '/import-queue');
+    await tester.tap(find.text('Ăn uống'));
+    await settle(tester);
+    // Cách 1: mở màn Nhập khoản đã chọn sẵn tài khoản + số tiền bằng số thiếu.
+    await tester.tap(find.textContaining('Ghi khoản thu vào MB Bank …1234'));
+    await settle(tester);
+    expect(find.text('Khoản thu mới'), findsOneWidget);
+    expect(findPlainText('200.000 ₫'), findsOneWidget);
+    expect(find.text('MB Bank …1234'), findsOneWidget);
+    await tester.tap(find.text('Chọn danh mục'));
+    await settle(tester);
+    await tester.tap(find.text('Lương'));
+    await settle(tester);
+    // Quay lại hàng đợi: kiểm lại thấy đủ tiền nên tự lưu mục kèm Hoàn tác.
+    expect(find.text('Đã bù đủ · đã lưu mục'), findsOneWidget);
+    final rows = await _entries(tester, db);
+    expect(rows, hasLength(2));
+    final income = rows.singleWhere((e) => e.type == EntryType.income);
+    expect((income.amount, income.accountId), (200000, mb));
+    final expense = rows.singleWhere((e) => e.type == EntryType.expense);
+    expect(expense.referenceNumber, 'REF9');
+    expect(
+      await tester.runAsync(() => db.select(db.importQueueItems).get()),
+      isEmpty,
+    );
+    // Hoàn tác chỉ bỏ khoản chi vừa lưu; khoản thu bù vẫn còn.
+    await tester.tap(find.text('Hoàn tác'));
+    await settle(tester);
+    expect((await _entries(tester, db)).single.type, EntryType.income);
+    expect(
+      await tester.runAsync(() => db.select(db.importQueueItems).get()),
+      hasLength(1),
+    );
+    await disposeApp(tester, db);
+  });
+
+  testWidgets('AC-165: cách 2 · chuyển tiền vào tài khoản thiếu tiền rồi quay '
+      'lại thì mục tự được lưu', (tester) async {
+    final db = await pumpApp(tester, allowNegative: false);
+    final mb = await _account(tester, db, 'MB Bank …1234', 0);
+    await tester.runAsync(
+      () => (db.update(db.accounts)..where((a) => a.id.equals(1))).write(
+        const AccountsCompanion(initialBalance: Value(500000)),
+      ),
+    );
+    await _queuedEmail(tester, db, mb);
+    await settle(tester);
+    await goTo(tester, '/import-queue');
+    await tester.tap(find.text('Ăn uống'));
+    await settle(tester);
+    // Cách 2: màn Chuyển tiền với ô Đến đã chọn sẵn tài khoản thiếu tiền.
+    await tester.tap(find.textContaining('Chuyển tiền vào MB Bank …1234'));
+    await settle(tester);
+    await typeKeys(tester, '200000');
+    await tester.tap(find.text('Lưu'));
+    await settle(tester);
+    expect(find.text('Đã bù đủ · đã lưu mục'), findsOneWidget);
+    final rows = await _entries(tester, db);
+    expect(rows, hasLength(2));
+    final transfer = rows.singleWhere((e) => e.type == EntryType.transfer);
+    expect((transfer.accountId, transfer.toAccountId), (1, mb));
+    final expense = rows.singleWhere((e) => e.type == EntryType.expense);
+    expect(expense.referenceNumber, 'REF9');
+    expect(
+      await tester.runAsync(() => db.select(db.importQueueItems).get()),
+      isEmpty,
+    );
     await disposeApp(tester, db);
   });
 

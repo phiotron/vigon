@@ -206,18 +206,18 @@ void main() {
         problems.addAll(await _audit(tester, '/entries Sắp vượt'));
         GoRouter.of(context).go('/settings');
         await settle(tester);
-        for (final row in ['Thông báo ngân sách', 'Mở khoá bằng vân tay']) {
+        for (final row in [
+          'Thông báo ngân sách',
+          'Tháng bắt đầu từ ngày',
+          'Mở khoá bằng vân tay',
+        ]) {
           await tester.scrollUntilVisible(
             find.text(row),
             200,
             scrollable: find.byType(Scrollable).first,
           );
           await settle(tester);
-          // Nhãn: chỉ kiểm hàng mới; hàng "Tháng bắt đầu từ ngày" có sẵn thiếu
-          // nhãn ở nút chạm (lỗi cũ, ngoài phạm vi F-37/F-41) lọt vào khung.
-          problems.addAll(
-            await _audit(tester, '/settings · $row', labels: false),
-          );
+          problems.addAll(await _audit(tester, '/settings · $row'));
           final node = tester.getSemantics(find.text(row));
           final data = node.getSemanticsData();
           if (!data.label.contains(row) ||

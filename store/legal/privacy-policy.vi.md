@@ -1,6 +1,6 @@
 # Chính sách quyền riêng tư của Ví Gọn
 
-**Cập nhật lần cuối:** 2026-11-11
+**Cập nhật lần cuối:** 2026-11-12
 
 Ví Gọn là ứng dụng ghi chép thu chi cá nhân cho Android và iPhone, do Phiotron phát hành. Chính sách này giải thích ứng dụng lưu dữ liệu gì, lưu ở đâu và bạn kiểm soát chúng thế nào.
 
@@ -20,6 +20,8 @@ Những gì bạn nhập — khoản thu, khoản chi, danh mục, tài khoản,
 Vì vậy trên cả hai nền tảng, đừng trông vào bản sao lưu của điện thoại để giữ dữ liệu Ví Gọn: khi bạn cài lại ứng dụng hoặc khôi phục điện thoại từ bản sao lưu, dữ liệu của ứng dụng không được khôi phục theo. Muốn mang dữ liệu sang máy khác, hãy tự xuất file sao lưu `.vigon` (mục 5) rồi chọn "Khôi phục từ bản sao lưu" trên máy mới.
 
 Nếu bạn bật khóa bằng mã PIN, ứng dụng chỉ lưu một giá trị băm có muối của mã PIN, không lưu mã PIN gốc. Trên Android, giá trị này nằm trong bộ nhớ an toàn được bảo vệ bằng Android Keystore. Trên iPhone, nó nằm trong Keychain của máy và không đồng bộ qua iCloud Keychain. iOS có thể giữ mục Keychain này sau khi bạn gỡ ứng dụng; khi bạn cài lại và ứng dụng bắt đầu với dữ liệu trống, ứng dụng tự nhận ra và xóa mã PIN cũ, nên bạn không bị khóa bằng mã PIN của lần cài trước.
+
+Mở khóa bằng vân tay, Face ID hoặc Touch ID là tùy chọn, chỉ bật được khi đã có mã PIN. Khi bật, ứng dụng chỉ lưu một cờ bật/tắt trong kho khóa an toàn. Vân tay hay khuôn mặt do hệ điều hành giữ và đối chiếu: ứng dụng không bao giờ đọc, không nhận và không lưu dữ liệu sinh trắc, chỉ nhận kết quả đúng hoặc sai. Cờ này không nằm trong file sao lưu và tự mất khi bạn tắt mã PIN hoặc chọn "Xóa toàn bộ dữ liệu". Trên Android, tùy chọn chỉ hiện khi máy có sinh trắc lớp mạnh; máy chỉ có mở khóa khuôn mặt 2D sẽ không thấy tùy chọn này.
 
 **Widget màn hình chính (Android và iPhone).** Nếu bạn thêm widget, widget luôn có hai nút "Chi" và "Thu" để mở nhanh màn nhập khoản. Mặc định widget không hiện số tiền nào. Chỉ khi bạn tự bật "Hiện số tiền trên widget" và không dùng khóa PIN thì widget mới hiện số đã chi trong tháng (và hạn mức nếu bạn đã đặt ngân sách tháng). Khi khóa PIN đang bật, widget luôn ẩn số tiền. Số liệu này chỉ nằm trong bộ nhớ riêng của ứng dụng trên máy (trên iPhone là vùng lưu trữ dùng chung chỉ giữa Ví Gọn và widget của chính nó) và trên màn hình chờ của bạn; không gửi đi đâu, và bị xóa khi bạn tắt công tắc hoặc bật PIN. Khi công tắc đang bật, ai cầm máy bạn cũng có thể thấy số trên màn hình chờ.
 
@@ -79,7 +81,7 @@ Ví Gọn không nhắm tới trẻ em và không thu thập dữ liệu của b
 
 ## 11. Bảo mật
 
-Dữ liệu được bảo vệ bằng cơ chế cách ly ứng dụng của Android và iOS, khóa PIN tùy chọn và tùy chọn "Che nội dung khi chuyển ứng dụng". Khóa PIN giúp ngăn người khác mở ứng dụng trên máy bạn, nhưng không mã hóa dữ liệu. Khi bật tùy chọn che nội dung: trên Android, ứng dụng chặn chụp màn hình và ẩn ảnh xem trước trong danh sách ứng dụng gần đây; trên iPhone, ứng dụng phủ một lớp che lên nội dung khi bạn rời ứng dụng hoặc mở màn chuyển ứng dụng, nhưng iPhone không cho ứng dụng chặn chụp màn hình. Khi chưa bật tùy chọn này, ảnh xem trước của ứng dụng trong màn đa nhiệm có thể hiện số liệu đang mở. Mật khẩu ứng dụng của hộp thư và mật khẩu sao lưu tự động nằm trong kho khóa an toàn của hệ điều hành, không nằm trong cơ sở dữ liệu hay file sao lưu. Nếu bạn phát hiện lỗ hổng bảo mật, hãy gửi email tới địa chỉ ở mục 13.
+Dữ liệu được bảo vệ bằng cơ chế cách ly ứng dụng của Android và iOS, khóa PIN tùy chọn (có thể mở bằng sinh trắc học) và tùy chọn "Che nội dung khi chuyển ứng dụng". Khóa PIN giúp ngăn người khác mở ứng dụng trên máy bạn, nhưng không mã hóa dữ liệu. Sinh trắc chỉ là cách mở khóa nhanh: dữ liệu sinh trắc do hệ điều hành giữ, ứng dụng không đọc và không lưu (mục 2). Khi bật tùy chọn che nội dung: trên Android, ứng dụng chặn chụp màn hình và ẩn ảnh xem trước trong danh sách ứng dụng gần đây; trên iPhone, ứng dụng phủ một lớp che lên nội dung khi bạn rời ứng dụng hoặc mở màn chuyển ứng dụng, nhưng iPhone không cho ứng dụng chặn chụp màn hình. Khi chưa bật tùy chọn này, ảnh xem trước của ứng dụng trong màn đa nhiệm có thể hiện số liệu đang mở. Mật khẩu ứng dụng của hộp thư và mật khẩu sao lưu tự động nằm trong kho khóa an toàn của hệ điều hành, không nằm trong cơ sở dữ liệu hay file sao lưu. Nếu bạn phát hiện lỗ hổng bảo mật, hãy gửi email tới địa chỉ ở mục 13.
 
 ## 12. Thay đổi chính sách
 
