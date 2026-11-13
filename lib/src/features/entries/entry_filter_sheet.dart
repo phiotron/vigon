@@ -11,6 +11,7 @@ import '../../data/period.dart';
 import '../../l10n_names.dart';
 import '../../providers.dart';
 import '../../ui/choice_sheet.dart';
+import '../../ui/fields.dart';
 import '../../ui/format.dart';
 import '../../ui/tokens.g.dart';
 import '../home/range_calendar.dart';
@@ -199,18 +200,14 @@ class _EntryFilterSheetState extends ConsumerState<EntryFilterSheet> {
               ),
             ),
           ),
-          Wrap(
-            spacing: VgSpace.s2,
-            children: [
-              for (final c in list)
-                FilterChip(
-                  label: Text(categoryLabel(l, c)),
-                  selected: _categories.contains(c.id),
-                  onSelected: (on) => setState(
-                    () => on ? _categories.add(c.id) : _categories.remove(c.id),
-                  ),
-                ),
-            ],
+          ScopeMultiChips<int>(
+            options: [for (final c in list) (c.id, categoryLabel(l, c))],
+            selected: _categories,
+            onChanged: (id) => setState(
+              () => _categories.contains(id)
+                  ? _categories.remove(id)
+                  : _categories.add(id),
+            ),
           ),
         ],
       );

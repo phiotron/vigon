@@ -101,7 +101,7 @@ class _Body extends ConsumerWidget {
     final netTile = _Tile(
       title: l.overviewNet,
       spoken: '${l.overviewNet}, $netText',
-      child: Text(netText, style: VgType.amountMd.copyWith(color: netColor)),
+      child: _AmountText(netText, color: netColor),
     );
     final budgetTile = left == null
         ? _Tile(
@@ -119,21 +119,31 @@ class _Body extends ConsumerWidget {
                 ? '${l.overviewBudgetLeft}, ${amount(left)}, ${l.almostOver}, ${l.budgetAlertUsed(usedPercent)}'
                 : '${l.overviewBudgetLeft}, ${amount(left)}',
             child: left < 0
-                // Vượt: icon + chữ, không chỉ dựa vào màu (AC-27, AC-40).
-                ? Row(
+                // Vượt: số tiền vượt ở dòng riêng, nhãn "Đã vượt" bên dưới — không để
+                // số bị ngắt giữa nhóm nghìn trong ô hẹp (2026-11-13). Icon +
+                // chữ để không chỉ dựa vào màu (AC-27, AC-40).
+                ? Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Icon(
-                        Symbols.warning_rounded,
-                        fill: 1,
-                        size: 20,
-                        color: scheme.error,
-                      ),
-                      const SizedBox(width: VgSpace.s1),
-                      Expanded(
-                        child: Text(
-                          l.budgetOver(amount(-left)),
-                          style: VgType.amountMd.copyWith(color: scheme.error),
-                        ),
+                      _AmountText(amount(-left), color: scheme.error),
+                      Row(
+                        children: [
+                          Icon(
+                            Symbols.warning_rounded,
+                            fill: 1,
+                            size: 16,
+                            color: scheme.error,
+                          ),
+                          const SizedBox(width: VgSpace.s1),
+                          Flexible(
+                            child: Text(
+                              l.overviewBudgetOver,
+                              style: VgType.bodySm.copyWith(
+                                color: scheme.error,
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                     ],
                   )
@@ -143,12 +153,7 @@ class _Body extends ConsumerWidget {
                 ? Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        amount(left),
-                        style: VgType.amountMd.copyWith(
-                          color: scheme.onSurface,
-                        ),
-                      ),
+                      _AmountText(amount(left), color: scheme.onSurface),
                       Row(
                         children: [
                           Icon(
@@ -170,10 +175,7 @@ class _Body extends ConsumerWidget {
                       ),
                     ],
                   )
-                : Text(
-                    amount(left),
-                    style: VgType.amountMd.copyWith(color: scheme.onSurface),
-                  ),
+                : _AmountText(amount(left), color: scheme.onSurface),
           );
 
     // "tháng 10" / "October" khi tháng bắt đầu ngày 1; không thì khoảng ngày.
@@ -374,6 +376,27 @@ class _HeroBalance extends StatelessWidget {
   }
 }
 
+/// Số tiền trong ô số liệu: một dòng, tự thu nhỏ khi số quá dài — không để
+/// số xuống dòng giữa nhóm nghìn trong ô hẹp (2026-11-13).
+class _AmountText extends StatelessWidget {
+  const _AmountText(this.text, {required this.color});
+
+  final String text;
+  final Color color;
+
+  @override
+  Widget build(BuildContext context) => FittedBox(
+    fit: BoxFit.scaleDown,
+    alignment: AlignmentDirectional.centerStart,
+    child: Text(
+      text,
+      maxLines: 1,
+      softWrap: false,
+      style: VgType.amountMd.copyWith(color: color),
+    ),
+  );
+}
+
 /// Ô số liệu: tiêu đề, giá trị; ô chỉ có số thì đọc một câu [spoken].
 class _Tile extends StatelessWidget {
   const _Tile({required this.title, this.spoken, required this.child});
@@ -453,38 +476,38 @@ class _DebtCard extends ConsumerWidget {
               constraints: const BoxConstraints(minHeight: VgSize.tapMin),
               child: Padding(
                 padding: const EdgeInsets.all(VgSpace.s4),
-                child: Row(
+                // Tiêu đề một hàng riêng để icon và mũi tên không chen giữa
+                // dòng "Người khác nợ bạn …" khi chữ xuống dòng (2026-11-13).
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Icon(
-                      Symbols.handshake_rounded,
-                      color: scheme.onSurfaceVariant,
-                    ),
-                    const SizedBox(width: VgSpace.s3),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
+                    Row(
+                      children: [
+                        Icon(
+                          Symbols.handshake_rounded,
+                          color: scheme.onSurfaceVariant,
+                        ),
+                        const SizedBox(width: VgSpace.s3),
+                        Expanded(
+                          child: Text(
                             l.overviewDebtTitle,
                             style: VgType.titleSm.copyWith(
                               color: scheme.onSurface,
                             ),
                           ),
-                          const SizedBox(height: VgSpace.s1),
-                          for (final line in lines)
-                            Text(
-                              line,
-                              style: VgType.bodyMd.copyWith(
-                                color: scheme.onSurface,
-                              ),
-                            ),
-                        ],
+                        ),
+                        Icon(
+                          Symbols.chevron_right_rounded,
+                          color: scheme.onSurfaceVariant,
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: VgSpace.s2),
+                    for (final line in lines)
+                      Text(
+                        line,
+                        style: VgType.bodyMd.copyWith(color: scheme.onSurface),
                       ),
-                    ),
-                    Icon(
-                      Symbols.chevron_right_rounded,
-                      color: scheme.onSurfaceVariant,
-                    ),
                   ],
                 ),
               ),

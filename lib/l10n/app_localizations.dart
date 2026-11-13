@@ -4400,6 +4400,12 @@ abstract class AppLocalizations {
   /// **'Budget left'**
   String get overviewBudgetLeft;
 
+  /// No description provided for @overviewBudgetOver.
+  ///
+  /// In en, this message translates to:
+  /// **'Over'**
+  String get overviewBudgetOver;
+
   /// No description provided for @overviewSetBudget.
   ///
   /// In en, this message translates to:

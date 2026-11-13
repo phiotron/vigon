@@ -649,7 +649,7 @@ class _FlowBarChartState extends State<FlowBarChart> {
                                   width: rod,
                                   color: selected == null || selected == i
                                       ? c
-                                      : c.withValues(alpha: 0.45),
+                                      : c.withValues(alpha: 0.55),
                                   borderRadius: const BorderRadius.vertical(
                                     top: Radius.circular(3),
                                   ),

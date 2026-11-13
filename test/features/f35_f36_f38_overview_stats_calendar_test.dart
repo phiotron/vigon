@@ -64,8 +64,10 @@ void main() {
       await goTo(tester, '/overview');
       // Thu − chi tháng = 9.000.000 − 5.000.000.
       expect(findPlainText('+4.000.000 ₫'), findsOneWidget);
-      // Ngân sách còn lại = 4.500.000 − 5.000.000 → "Vượt 500.000 ₫".
-      expect(findPlainText('Vượt 500.000 ₫'), findsOneWidget);
+      // Ngân sách còn lại = 4.500.000 − 5.000.000 → số vượt và nhãn "Vượt
+      // ngân sách" (số để dòng riêng, không bị ngắt giữa nhóm nghìn).
+      expect(findPlainText('500.000 ₫'), findsOneWidget);
+      expect(findPlainText('Đã vượt'), findsOneWidget);
       // Tổng số dư = 0 + 9.000.000 − 9.000.000 chi.
       expect(
         findSemanticsLabel(
@@ -320,7 +322,8 @@ void main() {
       );
       // Hôm nay được chọn sẵn: danh sách khoản của ngày 3.
       expect(find.textContaining('phở'), findsOneWidget);
-      expect(findPlainText('Chi 250.000 ₫ · Thu 0 ₫'), findsOneWidget);
+      // Ngày chỉ chi: không đọc thêm "Thu 0 ₫".
+      expect(findPlainText('Chi 250.000 ₫'), findsOneWidget);
 
       // Chạm ngày 6.
       await tester.tap(

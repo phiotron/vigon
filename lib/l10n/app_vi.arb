@@ -844,6 +844,7 @@
   "overviewAllAccounts": "Mọi tài khoản, kể cả tài khoản ẩn. Không gồm khoản nợ.",
   "overviewNet": "Thu − chi tháng",
   "overviewBudgetLeft": "Ngân sách còn lại",
+  "overviewBudgetOver": "Đã vượt",
   "overviewSetBudget": "Đặt ngân sách",
   "overviewMonthEmpty": "Tháng này chưa có khoản nào",
   "overviewChartTitle": "Thu và chi 6 tháng gần nhất",

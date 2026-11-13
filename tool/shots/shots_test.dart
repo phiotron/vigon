@@ -108,6 +108,12 @@ Future<void> _entry(
         toAccountId: Value(to),
         date: date,
         note: Value(note),
+        // Dữ liệu mẫu là VND như `test/helpers.dart`; thiếu hai cột này drift
+        // lấy USD và màn Tổng quan/Thống kê quy đổi thành số nghìn tỷ.
+        currency: const Value('VND'),
+        originalAmount: Value(amount),
+        toAmount: Value(to == null ? null : amount),
+        toCurrency: Value(to == null ? null : 'VND'),
       ),
     );
 
@@ -143,6 +149,8 @@ Future<int> _account(
       AccountsCompanion.insert(
         name: Value(name),
         initialBalance: Value(initial),
+        currency: const Value('VND'),
+        initialCurrency: const Value('VND'),
         sortOrder: Value(order),
         archived: Value(archived),
       ),
@@ -262,6 +270,8 @@ Future<void> _seedNormal(AppDatabase db) async {
           startDate: start,
           lastGeneratedDate: Value(last),
           active: Value(active),
+          currency: const Value('VND'),
+          originalAmount: Value(amount),
         ),
       );
   const m = RecurrenceFrequency.monthly;
@@ -380,7 +390,9 @@ class _Shot {
   final bool settings;
 
   String get language =>
-      name.startsWith('P2_') || name.endsWith('vi') ? 'vi' : 'en';
+      name.startsWith('P2_') || name.startsWith('P5_') || name.endsWith('vi')
+      ? 'vi'
+      : 'en';
   double get textScale => name.endsWith('text-200') ? 2 : 1;
 
   /// Frame tiếng Việt / 200% chỉ có bản sáng.
@@ -501,19 +513,37 @@ Future<void> _tapText(_Ctx c, String text) async {
 /// Bám `.first` để chịu được chữ trùng: tiêu đề nhóm "Giới thiệu" trùng chữ với
 /// dòng mở màn (2026-11-10).
 Future<void> _reveal(_Ctx c, String text, {double alignment = 0.5}) async {
-  final f = find.text(text).first;
+  // `scrollUntilVisible` cần finder chưa `.first`: danh sách lười chưa dựng mục
+  // ở xa, `.first` trên finder rỗng sẽ ném "No element" (2026-11-13).
+  final target = find.text(text);
   await c.t.scrollUntilVisible(
-    f,
+    target,
     300,
     scrollable: find.byType(Scrollable).first,
   );
   await c.t.pumpAndSettle();
+  final f = target.first;
   await Scrollable.ensureVisible(c.t.element(f), alignment: alignment);
   await settle(c.t);
 }
 
 Future<void> _openSettings(_Ctx c) => _tip(c, 'Settings', 'Cài đặt');
 Future<void> _openEntries(_Ctx c) => _tip(c, 'Records', 'Các khoản');
+
+/// Mở một màn trong menu "Tổng quan, thống kê, lịch" ở thanh trên màn chính
+/// (0 Tổng quan, 1 Thống kê, 2 Lịch).
+Future<void> _openInsights(_Ctx c, int index) async {
+  await c.t.tap(
+    find.byTooltip(
+      _l(c, 'Overview, statistics, calendar', 'Tổng quan, thống kê, lịch'),
+    ),
+  );
+  await settle(c.t);
+  const vi = ['Tổng quan', 'Thống kê', 'Lịch'];
+  const en = ['Overview', 'Statistics', 'Calendar'];
+  await c.t.tap(find.text(_l(c, en[index], vi[index])).last);
+  await settle(c.t);
+}
 
 Future<void> _settingsRow(_Ctx c, String text) async {
   await _openSettings(c);
@@ -960,13 +990,45 @@ final _p2 = <_Shot>[
   _Shot('P2_2.1_home_empty', _none, data: _Data.empty),
 ];
 
+/// Màn mới đợt 5 (chưa có frame Hi-Fi): chụp để so bằng mắt với hệ thiết kế
+/// hiện có (StatsCard, chip, lưới lịch, bảng kéo).
+final _p5 = <_Shot>[
+  _Shot('P5_1_overview', (c) => _openInsights(c, 0)),
+  _Shot(
+    'P5_1b_overview_over',
+    (c) => _openInsights(c, 0),
+    prep: (c) => _entry(c.db, _food, 15000000, '2026-11-27', note: 'Laptop'),
+  ),
+  _Shot('P5_2_stats', (c) => _openInsights(c, 1)),
+  _Shot('P5_3_calendar', (c) => _openInsights(c, 2)),
+  _Shot('P5_4_filter', (c) async {
+    await _openEntries(c);
+    await _tip(c, 'Filter', 'Lọc');
+  }),
+  _Shot('P5_5_export', (c) async {
+    await _settingsRow(c, _l(c, 'Export Excel', 'Xuất Excel'));
+  }),
+  _Shot('P5_6_security', (c) async {
+    await _openSettings(c);
+    await _reveal(c, _l(c, 'Security', 'Bảo mật'), alignment: 0);
+  }, settings: true),
+  _Shot('P5_7_insights', (c) async {
+    await c.t.tap(
+      find.byTooltip(
+        _l(c, 'Overview, statistics, calendar', 'Tổng quan, thống kê, lịch'),
+      ),
+    );
+    await settle(c.t);
+  }),
+];
+
 void main() {
   autoUpdateGoldenFiles = true;
   driftRuntimeOptions.dontWarnAboutMultipleDatabases = true;
   WidgetsApp.debugAllowBannerOverride = false;
   setUpAll(_loadFonts);
 
-  for (final s in [..._p1, ..._p2]) {
+  for (final s in [..._p1, ..._p2, ..._p5]) {
     for (final theme in ['light', 'dark']) {
       if (theme == 'dark' && s.lightOnly) continue;
       testWidgets('${s.name} · $theme', (t) async {

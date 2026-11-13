@@ -2596,6 +2596,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get overviewBudgetLeft => 'Budget left';
 
   @override
+  String get overviewBudgetOver => 'Over';
+
+  @override
   String get overviewSetBudget => 'Set a budget';
 
   @override

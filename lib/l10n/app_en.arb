@@ -870,6 +870,7 @@
   "overviewAllAccounts": "All accounts, hidden ones included. Debts not included.",
   "overviewNet": "Income − expenses",
   "overviewBudgetLeft": "Budget left",
+  "overviewBudgetOver": "Over",
   "overviewSetBudget": "Set a budget",
   "overviewMonthEmpty": "Nothing recorded this month yet",
   "overviewChartTitle": "Income and expenses, last 6 months",

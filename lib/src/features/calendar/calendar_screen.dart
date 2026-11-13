@@ -174,7 +174,8 @@ class CalendarScreen extends ConsumerWidget {
   }
 }
 
-/// Đầu danh sách của ngày đang chọn: tên ngày, "Chi X · Thu Y".
+/// Đầu danh sách của ngày đang chọn: tên ngày, "Chi X · Thu Y" — chỉ gồm phần
+/// có số (ngày chỉ chi thì chỉ "Chi X").
 class _DayHeader extends StatelessWidget {
   const _DayHeader({
     required this.day,
@@ -194,6 +195,10 @@ class _DayHeader extends StatelessWidget {
     final scheme = Theme.of(context).colorScheme;
     final locale = Localizations.localeOf(context).languageCode;
     final name = DateFormat.yMMMMEEEEd(locale).format(day);
+    final totals = [
+      if (expense > 0) '${l.expense} ${money(context, currency, expense)}',
+      if (income > 0) '${l.income} ${money(context, currency, income)}',
+    ].join(' · ');
     return Padding(
       padding: const EdgeInsets.fromLTRB(
         VgSpace.s4,
@@ -212,13 +217,13 @@ class _DayHeader extends StatelessWidget {
                 style: VgType.titleSm.copyWith(color: scheme.onSurface),
               ),
             ),
-            Text(
-              l.calendarDayTotals(
-                money(context, currency, expense),
-                money(context, currency, income),
+            // Chỉ hiện phần có số: ngày chỉ chi không đọc thêm "Thu 0 ₫"
+            // (2026-11-13). Ngày không có gì thì bỏ hẳn dòng tổng.
+            if (totals.isNotEmpty)
+              Text(
+                totals,
+                style: VgType.bodySm.copyWith(color: scheme.onSurfaceVariant),
               ),
-              style: VgType.bodySm.copyWith(color: scheme.onSurfaceVariant),
-            ),
           ],
         ),
       ),

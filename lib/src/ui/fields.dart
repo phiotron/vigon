@@ -203,62 +203,112 @@ class ScopeChips<T> extends StatelessWidget {
   final ValueChanged<T> onChanged;
 
   @override
+  Widget build(BuildContext context) => Wrap(
+    spacing: VgSpace.s2,
+    children: [
+      for (final (value, label) in options)
+        _ScopeChip(
+          label: label,
+          on: value == selected,
+          exclusive: true,
+          onTap: () => onChanged(value),
+        ),
+    ],
+  );
+}
+
+/// Như [ScopeChips] nhưng chọn được nhiều mục (bộ lọc danh mục, N-04, AC-115):
+/// cùng kiểu chip, mỗi mục bật/tắt độc lập. Nhãn đọc không nằm trong nhóm
+/// loại trừ lẫn nhau.
+class ScopeMultiChips<T> extends StatelessWidget {
+  const ScopeMultiChips({
+    super.key,
+    required this.options,
+    required this.selected,
+    required this.onChanged,
+  });
+
+  final List<(T, String)> options;
+  final Set<T> selected;
+  final ValueChanged<T> onChanged;
+
+  @override
+  Widget build(BuildContext context) => Wrap(
+    spacing: VgSpace.s2,
+    children: [
+      for (final (value, label) in options)
+        _ScopeChip(
+          label: label,
+          on: selected.contains(value),
+          exclusive: false,
+          onTap: () => onChanged(value),
+        ),
+    ],
+  );
+}
+
+/// Một chip của [ScopeChips]/[ScopeMultiChips].
+class _ScopeChip extends StatelessWidget {
+  const _ScopeChip({
+    required this.label,
+    required this.on,
+    required this.exclusive,
+    required this.onTap,
+  });
+
+  final String label;
+  final bool on;
+  final bool exclusive;
+  final VoidCallback onTap;
+
+  @override
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
     final shape = BorderRadius.circular(VgRadius.sm);
-
-    Widget chip(T value, String label) {
-      final on = value == selected;
-      final fg = on ? scheme.onSecondaryContainer : scheme.onSurface;
-      return Semantics(
-        button: true,
-        selected: on,
-        inMutuallyExclusiveGroup: true,
-        child: InkWell(
-          onTap: () => onChanged(value),
-          borderRadius: shape,
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(minHeight: VgSize.tapMin),
-            child: Center(
-              widthFactor: 1,
-              child: Container(
-                constraints: const BoxConstraints(minHeight: 32),
-                padding: EdgeInsetsDirectional.fromSTEB(
-                  on ? VgSpace.s2 : VgSpace.s3,
-                  VgSpace.s1,
-                  VgSpace.s4,
-                  VgSpace.s1,
-                ),
-                decoration: BoxDecoration(
-                  color: on ? scheme.secondaryContainer : null,
-                  border: on ? null : Border.all(color: scheme.outline),
-                  borderRadius: shape,
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    if (on) ...[
-                      Icon(Symbols.check_rounded, size: 18, color: fg),
-                      const SizedBox(width: 6),
-                    ],
-                    Flexible(
-                      child: Text(
-                        label,
-                        style: VgType.labelMd.copyWith(color: fg),
-                      ),
-                    ),
+    final fg = on ? scheme.onSecondaryContainer : scheme.onSurface;
+    return Semantics(
+      button: true,
+      selected: on,
+      inMutuallyExclusiveGroup: exclusive,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: shape,
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(minHeight: VgSize.tapMin),
+          child: Center(
+            widthFactor: 1,
+            child: Container(
+              constraints: const BoxConstraints(minHeight: 32),
+              padding: EdgeInsetsDirectional.fromSTEB(
+                on ? VgSpace.s2 : VgSpace.s3,
+                VgSpace.s1,
+                VgSpace.s4,
+                VgSpace.s1,
+              ),
+              decoration: BoxDecoration(
+                color: on ? scheme.secondaryContainer : null,
+                border: on ? null : Border.all(color: scheme.outline),
+                borderRadius: shape,
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  if (on) ...[
+                    Icon(Symbols.check_rounded, size: 18, color: fg),
+                    const SizedBox(width: 6),
                   ],
-                ),
+                  Flexible(
+                    child: Text(
+                      label,
+                      style: VgType.labelMd.copyWith(color: fg),
+                    ),
+                  ),
+                ],
               ),
             ),
           ),
         ),
-      );
-    }
-
-    return Wrap(
-      spacing: VgSpace.s2,
-      children: [for (final (value, label) in options) chip(value, label)],
+      ),
     );
   }
 }

@@ -11,6 +11,13 @@ import 'package:vigon/src/providers.dart';
 
 import '../helpers.dart';
 
+/// Chip danh mục trong bảng Lọc (tên danh mục cũng có thể xuất hiện ở danh
+/// sách khoản phía sau bảng).
+Finder _categoryChip(String name) => find.descendant(
+  of: find.byType(EntryFilterSheet),
+  matching: find.text(name),
+);
+
 /// Ghi các khoản mẫu: id danh mục theo seed (1 Ăn uống, 2 Đi lại, 5 Mua sắm,
 /// 12 Lương — hai danh mục lãi thêm ở schema 8 đẩy id danh mục thu lên 12).
 Future<void> _seedEntries(WidgetTester tester, AppDatabase db) async {
@@ -59,8 +66,8 @@ void main() {
 
     await _enter(tester, 'filter-min', '50000');
     await _enter(tester, 'filter-max', '200000');
-    await tester.tap(find.widgetWithText(FilterChip, 'Ăn uống'));
-    await tester.tap(find.widgetWithText(FilterChip, 'Đi lại'));
+    await tester.tap(_categoryChip('Ăn uống'));
+    await tester.tap(_categoryChip('Đi lại'));
     await tester.pump();
     await tester.tap(find.text('Áp dụng'));
     await settle(tester);
@@ -124,8 +131,8 @@ void main() {
       note: 'Chuyển ví',
     );
     await _openFilter(tester);
-    await tester.tap(find.widgetWithText(FilterChip, 'Lương'));
-    await tester.tap(find.widgetWithText(FilterChip, 'Mua sắm'));
+    await tester.tap(_categoryChip('Lương'));
+    await tester.tap(_categoryChip('Mua sắm'));
     await tester.pump();
     await tester.tap(find.text('Áp dụng'));
     await settle(tester);
@@ -233,7 +240,7 @@ void main() {
     );
     await _openFilter(tester);
     await _enter(tester, 'filter-min', '50000');
-    await tester.tap(find.widgetWithText(FilterChip, 'Ăn uống'));
+    await tester.tap(_categoryChip('Ăn uống'));
     await tester.pump();
     await tester.tap(find.text('Áp dụng'));
     await settle(tester);
@@ -317,8 +324,8 @@ void main() {
 
         await audit('bảng lọc');
         await _enter(tester, 'filter-min', '50000');
-        await tester.tap(find.widgetWithText(FilterChip, 'Ăn uống'));
-        await tester.tap(find.widgetWithText(FilterChip, 'Đi lại'));
+        await tester.tap(_categoryChip('Ăn uống'));
+        await tester.tap(_categoryChip('Đi lại'));
         await tester.pump();
         await tester.ensureVisible(find.text('Áp dụng'));
         await tester.tap(find.text('Áp dụng'));

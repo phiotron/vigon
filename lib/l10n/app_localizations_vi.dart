@@ -2556,6 +2556,9 @@ class AppLocalizationsVi extends AppLocalizations {
   String get overviewBudgetLeft => 'Ngân sách còn lại';
 
   @override
+  String get overviewBudgetOver => 'Đã vượt';
+
+  @override
   String get overviewSetBudget => 'Đặt ngân sách';
 
   @override
