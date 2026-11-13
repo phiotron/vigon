@@ -9,6 +9,7 @@ import 'package:vigon/src/features/budget_alert/budget_alert_settings.dart';
 import 'package:vigon/src/features/budget_alert/budget_alerts.dart';
 import 'package:vigon/src/features/reminder/reminder_providers.dart';
 import 'package:vigon/src/features/reminder/reminder_scheduler.dart';
+import 'package:vigon/src/features/settings/settings_screen.dart';
 
 import '../helpers.dart';
 
@@ -285,15 +286,15 @@ void main() {
       'Ngân sách tháng 11: đã dùng 80%',
       'Ngân sách tháng 11: đã dùng 100%',
     ]);
-    // Chạm thông báo khi đang ở Cài đặt → mở Tổng quan (AC-113; router có
+    // Chạm thông báo khi đang ở tab Cài đặt → mở Tổng quan (AC-113; router có
     // `/overview` từ F-35).
     await tester.tap(find.byTooltip('Cài đặt'));
     await settle(tester);
-    expect(find.byTooltip('Cài đặt'), findsNothing);
+    expect(find.byType(SettingsScreen), findsOneWidget);
     scheduler.onTap!(budgetAlertPayload);
     await settle(tester);
     expect(find.text('Tổng quan'), findsWidgets);
-    expect(find.byTooltip('Cài đặt'), findsNothing);
+    expect(find.byType(SettingsScreen), findsNothing);
     await disposeApp(tester, db);
   });
 }

@@ -141,6 +141,8 @@ class _EntriesAppBarState extends ConsumerState<EntriesAppBar> {
     final active = ref.watch(entrySearchProvider.select((s) => s.active));
     if (!active) {
       return AppBar(
+        // Tab gốc không có nút quay lại: tiêu đề bắt đầu ở x = 16 như màn chính.
+        titleSpacing: VgSpace.s4,
         title: Text(widget.title),
         actions: [
           IconButton(

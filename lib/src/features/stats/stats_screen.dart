@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
+import 'package:material_symbols_icons/symbols.dart';
 
 import '../../../l10n/app_localizations.dart';
 import '../../data/period.dart';
@@ -9,6 +11,7 @@ import '../../l10n_names.dart';
 import '../../providers.dart';
 import '../../ui/category_avatar.dart';
 import '../../ui/format.dart';
+import '../../ui/main_tab_bar.dart';
 import '../../ui/tokens.g.dart';
 import '../home/home_extras.dart';
 import 'stats_providers.dart';
@@ -27,9 +30,18 @@ class StatsScreen extends ConsumerWidget {
     final data = ref.watch(statsDataProvider);
     return Scaffold(
       appBar: AppBar(
+        titleSpacing: VgSpace.s4,
         title: Text(l.statsTitle),
-        actions: const [AccountFilterButton()],
+        actions: [
+          const AccountFilterButton(),
+          IconButton(
+            icon: const Icon(Symbols.calendar_month_rounded),
+            tooltip: l.calendarTitle,
+            onPressed: () => context.push('/calendar'),
+          ),
+        ],
       ),
+      bottomNavigationBar: const MainTabBar(current: MainTab.stats),
       body: SafeArea(
         child: Column(
           children: [

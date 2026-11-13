@@ -69,10 +69,6 @@ GoRouter createRouter({ValueListenable<bool?>? onboarding}) => GoRouter(
       builder: (context, state) => const HomeScreen(),
       routes: [
         GoRoute(
-          path: 'settings',
-          builder: (context, state) => const SettingsScreen(),
-        ),
-        GoRoute(
           path: 'rates',
           builder: (context, state) => const RatesScreen(),
         ),
@@ -100,10 +96,6 @@ GoRouter createRouter({ValueListenable<bool?>? onboarding}) => GoRouter(
           redirect: _idOrHome,
           builder: (context, state) =>
               TransferScreen(entryId: int.parse(state.pathParameters['id']!)),
-        ),
-        GoRoute(
-          path: 'entries',
-          builder: (context, state) => const EntriesScreen(),
         ),
         GoRoute(
           path: 'entry/new',
@@ -153,16 +145,7 @@ GoRouter createRouter({ValueListenable<bool?>? onboarding}) => GoRouter(
           path: 'savings',
           builder: (context, state) => const SavingsScreen(),
         ),
-        // F-35, F-36, F-38: Tổng quan, Thống kê, Lịch (lối vào tạm từ thanh
-        // trên màn chính, đợt 5).
-        GoRoute(
-          path: 'overview',
-          builder: (context, state) => const OverviewScreen(),
-        ),
-        GoRoute(
-          path: 'stats',
-          builder: (context, state) => const StatsScreen(),
-        ),
+        // F-38: Lịch (mở từ nút trên thanh trên Tổng quan/Thống kê, đợt 5).
         GoRoute(
           path: 'calendar',
           builder: (context, state) => const CalendarScreen(),
@@ -184,6 +167,24 @@ GoRouter createRouter({ValueListenable<bool?>? onboarding}) => GoRouter(
           ],
         ),
       ],
+    ),
+    // 5 tab gốc (đợt 5): mỗi tab là một gốc, không chồng lên màn chính. Các
+    // màn phụ vẫn nằm dưới `/` và mở chồng lên tab đang xem.
+    GoRoute(
+      path: '/entries',
+      builder: (context, state) => const EntriesScreen(),
+    ),
+    GoRoute(
+      path: '/overview',
+      builder: (context, state) => const OverviewScreen(),
+    ),
+    GoRoute(
+      path: '/stats',
+      builder: (context, state) => const StatsScreen(),
+    ),
+    GoRoute(
+      path: '/settings',
+      builder: (context, state) => const SettingsScreen(),
     ),
   ],
 );

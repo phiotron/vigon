@@ -104,6 +104,12 @@ abstract class AppLocalizations {
   /// **'Vigon'**
   String get appTitle;
 
+  /// No description provided for @homeTab.
+  ///
+  /// In en, this message translates to:
+  /// **'Home'**
+  String get homeTab;
+
   /// No description provided for @settings.
   ///
   /// In en, this message translates to:

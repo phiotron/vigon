@@ -10,6 +10,7 @@ import '../../data/rate_repository.dart';
 import '../../providers.dart';
 import '../../ui/choice_segments.dart';
 import '../../ui/format.dart';
+import '../../ui/main_tab_bar.dart';
 import '../../ui/messenger.dart';
 import '../../ui/settings_rows.dart';
 import '../../ui/theme.dart';
@@ -144,7 +145,11 @@ class SettingsScreen extends ConsumerWidget {
     );
 
     return Scaffold(
-      appBar: AppBar(title: Text(l.settings)),
+      appBar: AppBar(
+        titleSpacing: VgSpace.s4,
+        title: Text(l.settings),
+      ),
+      bottomNavigationBar: const MainTabBar(current: MainTab.settings),
       body: ListView(
         padding: const EdgeInsets.only(bottom: VgSpace.s6),
         children: [

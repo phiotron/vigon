@@ -13,6 +13,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get appTitle => 'Vigon';
 
   @override
+  String get homeTab => 'Home';
+
+  @override
   String get settings => 'Settings';
 
   @override

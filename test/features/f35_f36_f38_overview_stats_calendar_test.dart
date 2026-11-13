@@ -4,8 +4,12 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:vigon/src/data/database.dart';
 import 'package:vigon/src/data/debt_repository.dart';
 import 'package:vigon/src/data/settings_repository.dart';
+import 'package:vigon/src/features/calendar/calendar_screen.dart';
 import 'package:vigon/src/features/debts/debts_screen.dart';
+import 'package:vigon/src/features/entries/entries_screen.dart';
+import 'package:vigon/src/features/home/home_screen.dart';
 import 'package:vigon/src/features/overview/overview_screen.dart';
+import 'package:vigon/src/features/settings/settings_screen.dart';
 import 'package:vigon/src/features/stats/stats_screen.dart';
 
 import '../helpers.dart';
@@ -206,16 +210,32 @@ void main() {
       await disposeApp(tester, db);
     });
 
-    testWidgets('màn chính mở Tổng quan, Thống kê, Lịch từ nút trên thanh '
-        'trên', (tester) async {
+    testWidgets('thanh tab dưới mở 5 màn gốc; Lịch mở từ Tổng quan', (
+      tester,
+    ) async {
       final db = await pumpApp(tester);
-      await tester.tap(find.byTooltip('Tổng quan, thống kê, lịch'));
+      expect(find.byType(HomeScreen), findsOneWidget);
+      await tester.tap(find.byTooltip('Các khoản'));
       await settle(tester);
-      expect(find.text('Thống kê'), findsOneWidget);
-      expect(find.text('Lịch'), findsOneWidget);
-      await tester.tap(find.text('Tổng quan'));
+      expect(find.byType(EntriesScreen), findsOneWidget);
+      await tester.tap(find.byTooltip('Tổng quan'));
       await settle(tester);
       expect(find.byType(OverviewScreen), findsOneWidget);
+      await tester.tap(find.byTooltip('Thống kê'));
+      await settle(tester);
+      expect(find.byType(StatsScreen), findsOneWidget);
+      await tester.tap(find.byTooltip('Cài đặt'));
+      await settle(tester);
+      expect(find.byType(SettingsScreen), findsOneWidget);
+      await tester.tap(find.byTooltip('Trang chủ'));
+      await settle(tester);
+      expect(find.byType(HomeScreen), findsOneWidget);
+      // Lịch là màn phụ (nút trên thanh trên Tổng quan), không phải tab thứ 6.
+      await tester.tap(find.byTooltip('Tổng quan'));
+      await settle(tester);
+      await tester.tap(find.byTooltip('Lịch'));
+      await settle(tester);
+      expect(find.byType(CalendarScreen), findsOneWidget);
       await disposeApp(tester, db);
     });
   });

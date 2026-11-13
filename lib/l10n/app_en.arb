@@ -1,6 +1,7 @@
 {
   "@@locale": "en",
   "appTitle": "Vigon",
+  "homeTab": "Home",
   "settings": "Settings",
   "theme": "Theme",
   "themeSystem": "System",

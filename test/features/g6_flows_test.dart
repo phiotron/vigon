@@ -37,7 +37,8 @@ void main() {
     await tester.enterText(find.byType(TextField), '1000000');
     await tester.tap(find.text('Lưu'));
     await settle(tester);
-    await tester.tap(find.byTooltip('Quay lại'));
+    // Tab Cài đặt không có nút quay lại: về màn chính bằng tab Trang chủ.
+    await tester.tap(find.byTooltip('Trang chủ'));
     await settle(tester);
     expect(
       findPlainText('Ngân sách tháng: Đã chi 0 ₫ / 1.000.000 ₫'),

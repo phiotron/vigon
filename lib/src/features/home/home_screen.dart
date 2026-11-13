@@ -13,10 +13,10 @@ import '../../providers.dart';
 import '../../ui/balance_bar.dart';
 import '../../ui/category_avatar.dart';
 import '../../ui/category_grid.dart';
-import '../../ui/choice_sheet.dart';
 import '../../ui/format.dart';
 import '../../ui/limit_bar.dart';
 import '../../ui/main_action_button.dart';
+import '../../ui/main_tab_bar.dart';
 import '../../ui/messenger.dart';
 import '../../ui/spending_ring.dart';
 import '../../ui/theme.dart';
@@ -49,8 +49,8 @@ class HomeScreen extends ConsumerWidget {
           padding: const EdgeInsets.only(left: VgSpace.s3),
           child: Text(l.appTitle),
         ),
-        // Mockup v4 SCR-01: lọc tài khoản · hộp thư (khi có khoản chờ) · Cài
-        // đặt.
+        // Mockup v4 SCR-01: lọc tài khoản · hộp thư (khi có khoản chờ). Tổng
+        // quan, Thống kê, Cài đặt đã có tab riêng dưới thanh điều hướng.
         actions: [
           if (accounts.length > 1)
             _AccountFilterMenu(accounts: accounts, selected: accountFilter),
@@ -61,53 +61,9 @@ class HomeScreen extends ConsumerWidget {
               tooltip: '${l.importQueue}: $queueCount',
               onPressed: () => context.push('/import-queue'),
             ),
-          // Đợt 5 (lối vào tạm, chờ mockup v5): một nút gom Tổng quan,
-          // Thống kê, Lịch (F-35, F-36, F-38) trong bảng kéo cùng kiểu với
-          // các bảng chọn khác của app.
-          IconButton(
-            icon: const Icon(Symbols.insights_rounded),
-            tooltip: l.overviewMenu,
-            onPressed: () async {
-              final picked = await showChoiceSheet<String>(
-                context,
-                title: l.overviewMenu,
-                selected: '',
-                options: [
-                  ChoiceOption(
-                    '/overview',
-                    l.overviewTitle,
-                    icon: Symbols.dashboard_rounded,
-                  ),
-                  ChoiceOption(
-                    '/stats',
-                    l.statsTitle,
-                    icon: Symbols.bar_chart_rounded,
-                  ),
-                  ChoiceOption(
-                    '/calendar',
-                    l.calendarTitle,
-                    icon: Symbols.calendar_month_rounded,
-                  ),
-                ],
-              );
-              if (picked == null || !context.mounted) return;
-              context.push(picked.$1);
-            },
-          ),
-          // Mockup v4 không vẽ nút này (chỉ thanh Số dư mở danh sách); giữ
-          // lối tắt của app hiện tại.
-          IconButton(
-            icon: const Icon(Symbols.receipt_long_rounded),
-            tooltip: l.entries,
-            onPressed: () => context.push('/entries'),
-          ),
-          IconButton(
-            icon: const Icon(Symbols.settings_rounded),
-            tooltip: l.settings,
-            onPressed: () => context.push('/settings'),
-          ),
         ],
       ),
+      bottomNavigationBar: const MainTabBar(current: MainTab.home),
       body: SafeArea(
         child: Column(
           children: [
@@ -533,7 +489,7 @@ class _BalanceBar extends ConsumerWidget {
         periodTitle:
             '${periodTitle(context, ref.watch(periodProvider))} · '
             '${AppLocalizations.of(context).mainFirstNote(currency)}',
-        onTap: () => context.push('/entries'),
+        onTap: () => context.go('/entries'),
       ),
     );
   }

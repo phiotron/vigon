@@ -9,6 +9,7 @@ import '../../data/period.dart';
 import '../../data/stats.dart';
 import '../../providers.dart';
 import '../../ui/format.dart';
+import '../../ui/main_tab_bar.dart';
 import '../../ui/theme.dart';
 import '../../ui/tokens.g.dart';
 import '../budget_alert/budget_alert_providers.dart';
@@ -35,7 +36,18 @@ class OverviewScreen extends ConsumerWidget {
     final month = data.value?.month;
 
     return Scaffold(
-      appBar: AppBar(title: Text(l.overviewTitle)),
+      appBar: AppBar(
+        titleSpacing: VgSpace.s4,
+        title: Text(l.overviewTitle),
+        actions: [
+          IconButton(
+            icon: const Icon(Symbols.calendar_month_rounded),
+            tooltip: l.calendarTitle,
+            onPressed: () => context.push('/calendar'),
+          ),
+        ],
+      ),
+      bottomNavigationBar: const MainTabBar(current: MainTab.overview),
       body: SafeArea(
         child: Column(
           children: [

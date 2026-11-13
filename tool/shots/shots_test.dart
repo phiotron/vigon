@@ -530,19 +530,18 @@ Future<void> _reveal(_Ctx c, String text, {double alignment = 0.5}) async {
 Future<void> _openSettings(_Ctx c) => _tip(c, 'Settings', 'Cài đặt');
 Future<void> _openEntries(_Ctx c) => _tip(c, 'Records', 'Các khoản');
 
-/// Mở một màn trong menu "Tổng quan, thống kê, lịch" ở thanh trên màn chính
-/// (0 Tổng quan, 1 Thống kê, 2 Lịch).
+/// Mở Tổng quan (0) / Thống kê (1) bằng tab dưới; Lịch (2) là màn phụ mở từ
+/// nút trên thanh trên Tổng quan (đợt 5, không có tab thứ 6).
 Future<void> _openInsights(_Ctx c, int index) async {
-  await c.t.tap(
-    find.byTooltip(
-      _l(c, 'Overview, statistics, calendar', 'Tổng quan, thống kê, lịch'),
-    ),
-  );
-  await settle(c.t);
-  const vi = ['Tổng quan', 'Thống kê', 'Lịch'];
-  const en = ['Overview', 'Statistics', 'Calendar'];
-  await c.t.tap(find.text(_l(c, en[index], vi[index])).last);
-  await settle(c.t);
+  if (index == 2) {
+    await _openInsights(c, 0);
+    await _tip(c, 'Calendar', 'Lịch');
+    return;
+  }
+  final (en, vi) = index == 0
+      ? ('Overview', 'Tổng quan')
+      : ('Statistics', 'Thống kê');
+  await _tip(c, en, vi);
 }
 
 Future<void> _settingsRow(_Ctx c, String text) async {
@@ -1012,14 +1011,6 @@ final _p5 = <_Shot>[
     await _openSettings(c);
     await _reveal(c, _l(c, 'Security', 'Bảo mật'), alignment: 0);
   }, settings: true),
-  _Shot('P5_7_insights', (c) async {
-    await c.t.tap(
-      find.byTooltip(
-        _l(c, 'Overview, statistics, calendar', 'Tổng quan, thống kê, lịch'),
-      ),
-    );
-    await settle(c.t);
-  }),
 ];
 
 void main() {

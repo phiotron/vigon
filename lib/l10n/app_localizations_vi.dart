@@ -13,6 +13,9 @@ class AppLocalizationsVi extends AppLocalizations {
   String get appTitle => 'Ví Gọn';
 
   @override
+  String get homeTab => 'Trang chủ';
+
+  @override
   String get settings => 'Cài đặt';
 
   @override

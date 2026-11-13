@@ -111,6 +111,31 @@ ThemeData buildTheme(Brightness brightness) {
       surfaceTintColor: Colors.transparent,
       titleTextStyle: textTheme.titleLarge,
     ),
+    // Thanh tab dưới (token v3 `tabbar-*`): nền `surface-container`, viên chọn
+    // `secondary-container`, chữ/icon đậm khi chọn, `ink-muted` khi không.
+    navigationBarTheme: NavigationBarThemeData(
+      height: VgSize.tabbarHeight,
+      backgroundColor: p.surfaceContainer,
+      surfaceTintColor: Colors.transparent,
+      elevation: 0,
+      indicatorColor: p.secondaryContainer,
+      indicatorShape: const StadiumBorder(),
+      labelTextStyle: WidgetStateProperty.resolveWith(
+        (states) => VgType.labelSm.copyWith(
+          color: states.contains(WidgetState.selected)
+              ? p.onSecondaryContainer
+              : p.inkMuted,
+        ),
+      ),
+      iconTheme: WidgetStateProperty.resolveWith(
+        (states) => IconThemeData(
+          size: 24,
+          color: states.contains(WidgetState.selected)
+              ? p.onSecondaryContainer
+              : p.inkMuted,
+        ),
+      ),
+    ),
     dividerTheme: DividerThemeData(color: p.outlineVariant, space: 1),
     listTileTheme: const ListTileThemeData(minTileHeight: VgSize.tapKey),
     dialogTheme: DialogThemeData(

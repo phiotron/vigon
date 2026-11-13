@@ -10,6 +10,7 @@ import '../../l10n_names.dart';
 import '../../providers.dart';
 import '../../ui/category_avatar.dart';
 import '../../ui/format.dart';
+import '../../ui/main_tab_bar.dart';
 import '../../ui/money_lines.dart';
 import '../../ui/status.dart';
 import '../../ui/theme.dart';
@@ -225,6 +226,7 @@ class _EntriesScreenState extends ConsumerState<EntriesScreen> {
 
     return Scaffold(
       appBar: EntriesAppBar(title: periodTitle(context, period)),
+      bottomNavigationBar: const MainTabBar(current: MainTab.entries),
       // Tìm hoặc lọc nâng cao (F-39) đang bật thì hiện danh sách phẳng kết quả.
       body:
           ref.watch(entrySearchProvider.select((s) => s.active)) ||

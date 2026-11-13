@@ -204,7 +204,11 @@ void main() {
         await settle(tester);
         expect(find.textContaining('Đã dùng 90%'), findsWidgets);
         problems.addAll(await _audit(tester, '/entries Sắp vượt'));
-        GoRouter.of(context).go('/settings');
+        // `go` thay cả ngăn xếp (mỗi tab là một gốc) nên lấy lại context, không
+        // dùng context của màn chính đã bị gỡ.
+        GoRouter.of(
+          tester.element(find.byType(Scaffold).first),
+        ).go('/settings');
         await settle(tester);
         for (final row in [
           'Thông báo ngân sách',
