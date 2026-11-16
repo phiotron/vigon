@@ -348,15 +348,21 @@ class GoalCard extends ConsumerWidget {
             StatusTone.neutral,
           )
         : (Symbols.savings_rounded, '', StatusTone.neutral);
-    // Nhắc trước hạn chung (D-044): hiện "Trước N ngày" khi bật và mục còn hạn.
+    // Nhắc trước hạn chung (D-044): chỉ hiện khi còn mốc nhắc ở TƯƠNG LAI —
+    // mốc "trước N ngày" đã qua giờ nhắc thì chuyển sang mốc đúng ngày hạn.
     final remindOn = ref.watch(deadlineReminderEnabledProvider).value ?? false;
     final remindDays = ref.watch(deadlineReminderDaysProvider).value;
-    final showRemind =
-        !completed &&
-        remindOn &&
-        remindDays != null &&
-        progress.daysToDue != null &&
-        !progress.overdue;
+    final remindTime = ref.watch(deadlineReminderTimeProvider).value;
+    final due = goal.dueDate == null ? null : parseDateKey(goal.dueDate!);
+    final remindAt =
+        !completed && remindOn && remindDays != null && !progress.overdue
+        ? nextDeadlineReminder(
+            due,
+            remindDays,
+            ref.watch(clockProvider)(),
+            remindTime ?? const TimeOfDay(hour: 9, minute: 0),
+          )
+        : null;
 
     return Material(
       color: scheme.surfaceContainerLow,
@@ -467,7 +473,7 @@ class GoalCard extends ConsumerWidget {
                               ),
                             ),
                           ),
-                          if (showRemind) ...[
+                          if (remindAt != null) ...[
                             Icon(
                               Symbols.notifications_rounded,
                               size: 16,
@@ -476,7 +482,7 @@ class GoalCard extends ConsumerWidget {
                             const SizedBox(width: 2),
                             Flexible(
                               child: Text(
-                                l.remindDays(remindDays),
+                                l.remindNext(shortDate(context, remindAt)),
                                 style: VgType.bodySm.copyWith(
                                   color: scheme.onSurfaceVariant,
                                 ),

@@ -953,6 +953,11 @@ class AppLocalizationsVi extends AppLocalizations {
   String get wrongPin => 'Sai mã PIN';
 
   @override
+  String pinLockedRetry(String time) {
+    return 'Thử lại sau $time';
+  }
+
+  @override
   String get pinWarning =>
       'Nếu quên mã, cách duy nhất để dùng lại là xóa toàn bộ dữ liệu trong app.';
 
@@ -1024,6 +1029,10 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get rateApp => 'Đánh giá Ví Gọn';
+
+  @override
+  String get rateUnavailable =>
+      'Ví Gọn chưa có trên Google Play. Hãy thử lại khi bản phát hành lên cửa hàng.';
 
   @override
   String get feedback => 'Gửi góp ý';

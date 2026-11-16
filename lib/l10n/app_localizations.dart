@@ -1844,6 +1844,12 @@ abstract class AppLocalizations {
   /// **'Wrong PIN'**
   String get wrongPin;
 
+  /// No description provided for @pinLockedRetry.
+  ///
+  /// In en, this message translates to:
+  /// **'Try again in {time}'**
+  String pinLockedRetry(String time);
+
   /// No description provided for @pinWarning.
   ///
   /// In en, this message translates to:
@@ -1963,6 +1969,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Rate Vigon'**
   String get rateApp;
+
+  /// No description provided for @rateUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Vigon is not on Google Play yet. Try again once the release is in the store.'**
+  String get rateUnavailable;
 
   /// No description provided for @feedback.
   ///

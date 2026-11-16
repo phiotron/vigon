@@ -13,6 +13,7 @@ import '../../ui/messenger.dart';
 import '../../ui/money_lines.dart';
 import '../../ui/tokens.g.dart';
 import '../debts/debt_movement.dart';
+import '../reminder/deadline_reminders.dart';
 import 'goal_editor.dart';
 import 'goal_money_sheet.dart';
 import 'savings_providers.dart';
@@ -62,6 +63,20 @@ class _GoalDetail extends ConsumerWidget {
         goalProgress(ref, goal) ??
         GoalProgress.of(goal, 0, ref.watch(todayProvider));
     final completed = goal.completedAt != null;
+    // Nhắc trước hạn (D-044): cùng mốc với lịch thông báo, chỉ hiện khi mốc
+    // kế tiếp còn ở tương lai (mốc "trước N ngày" đã qua thì sang ngày hạn).
+    final remindOn = ref.watch(deadlineReminderEnabledProvider).value ?? false;
+    final remindDays = ref.watch(deadlineReminderDaysProvider).value;
+    final remindTime = ref.watch(deadlineReminderTimeProvider).value;
+    final remindAt =
+        !completed && remindOn && remindDays != null && !progress.overdue
+        ? nextDeadlineReminder(
+            goal.dueDate == null ? null : parseDateKey(goal.dueDate!),
+            remindDays,
+            ref.watch(clockProvider)(),
+            remindTime ?? const TimeOfDay(hour: 9, minute: 0),
+          )
+        : null;
     final accounts = ref.watch(allAccountsProvider).value ?? const <Account>[];
     final byId = {for (final a in accounts) a.id: a};
     final wallet = byId[goal.accountId];
@@ -249,6 +264,16 @@ class _GoalDetail extends ConsumerWidget {
                             ? scheme.error
                             : scheme.onSurfaceVariant,
                         fontWeight: progress.overdue ? FontWeight.w600 : null,
+                      ),
+                    ),
+                  if (remindAt != null)
+                    Padding(
+                      padding: const EdgeInsets.only(top: VgSpace.s1),
+                      child: Text(
+                        l.remindNext(shortDate(context, remindAt)),
+                        style: VgType.bodySm.copyWith(
+                          color: scheme.onSurfaceVariant,
+                        ),
                       ),
                     ),
                   const SizedBox(height: VgSpace.s2),

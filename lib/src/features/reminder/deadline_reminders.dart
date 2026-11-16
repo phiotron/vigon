@@ -47,6 +47,23 @@ class DeadlineNotification {
   String toString() => 'DeadlineNotification($id, $at, $body)';
 }
 
+/// Mốc nhắc trước hạn kế tiếp (D-044: báo [days] ngày trước và đúng ngày
+/// hạn, lúc [time]). Mốc mà giờ nhắc đã qua so với [now] thì đã nổ — bỏ, như
+/// `planDeadlineNotifications`; null khi không có hạn hoặc cả hai mốc đã qua.
+DateTime? nextDeadlineReminder(
+  DateTime? due,
+  int days,
+  DateTime now,
+  TimeOfDay time,
+) {
+  if (due == null) return null;
+  for (final day in [due.subtract(Duration(days: days)), due]) {
+    final at = DateTime(day.year, day.month, day.day, time.hour, time.minute);
+    if (at.isAfter(now)) return day;
+  }
+  return null;
+}
+
 /// Một mục có hạn (mục tiêu tiết kiệm hoặc khoản nợ) cùng số còn lại.
 class DeadlineItem {
   const DeadlineItem({

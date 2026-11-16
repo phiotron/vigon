@@ -43,6 +43,36 @@ class MemorySecretStore implements SecretStore {
   Future<void> delete(String key) async => values.remove(key);
 }
 
+/// Kết quả một lần nhập PIN (F-11, D-007): đúng hay sai, đã sai bao nhiêu lần
+/// và đang bị khoá tạm tới lúc nào. Bộ đếm nằm trong bộ nhớ an toàn nên gỡ app
+/// hay khởi động lại không xoá được (chống dò 10.000 mã bằng tay).
+class PinAttemptResult {
+  const PinAttemptResult({
+    required this.ok,
+    this.failures = 0,
+    this.lockedUntil,
+  });
+
+  /// Lần nhập này đúng.
+  final bool ok;
+
+  /// Tổng số lần sai liên tiếp (đặt lại về 0 khi đúng mã).
+  final int failures;
+
+  /// Đang bị khoá tạm tới thời điểm này; null khi không khoá.
+  final DateTime? lockedUntil;
+
+  /// Còn phải chờ bao lâu tại [now]; [Duration.zero] khi hết khoá.
+  Duration remaining(DateTime now) {
+    final until = lockedUntil;
+    if (until == null) return Duration.zero;
+    final left = until.difference(now);
+    return left.isNegative ? Duration.zero : left;
+  }
+
+  bool isLockedAt(DateTime now) => remaining(now) > Duration.zero;
+}
+
 /// Mã PIN 4 số khóa app (F-11). Chỉ lưu muối và mã băm, không lưu mã (AC-33).
 ///
 /// iOS giữ Keychain sau khi gỡ app trong khi cơ sở dữ liệu bị xóa (iOS-02).
@@ -61,6 +91,28 @@ class PinService {
   static const _hashKey = 'pin_hash';
   static const _saltKey = 'pin_salt';
   static const _installKey = 'pin_install_id';
+  static const _failuresKey = 'pin_failures';
+  static const _lockedUntilKey = 'pin_locked_until';
+
+  /// Sai liên tiếp bao nhiêu lần thì bắt đầu khoá tạm (D-007).
+  static const maxFailures = 5;
+
+  /// Thời gian khoá theo mức: lần sai thứ 5 → 30 giây, 6 → 1 phút, 7 → 5 phút,
+  /// 8 trở đi → 15 phút. Đúng mã là đặt lại hết.
+  static const _lockSteps = [
+    Duration(seconds: 30),
+    Duration(minutes: 1),
+    Duration(minutes: 5),
+    Duration(minutes: 15),
+  ];
+
+  /// Thời gian khoá sau [failures] lần sai liên tiếp; không khoá khi chưa tới
+  /// [maxFailures].
+  static Duration lockDuration(int failures) {
+    final index = failures - maxFailures;
+    if (index < 0) return Duration.zero;
+    return _lockSteps[min(index, _lockSteps.length - 1)];
+  }
 
   /// Cờ "Mở khoá bằng sinh trắc" (F-41). Nằm cùng chỗ PIN để [disable] (tắt PIN,
   /// Xoá toàn bộ dữ liệu, cài lại trên iOS) tắt luôn sinh trắc (AC-119).
@@ -87,6 +139,8 @@ class PinService {
     final salt = _randomBase64();
     await _store.write(_saltKey, salt);
     await _store.write(_hashKey, hashPin(pin, salt));
+    // Đổi PIN là một lần bắt đầu mới: bỏ bộ đếm lần sai và khoá tạm cũ.
+    await _clearAttempts();
   }
 
   /// Gọi một lần khi mở app, trước khi hỏi PIN. Bộ nhớ an toàn có mã cài đặt
@@ -110,11 +164,62 @@ class PinService {
     return _constantTimeEquals(hashPin(pin, salt), hash);
   }
 
+  /// Trạng thái đếm lần sai hiện tại (không thử mã): dùng lúc mở màn khoá để
+  /// biết có đang bị khoá tạm hay không.
+  Future<PinAttemptResult> currentAttempt(DateTime now) async {
+    final failures = await _readFailures();
+    final until = await _readLockedUntil();
+    if (until == null || !until.isAfter(now)) {
+      return PinAttemptResult(ok: false, failures: failures);
+    }
+    return PinAttemptResult(ok: false, failures: failures, lockedUntil: until);
+  }
+
+  /// Thử mã và cập nhật bộ đếm (D-007). Đang trong thời gian khoá thì không
+  /// băm mã (trả kết quả khoá ngay), đúng mã thì xoá bộ đếm, sai thì tăng và
+  /// khoá tạm khi tới [maxFailures].
+  Future<PinAttemptResult> verifyAttempt(String pin, DateTime now) async {
+    final lockedUntil = await _readLockedUntil();
+    if (lockedUntil != null && lockedUntil.isAfter(now)) {
+      return PinAttemptResult(
+        ok: false,
+        failures: await _readFailures(),
+        lockedUntil: lockedUntil,
+      );
+    }
+    if (await verify(pin)) {
+      await _clearAttempts();
+      return const PinAttemptResult(ok: true);
+    }
+    final failures = await _readFailures() + 1;
+    final duration = lockDuration(failures);
+    final until = duration == Duration.zero ? null : now.add(duration);
+    await _store.write(_failuresKey, '$failures');
+    if (until == null) {
+      await _store.delete(_lockedUntilKey);
+    } else {
+      await _store.write(_lockedUntilKey, until.toIso8601String());
+    }
+    return PinAttemptResult(ok: false, failures: failures, lockedUntil: until);
+  }
+
+  Future<int> _readFailures() async =>
+      int.tryParse(await _store.read(_failuresKey) ?? '') ?? 0;
+
+  Future<DateTime?> _readLockedUntil() async =>
+      DateTime.tryParse(await _store.read(_lockedUntilKey) ?? '');
+
+  Future<void> _clearAttempts() async {
+    await _store.delete(_failuresKey);
+    await _store.delete(_lockedUntilKey);
+  }
+
   Future<void> disable() async {
     await _store.delete(_hashKey);
     await _store.delete(_saltKey);
     await _store.delete(_installKey);
     await _store.delete(biometricKey);
+    await _clearAttempts();
   }
 
   String _randomBase64() =>

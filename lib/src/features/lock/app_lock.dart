@@ -68,15 +68,21 @@ class LockNotifier extends Notifier<AppLockState> {
     }
   }
 
-  Future<bool> unlock(String pin) async {
-    var ok = false;
+  Future<bool> unlock(String pin) async => (await attemptUnlock(pin)).ok;
+
+  /// Thử mã một lần và trả cả bộ đếm lần sai cho màn khoá (D-007).
+  Future<PinAttemptResult> attemptUnlock(String pin) async {
+    PinAttemptResult result;
     try {
-      ok = await ref.read(pinServiceProvider).verify(pin);
+      result = await ref
+          .read(pinServiceProvider)
+          .verifyAttempt(pin, ref.read(clockProvider)());
     } catch (_) {
       // Lỗi bộ nhớ an toàn: không mở khóa.
+      result = const PinAttemptResult(ok: false);
     }
-    if (ok) state = AppLockState.unlocked;
-    return ok;
+    if (result.ok) state = AppLockState.unlocked;
+    return result;
   }
 
   /// Mở khoá sau khi hộp sinh trắc của hệ điều hành báo đúng (F-41, AC-120).
@@ -92,6 +98,37 @@ class LockNotifier extends Notifier<AppLockState> {
 final lockProvider = NotifierProvider<LockNotifier, AppLockState>(
   LockNotifier.new,
 );
+
+/// Bộ đếm lần nhập sai của màn khoá (D-007). Giữ trong provider để màn khoá
+/// dựng lại (xoay, đổi cỡ chữ) vẫn thấy thời gian khoá còn lại.
+class PinAttemptNotifier extends Notifier<PinAttemptResult?> {
+  @override
+  PinAttemptResult? build() => null;
+
+  /// Đọc trạng thái đã lưu trong bộ nhớ an toàn: mở app lại khi đang bị khoá
+  /// tạm thì vẫn phải chờ, không xoá được bằng cách tắt app.
+  Future<void> restore() async {
+    if (state != null) return;
+    try {
+      state = await ref
+          .read(pinServiceProvider)
+          .currentAttempt(ref.read(clockProvider)());
+    } catch (_) {
+      // Không đọc được bộ nhớ an toàn: màn khoá vẫn nhập được, không khoá thêm.
+    }
+  }
+
+  Future<PinAttemptResult> submit(String pin) async {
+    final result = await ref.read(lockProvider.notifier).attemptUnlock(pin);
+    state = result;
+    return result;
+  }
+}
+
+final pinAttemptProvider =
+    NotifierProvider<PinAttemptNotifier, PinAttemptResult?>(
+      PinAttemptNotifier.new,
+    );
 
 /// Theo dõi app ra nền và quay lại: khóa lại khi cần, tạo khoản định kỳ tới hạn (AC-24, AC-32).
 class AppLifecycleWatcher extends ConsumerStatefulWidget {

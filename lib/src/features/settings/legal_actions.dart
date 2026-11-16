@@ -52,17 +52,23 @@ abstract final class LegalActions {
     );
   }
 
-  /// Hàng "Đánh giá" chỉ hiện khi có chỗ để đi: Android luôn có, iOS chờ có
-  /// App Store id (không để nút chết).
-  static bool get canRate =>
-      defaultTargetPlatform == TargetPlatform.android ||
-      (defaultTargetPlatform == TargetPlatform.iOS &&
-          AppInfo.appStoreId != null);
+  /// Hàng "Đánh giá" chỉ hiện khi có chỗ để đi: Android phải đã có trang trên
+  /// Play (`AppInfo.playStorePublished`), iOS phải có App Store id — không để
+  /// nút chết dẫn tới trang "không tìm thấy" (D-051).
+  static bool get canRate => defaultTargetPlatform == TargetPlatform.android
+      ? AppInfo.playStorePublished
+      : defaultTargetPlatform == TargetPlatform.iOS &&
+            AppInfo.appStoreId != null;
 
   /// Mở trang cửa hàng: Play (`market://` rồi HTTPS); iOS mở hộp đánh giá
-  /// khi đã có App Store id.
+  /// khi đã có App Store id. Chưa có trang (canRate false) thì báo cho người
+  /// dùng, không mở link chết.
   static Future<void> rateApp(BuildContext context) async {
     final AppLocalizations l = AppLocalizations.of(context);
+    if (!canRate) {
+      showMessage(l.rateUnavailable);
+      return;
+    }
     final candidates = defaultTargetPlatform == TargetPlatform.iOS
         ? [
             Uri.parse(

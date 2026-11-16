@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  D-020: dữ liệu của Ví Gọn chỉ nằm trên máy người dùng.
+  - `android:allowBackup="false"` (manifest) đã tắt sao lưu trên Android 11 trở
+    xuống, nhưng một số hãng vẫn cho chuyển dữ liệu trực tiếp máy-sang-máy
+    (D2D) trên Android 12+.
+  - Tệp này loại toàn bộ dữ liệu khỏi CẢ sao lưu đám mây LẪN chuyển máy trực
+    tiếp, để câu "không vào bản sao lưu" trong chính sách là đúng.
+  - Bật lại từng vùng chỉ khi có quyết định mới và cập nhật chính sách trước.
+-->
+<data-extraction-rules>
+    <cloud-backup>
+        <exclude domain="root" path="." />
+        <exclude domain="file" path="." />
+        <exclude domain="database" path="." />
+        <exclude domain="sharedpref" path="." />
+        <exclude domain="external" path="." />
+        <exclude domain="device_root" path="." />
+        <exclude domain="device_file" path="." />
+        <exclude domain="device_database" path="." />
+        <exclude domain="device_sharedpref" path="." />
+    </cloud-backup>
+    <device-transfer>
+        <exclude domain="root" path="." />
+        <exclude domain="file" path="." />
+        <exclude domain="database" path="." />
+        <exclude domain="sharedpref" path="." />
+        <exclude domain="device_root" path="." />
+        <exclude domain="device_file" path="." />
+        <exclude domain="device_database" path="." />
+        <exclude domain="device_sharedpref" path="." />
+    </device-transfer>
+</data-extraction-rules>

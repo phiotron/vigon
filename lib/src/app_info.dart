@@ -7,6 +7,11 @@ abstract final class AppInfo {
   /// Mã ứng dụng trên Google Play (hàng "Đánh giá").
   static const androidPackage = 'com.phiotron.vigon';
 
+  /// App đã có trang trên Google Play chưa. Khi `false` (đang phát triển) hàng
+  /// "Đánh giá" ẩn để không dẫn tới trang "không tìm thấy" — bật thành `true`
+  /// sau khi bản phát hành đầu tiên lên Play.
+  static const playStorePublished = false;
+
   /// Mã số App Store; còn `null` thì hàng "Đánh giá" ẩn trên iOS (không có nút chết).
   static const appStoreId = null;
 

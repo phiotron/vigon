@@ -96,7 +96,7 @@ Quy ước kiểm chứng (áp dụng cho mọi mục 3, 3b, 3c, 3d): **[T]** = 
 - AC-40: Tương phản chữ đạt tối thiểu 4,5:1 (chữ thường) và 3:1 (chữ lớn, icon) ở cả hai giao diện sáng và tối. [M]
 
 ### F-13 · Quyền riêng tư và thông tin pháp lý trong app
-- AC-41: (D-039, 2026-11-10) Cài đặt → nhóm "Giới thiệu" là **một thẻ trong màn Cài đặt** (không có màn riêng), gồm: hàng "Phiên bản" với giá trị `1.0.0 (1)` căn phải; Chính sách quyền riêng tư và Điều khoản sử dụng mở trang công khai **đúng ngôn ngữ app** (không mở được thì đọc bản nhúng trong app); Giấy phép mã nguồn mở (màn license của Flutter); Đánh giá Ví Gọn (chỉ Android; iOS ẩn tới khi có App Store id); Gửi góp ý và Báo lỗi bảo mật (hai hàng `mailto:` khác tiêu đề, hàng bảo mật hiện email liên hệ); dưới thẻ ghi "Dữ liệu chỉ lưu trên máy này…". [M]
+- AC-41: (D-039, 2026-11-10) Cài đặt → nhóm "Giới thiệu" là **một thẻ trong màn Cài đặt** (không có màn riêng), gồm: hàng "Phiên bản" với giá trị `1.0.0 (1)` căn phải; Chính sách quyền riêng tư và Điều khoản sử dụng mở trang công khai **đúng ngôn ngữ app** (không mở được thì đọc bản nhúng trong app); Giấy phép mã nguồn mở (màn license của Flutter); Đánh giá Ví Gọn (chỉ Android, **chỉ hiện khi app đã có trang Play** — D-051/AC-179; iOS ẩn tới khi có App Store id); Gửi góp ý và Báo lỗi bảo mật (hai hàng `mailto:` khác tiêu đề, hàng bảo mật hiện email liên hệ); dưới thẻ ghi "Dữ liệu chỉ lưu trên máy này…". [M]
 - AC-42: Mục "Xóa toàn bộ dữ liệu" trong Cài đặt xóa hết dữ liệu trong app sau xác nhận hai bước; mở lại app thì như mới cài. [T]
 - AC-43 (bản 2.0 chưa duyệt sẽ thay danh sách quyền bằng AC-125): ~~App không có quyền INTERNET trong manifest của bản phát hành~~ (sửa 2026-11-05 theo D-025): manifest bản phát hành chỉ có `INTERNET` (để tải tỉ giá, AC-72) và hai quyền nhắc ghi sổ; app không gửi dữ liệu người dùng đi đâu. [T: kiểm manifest nguồn và manifest release đã gộp]
 
@@ -403,6 +403,10 @@ Mục này sửa F-34 (AC-104..AC-106), F-47 (AC-152) và F-48 (AC-157). Chỗ n
 - AC-175: **Xoá khoản nợ** → hộp "Xoá khoản nợ với An? Các khoản trong sổ vẫn giữ" → khoản nợ, lần trả, lịch lãi suất bị xoá; các Debt movement **giữ nguyên** (số dư không đổi), nhãn thành "Khoản nợ đã xoá", vẫn không tính thu/chi, chạm mở màn sửa khoản để xoá từng khoản (chịu AC-161). [T]
 - AC-176: Đổi tiền tệ khoản nợ bị khoá sau lần trả đầu (như AC-133) và khi đã có Debt movement. Excel (AC-117) sheet "Khoản nợ" thêm cột Lãi suất, Gốc còn lại, Lãi tới hôm nay. File sao lưu mang mọi cột/bảng mới; file schema ≤ 7 khôi phục được. [T]
 - AC-177: Schema **v8** + migration 7→8 giữ dữ liệu: `accounts.allow_negative`; khoản nợ: tài khoản, lãi suất, kỳ lãi suất, ngày bắt đầu tính lãi; bảng mốc đổi lãi suất; lần trả: tài khoản, phần lãi; khoản: liên kết tới khoản nợ / lần trả + loại Debt movement. Test migration 7→8 và 1→8. [T]
+
+### F-53 · Hoàn thiện chức năng (D-050, D-051) — 2026-11-16
+- AC-178: (D-050) Màn khoá đếm **số lần nhập sai liên tiếp** trong bộ nhớ an toàn của hệ điều hành (không trong SQLite/ file sao lưu). Sai lần 5 → khoá nhập 30 giây; lần 6 → 1 phút; lần 7 → 5 phút; lần 8 trở đi → 15 phút. Trong thời gian khoá: nhập mã (kể cả mã đúng) không mở app, màn khoá hiện "Thử lại sau m:ss" và tắt bàn phím; hết giờ nhập lại được. Nhập đúng mã xoá bộ đếm; đổi PIN, tắt PIN và "Xoá toàn bộ dữ liệu" cũng xoá bộ đếm. Tắt app rồi mở lại khi đang khoá vẫn phải chờ. [T]
+- AC-179: (D-051) Hàng "Đánh giá Ví Gọn" chỉ hiện khi thật sự có chỗ để đi: Android khi `AppInfo.playStorePublished = true` (bản đã lên Play), iOS khi có `AppInfo.appStoreId`; chưa có thì ẩn và gọi thẳng hành động đánh giá sẽ báo "Ví Gọn chưa có trên Google Play…", không mở trang "không tìm thấy". [T]
 
 ## 4. Ngoài phạm vi (cố ý KHÔNG làm)
 Đã đưa vào phạm vi (giữ dòng gạch để biết lịch sử):

@@ -1,9 +1,12 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:material_symbols_icons/symbols.dart';
 
 import '../../../l10n/app_localizations.dart';
+import '../../providers.dart';
 import '../../ui/confirm_dialog.dart';
 import '../../ui/tokens.g.dart';
 import '../settings/data_actions.dart';
@@ -42,13 +45,54 @@ class _LockBody extends ConsumerStatefulWidget {
 class _LockBodyState extends ConsumerState<_LockBody> {
   String? _error;
   bool _biometricBusy = false;
+  Timer? _ticker;
 
   @override
   void initState() {
     super.initState();
     // F-41 (AC-120): bật sinh trắc thì tự mở hộp của hệ thống một lần khi màn
     // khoá hiện (mở app, quay lại sau > 1 phút, vào từ widget hay thông báo).
-    WidgetsBinding.instance.addPostFrameCallback((_) => _tryBiometric());
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _tryBiometric();
+      _restoreAttempts();
+    });
+  }
+
+  @override
+  void dispose() {
+    _ticker?.cancel();
+    super.dispose();
+  }
+
+  /// D-007: đang bị khoá tạm từ lần mở trước thì hiện đếm ngược và tắt bàn phím.
+  Future<void> _restoreAttempts() async {
+    await ref.read(pinAttemptProvider.notifier).restore();
+    if (mounted) _syncTicker();
+  }
+
+  /// Chạy đồng hồ đếm ngược khi đang khoá; hết giờ thì mở bàn phím lại.
+  void _syncTicker() {
+    final attempt = ref.read(pinAttemptProvider);
+    final locked = attempt?.isLockedAt(ref.read(clockProvider)()) ?? false;
+    if (!locked) return;
+    _ticker ??= Timer.periodic(const Duration(seconds: 1), (_) {
+      if (!mounted) return;
+      final current = ref.read(pinAttemptProvider);
+      if (current == null || !current.isLockedAt(ref.read(clockProvider)())) {
+        _ticker?.cancel();
+        _ticker = null;
+        setState(() => _error = null);
+      } else {
+        setState(() {});
+      }
+    });
+  }
+
+  /// "0:29" — phút:giây cho dòng lỗi khoá tạm.
+  static String _countdown(Duration d) {
+    final minutes = d.inMinutes;
+    final seconds = d.inSeconds % 60;
+    return '$minutes:${seconds.toString().padLeft(2, '0')}';
   }
 
   /// Hỏi sinh trắc. Đúng → vào app; huỷ, sai, bị khoá tạm → ở lại màn PIN,
@@ -106,6 +150,12 @@ class _LockBodyState extends ConsumerState<_LockBody> {
             (availability?.available ?? false)
         ? availability
         : null;
+    // D-007: sai quá nhiều lần thì khoá tạm, hiện đếm ngược và tắt bàn phím.
+    final attempt = ref.watch(pinAttemptProvider);
+    final remaining =
+        attempt?.remaining(ref.watch(clockProvider)()) ?? Duration.zero;
+    final locked = remaining > Duration.zero;
+    final error = locked ? l.pinLockedRetry(_countdown(remaining)) : _error;
     // Bố cục `.vg-pin` (1.1, 1.2): icon khóa, tiêu đề, chấm, dòng lỗi ở trên;
     // bàn phím dồn xuống đáy, "Quên mã" dưới cùng. Thiếu chỗ (cỡ chữ 200%)
     // thì cả khối cuộn được.
@@ -130,15 +180,21 @@ class _LockBodyState extends ConsumerState<_LockBody> {
                         ),
                         title: l.enterPin,
                         titleStyle: Theme.of(context).textTheme.titleLarge,
-                        error: _error,
+                        enabled: !locked,
+                        error: error,
                         onCompleted: (pin) async {
-                          final ok = await ref
-                              .read(lockProvider.notifier)
-                              .unlock(pin);
-                          if (ok || !mounted) return;
+                          final result = await ref
+                              .read(pinAttemptProvider.notifier)
+                              .submit(pin);
+                          if (result.ok || !mounted) return;
                           // Sai mã: rung nhẹ trên cả hai nền tảng (1.2).
                           HapticFeedback.lightImpact();
-                          setState(() => _error = l.wrongPin);
+                          setState(
+                            () => _error = result.lockedUntil == null
+                                ? l.wrongPin
+                                : null,
+                          );
+                          _syncTicker();
                         },
                       ),
                     ),

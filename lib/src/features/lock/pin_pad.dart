@@ -15,6 +15,7 @@ class PinPad extends StatefulWidget {
     this.leading,
     this.titleStyle,
     this.expand = false,
+    this.enabled = true,
   });
 
   final String title;
@@ -31,6 +32,9 @@ class PinPad extends StatefulWidget {
   /// Khi bật, cha phải cấp chiều cao hữu hạn, ví dụ `SliverFillRemaining`.
   final bool expand;
 
+  /// Tắt bàn phím khi đang bị khoá vì nhập sai quá nhiều lần (D-007).
+  final bool enabled;
+
   /// Gọi khi đủ 4 số; xong thì ô nhập tự xóa để nhập lại nếu cần.
   final Future<void> Function(String pin) onCompleted;
 
@@ -43,7 +47,7 @@ class _PinPadState extends State<PinPad> {
   bool _busy = false;
 
   Future<void> _press(String key) async {
-    if (_busy) return;
+    if (_busy || !widget.enabled) return;
     if (key == '⌫') {
       if (_pin.isNotEmpty) {
         setState(() => _pin = _pin.substring(0, _pin.length - 1));
@@ -81,7 +85,7 @@ class _PinPadState extends State<PinPad> {
                 textStyle: VgType.keyDigit,
                 shape: const StadiumBorder(),
               ),
-              onPressed: () => _press(k),
+              onPressed: widget.enabled ? () => _press(k) : null,
               child: k == '⌫'
                   ? Icon(
                       Symbols.backspace_rounded,

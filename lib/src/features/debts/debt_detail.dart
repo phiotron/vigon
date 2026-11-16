@@ -28,7 +28,7 @@ import '../reminder/deadline_reminders.dart';
 import '../settings/budget_dialog.dart' show currencySymbol;
 import 'debt_editor.dart';
 import 'debts_providers.dart';
-import 'debts_screen.dart' show isDebtOverdue, nextDeadlineReminder;
+import 'debts_screen.dart' show isDebtOverdue;
 
 /// Chi tiết một khoản nợ (AC-105, D-049): còn lại = gốc + lãi tới hôm nay
 /// (AC-174), chip lãi suất, các mốc lãi suất + "Đổi lãi suất" (AC-171), các

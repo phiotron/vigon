@@ -324,6 +324,10 @@
   "confirmPin": "Enter the PIN again",
   "pinMismatch": "The PINs do not match",
   "wrongPin": "Wrong PIN",
+  "pinLockedRetry": "Try again in {time}",
+  "@pinLockedRetry": {
+    "placeholders": {"time": {"type": "String"}}
+  },
   "pinWarning": "If you forget the PIN, the only way back in is to delete all data in the app.",
   "forgotPin": "Forgot PIN",
   "forgotPinBody": "Vigon has no server, so a PIN cannot be recovered. You can delete all data in the app to use it again.",
@@ -349,6 +353,7 @@
   "reportSecurity": "Report a security issue",
   "licenses": "Open-source licences",
   "rateApp": "Rate Vigon",
+  "rateUnavailable": "Vigon is not on Google Play yet. Try again once the release is in the store.",
   "feedback": "Send feedback",
   "feedbackSubject": "Vigon feedback {version}",
   "@feedbackSubject": {"placeholders": {"version": {"type": "String"}}},

@@ -971,6 +971,11 @@ class AppLocalizationsEn extends AppLocalizations {
   String get wrongPin => 'Wrong PIN';
 
   @override
+  String pinLockedRetry(String time) {
+    return 'Try again in $time';
+  }
+
+  @override
   String get pinWarning =>
       'If you forget the PIN, the only way back in is to delete all data in the app.';
 
@@ -1042,6 +1047,10 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get rateApp => 'Rate Vigon';
+
+  @override
+  String get rateUnavailable =>
+      'Vigon is not on Google Play yet. Try again once the release is in the store.';
 
   @override
   String get feedback => 'Send feedback';

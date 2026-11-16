@@ -47,6 +47,126 @@ void main() {
     });
   });
 
+  group('đếm lần sai và khoá tạm (D-007)', () {
+    final start = DateTime(2026, 11, 16, 9);
+    late MemorySecretStore store;
+    late PinService pin;
+
+    setUp(() async {
+      store = MemorySecretStore();
+      pin = PinService(store);
+      await pin.setPin('2468');
+    });
+
+    test('sai 4 lần chưa khoá; lần thứ 5 khoá 30 giây', () async {
+      for (var i = 1; i <= 4; i++) {
+        final r = await pin.verifyAttempt('0000', start);
+        expect(r.ok, isFalse);
+        expect(r.failures, i);
+        expect(r.lockedUntil, isNull, reason: 'lần $i');
+      }
+      final fifth = await pin.verifyAttempt('0000', start);
+      expect(fifth.failures, 5);
+      expect(fifth.lockedUntil, start.add(const Duration(seconds: 30)));
+      expect(fifth.isLockedAt(start.add(const Duration(seconds: 29))), isTrue);
+      expect(fifth.isLockedAt(start.add(const Duration(seconds: 30))), isFalse);
+    });
+
+    test(
+      'đang khoá thì mã đúng cũng không mở; hết khoá mở và đặt lại',
+      () async {
+        for (var i = 0; i < 5; i++) {
+          await pin.verifyAttempt('0000', start);
+        }
+        final during = await pin.verifyAttempt(
+          '2468',
+          start.add(const Duration(seconds: 10)),
+        );
+        expect(during.ok, isFalse);
+        expect(during.failures, 5);
+        expect(
+          during.isLockedAt(start.add(const Duration(seconds: 10))),
+          isTrue,
+        );
+
+        final after = await pin.verifyAttempt(
+          '2468',
+          start.add(const Duration(seconds: 31)),
+        );
+        expect(after.ok, isTrue);
+        final cleared = await pin.currentAttempt(
+          start.add(const Duration(seconds: 31)),
+        );
+        expect(cleared.failures, 0);
+        expect(cleared.lockedUntil, isNull);
+
+        // Đúng mã xong thì sai lại tính từ đầu, chưa khoá.
+        final wrong = await pin.verifyAttempt('0000', start);
+        expect(wrong.failures, 1);
+        expect(wrong.lockedUntil, isNull);
+      },
+    );
+
+    test('mỗi lần sai sau khi hết khoá tăng mức khoá', () async {
+      var now = start;
+      for (var i = 0; i < 5; i++) {
+        await pin.verifyAttempt('0000', now);
+      }
+      now = now.add(const Duration(seconds: 31));
+      final sixth = await pin.verifyAttempt('0000', now);
+      expect(sixth.lockedUntil, now.add(const Duration(minutes: 1)));
+
+      now = now.add(const Duration(minutes: 1, seconds: 1));
+      final seventh = await pin.verifyAttempt('0000', now);
+      expect(seventh.lockedUntil, now.add(const Duration(minutes: 5)));
+
+      now = now.add(const Duration(minutes: 5, seconds: 1));
+      final eighth = await pin.verifyAttempt('0000', now);
+      expect(eighth.lockedUntil, now.add(const Duration(minutes: 15)));
+
+      now = now.add(const Duration(minutes: 15, seconds: 1));
+      final ninth = await pin.verifyAttempt('0000', now);
+      expect(ninth.lockedUntil, now.add(const Duration(minutes: 15)));
+    });
+
+    test('bộ đếm ở bộ nhớ an toàn: mở lại app vẫn còn khoá', () async {
+      for (var i = 0; i < 5; i++) {
+        await pin.verifyAttempt('0000', start);
+      }
+      final reopened = PinService(store);
+      final state = await reopened.currentAttempt(
+        start.add(const Duration(seconds: 5)),
+      );
+      expect(state.isLockedAt(start.add(const Duration(seconds: 5))), isTrue);
+      expect(state.lockedUntil, start.add(const Duration(seconds: 30)));
+    });
+
+    test('tắt PIN xoá bộ đếm; đổi PIN cũng đặt lại', () async {
+      for (var i = 0; i < 5; i++) {
+        await pin.verifyAttempt('0000', start);
+      }
+      await pin.disable();
+      expect(store.values, isEmpty);
+
+      await pin.setPin('1357');
+      final r = await pin.verifyAttempt('0000', start);
+      expect(r.failures, 1);
+      expect(r.lockedUntil, isNull);
+    });
+
+    test(
+      'mốc thời gian khoá: 5 → 30 giây, 6 → 1 phút, 7 → 5 phút, 8+ → 15 phút',
+      () {
+        expect(PinService.lockDuration(4), Duration.zero);
+        expect(PinService.lockDuration(5), const Duration(seconds: 30));
+        expect(PinService.lockDuration(6), const Duration(minutes: 1));
+        expect(PinService.lockDuration(7), const Duration(minutes: 5));
+        expect(PinService.lockDuration(8), const Duration(minutes: 15));
+        expect(PinService.lockDuration(20), const Duration(minutes: 15));
+      },
+    );
+  });
+
   group('khóa lại sau hơn 1 phút ở nền (AC-32)', () {
     late DateTime now;
     late MemorySecretStore store;

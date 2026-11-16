@@ -2,7 +2,7 @@
 // mốc N ngày trước mà giờ nhắc đã qua thì chuyển sang mốc ngày hạn.
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:vigon/src/features/debts/debts_screen.dart';
+import 'package:vigon/src/features/reminder/deadline_reminders.dart';
 
 void main() {
   final due = DateTime(2026, 11, 18);
@@ -30,9 +30,6 @@ void main() {
   });
 
   test('không có hạn: không có chip', () {
-    expect(
-      nextDeadlineReminder(null, 7, DateTime(2026, 11, 11), nine),
-      isNull,
-    );
+    expect(nextDeadlineReminder(null, 7, DateTime(2026, 11, 11), nine), isNull);
   });
 }

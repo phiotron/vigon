@@ -4,6 +4,7 @@ import 'package:material_symbols_icons/symbols.dart';
 import 'package:vigon/src/app_info.dart';
 import 'package:vigon/src/data/database.dart';
 import 'package:vigon/src/data/pin_service.dart';
+import 'package:vigon/src/features/settings/legal_actions.dart';
 import 'package:vigon/src/ui/theme.dart';
 import 'package:vigon/src/ui/settings_rows.dart';
 
@@ -182,9 +183,8 @@ void main() {
   });
 
   testWidgets('Giới thiệu (9.1–9.2, AC-41): một thẻ trong Cài đặt có phiên '
-      'bản, chính sách, điều khoản, giấy phép, đánh giá, góp ý', (
-    tester,
-  ) async {
+      'bản, chính sách, điều khoản, giấy phép, đánh giá (khi đã phát hành), '
+      'góp ý', (tester) async {
     expect(
       AppInfo.privacyPolicyUrl('vi'),
       endsWith('/vigon/privacy-policy.vi.html'),
@@ -204,7 +204,12 @@ void main() {
     await settle(tester);
 
     expect(find.text('1.0.0 (1)'), findsOneWidget);
-    expect(find.text('Đánh giá Ví Gọn'), findsOneWidget);
+    // Chưa phát hành trên Play (`AppInfo.playStorePublished = false`) nên hàng
+    // Đánh giá ẩn - không để nút chết mở trang "không tìm thấy" (D-051).
+    expect(
+      find.text('Đánh giá Ví Gọn'),
+      LegalActions.canRate ? findsOneWidget : findsNothing,
+    );
     expect(find.text('Điều khoản sử dụng'), findsOneWidget);
     expect(find.text('Gửi góp ý'), findsOneWidget);
     final policy = find.widgetWithText(

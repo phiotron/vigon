@@ -32,6 +32,29 @@ void main() {
     },
   );
 
+  testWidgets('sai 5 lần thì khoá tạm và tắt bàn phím (D-007)', (tester) async {
+    final secrets = MemorySecretStore();
+    await tester.runAsync(() => PinService(secrets).setPin('2468'));
+    final db = await pumpApp(tester, secrets: secrets);
+
+    for (var i = 0; i < 4; i++) {
+      await enterPin(tester, '1111');
+      expect(find.text('Sai mã PIN'), findsOneWidget);
+    }
+    // Lần thứ 5: không dùng settle vì màn khoá chạy đồng hồ đếm ngược.
+    for (final d in '1111'.split('')) {
+      await tester.tap(find.widgetWithText(TextButton, d));
+      await tester.pump();
+    }
+    await tester.pump();
+    expect(find.textContaining('Thử lại sau'), findsOneWidget);
+    final one = tester.widget<TextButton>(find.widgetWithText(TextButton, '1'));
+    expect(one.onPressed, isNull, reason: 'bàn phím phải tắt khi đang khoá');
+    // Bị khoá vẫn còn lối "Quên mã" (AC-34).
+    expect(find.text('Quên mã'), findsOneWidget);
+    await disposeApp(tester, db);
+  });
+
   testWidgets(
     'quên mã: xác nhận hai bước thì xóa dữ liệu và vào lại được (AC-34)',
     (tester) async {
