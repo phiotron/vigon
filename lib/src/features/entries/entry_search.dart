@@ -15,6 +15,7 @@ import '../../providers.dart';
 import '../../ui/category_avatar.dart';
 import '../../ui/fields.dart';
 import '../../ui/format.dart';
+import '../../ui/money_lines.dart';
 import '../../ui/theme.dart';
 import '../../ui/tokens.g.dart';
 import '../../data/money_sum.dart' show isDebtInflow;
@@ -367,11 +368,6 @@ class EntrySearchResults extends ConsumerWidget {
                     EntryType.debt => l.debtMovementsSection,
                     _ => categoryName(r),
                   },
-                  amount: money(
-                    context,
-                    r.entry.currency,
-                    r.entry.originalAmount ?? r.entry.amount,
-                  ),
                   query: query,
                 );
               },
@@ -415,14 +411,12 @@ class SearchResultTile extends ConsumerWidget {
     required this.row,
     required this.title,
     required this.categoryName,
-    required this.amount,
     required this.query,
   });
 
   final EntryView row;
   final String title;
   final String categoryName;
-  final String amount;
   final String query;
 
   @override
@@ -450,17 +444,59 @@ class SearchResultTile extends ConsumerWidget {
     final date = day == ref.watch(todayProvider)
         ? l.today
         : shortDate(context, day);
-    final amountText = Text.rich(
-      TextSpan(
-        style: VgType.bodyMd.copyWith(
-          color: color,
-          fontFeatures: const [FontFeature.tabularFigures()],
+    final lines = moneyLinesText(
+      context,
+      ref,
+      entry.originalAmount ?? entry.amount,
+      entry.currency,
+    );
+    // Tìm theo số tiền so với **số gốc** (xem `amountTextOf` ở trên), nên chỉ
+    // tô số gốc; dòng Tiền tệ chính đã quy đổi thì không tô.
+    final highlightMain = lines.secondary == null || lines.missingRate;
+    final amountStyle = VgType.bodyMd.copyWith(
+      color: color,
+      fontFeatures: const [FontFeature.tabularFigures()],
+    );
+    final amountText = Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: large
+          ? CrossAxisAlignment.start
+          : CrossAxisAlignment.end,
+      children: [
+        Text.rich(
+          TextSpan(
+            style: amountStyle,
+            children: [
+              if (sign.isNotEmpty) TextSpan(text: sign),
+              ...highlightSpans(
+                lines.main,
+                highlightMain ? amountMatches(lines.main, query) : const [],
+                mark,
+              ),
+            ],
+          ),
+          textAlign: large ? TextAlign.start : TextAlign.end,
         ),
-        children: [
-          if (sign.isNotEmpty) TextSpan(text: sign),
-          ...highlightSpans(amount, amountMatches(amount, query), mark),
-        ],
-      ),
+        if (lines.secondary != null)
+          Text.rich(
+            TextSpan(
+              style: VgType.bodySm.copyWith(
+                color: lines.missingRate
+                    ? scheme.error
+                    : scheme.onSurfaceVariant,
+                fontFeatures: const [FontFeature.tabularFigures()],
+              ),
+              children: highlightSpans(
+                lines.secondary!,
+                lines.missingRate
+                    ? const []
+                    : amountMatches(lines.secondary!, query),
+                mark,
+              ),
+            ),
+            textAlign: large ? TextAlign.start : TextAlign.end,
+          ),
+      ],
     );
     final text = Column(
       crossAxisAlignment: CrossAxisAlignment.start,

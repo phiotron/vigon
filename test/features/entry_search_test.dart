@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:vigon/src/data/database.dart';
+import 'package:vigon/src/data/exchange_rate.dart';
+import 'package:vigon/src/data/money.dart';
+import 'package:vigon/src/data/settings_repository.dart';
 
 import '../helpers.dart';
 
@@ -108,6 +111,53 @@ void main() {
     await settle(tester);
     expect(find.byType(TextField), findsNothing);
     expect(find.text('Số dư'), findsOneWidget);
+    await disposeApp(tester, db);
+  });
+
+  testWidgets('dòng tìm hiện Tiền tệ chính trên, số gốc dưới (AC-146)', (
+    tester,
+  ) async {
+    final db = memoryDatabase();
+    // Tiền tệ chính USD, 1 USD = 25.000 ₫ → 155.000 ₫ = $6.20. Ghi trước khi
+    // mở app để không phải sửa cài đặt khi các luồng dữ liệu đang chạy.
+    await tester.runAsync(() async {
+      final settings = SettingsRepository(db);
+      await settings.setCurrency('USD');
+      await settings.setRateTable(
+        const RateTable(
+          base: 'USD',
+          date: '2026-11-16',
+          rates: {'USD': 1, 'VND': 25000},
+        ),
+      );
+    });
+    await pumpApp(tester, db: db);
+    await insertEntry(
+      tester,
+      db,
+      type: EntryType.expense,
+      amount: 155000,
+      categoryId: 1,
+      note: 'Cà phê',
+    );
+    await openEntries(tester);
+
+    Finder rich(String text) => find.byWidgetPredicate(
+      (w) =>
+          w is Text &&
+          w.textSpan != null &&
+          plain(w.textSpan!.toPlainText()) == text,
+    );
+    final primary = plain(
+      '−${formatMoney(620, currencyCode: 'USD', locale: 'vi')}',
+    );
+    expect(rich(primary), findsOneWidget);
+    expect(rich('155.000 ₫'), findsOneWidget);
+    // Hai dòng nằm trong cùng dòng kết quả, dòng chính ở trên.
+    expect(
+      tester.getTopLeft(rich(primary)).dy,
+      lessThan(tester.getTopLeft(rich('155.000 ₫')).dy),
+    );
     await disposeApp(tester, db);
   });
 

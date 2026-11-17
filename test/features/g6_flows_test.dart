@@ -5,6 +5,7 @@ import 'package:vigon/src/ui/dialog.dart';
 import 'package:vigon/src/data/account_repository.dart';
 import 'package:vigon/src/data/database.dart';
 import 'package:vigon/src/data/settings_repository.dart';
+import 'package:vigon/src/features/entries/entry_filter_sheet.dart';
 import 'package:vigon/src/features/home/range_calendar.dart';
 import 'package:vigon/src/providers.dart';
 
@@ -148,6 +149,60 @@ void main() {
       () => db.select(db.entries).getSingle(),
     );
     expect(entry!.categoryId, 2);
+    await disposeApp(tester, db);
+  });
+
+  testWidgets('xóa danh mục đang lọc thì bỏ id khỏi bộ lọc (AC-115)', (
+    tester,
+  ) async {
+    final db = await pumpApp(tester);
+    await insertEntry(
+      tester,
+      db,
+      type: EntryType.expense,
+      amount: 40000,
+      categoryId: 1,
+      note: 'Phở',
+    );
+    // Lọc theo "Ăn uống" ở màn Các khoản.
+    await tester.tap(find.byTooltip('Các khoản'));
+    await settle(tester);
+    await tester.tap(find.byTooltip('Lọc'));
+    await settle(tester);
+    await tester.tap(
+      find.descendant(
+        of: find.byType(EntryFilterSheet),
+        matching: find.text('Ăn uống'),
+      ),
+    );
+    await tester.pump();
+    await tester.tap(find.text('Áp dụng'));
+    await settle(tester);
+    expect(find.byKey(const ValueKey('chip-category-1')), findsOneWidget);
+    expect(find.text('Phở'), findsOneWidget);
+
+    // Xóa danh mục đó, chuyển khoản sang "Đi lại".
+    await openSettings(tester);
+    await tester.tap(find.text('Danh mục'));
+    await settle(tester);
+    await tester.tap(find.text('Ăn uống'));
+    await settle(tester);
+    await tester.tap(find.text('Xóa danh mục'));
+    await settle(tester);
+    await tester.tap(
+      find.descendant(of: find.byType(VgDialog), matching: find.text('Đi lại')),
+    );
+    await settle(tester);
+
+    // Về Các khoản: chip đã mất, khoản đã chuyển vẫn hiện (không bị lọc chết).
+    await tester.tap(find.byTooltip('Quay lại'));
+    await settle(tester);
+    await tester.tap(find.byTooltip('Các khoản'));
+    await settle(tester);
+    expect(find.byKey(const ValueKey('chip-category-1')), findsNothing);
+    // Bộ lọc đã trống nên danh sách về nhóm thường, có danh mục nhận khoản.
+    expect(find.text('Không có khoản nào khớp'), findsNothing);
+    expect(find.text('Đi lại'), findsOneWidget);
     await disposeApp(tester, db);
   });
 

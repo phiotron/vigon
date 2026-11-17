@@ -16,6 +16,7 @@ import '../../ui/confirm_dialog.dart';
 import '../../ui/dialog.dart';
 import '../../ui/theme.dart';
 import '../../ui/tokens.g.dart';
+import '../entries/entry_filter_state.dart';
 import '../settings/budget_dialog.dart' show currencySymbol;
 import 'category_icons.dart';
 import 'sheet_footer.dart';
@@ -327,6 +328,9 @@ class _CategoryEditorState extends ConsumerState<_CategoryEditor> {
     }
     if (target == null) return;
     await repo.delete(c.id, moveTo: target);
+    // Danh mục đang lọc bị xóa thì bỏ id khỏi bộ lọc, nếu không danh sách sẽ
+    // trống mà không còn chip nào để gỡ (AC-115).
+    ref.read(entryFilterProvider.notifier).remove(category: c.id);
     if (mounted) Navigator.pop(context);
   }
 

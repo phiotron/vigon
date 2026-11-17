@@ -20,6 +20,7 @@ import '../../ui/confirm_dialog.dart';
 import '../../ui/dialog.dart';
 import '../../ui/messenger.dart';
 import '../../ui/tokens.g.dart';
+import '../entries/entry_filter_state.dart';
 import '../lock/app_lock.dart';
 import '../lock/pin_pad.dart';
 import 'auto_backup_providers.dart';
@@ -161,6 +162,7 @@ Future<void> restoreFromFile(BuildContext context, WidgetRef ref) async {
   try {
     await importBackup(ref.read(databaseProvider), content);
     ref.read(accountFilterProvider.notifier).select(null);
+    ref.read(entryFilterProvider.notifier).clear();
     showMessage(l.restoreDone);
   } on BackupFormatException {
     showMessage(l.restoreFailed);
@@ -200,6 +202,7 @@ Future<bool> deleteEverything(BuildContext context, WidgetRef ref) async {
   await eraseEmailImport(ref);
   await ref.read(settingsRepositoryProvider).ensureCurrency();
   ref.read(accountFilterProvider.notifier).select(null);
+  ref.read(entryFilterProvider.notifier).clear();
   HapticFeedback.lightImpact();
   showMessage(l.deleteAllDone);
   return true;
