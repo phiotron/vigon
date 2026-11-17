@@ -53,11 +53,35 @@ Người dùng hỏi "kiểm tra kỹ xem còn sót chức năng nào không". L
 - Không thấy chỗ nào khác còn thiếu chức năng: không TODO/FIXME/stub, không test bị bỏ qua,
   mọi route đều có màn, mọi hàng Cài đặt đều có tác dụng.
 
+## Kiểm trên máy ảo Android (cùng ngày, người dùng cho phép)
+
+Máy ảo `Medium_Phone_API_37.0` (Android 17/API 37, x86_64, 1080×2400, `emulator-5554`), chạy
+không cửa sổ (`-no-window -gpu swiftshader_indirect`), cài APK debug `--target-platform
+android-x64`, **không đụng điện thoại thật**. Ảnh chụp: `%TEMP%\opencode\emu-shots\01..71.png`.
+
+- **Cài mới, mặc định:** màn chào 5 bước tiếng Anh, Tiền tệ chính **USD** — đúng **D-036**.
+- **PIN (D-050):** đặt 1234; tắt/mở app ra màn khoá. Sai 4 lần → "Wrong PIN"; lần 5 →
+  "Try again in 0:27", bàn phím mờ + không bấm được; hết hạn sai tiếp → "Try again in 0:57"
+  (mức 1 phút). Đang khoá mà force-stop + mở lại → **vẫn khoá** ("Try again in 0:21"), bàn
+  phím tắt. Hết giờ nhập 1234 → mở được; sai lại 1 lần chỉ báo "Wrong PIN" (bộ đếm **đã
+  reset** sau lần đúng).
+- **Hàng "Đánh giá" (D-051):** Cài đặt → Giới thiệu chỉ còn Version, Privacy policy, Terms of
+  use, Open-source licences, Send feedback, Report a security issue — **không có hàng Rate**.
+- **AC-146 trên máy:** thêm khoản chi 155.000 ₫ (≈ $6.02) vào danh mục Food; Records → Tìm
+  kiếm `155000`: "1 record · total $6.02", dòng kết quả hiện **−$6.02 ở trên** và **₫155,000
+  ở dưới**, chỉ dòng số gốc được tô sáng.
+- **AC-115 trên máy:** lọc Records theo Food (chip "Food ×", 1 record) → Cài đặt → Danh mục →
+  xoá Food (chuyển 1 khoản sang Other) → quay lại Records: **chip lọc biến mất**, danh sách
+  hiện lại với khoản ở nhóm Other; không còn trạng thái trống kẹt.
+- **Ghi chú khi điều khiển máy ảo:** toạ độ `adb shell input tap` phải đo trên PNG
+  (1080×2400) — ước lượng theo màn hình bị lệch ~85 px dọc; bàn phím số có "5" ở hàng 2
+  (không phải hàng 3).
+
 ## Còn chờ (không phải sót chức năng)
 
-- **Máy thật:** PIN khoá tạm (D-050), hàng "Đánh giá" ẩn (D-051), chuyển máy Android 12+,
-  chip nhắc hạn Tiết kiệm theo giờ, và hai chỗ vừa sửa (dòng tìm 2 tầng, bộ lọc sau khi xoá
-  danh mục) — chờ điện thoại rảnh, hỏi trước khi dùng adb.
+- **Máy thật / môi trường thật:** chuyển máy Android 12+ (không kiểm được trên máy ảo), chip
+  nhắc hạn Tiết kiệm theo giờ (cần mục tiêu có hạn + nhắc), iOS (App Group, CI macOS). PIN
+  khoá tạm và hàng "Đánh giá" **đã kiểm xong trên máy ảo**.
 - **iOS:** App Group `group.com.phiotron.vigon`, build/CI trên macOS runner, khai báo mã hoá.
 - **Phát hành:** đăng lại trang pháp lý sau khi duyệt (cần người dùng đồng ý), upload
   keystore, Play Console closed test, mockup v5 (chưa có) để áp lại điều hướng.
