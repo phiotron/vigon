@@ -12,6 +12,7 @@ import '../../data/summary.dart';
 import '../../data/text_fold.dart';
 import '../../l10n_names.dart';
 import '../../providers.dart';
+import '../../ui/account_filter_button.dart';
 import '../../ui/category_avatar.dart';
 import '../../ui/fields.dart';
 import '../../ui/format.dart';
@@ -146,6 +147,9 @@ class _EntriesAppBarState extends ConsumerState<EntriesAppBar> {
         titleSpacing: VgSpace.s4,
         title: Text(widget.title),
         actions: [
+          // Cùng bộ lọc tài khoản với màn chính (AC-20): vào Các khoản là đang
+          // đúng tài khoản chọn ở nhà, đổi được ngay tại đây.
+          const AccountFilterButton(),
           IconButton(
             icon: const Icon(Symbols.search_rounded),
             tooltip: l.search,

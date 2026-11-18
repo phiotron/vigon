@@ -32,7 +32,7 @@ Cập nhật khi viết test hoặc khi thử tay. Một AC chưa có dòng ở 
 | AC-04 | tự động | `g6_flows_test` (ghi chú cắt ở 200 ký tự, chọn tài khoản thứ hai, chọn ngày trong hộp chọn ngày) | 2026-11-04 flutter test 116/116 đạt |
 | AC-10 | tự động | `g6_flows_test` (kỳ Tuần bắt đầu Thứ Hai, kỳ sau, kỳ Năm, Khoảng tùy chọn bằng hộp chọn ngày kèm dịch kỳ), `period_test` | 2026-11-04 flutter test 118/118 đạt |
 | AC-16, AC-17 | tự động | `g3_screens_test` (thêm danh mục), `g6_flows_test` (đổi tên, màu, icon; xóa danh mục và chuyển khoản sang danh mục khác) | 2026-11-04 đạt |
-| AC-20 | tự động | `g6_flows_test` (lọc theo Thẻ rồi bỏ lọc, số dư đổi đúng) | 2026-11-04 đạt |
+| AC-20 | tự động | `g6_flows_test` (lọc theo Thẻ rồi bỏ lọc, số dư đổi đúng); `f39_filter_test` ("chọn tài khoản ngay trên màn Các khoản, mặc định theo màn chính (AC-20)": có từ hai tài khoản thì nút chọn tài khoản ở thanh tiêu đề Các khoản, chọn `Thẻ` → danh mục của tiền mặt mất, mở `Ăn uống` chỉ còn khoản của Thẻ, chip "Tài khoản: Thẻ"; sang Trang chủ vẫn lọc Thẻ, về Các khoản vẫn Thẻ; đổi lại `Tất cả tài khoản` → danh mục tiền mặt trở lại) | 2026-11-04 đạt; 2026-11-18 thêm test nút chọn tài khoản trên Các khoản |
 | AC-26 | tự động | `g6_flows_test` (số 0 bị từ chối, đặt 1.000.000, chạm thanh để bỏ), `g4_screens_test` | 2026-11-04 đạt |
 | AC-29 | tự động | `backup_test` (kể cả `validateBackup`: báo file hỏng trước khi hỏi xác nhận, không đụng dữ liệu) | 2026-11-04 đạt |
 | AC-08 | tự động | `summary_test` (6, 7, 12, 13 danh mục bằng nhau và ca khoản rất nhỏ/lớn: phần trăm hiển thị cộng đúng 100,0) | 2026-11-03 flutter test 107/107 đạt |

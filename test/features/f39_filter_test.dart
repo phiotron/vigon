@@ -270,6 +270,72 @@ void main() {
     await disposeApp(tester, db);
   });
 
+  testWidgets(
+    'chọn tài khoản ngay trên màn Các khoản, mặc định theo màn chính (AC-20)',
+    (tester) async {
+      final db = await pumpApp(tester);
+      await _seedEntries(tester, db);
+      final card = await tester.runAsync(
+        () => AccountRepository(db).add(name: 'Thẻ', currency: 'VND'),
+      );
+      // Cùng danh mục nhưng ở tài khoản "Thẻ" để phân biệt danh sách.
+      await insertEntry(
+        tester,
+        db,
+        type: EntryType.expense,
+        amount: 80000,
+        categoryId: 1,
+        accountId: card!,
+        date: '2026-11-02',
+        note: 'Phở thẻ',
+      );
+      await settle(tester);
+      final container = ProviderScope.containerOf(
+        tester.element(find.byType(Scaffold).first),
+      );
+
+      // Có từ hai tài khoản: nút chọn tài khoản nằm trên thanh tiêu đề Các
+      // khoản, đang là "Tất cả tài khoản".
+      await tester.tap(find.byTooltip('Các khoản'));
+      await settle(tester);
+      expect(find.byTooltip('Tài khoản: Tất cả tài khoản'), findsOneWidget);
+      await tester.tap(find.byTooltip('Tài khoản: Tất cả tài khoản'));
+      await settle(tester);
+      // Menu có "Tất cả tài khoản" + từng tài khoản; chọn "Thẻ" ngay tại đây.
+      expect(find.text('Thẻ'), findsOneWidget);
+      await tester.tap(find.text('Thẻ'));
+      await settle(tester);
+      expect(container.read(accountFilterProvider), card);
+      // Danh sách nhóm theo danh mục: lọc Thẻ thì "Mua sắm" (khoản tiền mặt) mất;
+      // mở "Ăn uống" chỉ còn khoản của Thẻ.
+      expect(find.text('Mua sắm'), findsNothing);
+      await tester.tap(find.text('Ăn uống'));
+      await settle(tester);
+      expect(find.text('Phở thẻ'), findsOneWidget);
+      expect(find.text('Phở'), findsNothing);
+      // Chip tài khoản đang lọc hiện ở đầu danh sách.
+      expect(find.text('Tài khoản: Thẻ'), findsOneWidget);
+
+      // Màn chính dùng chung bộ lọc: đang lọc Thẻ; vào lại Các khoản vẫn Thẻ.
+      await tester.tap(find.byTooltip('Trang chủ'));
+      await settle(tester);
+      expect(container.read(accountFilterProvider), card);
+      await tester.tap(find.byTooltip('Các khoản'));
+      await settle(tester);
+      expect(find.text('Mua sắm'), findsNothing);
+      expect(find.text('Tài khoản: Thẻ'), findsOneWidget);
+
+      // Đổi lại "Tất cả tài khoản" ngay trên Các khoản: danh mục tiền mặt về.
+      await tester.tap(find.byTooltip('Tài khoản: Thẻ'));
+      await settle(tester);
+      await tester.tap(find.text('Tất cả tài khoản').last);
+      await settle(tester);
+      expect(container.read(accountFilterProvider), isNull);
+      expect(find.text('Mua sắm'), findsOneWidget);
+      await disposeApp(tester, db);
+    },
+  );
+
   testWidgets('giao diện tiếng Anh: nút Filter, chip, dòng tổng', (
     tester,
   ) async {
